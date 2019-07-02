@@ -9,6 +9,8 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.util.List;
 
+import cn.xylink.mting.MTing;
+import cn.xylink.mting.model.Article;
 import cn.xylink.mting.speech.event.SpeechErrorEvent;
 import cn.xylink.mting.speech.event.SpeechProgressEvent;
 import cn.xylink.mting.speech.event.SpeechStateChangedEvent;
@@ -17,6 +19,9 @@ public class SpeechService extends Service {
 
     IBinder binder = new SpeechBinder();
     SpeechHelper helper = new SpeechHelper();
+    List<Article> articles ;
+    Article article;
+    int index = -1;
 
     public class SpeechBinder extends Binder
     {
@@ -35,22 +40,30 @@ public class SpeechService extends Service {
             @Override
             public void onStateChanged(SpeechorState speakerState) {
 
-                EventBus.getDefault().post(new SpeechStateChangedEvent(speakerState));
+                EventBus.getDefault().post(new SpeechStateChangedEvent(speakerState, article));
 
+                if(speakerState == SpeechorState.SpeechorStateReady)
+                {
+                    speechor.reset();
+                    next();
+                }
             }
 
             @Override
             public void onProgress(List<String> textFragments, int index) {
-                EventBus.getDefault().post(new SpeechProgressEvent(index, textFragments));
+                EventBus.getDefault().post(new SpeechProgressEvent(index, textFragments, article));
 
             }
 
             @Override
             public void onError(int errorCode, String message) {
 
-                EventBus.getDefault().post(new SpeechErrorEvent(errorCode, message));
+                EventBus.getDefault().post(new SpeechErrorEvent(errorCode, message, article));
             }
         };
+
+        articles = ((MTing)getApplication()).articlesToRead;
+        article = null;
     }
 
     @Override
@@ -106,5 +119,38 @@ public class SpeechService extends Service {
     public void reset()
     {
         speechor.reset();
+    }
+
+    public void setArticle(Article article)
+    {
+        synchronized (articles)
+        {
+            for(int i = 0; i < articles.size(); i++)
+            {
+                if(articles.get(i) == article)
+                {
+                    index = i;
+                    this.prepare(article.getTitle());
+                    this.prepare(article.getTextBody());
+                    this.seek(0);
+                }
+            }
+        }
+    }
+
+    private boolean next()
+    {
+        synchronized (articles) {
+            if ((index + 1) >= articles.size())
+                return false;
+
+            ++index;
+            article = articles.get(index);
+            this.prepare(article.getTitle());
+            this.prepare(article.getTextBody());
+            this.seek(0);
+
+            return true;
+        }
     }
 }

@@ -1,14 +1,20 @@
 package cn.xylink.mting.speech.event;
 
-public class SpeechErrorEvent extends RecycleEvent<SpeechErrorEvent>
+import cn.xylink.mting.model.Article;
+
+public class SpeechErrorEvent extends RecycleEvent
 {
     private int errorCode;
     private String message;
 
-    public SpeechErrorEvent(int errorCode, String message)
+    public SpeechErrorEvent(int errorCode, String message, Article article)
     {
+
         this.errorCode = errorCode;
         this.message = message;
+
+        this.setArticle(article);
+
     }
 
     public int getErrorCode() {
