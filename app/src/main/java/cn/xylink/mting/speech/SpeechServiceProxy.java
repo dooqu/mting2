@@ -1,13 +1,10 @@
-package cn.xylink.mting.speech.event;
+package cn.xylink.mting.speech;
 
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
-
-import cn.xylink.mting.speech.SpeechService;
 
 public abstract  class SpeechServiceProxy
 {

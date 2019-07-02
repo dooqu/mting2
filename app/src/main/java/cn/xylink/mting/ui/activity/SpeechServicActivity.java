@@ -1,10 +1,5 @@
 package cn.xylink.mting.ui.activity;
 
-import android.content.ComponentName;
-import android.content.Intent;
-import android.content.ServiceConnection;
-import android.os.IBinder;
-
 import com.wuhenzhizao.titlebar.widget.CommonTitleBar;
 
 import org.greenrobot.eventbus.EventBus;
@@ -16,7 +11,7 @@ import cn.xylink.mting.R;
 import cn.xylink.mting.base.BaseActivity;
 import cn.xylink.mting.speech.SpeechService;
 import cn.xylink.mting.speech.event.SpeechProgressEvent;
-import cn.xylink.mting.speech.event.SpeechServiceProxy;
+import cn.xylink.mting.speech.SpeechServiceProxy;
 import cn.xylink.mting.speech.event.SpeechStateChangedEvent;
 
 /**
