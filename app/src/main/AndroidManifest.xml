@@ -12,7 +12,7 @@
         tools:replace="android:appComponentFactory"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:theme="@style/AppTheme">
-        <activity android:name="cn.xylink.mting.ui.MainActivity">
+        <activity android:name="cn.xylink.mting.ui.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
