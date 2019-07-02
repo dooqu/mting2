@@ -1,5 +1,7 @@
 package cn.xylink.mting.ui.activity;
 
+import android.content.Intent;
+
 import com.wuhenzhizao.titlebar.widget.CommonTitleBar;
 
 import butterknife.BindView;
@@ -27,6 +29,8 @@ public class ArticleDetailActivity extends BaseActivity {
 
     @Override
     protected void initData() {
+
+
 
     }
 
