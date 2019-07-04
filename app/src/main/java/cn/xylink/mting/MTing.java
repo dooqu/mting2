@@ -51,4 +51,5 @@ public class MTing extends Application {
     public void onTerminate() {
         super.onTerminate();
     }
+
 }

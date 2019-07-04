@@ -2,23 +2,28 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="cn.xylink.mting">
-    <uses-permission android:name="android.permission.INTERNET"/>
+
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.WRITE_APN_SETTINGS"
+        tools:ignore="ProtectedPermissions" />
+
     <application
         android:name=".MTing"
         android:allowBackup="true"
+        android:appComponentFactory="android.support.v4.app.CoreComponentFactory"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:appComponentFactory="android.support.v4.app.CoreComponentFactory"
-        tools:replace="android:appComponentFactory"
         android:roundIcon="@mipmap/ic_launcher_round"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        tools:replace="android:appComponentFactory">
         <service android:name=".speech.SpeechService"></service>
+
         <activity android:name="cn.xylink.mting.ui.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -27,6 +32,33 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.activity.SpeechServicActivity"></activity>
+        <activity android:name=".ui.activity.GuideActivity" />
+        <activity android:name=".ui.activity.LoginActivity" />
+        <activity
+            android:name=".wxapi.WXEntryActivity"
+            android:exported="true"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"></activity>
+        <activity android:name=".ui.activity.BindUserPhoneThirdPlatformActivity"/>
+        <!--qq分享-->
+        <activity
+            android:name="com.tencent.tauth.AuthActivity"
+            android:launchMode="singleTask"
+            android:noHistory="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="tencent101519024" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.tencent.connect.common.AssistActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="behind"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"></activity>
+        <activity android:name=".ui.activity.VideoViewActivity"/>
     </application>
 
 </manifest>

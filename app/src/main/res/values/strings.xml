@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">MTing</string>
+
+    <string name="guide_one_title">高效便捷获取信息</string>
+    <string name="guide_one_msg">自己做主，只给自己想看的</string>
+    <string name="guide_two_title">真实可信赖的背景信息</string>
+    <string name="guide_two_msg">多维度收集，快速提炼有效信息</string>
+    <string name="guide_three_title">更多圈子推荐</string>
+    <string name="guide_three_msg">只做与你相关的内容推荐</string>
 </resources>

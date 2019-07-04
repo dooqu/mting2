@@ -1,8 +1,8 @@
 apply plugin: 'com.android.application'
-
+//apply plugin: 'com.neenbedankt.android-apt'
 android {
     compileSdkVersion 28
-    buildToolsVersion "28.0.2"
+    buildToolsVersion '28.0.3'
     defaultConfig {
         applicationId "cn.xylink.mting"
         minSdkVersion 21
@@ -10,9 +10,24 @@ android {
         versionCode 1
         versionName "1.0"
     }
+    signingConfigs {
+        release {
+            keyAlias 'mting'
+            keyPassword 'xylink@20180928'
+            storeFile file('../doc/ting.jks')
+            storePassword 'xylink@20180928'
+        }
+        debug {
+            keyAlias 'mting'
+            keyPassword 'xylink@20180928'
+            storeFile file('../doc/ting.jks')
+            storePassword 'xylink@20180928'
+        }
+    }
     buildTypes {
         release {
             minifyEnabled false
+            signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -33,4 +48,7 @@ dependencies {
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
     implementation 'com.wuhenzhizao:titlebar:1.1.4'
     implementation files('libs/com.baidu.tts_2.3.2.20180713_6101c2a.jar')
+    implementation 'com.zhy:okhttputils:2.6.2'
+
+    implementation 'com.github.tohodog:QSVideoPlayer:2.2.5x'
 }
