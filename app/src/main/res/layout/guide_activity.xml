@@ -29,7 +29,7 @@
             android:layout_centerHorizontal="true"
             android:gravity="center"
             android:text="跳过"
-            android:textColor="@color/textcolor_007d7b"
+            android:textColor="@color/color_blue"
             android:textSize="20sp"
             android:visibility="visible" />
     </RelativeLayout>

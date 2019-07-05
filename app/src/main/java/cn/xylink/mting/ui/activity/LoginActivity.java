@@ -67,7 +67,7 @@ public class LoginActivity extends BaseActivity {
         EventBus.getDefault().unregister(this);
     }
 
-    @OnClick({R.id.imv_login_weChat, R.id.imv_login_qq})
+    @OnClick({R.id.imv_login_weChat, R.id.imv_login_qq,R.id.tv_phone})
     public void onClick(View v) {
         switch (v.getId())
         {
@@ -80,6 +80,9 @@ public class LoginActivity extends BaseActivity {
                 break;
             case R.id.imv_login_qq:
                 mTencent.login(this, "all", new BaseUiListener());
+                break;
+            case R.id.tv_phone:
+                startActivity(new Intent(LoginActivity.this,PhoneLoginActivity.class));
                 break;
         }
 
