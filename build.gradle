@@ -8,7 +8,7 @@ buildscript {
         maven { url "https://raw.githubusercontent.com/HyphenateInc/Hyphenate-SDK-Android/master/repository" }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.4.0'
+        classpath 'com.android.tools.build:gradle:3.3.0'
 //        classpath 'com.android.tools.build:gradle:3.3.2'
         classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
 

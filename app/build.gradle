@@ -48,5 +48,10 @@ dependencies {
     implementation 'com.wuhenzhizao:titlebar:1.1.4'
     implementation files('libs/com.baidu.tts_2.3.2.20180713_6101c2a.jar')
     implementation 'com.zhy:okhttputils:2.6.2'
-    implementation 'com.github.tohodog:QSVideoPlayer:2.2.5x'
+
+    //okhttp-okGo
+    implementation 'com.lzy.net:okgo:3.0.4'
+    implementation 'com.lzy.net:okrx2:2.0.2'
+    //gson
+    implementation 'com.google.code.gson:gson:2.8.5'
 }

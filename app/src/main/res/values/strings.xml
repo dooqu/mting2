@@ -7,4 +7,5 @@
     <string name="guide_two_msg">多维度收集，快速提炼有效信息</string>
     <string name="guide_three_title">更多圈子推荐</string>
     <string name="guide_three_msg">只做与你相关的内容推荐</string>
+    <string name="login_lable">你的文章随时听</string>
 </resources>

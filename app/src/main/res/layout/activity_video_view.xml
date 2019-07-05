@@ -4,12 +4,12 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <org.song.videoplayer.DemoQSVideoView
+    <VideoView
         android:id="@+id/video_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    </org.song.videoplayer.DemoQSVideoView>
+    </VideoView>
 
     <ImageView
         android:id="@+id/iv_break"

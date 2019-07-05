@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.ActivityCompat;
@@ -16,18 +15,8 @@ import java.util.ArrayList;
 import cn.xylink.mting.R;
 import cn.xylink.mting.base.BaseActivity;
 import cn.xylink.mting.ui.activity.GuideActivity;
-import cn.xylink.mting.ui.activity.VideoViewActivity;
-import cn.xylink.mting.utils.LogUtils;
 
 public class SplashActivity extends BaseActivity {
-
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-
-    }
 
     @Override
     protected void preView() {
@@ -40,27 +29,20 @@ public class SplashActivity extends BaseActivity {
         SharedPreferences sharedPreferences = this.getSharedPreferences("share", MODE_PRIVATE);
         boolean isFirstRun = sharedPreferences.getBoolean("isFirstRun", true);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        if (isFirstRun) {
-            Intent intent = new Intent();
-            intent.setClass(SplashActivity.this, VideoViewActivity.class);
-            startActivityForResult(intent, 0);
-            editor.putBoolean("isFirstRun", false);
-            editor.commit();
-        } else {
-            //闪屏页显示3秒才跳转
-            new Handler(new Handler.Callback() {
-                @Override
-                public boolean handleMessage(Message msg) {
-                    if (Build.VERSION.SDK_INT < 23) {
-                        startActivity(new Intent(SplashActivity.this, GuideActivity.class));
-                        finish();
-                    } else {
-                        initPermission();
-                    }
-                    return false;
+
+        //闪屏页显示3秒才跳转
+        new Handler(new Handler.Callback() {
+            @Override
+            public boolean handleMessage(Message msg) {
+                if (Build.VERSION.SDK_INT < 23) {
+                    startActivity(new Intent(SplashActivity.this, GuideActivity.class));
+                    finish();
+                } else {
+                    initPermission();
                 }
-            }).sendEmptyMessageDelayed(0, 3000);
-        }
+                return false;
+            }
+        }).sendEmptyMessageDelayed(0, 3000);
     }
 
     @Override
@@ -99,31 +81,8 @@ public class SplashActivity extends BaseActivity {
         }
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
-            if (requestCode == 0) {
-                LogUtils.e("nana", "result: " + data.getStringExtra(VideoViewActivity.ISFINISH));
-                if ("isFinish".equals(data.getStringExtra(VideoViewActivity.ISFINISH))) {
-                    //闪屏页显示3秒才跳转
-                    new Handler(new Handler.Callback() {
-                        @Override
-                        public boolean handleMessage(Message msg) {
-                            if (Build.VERSION.SDK_INT < 23) {
-                                startActivity(new Intent(SplashActivity.this, GuideActivity.class));
-                                finish();
-                            } else {
-                                initPermission();
-                            }
-                            return false;
-                        }
-                    }).sendEmptyMessageDelayed(0, 3000);
-                }
 
-            }
-        }
-    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         boolean flag = true;
