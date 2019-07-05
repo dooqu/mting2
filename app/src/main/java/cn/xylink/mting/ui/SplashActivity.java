@@ -66,9 +66,6 @@ public class SplashActivity extends BaseActivity {
     @Override
     protected void initData() {
 
-<<<<<<< HEAD
-        startActivity(new Intent(this, SpeechServicActivity.class));
-=======
     }
 
     @Override
@@ -145,6 +142,5 @@ public class SplashActivity extends BaseActivity {
             startActivity(new Intent(SplashActivity.this, GuideActivity.class));
         }
         finish();
->>>>>>> e64adeab17e4a66db8a615de11689c4dd251d343
     }
 }

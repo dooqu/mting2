@@ -53,5 +53,4 @@ dependencies {
     implementation 'com.wuhenzhizao:titlebar:1.1.4'
     implementation files('libs/com.baidu.tts_2.3.2.20180713_6101c2a.jar')
     implementation 'com.zhy:okhttputils:2.6.2'
-    implementation 'com.github.tohodog:QSVideoPlayer:2.2.5x'
 }

@@ -2,13 +2,14 @@
 
 buildscript {
     repositories {
+        maven{ url 'http://maven.aliyun.com/nexus/content/groups/public'}
         google()
-        jcenter()
+        //jcenter()
         maven { url "https://jitpack.io" }
         maven { url "https://raw.githubusercontent.com/HyphenateInc/Hyphenate-SDK-Android/master/repository" }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.4.0'
+        classpath 'com.android.tools.build:gradle:3.4.1'
 //        classpath 'com.android.tools.build:gradle:3.3.2'
         classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
 
@@ -19,8 +20,9 @@ buildscript {
 
 allprojects {
     repositories {
+        maven{ url 'http://maven.aliyun.com/nexus/content/groups/public'}
         google()
-        jcenter()
+        //jcenter()
         maven { url "https://jitpack.io" }
         maven { url "https://raw.githubusercontent.com/HyphenateInc/Hyphenate-SDK-Android/master/repository" }
     }
