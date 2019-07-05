@@ -1,5 +1,7 @@
 package cn.xylink.mting.ui.activity;
 
+import android.util.Log;
+
 import com.wuhenzhizao.titlebar.widget.CommonTitleBar;
 
 import org.greenrobot.eventbus.EventBus;
@@ -7,13 +9,14 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import butterknife.BindView;
-import cn.xylink.mting.MTing;
 import cn.xylink.mting.R;
 import cn.xylink.mting.base.BaseActivity;
 import cn.xylink.mting.speech.SpeechService;
+import cn.xylink.mting.speech.event.SpeechErrorEvent;
 import cn.xylink.mting.speech.event.SpeechProgressEvent;
 import cn.xylink.mting.speech.SpeechServiceProxy;
-import cn.xylink.mting.speech.event.SpeechStateChangedEvent;
+import cn.xylink.mting.speech.event.SpeechStartEvent;
+import cn.xylink.mting.speech.event.SpeechStopEvent;
 
 /**
  * Created by liuhe. on Date: 2019/7/2
@@ -44,8 +47,7 @@ public class SpeechServicActivity extends BaseActivity {
             {
                 if(connected)
                 {
-                    service.setArticle(((MTing)getApplication()).articlesToRead.get(0));
-                    service.seek(0);
+                    service.selectAndPlay("1");
                 }
             }
         };
@@ -62,15 +64,26 @@ public class SpeechServicActivity extends BaseActivity {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    protected void onSpeechServiceState(SpeechStateChangedEvent event)
+    protected void onSpeechStart(SpeechStartEvent event)
     {
-        System.out.println(event);
+        Log.d("xylink", "onSpeechStart:" + event.getArticle().getTitle());
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    protected void onSpeechServiceProgress(SpeechProgressEvent event)
+    protected void onSpeechProgress(SpeechProgressEvent event)
     {
-        System.out.println(event);
+        Log.d("xylink", "onSpeechProgress: " + event.getArticle().getTitle() + "," + event.getTextFragments().get(event.getFrameIndex()));
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    protected void onSpeechStop(SpeechStopEvent event)
+    {
+        Log.d("xylink", "onSpeechStop");
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    protected void onSpeechError(SpeechErrorEvent event)
+    {
     }
 
     @Override

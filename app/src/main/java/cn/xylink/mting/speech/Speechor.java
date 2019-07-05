@@ -41,7 +41,9 @@ public interface Speechor {
         /*播放中*/
         SpeechorStatePlaying,
         /*暂停中*/
-        SpeechorStatePaused
+        SpeechorStatePaused,
+
+        SpeechorStateListNull
     }
 
     static enum SpeechorRole

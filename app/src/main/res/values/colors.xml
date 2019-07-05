@@ -5,8 +5,13 @@
     <color name="colorAccent">#D81B60</color>
     <color name="font_gray3">#a1a1a1</color>
     <color name="white">#fff</color>
+    <color name="font_gray">#b7b7b7</color>
 
     <color name="textcolor_007d7b">#007d7b</color>
 
     <color name="black_overlay">#66000000</color>
+    <color name="color_blue">#488DEF</color>
+    <color name="color_blue_hint">#C6DCFA</color>
+
+    <color name="transparent">#00ffffff</color>
 </resources>

@@ -31,19 +31,23 @@ public abstract class BaseActivity extends AppCompatActivity {
     private static final int GET_UNKNOWN_APP_SOURCES = 101;
     protected Intent mUpdateIntent;
     protected Context context;
-    //    protected ProgressDialog progressDialog;
-//    protected Dialog mUpdateDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = this;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            getWindow().setStatusBarColor(0xffffffff);
+            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+        }
         preView();
         ButterKnife.bind(this);
         initView();
         initTitleBar();
         initData();
     }
+
+
 
     @Override
     protected void onDestroy() {
