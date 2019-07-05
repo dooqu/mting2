@@ -15,6 +15,6 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
-        //startActivity(new Intent(this, SpeechServicActivity.class));
+        startActivity(new Intent(this, SpeechServicActivity.class));
     }
 }
