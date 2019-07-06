@@ -11,7 +11,6 @@ import cn.xylink.mting.R;
 内部采用mediaplayer进行轻度包装
  */
 public class SoundEffector{
-
     /*
     音效播放完成后的回调， 采用函数接口形式
      */

@@ -22,10 +22,6 @@ public abstract class BaiduSpeechor implements Speechor {
     boolean isReleased;
     SpeechSynthesizer speechSynthesizer;
 
-    // SpeakProgressListener progressListener;
-    //StateChangedListener stateListener;
-    // ErrorListener errorListener;
-
     public BaiduSpeechor(Context context) {
 
         state = SpeechorState.SpeechorStateReady;
@@ -44,7 +40,7 @@ public abstract class BaiduSpeechor implements Speechor {
         speechOperator = new SpeechHelper();
         speechSynthesizer = SpeechSynthesizer.getInstance();
         speechSynthesizer.setContext(context);
-        speechSynthesizer.setAppId("11676777"/*这里只是为了让Demo运行使用的APPID,请替换成自己的id。*/);
+        speechSynthesizer.setAppId("11676777");
         speechSynthesizer.setApiKey("aRazCPQBXok8zEt0yZUNqTGV", "c4qpC1f4dKExrhjQvU4FW7iICfVjvQFP");
         speechSynthesizer.auth(TtsMode.ONLINE);
         speechSynthesizer.setAudioStreamType(AudioManager.STREAM_MUSIC);
@@ -271,25 +267,21 @@ public abstract class BaiduSpeechor implements Speechor {
     }
 
     @Override
-    public List<String> getTextFragments()
-    {
+    public List<String> getTextFragments() {
         return this.textFragments;
     }
 
     @Override
-    public float getProgress()
-    {
-        synchronized (this)
-        {
-            switch (this.state)
-            {
+    public float getProgress() {
+        synchronized (this) {
+            switch (this.state) {
                 case SpeechorStateReady:
                     return 0f;
 
                 default:
-                    if(this.textFragments.size() <= 0)
+                    if (this.textFragments.size() <= 0)
                         return 0f;
-                    return (float)fragmentIndex / (float)this.textFragments.size();
+                    return (float) fragmentIndex / (float) this.textFragments.size();
             }
         }
     }
@@ -301,10 +293,11 @@ public abstract class BaiduSpeechor implements Speechor {
                 return false;
 
             if (state == SpeechorState.SpeechorStatePlaying) {
-                speechSynthesizer.pause();
-                this.state = SpeechorState.SpeechorStatePaused;
-                this.onStateChanged(SpeechorState.SpeechorStatePaused);
-                return true;
+                if(speechSynthesizer.pause() == 0) {
+                    this.state = SpeechorState.SpeechorStatePaused;
+                    this.onStateChanged(SpeechorState.SpeechorStatePaused);
+                    return true;
+                }
             }
             return false;
         }
@@ -312,31 +305,29 @@ public abstract class BaiduSpeechor implements Speechor {
 
     @Override
     public boolean resume() {
+
         synchronized (this) {
             if (isReleased)
                 return false;
 
             if (state == SpeechorState.SpeechorStatePaused) {
-                speechSynthesizer.resume();
-                state = SpeechorState.SpeechorStatePlaying;
-                this.onStateChanged(SpeechorState.SpeechorStatePlaying);
-                return true;
+                if (speechSynthesizer.resume() == 0) {
+                    state = SpeechorState.SpeechorStatePlaying;
+                    this.onStateChanged(SpeechorState.SpeechorStatePlaying);
+                    return true;
+                }
             }
-
             return false;
         }
     }
 
     @Override
-    public void stop()
-    {
-        synchronized (this)
-        {
-            if(isReleased)
+    public void stop() {
+        synchronized (this) {
+            if (isReleased)
                 return;
 
-            if(state != SpeechorState.SpeechorStateReady)
-            {
+            if (state != SpeechorState.SpeechorStateReady) {
                 state = SpeechorState.SpeechorStateReady;
                 speechSynthesizer.stop();
             }

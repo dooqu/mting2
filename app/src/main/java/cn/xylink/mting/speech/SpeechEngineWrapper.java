@@ -220,9 +220,7 @@ public abstract class SpeechEngineWrapper implements Speechor {
                     {
                         preSpeechor.seek(preIndex);
                     }
-
-                }
-
+                } // end else
             } // end sync
         } // end sync
     }
