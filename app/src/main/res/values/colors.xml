@@ -7,6 +7,9 @@
     <color name="white">#fff</color>
     <color name="font_gray">#b7b7b7</color>
 
+    <color name="textcolor_007d7b">#007d7b</color>
+
+    <color name="black_overlay">#66000000</color>
     <color name="color_blue">#488DEF</color>
     <color name="color_blue_hint">#C6DCFA</color>
 

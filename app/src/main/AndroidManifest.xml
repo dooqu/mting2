@@ -23,23 +23,31 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:theme="@style/AppTheme"
         tools:replace="android:appComponentFactory">
-        <service android:name=".speech.SpeechService"></service>
+        <activity
+            android:name=".ui.activity.MainActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_main"
+            android:theme="@style/FullscreenTheme">
 
-        <activity android:name="cn.xylink.mting.ui.SplashActivity">
+        </activity>
+
+        <service android:name=".speech.SpeechService" />
+
+        <activity android:name=".ui.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.activity.SpeechServicActivity"></activity>
+        <activity android:name=".ui.activity.SpeechServicActivity" />
         <activity android:name=".ui.activity.GuideActivity" />
         <activity android:name=".ui.activity.LoginActivity" />
         <activity
             android:name=".wxapi.WXEntryActivity"
-            android:exported="true"></activity>
-        <activity android:name=".ui.activity.BindUserPhoneThirdPlatformActivity" />
-        <!--qq分享-->
+            android:exported="true"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+        <activity android:name=".ui.activity.BindUserPhoneThirdPlatformActivity" /> <!-- qq分享 -->
         <activity
             android:name="com.tencent.tauth.AuthActivity"
             android:launchMode="singleTask"
@@ -58,9 +66,7 @@
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="behind"></activity>
         <activity android:name=".ui.activity.PhoneLoginActivity" />
-        <activity
-            android:name=".ui.activity.GetCodeActivity"
-            />
+        <activity android:name=".ui.activity.GetCodeActivity" />
     </application>
 
 </manifest>
