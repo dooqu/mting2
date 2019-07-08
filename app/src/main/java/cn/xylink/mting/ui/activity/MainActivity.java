@@ -1,23 +1,35 @@
 package cn.xylink.mting.ui.activity;
 
+import android.animation.AnimatorSet;
+import android.animation.ArgbEvaluator;
+import android.animation.ObjectAnimator;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
+import android.view.animation.DecelerateInterpolator;
+import android.widget.TextView;
 
 import butterknife.BindView;
 import butterknife.OnClick;
 import cn.xylink.mting.R;
 import cn.xylink.mting.base.BaseActivity;
+import cn.xylink.mting.ui.adapter.MainFragmentAdapter;
 
 public class MainActivity extends BaseActivity {
 
+    @BindView(R.id.tv_main_tabar_unread)
+    TextView mUnreadTextView;
+    @BindView(R.id.tv_main_tabar_readed)
+    TextView mReadedTextView;
+    @BindView(R.id.tv_main_tabar_love)
+    TextView mLoveTextView;
     @BindView(R.id.dl_main)
     DrawerLayout mDrawerLayout;
     @BindView(R.id.vp_main)
-    ViewPager mViewPage;
-    private int mCurrentTabIndex = 0;
+    ViewPager mViewPager;
+    private TAB_ENUM mCurrentTabIndex = TAB_ENUM.TAB_UNREAD;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +50,11 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void initData() {
-
+        TAB_ENUM.TAB_LOVE.setView(mLoveTextView);
+        TAB_ENUM.TAB_READED.setView(mReadedTextView);
+        TAB_ENUM.TAB_UNREAD.setView(mUnreadTextView);
+        mViewPager.setAdapter(new MainFragmentAdapter(getSupportFragmentManager()));
+        mViewPager.setOffscreenPageLimit(TAB_ENUM.values().length);
     }
 
     @Override
@@ -47,9 +63,29 @@ public class MainActivity extends BaseActivity {
     }
 
     public enum TAB_ENUM {
-        TAB_UNREAD,
-        TAB_READED,
-        TAB_LOVE,
+        TAB_UNREAD(0, null),
+        TAB_READED(1, null),
+        TAB_LOVE(2, null);
+
+        TAB_ENUM(int index, TextView view) {
+            this.index = index;
+        }
+
+        private int index;
+        private TextView view;
+
+        public TextView getView() {
+            return view;
+        }
+
+        public void setView(TextView view) {
+            this.view = view;
+        }
+
+        public int getIndex() {
+            return index;
+        }
+
     }
 
 
@@ -64,15 +100,36 @@ public class MainActivity extends BaseActivity {
                 break;
             case R.id.iv_main_title_add:
                 break;
-            case R.id.tv_main_tabar_readed:
-                mCurrentTabIndex = TAB_ENUM.TAB_UNREAD.ordinal();
-                break;
             case R.id.tv_main_tabar_unread:
-                mCurrentTabIndex = TAB_ENUM.TAB_READED.ordinal();
+                doAnim(mCurrentTabIndex, TAB_ENUM.TAB_UNREAD);
+                break;
+            case R.id.tv_main_tabar_readed:
+                doAnim(mCurrentTabIndex, TAB_ENUM.TAB_READED);
                 break;
             case R.id.tv_main_tabar_love:
-                mCurrentTabIndex = TAB_ENUM.TAB_LOVE.ordinal();
+                doAnim(mCurrentTabIndex, TAB_ENUM.TAB_LOVE);
                 break;
+        }
+    }
+
+    private void doAnim(TAB_ENUM currentTab, TAB_ENUM goTab) {
+        if (currentTab != goTab) {
+            mViewPager.setCurrentItem(goTab.getIndex(),false);
+            mCurrentTabIndex = goTab;
+            ObjectAnimator ccAnimator = ObjectAnimator.ofInt(currentTab.getView(), "textColor", 0xff333333, 0xff999999);
+            ccAnimator.setEvaluator(new ArgbEvaluator());
+            ccAnimator.setDuration(180);
+            ObjectAnimator gcAnimator = ObjectAnimator.ofInt(goTab.getView(), "textColor", 0xff999999, 0xff333333);
+            gcAnimator.setEvaluator(new ArgbEvaluator());
+            gcAnimator.setDuration(180);
+            ObjectAnimator csAnimator = ObjectAnimator.ofFloat(currentTab.getView(), "textSize", 24f, 15f);
+            csAnimator.setDuration(180);
+            ObjectAnimator gsAnimator = ObjectAnimator.ofFloat(goTab.getView(), "textSize", 15f, 24f);
+            gsAnimator.setDuration(180);
+            AnimatorSet animatorSet = new AnimatorSet();
+            animatorSet.playTogether(ccAnimator, gcAnimator, csAnimator, gsAnimator);
+            animatorSet.setInterpolator(new DecelerateInterpolator());
+            animatorSet.start();
         }
     }
 
@@ -84,6 +141,5 @@ public class MainActivity extends BaseActivity {
             super.onBackPressed();
         }
     }
-
 
 }
