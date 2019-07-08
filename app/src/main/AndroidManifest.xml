@@ -27,7 +27,7 @@
             android:name=".ui.activity.MainActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_main"
-            android:theme="@style/FullscreenTheme">
+            android:theme="@style/AppTheme">
 
         </activity>
 
