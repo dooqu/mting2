@@ -18,7 +18,7 @@ public class GetCodePresenter extends BasePresenter<GetCodeContact.IGetCodeView>
     @Override
     public void onGetCode(GetCodeRequest request) {
         L.v("request",request);
-        OkGoUtils.getInstance().postData(mView, RemoteUrl.onLogin(), new Gson().toJson(request), new TypeToken<BaseResponse<CodeInfo>>() {
+        OkGoUtils.getInstance().postData(mView, RemoteUrl.getCodeUrl(), new Gson().toJson(request), new TypeToken<BaseResponse<CodeInfo>>() {
 
         }.getType(), new OkGoUtils.ICallback() {
             @Override
@@ -30,6 +30,7 @@ public class GetCodePresenter extends BasePresenter<GetCodeContact.IGetCodeView>
             public void onSuccess(Object data) {
                 BaseResponse<CodeInfo> baseResponse = (BaseResponse<CodeInfo>) data;
                 int code = baseResponse.code;
+                L.v("coce",code);
                 if (code == 200) {
                     mView.onCodeSuccess(baseResponse);
                     String userInfoData = new Gson().toJson(baseResponse.data);
