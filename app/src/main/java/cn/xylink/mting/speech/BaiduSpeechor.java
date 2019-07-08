@@ -97,6 +97,7 @@ public abstract class BaiduSpeechor implements Speechor {
                                 self.onStateChanged(SpeechorState.SpeechorStateReady);
                             }
                         }).start();
+
                     }
                 }
             }
