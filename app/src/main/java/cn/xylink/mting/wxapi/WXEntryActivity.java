@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.tencent.mm.opensdk.modelbase.BaseReq;
 import com.tencent.mm.opensdk.modelbase.BaseResp;
 import com.tencent.mm.opensdk.modelmsg.SendAuth;
@@ -18,8 +20,18 @@ import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import cn.xylink.mting.MTing;
+import cn.xylink.mting.bean.BaseResponse;
+import cn.xylink.mting.bean.LoginInfo;
+import cn.xylink.mting.bean.WxTokenInfo;
+import cn.xylink.mting.bean.WxTokenRequset;
 import cn.xylink.mting.common.Const;
+import cn.xylink.mting.contract.WxChatContact;
+import cn.xylink.mting.contract.WxChatContact.IWxTokenView;
 import cn.xylink.mting.model.WXQQDataBean;
+import cn.xylink.mting.model.data.OkGoUtils;
+import cn.xylink.mting.presenter.WxTokenPresenter;
+import cn.xylink.mting.utils.FileUtil;
 import cn.xylink.mting.utils.L;
 import okhttp3.Call;
 
@@ -27,9 +39,9 @@ import okhttp3.Call;
  * Created by wjn on 2018/10/31.
  */
 
-public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
+public class WXEntryActivity extends Activity implements IWXAPIEventHandler , WxChatContact.IWxTokenView{
     private IWXAPI api;
-
+    private WxTokenPresenter wxTokenPresenter;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,6 +55,14 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        wxTokenPresenter = new WxTokenPresenter();
+
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 
     @Override
@@ -96,37 +116,99 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
     }
 
     private void getAccessToken(String code) {
-        OkHttpUtils.get().url(Const.WX_URL_BASE + "oauth2/access_token")
-                .addParams("appid", Const.WX_ID)
-                .addParams("secret", Const.WX_SECRET)
-                .addParams("code", code)
-                .addParams("grant_type", "authorization_code")
-                .build()
-                .execute(new StringCallback() {
-                    @Override
-                    public void onError(Call call, Exception e, int id) {
-                    }
+        L.v("code",code);
+        WxTokenRequset request = new WxTokenRequset();
+        request.setAppid( Const.WX_ID);
+        request.setSecret( Const.WX_SECRET);
+        request.setCode(code);
+        request.setGrant_type("authorization_code");
+        L.v(request.toString());
+        L.v("wxTokenPresenter",wxTokenPresenter);
 
-                    @Override
-                    public void onResponse(String response, int id) {
-                        L.v("nana", "getAccessToken response::: " + response);
-                        try {
-                            JSONObject jsonObject = new JSONObject(response);
-                            String access_token = jsonObject.getString("access_token");
-                            String openid = jsonObject.getString("openid");
-                            EventBus.getDefault().post(new WXQQDataBean(access_token, openid, "wechat"));
+        OkGoUtils.getInstance().postData(this, cn.xylink.mting.common.Const.WX_URL_BASE + "oauth2/access_token", new Gson().toJson(request), new TypeToken<BaseResponse<LoginInfo>>() {
 
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+        }.getType(), new OkGoUtils.ICallback() {
+            @Override
+            public void onStart() {
 
-                    }
+            }
 
-                    @Override
-                    public void onAfter(int id) {
-                        super.onAfter(id);
-                    }
-                });
+            @Override
+            public void onSuccess(Object data) {
+                BaseResponse<WxTokenInfo> baseResponse = (BaseResponse<WxTokenInfo>) data;
+                int code = baseResponse.code;
+                if (code == 200) {
+                   onTokenSuccess(baseResponse);
+                    String userInfoData = new Gson().toJson(baseResponse.data);
+                    FileUtil.writeFile(MTing.getInstance(), cn.xylink.mting.model.data.Const.FileName.USER_INFO_LOGIN, userInfoData);
+                } else {
+                    onTokenError(code, baseResponse.message);
+                }
+            }
+
+            @Override
+            public void onFailure(int code, String errorMsg) {
+               onTokenError(code, errorMsg);
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+        });
+//        wxTokenPresenter.onGetCode(requset);
+//        OkHttpUtils.get().url(Const.WX_URL_BASE + "oauth2/access_token")
+//                .addParams("appid", Const.WX_ID)
+//                .addParams("secret", Const.WX_SECRET)
+//                .addParams("code", code)
+//                .addParams("grant_type", "authorization_code")
+//                .build()
+//                .execute(new StringCallback() {
+//                    @Override
+//                    public void onError(Call call, Exception e, int id) {
+//                    }
+//
+//                    @Override
+//                    public void onResponse(String response, int id) {
+//                        L.v("nana", "getAccessToken response::: " + response);
+//                        try {
+//                            JSONObject jsonObject = new JSONObject(response);
+//                            String access_token = jsonObject.getString("access_token");
+//                            String openid = jsonObject.getString("openid");
+//
+//
+//                        } catch (JSONException e) {
+//                            e.printStackTrace();
+//                        }
+//
+//                    }
+//
+//                    @Override
+//                    public void onAfter(int id) {
+//                        super.onAfter(id);
+//                    }
+//                });
+    }
+
+    @Override
+    public void showLoading() {
+
+    }
+
+    @Override
+    public void hideLoading() {
+
+    }
+
+    @Override
+    public void onTokenSuccess(BaseResponse<WxTokenInfo> loginInfoBaseResponse) {
+        WxTokenInfo info =  loginInfoBaseResponse.data;
+        EventBus.getDefault().post(new WXQQDataBean(info.getAccess_token(), info.getOpenid(), "wechat"));
+    }
+
+    @Override
+    public void onTokenError(int code, String errorMsg) {
+
     }
 
 }
