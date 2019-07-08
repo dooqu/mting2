@@ -5,7 +5,6 @@ import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -13,10 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-
-import com.wuhenzhizao.titlebar.widget.CommonTitleBar;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -24,10 +20,8 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.List;
 
-import butterknife.BindView;
 import cn.xylink.mting.R;
-import cn.xylink.mting.base.BaseActivity;
-import cn.xylink.mting.model.Article;
+import cn.xylink.mting.bean.Article;
 import cn.xylink.mting.speech.SpeechService;
 import cn.xylink.mting.speech.data.SpeechList;
 import cn.xylink.mting.speech.event.SpeechErrorEvent;
@@ -315,7 +309,7 @@ public class SpeechServicActivity extends Activity {
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSpeechError(SpeechErrorEvent event) {
-        Log.d("xylink", "onSpeechError:" + event.getArticle().getTitle());
+        Log.d("xylink", "onSpeechError:" + event.getArticle().getTitle() + ",errorCode=" + event.getErrorCode() + ", message=" + event.getMessage());
 
     }
 

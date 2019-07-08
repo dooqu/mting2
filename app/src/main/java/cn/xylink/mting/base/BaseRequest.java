@@ -1,4 +1,4 @@
-package cn.xylink.mting.bean;
+package cn.xylink.mting.base;
 
 import cn.xylink.mting.utils.ContentManager;
 import cn.xylink.mting.utils.SignKit;

@@ -1,6 +1,6 @@
 package cn.xylink.mting.contract;
 
-import cn.xylink.mting.bean.BaseResponse;
+import cn.xylink.mting.base.BaseResponse;
 import cn.xylink.mting.bean.CodeInfo;
 import cn.xylink.mting.bean.GetCodeRequest;
 

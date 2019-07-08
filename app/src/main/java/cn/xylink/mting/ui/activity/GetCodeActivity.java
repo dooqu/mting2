@@ -1,7 +1,7 @@
 package cn.xylink.mting.ui.activity;
 
 import cn.xylink.mting.R;
-import cn.xylink.mting.bean.BaseResponse;
+import cn.xylink.mting.base.BaseResponse;
 import cn.xylink.mting.bean.CodeInfo;
 import cn.xylink.mting.bean.GetCodeRequest;
 import cn.xylink.mting.contract.GetCodeContact;

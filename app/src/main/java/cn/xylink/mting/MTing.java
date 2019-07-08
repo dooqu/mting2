@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
-import cn.xylink.mting.model.Article;
+import cn.xylink.mting.bean.Article;
 import cn.xylink.mting.openapi.QQApi;
 import cn.xylink.mting.openapi.WXapi;
 import cn.xylink.mting.speech.SpeechService;
