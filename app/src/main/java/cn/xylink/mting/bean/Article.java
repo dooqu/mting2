@@ -1,5 +1,7 @@
 package cn.xylink.mting.bean;
 
+import cn.xylink.mting.base.BaseRequest;
+
 public class Article
 {
     String articleId;

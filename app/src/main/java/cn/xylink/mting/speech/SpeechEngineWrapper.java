@@ -241,7 +241,6 @@ public abstract class SpeechEngineWrapper implements Speechor {
     @Override
     public SpeechorSpeed getSpeed() {
         synchronized (this) {
-
             return speechor.getSpeed();
         }
     }

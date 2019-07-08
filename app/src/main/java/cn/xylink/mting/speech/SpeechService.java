@@ -119,11 +119,11 @@ public class SpeechService extends Service {
         return binder;
     }
 
-    public Speechor.SpeechorState getState() {
+    public synchronized Speechor.SpeechorState getState() {
         return speechor.getState();
     }
 
-    public void setTickCountMode(TickCountMode mode, int tickcountValue) {
+    public synchronized void setTickCountMode(TickCountMode mode, int tickcountValue) {
         this.tickCountMode = mode;
 
         if (this.tickCountMode != TickCountMode.None) {
@@ -133,16 +133,16 @@ public class SpeechService extends Service {
             }
         }
         else {
-            this.tickcount = 0;
+            this.cancelTickCountMode();
         }
     }
 
-    public void cancelTickCountMode() {
+    public synchronized void cancelTickCountMode() {
         this.tickCountMode = TickCountMode.None;
         this.tickcount = 0;
     }
 
-    private int seek(float percentage) {
+    private synchronized int seek(float percentage) {
         //如果当前播放不存在，那返回错误
         if (speechList.getCurrent() == null) {
             return -4;
@@ -164,7 +164,7 @@ public class SpeechService extends Service {
         return -5;
     }
 
-    public boolean pause() {
+    public synchronized boolean pause() {
         if (speechList.getCurrent() == null) {
             return false;
         }
@@ -184,7 +184,7 @@ public class SpeechService extends Service {
         return false;
     }
 
-    public boolean resume() {
+    public synchronized boolean resume() {
         if (speechList.getCurrent() == null) {
             return false;
         }
@@ -205,7 +205,7 @@ public class SpeechService extends Service {
         return false;
     }
 
-    public boolean playSelected() {
+    public synchronized boolean playSelected() {
         if (speechList.getCurrent() == null)
             return false;
 
@@ -214,7 +214,7 @@ public class SpeechService extends Service {
     }
 
 
-    public Article play(String articleId) {
+    public synchronized Article play(String articleId) {
         Article article = this.speechList.select(articleId);
         if (article != null) {
             prepareArticle(article, false);
@@ -223,13 +223,23 @@ public class SpeechService extends Service {
         return article;
     }
 
-    public Article pushFrontAndPlay(Article article) {
+    public synchronized Article pushFrontAndPlay(Article article) {
         Article artcleSelected = this.speechList.topAndSelect(article);
         if (artcleSelected != null) {
             prepareArticle(article, false);
         }
 
         return artcleSelected;
+    }
+
+    public synchronized void setSpeed(Speechor.SpeechorSpeed speed)
+    {
+        this.speechor.setSpeed(speed);
+    }
+
+    public synchronized Speechor.SpeechorSpeed getSpeed()
+    {
+        return this.speechor.getSpeed();
     }
 
     private void prepareArticle(final Article article, boolean needSourceEffect) {
@@ -274,7 +284,7 @@ public class SpeechService extends Service {
     }
 
 
-    public boolean playNext() {
+    public synchronized boolean playNext() {
         if (speechList.getCurrent() != null) {
             speechor.stop();
         }
@@ -296,12 +306,12 @@ public class SpeechService extends Service {
         return nextExists;
     }
 
-    public void setRole(Speechor.SpeechorRole role) {
+    public synchronized void setRole(Speechor.SpeechorRole role) {
         speechor.setRole(role);
     }
 
 
-    public void getRole() {
+    public synchronized void getRole() {
         speechor.getRole();
     }
 
@@ -311,7 +321,7 @@ public class SpeechService extends Service {
     }
 
 
-    public List<Article> getSpeechList() {
+    public synchronized List<Article> getSpeechList() {
         return this.speechList.getArticleList();
     }
 
@@ -319,7 +329,7 @@ public class SpeechService extends Service {
         this.speechList.appendArticles(listToLoad);
     }
 
-    public void clearSpeechList() {
+    public synchronized void clearSpeechList() {
         boolean isSelectedDeleted = this.speechList.removeAll();
         if (isSelectedDeleted) {
             this.speechor.stop();
@@ -327,7 +337,7 @@ public class SpeechService extends Service {
         }
     }
 
-    public void removeFromSpeechList(List<String> articleIds) {
+    public synchronized void removeFromSpeechList(List<String> articleIds) {
 
         boolean isSelectedDeleted = this.speechList.removeSome(articleIds);
         /*
@@ -348,16 +358,16 @@ public class SpeechService extends Service {
     }
 
 
-    public Article getSelected() {
+    public synchronized Article getSelected() {
         return this.speechList.getCurrent();
     }
 
-    public int getSpeechListSize() {
+    public synchronized int getSpeechListSize() {
         return this.speechList.size();
     }
 
 
-    public float getProgress() {
+    public synchronized float getProgress() {
         return speechor.getProgress();
     }
 }

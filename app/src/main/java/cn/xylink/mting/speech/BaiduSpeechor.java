@@ -233,6 +233,7 @@ public abstract class BaiduSpeechor implements Speechor {
         }
 
         speechSynthesizer.setParam(SpeechSynthesizer.PARAM_SPEED, paramSpeed);
+        this.speed = speed;
     }
 
 

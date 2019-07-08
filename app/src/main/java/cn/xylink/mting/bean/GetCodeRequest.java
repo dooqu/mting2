@@ -20,4 +20,6 @@ public class GetCodeRequest extends BaseRequest {
                 ", sign='" + sign + '\'' +
                 '}';
     }
+
+
 }
