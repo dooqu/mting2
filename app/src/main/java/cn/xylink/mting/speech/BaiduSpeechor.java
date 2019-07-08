@@ -368,5 +368,4 @@ public abstract class BaiduSpeechor implements Speechor {
             isReleased = true;
         }
     }
-
 }
