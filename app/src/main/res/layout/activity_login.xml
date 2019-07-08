@@ -9,26 +9,22 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1.0"
-        android:textColor="@android:color/black"
         android:gravity="center"
-        android:textSize="20sp"
-        android:text="@string/login_lable"/>
+        android:text="@string/login_lable"
+        android:textSize="30sp" />
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
         <Button
             android:id="@+id/tv_phone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="35dp"
-            android:layout_marginEnd="35dp"
+            android:layout_marginStart="50dp"
+            android:layout_marginEnd="50dp"
             android:background="@drawable/bg_login_loginbtn"
+            android:text="手机号登录"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
             android:textColor="@android:color/white"
-            android:textSize="19sp"
-            android:text="手机验证登录"/>
-    </RelativeLayout>
+            android:textSize="19sp" />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -36,12 +32,46 @@
         android:layout_weight="1">
 
         <LinearLayout
+            android:id="@+id/lv_top_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginStart="100dp"
+            android:layout_marginTop="60dp"
+            android:layout_marginEnd="100dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <View
+                android:layout_width="0px"
+                android:layout_height="1dp"
+                android:layout_weight="1.0"
+                android:textColor="@color/color_login_text_gray"
+                android:background="@mipmap/login_left_dotted_line" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:textColor="@color/color_login_text_gray"
+                android:text="其它账号登录" />
+
+            <View
+                android:layout_width="0px"
+                android:layout_height="1dp"
+                android:layout_weight="1.0"
+                android:textColor="@color/color_login_text_gray"
+                android:background="@mipmap/login_right_dotted_line" />
+        </LinearLayout>
+
+        <LinearLayout
             android:id="@+id/lv_login_third"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginBottom="42dp"
+            android:layout_marginBottom="100dp"
             android:orientation="horizontal">
 
             <ImageView
@@ -54,20 +84,28 @@
                 android:id="@+id/imv_login_qq"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="118dp"
+                android:layout_marginLeft="56dp"
                 android:src="@mipmap/login_qq" />
         </LinearLayout>
 
+    </RelativeLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:layout_marginBottom="16dp"
+        android:orientation="horizontal">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/lv_login_third"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="30dp"
-            android:visibility="gone"
-            android:text="第三方登录" />
-
-
-    </RelativeLayout>
+            android:textColor="@color/color_login_text_gray"
+            android:text="登录既表示您已同意"/>
+        <TextView
+            android:id="@+id/tv_user_protocol"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/color_blue"
+            android:text="《用户协议》"/>
+    </LinearLayout>
 
 </LinearLayout>

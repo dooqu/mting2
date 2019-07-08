@@ -12,4 +12,5 @@
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="login_lable">你的文章随时听</string>
+    <string name="please_enter_phone">请输入手机号码</string>
 </resources>

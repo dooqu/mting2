@@ -1,32 +1,72 @@
 package cn.xylink.mting.ui.activity;
 
 import android.content.Intent;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
-import android.widget.EditText;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import butterknife.BindView;
 import butterknife.OnClick;
 import cn.xylink.mting.R;
 import cn.xylink.mting.base.BaseActivity;
+import cn.xylink.mting.bean.BaseResponse;
+import cn.xylink.mting.bean.CodeInfo;
+import cn.xylink.mting.bean.GetCodeRequest;
+import cn.xylink.mting.contract.GetCodeContact;
+import cn.xylink.mting.presenter.GetCodePresenter;
+import cn.xylink.mting.utils.L;
+import cn.xylink.mting.utils.TingUtils;
+import cn.xylink.mting.widget.ZpPhoneEditText;
 
-public class PhoneLoginActivity extends BaseActivity {
+public class PhoneLoginActivity extends BasePresenterActivity implements GetCodeContact.IGetCodeView  {
 
     public static final String EXTRA_PHONE = "extra_phone";
     public static final String EXTRA_SOURCE = "extra_source";
-    @BindView(R.id.tv_phone_86)
-    TextView tvPhone86;
     @BindView(R.id.et_phone)
-    EditText etPhone;
+    ZpPhoneEditText etPhone;
+    @BindView(R.id.tv_include_title)
+    TextView tvTitle;
+    @BindView(R.id.btn_next)
+    Button mBtnNext;
+
+    private GetCodePresenter codePresenter;
 
     @Override
     protected void preView() {
         setContentView(R.layout.activity_phone_login);
+
+        codePresenter = (GetCodePresenter) createPresenter(GetCodePresenter.class);
+        codePresenter.attachView(this);
     }
 
     @Override
     protected void initView() {
+        tvTitle.setText("手机号登录");
+        etPhone.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if(s.length() > 0)
+                {
+                    mBtnNext.setBackground(getResources().getDrawable(R.drawable.bg_phone_click_btn));
+                }else{
+                    mBtnNext.setBackground(getResources().getDrawable(R.drawable.bg_phone_default_btn));
+
+                }
+            }
+        });
     }
 
     @Override
@@ -45,11 +85,38 @@ public class PhoneLoginActivity extends BaseActivity {
         switch (v.getId())
         {
             case R.id.btn_next:
+                if(etPhone.getText().length() == 0)
+                {
+                    Toast.makeText(this,"手机号不能为空",Toast.LENGTH_SHORT).show();
+                    return;
+                }else if (etPhone.getText().length() < 11){
+                    Toast.makeText(this,"请输入正确的手机号",Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 String phone = etPhone.getText().toString();
-                Intent mIntent = new Intent(PhoneLoginActivity.this,GetCodeActivity.class);
-                mIntent.putExtra(EXTRA_PHONE,phone);
-                mIntent.putExtra(EXTRA_SOURCE,"login");
-                startActivity(mIntent);
+
+                GetCodeRequest requset = new GetCodeRequest();
+                requset.deviceId = TingUtils.getDeviceId(getApplicationContext());
+                requset.phone = phone.replaceAll(" ", "");
+                requset.source = "register";
+                requset.doSign();
+                codePresenter.onGetCode(requset);
+                break;
+        }
+    }
+
+    @Override
+    public void onCodeSuccess(BaseResponse<CodeInfo> response) {
+        L.v(response.data.toString());
+
+    }
+
+    @Override
+    public void onCodeError(int code, String errorMsg) {
+        switch (code)
+        {
+            case -2:
+
                 break;
         }
     }
