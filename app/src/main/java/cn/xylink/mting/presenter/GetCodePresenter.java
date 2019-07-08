@@ -13,11 +13,13 @@ import cn.xylink.mting.model.data.Const;
 import cn.xylink.mting.model.data.OkGoUtils;
 import cn.xylink.mting.model.data.RemoteUrl;
 import cn.xylink.mting.utils.FileUtil;
+import cn.xylink.mting.utils.L;
 
 public class GetCodePresenter extends BasePresenter<GetCodeContact.IGetCodeView> implements GetCodeContact.Presenter {
     @Override
     public void onGetCode(GetCodeRequest request) {
-        OkGoUtils.getInstance().postData(mView, RemoteUrl.onLogin(), new Gson().toJson(request), new TypeToken<BaseResponse<LoginInfo>>() {
+        L.v("request",request);
+        OkGoUtils.getInstance().postData(mView, RemoteUrl.onLogin(), new Gson().toJson(request), new TypeToken<BaseResponse<CodeInfo>>() {
 
         }.getType(), new OkGoUtils.ICallback() {
             @Override

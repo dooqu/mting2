@@ -2,7 +2,6 @@ package cn.xylink.mting.http;
 
 import android.util.Log;
 
-import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
@@ -46,14 +45,14 @@ public class OkHttpUtils {
         Call call = okHttpClient.newCall(request);
         call.enqueue(new Callback() {
             @Override
-            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+            public void onFailure( Call call,  IOException e) {
                 e.printStackTrace();
                 callBack.onError();
                 callBack.onFinish();
             }
 
             @Override
-            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+            public void onResponse( Call call,  Response response) throws IOException {
                 String json = response.body().string();
                 Log.d("okhttp-response:", json);
                 IModel iModel = GsonUtil.GsonToBean(json, model.clazz);
