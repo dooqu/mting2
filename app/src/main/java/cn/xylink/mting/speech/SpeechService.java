@@ -135,7 +135,7 @@ public class SpeechService extends Service {
         return -5;
     }
 
-    public synchronized boolean pause() {
+    public boolean pause() {
         if (speechList.getCurrent() == null) {
             return false;
         }
@@ -155,7 +155,7 @@ public class SpeechService extends Service {
         return false;
     }
 
-    public synchronized boolean resume() {
+    public boolean resume() {
         if (speechList.getCurrent() == null) {
             return false;
         }
@@ -176,7 +176,7 @@ public class SpeechService extends Service {
         return false;
     }
 
-    public synchronized boolean playSelected() {
+    public  boolean playSelected() {
         if (speechList.getCurrent() == null)
             return false;
 
@@ -184,13 +184,23 @@ public class SpeechService extends Service {
         return true;
     }
 
-    public synchronized Article play(String articleId) {
+    public  Article play(String articleId) {
         Article article = this.speechList.select(articleId);
         if (article != null) {
             prepareArticle(article, false);
         }
 
         return article;
+    }
+
+    public Article pushFrontAndPlay(Article article)
+    {
+        Article artcleSelected = this.speechList.topAndSelect(article);
+        if( artcleSelected != null) {
+            prepareArticle(article, false);
+        }
+
+        return artcleSelected;
     }
 
     private void prepareArticle(final Article article, boolean needSourceEffect) {
@@ -251,6 +261,17 @@ public class SpeechService extends Service {
             prepareArticle(speechList.getCurrent(), true);
         }
         return nextExists;
+    }
+
+    public void setRole(Speechor.SpeechorRole role)
+    {
+        speechor.setRole(role);
+    }
+
+
+    public void getRole()
+    {
+        speechor.getRole();
     }
 
 
