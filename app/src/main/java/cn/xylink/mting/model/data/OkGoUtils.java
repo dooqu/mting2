@@ -59,6 +59,38 @@ public class OkGoUtils<T> {
                 );
 
     }
+    public void postParamsData(String url, Map<String,String> postData, Type type, final ICallback<T> callback) {
+        OkGo.<T>post(url)
+                .params(postData)
+                .execute(new JsonBeanCallback<T>(type) {
+
+                             @Override
+                             protected void onStart() {
+                                 super.onStart();
+                                     callback.onStart();
+                             }
+
+                             @Override
+                             protected void onSuccess(T data) {
+                                     callback.onSuccess(data);
+                             }
+
+                             @Override
+                             protected void onFailure(int errorCode, String errorMsg) {
+                                     callback.onFailure(errorCode+10000, errorMsg);
+//                                     if (errorCode==-1)
+//                                         cn.peng10.utils.T.showCustomToast("网络连接失败！");
+                             }
+
+                             @Override
+                             protected void onComplete() {
+                                 super.onComplete();
+                                     callback.onComplete();
+                             }
+                         }
+                );
+
+    }
 
     public void postData(final IBaseView view, String url, Map<String, String> data, File file, Type type, final ICallback<T> callback) {
         OkGo.<T>post(url)
