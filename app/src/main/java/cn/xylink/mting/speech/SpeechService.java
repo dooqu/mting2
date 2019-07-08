@@ -62,6 +62,10 @@ public class SpeechService extends Service {
                             SpeechService.this.playNextInvokeByInternal();
                         }
                         else {
+                            /*
+                            不是要播放下一个，因为当前没有下一个了， 而是要通过playNext、内部为moveNext，删除当前的
+                             */
+                            SpeechService.this.playNext();
                             //没有要读的文章了
                             serviceState = SpeechServiceState.Stoped;
                             EventBus.getDefault().post(new SpeechStopEvent());
