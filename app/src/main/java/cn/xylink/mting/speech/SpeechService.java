@@ -1,11 +1,14 @@
 package cn.xylink.mting.speech;
 
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
+import android.telephony.ServiceState;
 import android.util.Log;
 
 import org.greenrobot.eventbus.EventBus;
@@ -44,6 +47,7 @@ public class SpeechService extends Service {
     ArticleDataProvider articleDataProvider;
     int tickcount;
     TickCountMode tickCountMode;
+    Timer tickCountTimer;
 
 
     public class SpeechBinder extends Binder {
@@ -130,6 +134,22 @@ public class SpeechService extends Service {
             if (tickcountValue > 0) {
                 this.tickCountMode = mode;
                 this.tickcount = tickcountValue;
+
+                if (this.tickCountMode == TickCountMode.MinuteCount) {
+                    tickCountTimer = new Timer();
+                    tickCountTimer.schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            synchronized (SpeechService.this) {
+                                if (SpeechService.this.getState() == Speechor.SpeechorState.SpeechorStatePlaying) {
+                                    SpeechService.this.speechor.stop();
+                                    SpeechService.this.serviceState = SpeechServiceState.Stoped;
+                                    EventBus.getDefault().post(new SpeechStopEvent());
+                                }
+                            }
+                        }
+                    }, tickcountValue * 1000);
+                }
             }
         }
         else {
@@ -138,6 +158,15 @@ public class SpeechService extends Service {
     }
 
     public synchronized void cancelTickCountMode() {
+
+        if(this.tickCountMode == TickCountMode.MinuteCount)
+        {
+            if(this.tickCountTimer != null)
+            {
+                this.tickCountTimer.cancel();
+                this.tickCountTimer = null;
+            }
+        }
         this.tickCountMode = TickCountMode.None;
         this.tickcount = 0;
     }
