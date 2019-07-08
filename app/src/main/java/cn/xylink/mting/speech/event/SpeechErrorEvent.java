@@ -9,12 +9,10 @@ public class SpeechErrorEvent extends RecycleEvent
 
     public SpeechErrorEvent(int errorCode, String message, Article article)
     {
-
         this.errorCode = errorCode;
         this.message = message;
 
         this.setArticle(article);
-
     }
 
     public int getErrorCode() {

@@ -83,9 +83,12 @@ public abstract class SpeechEngineWrapper implements Speechor {
                         if(SpeechEngineWrapper.this.getState() == SpeechorState.SpeechorStatePaused
                                 && isPausedByExternal == true)
                         {
-
                             //这里有个问题， 这期间可能更换了语音包了，导致必须使用seek
-                            speechor.resume();
+                            if(speechor.resume() == false)
+                            {
+                                //如果resume失败， 重读分片
+                                speechor.seek(speechor.getFragmentIndex());
+                            }
                         }
                         isPausedByExternal = false;
                         //player.start();
@@ -262,7 +265,7 @@ public abstract class SpeechEngineWrapper implements Speechor {
     @Override
     public List<String> getTextFragments()
     {
-        //synchronized (this)
+        synchronized (this)
         {
             return speechor.getTextFragments();
         }

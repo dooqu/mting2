@@ -1,12 +1,10 @@
 package cn.xylink.mting.speech.data;
 
+import java.util.List;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
-
-
-import java.util.List;
 
 import cn.xylink.mting.base.BaseRequest;
 import cn.xylink.mting.base.BaseResponse;
@@ -137,41 +135,40 @@ public class ArticleDataProvider {
         });
     }
 
-    public void readArticle(String article, float progress)
-    {
+    public void readArticle(String article, float progress) {
         ReadArticleRequest request = new ReadArticleRequest();
         request.setArticleId(article);
         request.setProgress(progress);
-        request.setRead(progress == 1f? 1 : 0);
+        request.setRead(progress == 1f ? 1 : 0);
         request.setToken("appe11069626a464dcab7eb2f69901f501b");
         request.doSign();
 
         OkGoUtils.getInstance().postData(new IBaseView() {
-            @Override
-            public void showLoading() {
-            }
+                                             @Override
+                                             public void showLoading() {
+                                             }
 
-            @Override
-            public void hideLoading() {
+                                             @Override
+                                             public void hideLoading() {
+                                             }
+                                         }
+                , "http://test.xylink.cn//api/sct/v2/article/read", GsonUtil.GsonString(request), BaseRequest.class, new OkGoUtils.ICallback<BaseResponse>() {
+                    @Override
+                    public void onStart() {
+                    }
 
-            }
-        }, "http://test.xylink.cn//api/sct/v2/article/read", GsonUtil.GsonString(request), BaseRequest.class, new OkGoUtils.ICallback<BaseResponse>() {
-            @Override
-            public void onStart() {
-            }
+                    @Override
+                    public void onSuccess(BaseResponse data) {
+                    }
 
-            @Override
-            public void onSuccess(BaseResponse data) {
-            }
+                    @Override
+                    public void onFailure(int code, String errorMsg) {
+                    }
 
-            @Override
-            public void onFailure(int code, String errorMsg) {
-            }
-
-            @Override
-            public void onComplete() {
-            }
-        });
+                    @Override
+                    public void onComplete() {
+                    }
+                });
     }
 
 
