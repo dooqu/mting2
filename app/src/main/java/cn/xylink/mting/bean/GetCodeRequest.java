@@ -7,4 +7,15 @@ public class GetCodeRequest extends BaseRequest {
     public String source;
     public String deviceId;
 
+    @Override
+    public String toString() {
+        return "GetCodeRequest{" +
+                "phone='" + phone + '\'' +
+                ", source='" + source + '\'' +
+                ", deviceId='" + deviceId + '\'' +
+                ", token='" + token + '\'' +
+                ", timestamp=" + timestamp +
+                ", sign='" + sign + '\'' +
+                '}';
+    }
 }

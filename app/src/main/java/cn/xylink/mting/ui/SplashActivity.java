@@ -27,11 +27,6 @@ public class SplashActivity extends BaseActivity {
     @Override
     protected void initView() {
 
-        if(false)
-        {
-            startActivity(new Intent(this, SpeechServicActivity.class));
-            return;
-        }
 
         SharedPreferences sharedPreferences = this.getSharedPreferences("share", MODE_PRIVATE);
         boolean isFirstRun = sharedPreferences.getBoolean("isFirstRun", true);

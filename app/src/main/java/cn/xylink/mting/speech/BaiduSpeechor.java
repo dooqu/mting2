@@ -65,8 +65,6 @@ public abstract class BaiduSpeechor implements Speechor {
                 //System.out.println("onSpeechStart:" + s);
                 synchronized (self) {
                     self.fragmentIndex = self.fragmentIndexNext;
-
-                    System.out.println(self.getRole() + "设定frameIndex=" + self.fragmentIndex);
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
@@ -86,7 +84,7 @@ public abstract class BaiduSpeechor implements Speechor {
                 //System.out.println("onSpeechFinish:" + s + ",");
                 synchronized (self) {
 
-                    System.out.println("onSpeechFinish:" + self);
+                    //System.out.println("onSpeechFinish:" + self);
                     ++self.fragmentIndexNext;
                     if (self.fragmentIndexNext == self.textFragments.size()) {
                         self.fragmentIndexNext = 0;
@@ -95,7 +93,7 @@ public abstract class BaiduSpeechor implements Speechor {
                         new Thread(new Runnable() {
                             @Override
                             public void run() {
-                                System.out.println("onStateChange:" + self);
+                               // System.out.println("onStateChange:" + self);
                                 self.onStateChanged(SpeechorState.SpeechorStateReady);
                             }
                         }).start();
