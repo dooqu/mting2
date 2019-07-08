@@ -29,6 +29,8 @@ public class SpeechServicActivity extends BaseActivity {
 
     SpeechServiceProxy proxy;
 
+    SpeechService service;
+
     @Override
     protected void preView() {
         setContentView(R.layout.activity_article_detail);
@@ -47,7 +49,9 @@ public class SpeechServicActivity extends BaseActivity {
             {
                 if(connected)
                 {
-                    service.selectAndPlay("1");
+                    SpeechServicActivity.this.service = service;
+                    service.play("1");
+                    service.playNext();
                 }
             }
         };
@@ -64,26 +68,30 @@ public class SpeechServicActivity extends BaseActivity {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    protected void onSpeechStart(SpeechStartEvent event)
+    public void onSpeechStart(SpeechStartEvent event)
     {
         Log.d("xylink", "onSpeechStart:" + event.getArticle().getTitle());
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    protected void onSpeechProgress(SpeechProgressEvent event)
+    public void onSpeechProgress(SpeechProgressEvent event)
     {
         Log.d("xylink", "onSpeechProgress: " + event.getArticle().getTitle() + "," + event.getTextFragments().get(event.getFrameIndex()));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    protected void onSpeechStop(SpeechStopEvent event)
+    public void onSpeechStop(SpeechStopEvent event)
     {
         Log.d("xylink", "onSpeechStop");
+
+        service.resume();
+
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    protected void onSpeechError(SpeechErrorEvent event)
+    public void onSpeechError(SpeechErrorEvent event)
     {
+        Log.d("xylink", "onSpeechError:" + event.getArticle().getTitle());
     }
 
     @Override

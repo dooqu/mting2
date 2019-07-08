@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import cn.xylink.mting.R;
 import cn.xylink.mting.base.BaseActivity;
 import cn.xylink.mting.ui.activity.GuideActivity;
+import cn.xylink.mting.ui.activity.SpeechServicActivity;
 
 public class SplashActivity extends BaseActivity {
 
@@ -25,6 +26,12 @@ public class SplashActivity extends BaseActivity {
 
     @Override
     protected void initView() {
+
+        if(false)
+        {
+            startActivity(new Intent(this, SpeechServicActivity.class));
+            return;
+        }
 
         SharedPreferences sharedPreferences = this.getSharedPreferences("share", MODE_PRIVATE);
         boolean isFirstRun = sharedPreferences.getBoolean("isFirstRun", true);
