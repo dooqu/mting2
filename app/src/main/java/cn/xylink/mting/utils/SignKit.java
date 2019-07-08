@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import cn.xylink.mting.bean.BaseRequest;
+import cn.xylink.mting.base.BaseRequest;
 
 /**
  * 接口签名工具类

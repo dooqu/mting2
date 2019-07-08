@@ -2,7 +2,7 @@ package cn.xylink.mting.speech.event;
 
 import java.util.List;
 
-import cn.xylink.mting.model.Article;
+import cn.xylink.mting.bean.Article;
 
 public class SpeechProgressEvent extends  RecycleEvent
 {

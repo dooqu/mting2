@@ -6,7 +6,7 @@ import android.os.Looper;
 import android.util.Log;
 
 
-import cn.xylink.mting.model.Article;
+import cn.xylink.mting.bean.Article;
 import cn.xylink.mting.speech.SoundEffector;
 
 

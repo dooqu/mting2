@@ -4,9 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import cn.xylink.mting.MTing;
-import cn.xylink.mting.bean.BaseResponse;
+import cn.xylink.mting.base.BaseResponse;
 import cn.xylink.mting.bean.CodeInfo;
-import cn.xylink.mting.bean.LoginInfo;
 import cn.xylink.mting.bean.GetCodeRequest;
 import cn.xylink.mting.contract.GetCodeContact;
 import cn.xylink.mting.model.data.Const;
