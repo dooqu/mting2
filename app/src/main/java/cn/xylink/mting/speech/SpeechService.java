@@ -8,7 +8,6 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
-import android.telephony.ServiceState;
 import android.util.Log;
 
 import org.greenrobot.eventbus.EventBus;
@@ -56,6 +55,7 @@ public class SpeechService extends Service {
         }
     }
 
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -83,8 +83,9 @@ public class SpeechService extends Service {
                         SpeechService.this.moveNext();
                         //没有要读的文章了
                         serviceState = SpeechServiceState.Stoped;
-                        EventBus.getDefault().post(new SpeechStopEvent());
 
+                        SpeechService.this.cancelTickCountMode();
+                        EventBus.getDefault().post(new SpeechStopEvent());
                     }
                 }
             }
@@ -141,14 +142,15 @@ public class SpeechService extends Service {
                         @Override
                         public void run() {
                             synchronized (SpeechService.this) {
-                                if (SpeechService.this.getState() == Speechor.SpeechorState.SpeechorStatePlaying) {
+                                if (--SpeechService.this.tickcount == 0 && SpeechService.this.getState() == Speechor.SpeechorState.SpeechorStatePlaying) {
                                     SpeechService.this.speechor.stop();
                                     SpeechService.this.serviceState = SpeechServiceState.Stoped;
+                                    SpeechService.this.cancelTickCountMode();
                                     EventBus.getDefault().post(new SpeechStopEvent());
                                 }
                             }
                         }
-                    }, tickcountValue * 1000);
+                    }, 1000 * 60,  1000 * 60);
                 }
             }
         }
@@ -251,7 +253,7 @@ public class SpeechService extends Service {
     public synchronized Article play(String articleId) {
         Article article = this.speechList.select(articleId);
         if (article != null) {
-            prepareArticleInnternal(article);
+            prepareArticle(article, false);
         }
 
         return article;
@@ -283,6 +285,7 @@ public class SpeechService extends Service {
         {
             this.speechor.stop();
         }
+
 
         this.articleDataProvider.updateArticle(article, false, (int errorCode, Article ar)->{
             if(errorCode != 0)
