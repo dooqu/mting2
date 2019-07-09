@@ -16,7 +16,6 @@ public class ArticleDetailActivity extends BaseActivity {
 
     @Override
     protected void preView() {
-        setStatusBarColor(this,R.color.color_main_bllue);
         setContentView(R.layout.activity_article_detail);
     }
 
