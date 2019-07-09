@@ -16,4 +16,6 @@
 
     <color name="transparent">#00ffffff</color>
     <color name="color_login_text_gray">#bbbbbb</color>
+
+    <color name="color_main_bllue">#488def</color>
 </resources>
