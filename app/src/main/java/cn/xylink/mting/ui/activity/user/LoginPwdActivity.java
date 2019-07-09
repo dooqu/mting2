@@ -1,5 +1,6 @@
 package cn.xylink.mting.ui.activity.user;
 
+import android.content.Intent;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -8,19 +9,27 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.apaches.commons.codec.binary.Base64;
+
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.spec.InvalidKeySpecException;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import cn.xylink.mting.R;
 import cn.xylink.mting.base.BaseResponse;
-import cn.xylink.mting.model.LoginRequset;
 import cn.xylink.mting.bean.UserInfo;
 import cn.xylink.mting.contract.LoginContact;
+import cn.xylink.mting.model.LoginRequset;
+import cn.xylink.mting.model.data.Const;
 import cn.xylink.mting.presenter.LoginPresenter;
 import cn.xylink.mting.ui.activity.BasePresenterActivity;
+import cn.xylink.mting.ui.activity.MainActivity;
 import cn.xylink.mting.ui.activity.PhoneLoginActivity;
 import cn.xylink.mting.utils.ContentManager;
+import cn.xylink.mting.utils.EncryptionUtil;
 import cn.xylink.mting.utils.L;
-import cn.xylink.mting.utils.MD5;
 import cn.xylink.mting.utils.TingUtils;
 
 public class LoginPwdActivity extends BasePresenterActivity implements LoginContact.ILoginView  {
@@ -98,8 +107,20 @@ public class LoginPwdActivity extends BasePresenterActivity implements LoginCont
 
                 LoginRequset requset = new LoginRequset();
                 requset.deviceId = TingUtils.getDeviceId(getApplicationContext());
-                requset.setPhone(MD5.md5crypt(phone));
-                requset.setPassword(pwd);
+                requset.setPhone(phone.replaceAll(" ",""));
+
+                byte[] pwds = null;
+                try {
+                    pwds =  EncryptionUtil.encrypt(pwd, EncryptionUtil.getPublicKey(Const.publicKey));
+                } catch (NoSuchAlgorithmException e) {
+                    e.printStackTrace();
+                } catch (InvalidKeySpecException e) {
+                    e.printStackTrace();
+                } catch (NoSuchProviderException e) {
+                    e.printStackTrace();
+                }
+                L.v("pwd decode",pwd);
+                requset.setPassword( new Base64().encodeToString(pwds));
                 requset.doSign();
                 loginPresenter.onLogin(requset);
                 break;
@@ -116,6 +137,8 @@ public class LoginPwdActivity extends BasePresenterActivity implements LoginCont
             L.v("message",response.message);
             L.v("token",response.data.getToken());
             ContentManager.getInstance().setLoginToken(response.data.getToken());
+            Intent mIntent = new Intent(this, MainActivity.class);
+            startActivity(mIntent);
         }
     }
 

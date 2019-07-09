@@ -18,7 +18,9 @@ public class RegisterPresenter extends BasePresenter<RegisterContact.IRegisterVi
     @Override
     public void onRegister(RegisterRequset request) {
         L.v("request",request);
-        OkGoUtils.getInstance().postData(mView, RemoteUrl.registerUrl(), new Gson().toJson(request), new TypeToken<BaseResponse<UserInfo>>() {
+        String json = new Gson().toJson(request);
+        L.v("json",json);
+        OkGoUtils.getInstance().postData(mView, RemoteUrl.registerUrl(), json, new TypeToken<BaseResponse<UserInfo>>() {
 
         }.getType(), new OkGoUtils.ICallback() {
             @Override

@@ -16,6 +16,10 @@ public class RemoteUrl {
     public static String loginUrl(){
         return URL_BASE + "/api/user/common/v2/login";
     }
+    //验证
 
+    public static String checkCodeUrl(){
+        return URL_BASE + "/api/sms/common/v2/code/check";
+    }
 
 }
