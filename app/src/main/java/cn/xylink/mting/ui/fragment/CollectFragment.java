@@ -10,7 +10,7 @@ import cn.xylink.mting.R;
  * 2019/7/8 13:57 : Create CollectFragment.java (JoDragon);
  * -----------------------------------------------------------------
  */
-public class CollectFragment extends BasePresenterFragment {
+public class CollectFragment extends BaseMainTabFragment {
 
     @Override
     protected int getLayoutViewId() {

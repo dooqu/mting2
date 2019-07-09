@@ -3,12 +3,15 @@ package cn.xylink.mting.ui.adapter;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,7 +40,7 @@ public class UnreadAdapter extends RecyclerView.Adapter<UnreadAdapter.UnreadHold
         }
     }
 
-    public void setCurrentPosition(int position){
+    public void setCurrentPosition(int position) {
         this.mCurrentPosition = position;
     }
 
@@ -53,13 +56,17 @@ public class UnreadAdapter extends RecyclerView.Adapter<UnreadAdapter.UnreadHold
     public void onBindViewHolder(@NonNull UnreadHolder holder, int position) {
         Article data = mData.get(position);
         holder.tvTitle.setText(data.getTitle());
-//        holder.tvFrom.setText(data.getTextBody());
-//        holder.tvProgress.setText(data.);
-        if (mCurrentPosition ==position){
+        holder.tvFrom.setText(TextUtils.isEmpty(data.getSourceName())?"其他":data.getSourceName());
+        if (data.getProgress() > 0) {
+            holder.tvProgress.setText("已播放：" + getPercentFormat(data.getProgress()));
+        } else {
+            holder.tvProgress.setText("");
+        }
+        if (mCurrentPosition == position) {
             holder.tvTitle.setTextColor(mContext.getResources().getColor(R.color.c488def));
             holder.tvFrom.setTextColor(mContext.getResources().getColor(R.color.c488def));
             holder.tvProgress.setTextColor(mContext.getResources().getColor(R.color.c488def));
-        }else {
+        } else {
             holder.tvTitle.setTextColor(mContext.getResources().getColor(R.color.c333333));
             holder.tvFrom.setTextColor(mContext.getResources().getColor(R.color.c999999));
             holder.tvProgress.setTextColor(mContext.getResources().getColor(R.color.c999999));
@@ -76,6 +83,14 @@ public class UnreadAdapter extends RecyclerView.Adapter<UnreadAdapter.UnreadHold
 
     public List<Article> getArticleList() {
         return mData;
+    }
+
+    public static String getPercentFormat(double d) {
+        NumberFormat nf = java.text.NumberFormat.getPercentInstance();
+        nf.setMaximumIntegerDigits(2);//小数点前保留几位
+        nf.setMinimumFractionDigits(0);// 小数点后保留几位
+        String str = nf.format(d);
+        return str;
     }
 
     @Override
@@ -100,6 +115,7 @@ public class UnreadAdapter extends RecyclerView.Adapter<UnreadAdapter.UnreadHold
 
     public interface OnItemClickListener {
         void onItemClick(Article article);
+
         void onItemMoreClick(Article article);
     }
 }
