@@ -127,7 +127,7 @@ public class SpeechService extends Service {
         return speechor.getState();
     }
 
-    private synchronized void setTickCountMode(TickCountMode mode, int tickcountValue) {
+    public synchronized void setTickCountMode(TickCountMode mode, int tickcountValue) {
         this.tickCountMode = mode;
 
         if (this.tickCountMode != TickCountMode.None) {
@@ -157,7 +157,7 @@ public class SpeechService extends Service {
         }
     }
 
-    private synchronized void cancelTickCountMode() {
+    public synchronized void cancelTickCountMode() {
 
         if(this.tickCountMode == TickCountMode.MinuteCount)
         {
@@ -248,7 +248,7 @@ public class SpeechService extends Service {
     }
 
 
-    private synchronized Article play(String articleId) {
+    public synchronized Article play(String articleId) {
         Article article = this.speechList.select(articleId);
         if (article != null) {
             prepareArticleInnternal(article);
@@ -257,7 +257,7 @@ public class SpeechService extends Service {
         return article;
     }
 
-    private synchronized Article pushFrontAndPlay(Article article) {
+    public synchronized Article pushFrontAndPlay(Article article) {
         Article artcleSelected = this.speechList.topAndSelect(article);
         if (artcleSelected != null) {
             prepareArticle(article, false);
@@ -350,7 +350,7 @@ public class SpeechService extends Service {
     }
 
 
-    private synchronized boolean playNext() {
+    public synchronized boolean playNext() {
         if (speechList.getCurrent() != null) {
             speechor.stop();
         }
@@ -387,15 +387,15 @@ public class SpeechService extends Service {
     }
 
 
-    private synchronized List<Article> getSpeechList() {
+    public synchronized List<Article> getSpeechList() {
         return this.speechList.getArticleList();
     }
 
-    private void loadArticles(List<Article> listToLoad) {
+    public void loadArticles(List<Article> listToLoad) {
         this.speechList.appendArticles(listToLoad);
     }
 
-    private synchronized void clearSpeechList() {
+    public synchronized void clearSpeechList() {
         boolean isSelectedDeleted = this.speechList.removeAll();
         if (isSelectedDeleted) {
             this.speechor.stop();
@@ -403,7 +403,7 @@ public class SpeechService extends Service {
         }
     }
 
-    private synchronized void removeFromSpeechList(List<String> articleIds) {
+    public synchronized void removeFromSpeechList(List<String> articleIds) {
 
         boolean isSelectedDeleted = this.speechList.removeSome(articleIds);
         /*
@@ -424,7 +424,7 @@ public class SpeechService extends Service {
     }
 
 
-    private synchronized Article getSelected() {
+    public synchronized Article getSelected() {
         return this.speechList.getCurrent();
     }
 

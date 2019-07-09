@@ -174,6 +174,7 @@ public class ArticleDataProvider {
 
     public void saveSpeechListToLocal()
     {
+
     }
 
     public List<Article> getSpeechListFromLocal()
