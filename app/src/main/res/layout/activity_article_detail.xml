@@ -5,15 +5,36 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <com.wuhenzhizao.titlebar.widget.CommonTitleBar
-        android:id="@+id/titlebar"
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/dimen_title_height"
-        titlebar:centerType="textView"
-        titlebar:fillStatusBar="false"
-        titlebar:leftType="imageButton"
-        titlebar:rightType="textView"
-        titlebar:titleBarHeight="@dimen/dimen_title_height" />
+        android:background="@color/color_main_bllue"
+        android:gravity="center_vertical">
+
+        <ImageView
+            android:layout_width="@dimen/dimen_title_height"
+            android:layout_height="@dimen/dimen_title_height"
+            android:scaleType="center"
+            android:src="@mipmap/back" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="-52dp"
+            android:layout_weight="1"
+            android:textColor="@color/white"
+            android:textSize="14sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginRight="16dp"
+            android:gravity="center"
+            android:text="反馈"
+            android:textColor="@color/white"
+            android:textSize="17sp" />
+    </LinearLayout>
 
     <ScrollView
         android:layout_width="match_parent"
@@ -26,77 +47,85 @@
     </ScrollView>
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
         android:orientation="horizontal">
 
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:orientation="vertical">
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@mipmap/ic_launcher_round" />
+                android:layout_gravity="center_horizontal"
+                android:src="@mipmap/ico_setting" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="朗读设置" />
+                android:text="朗读设置"
+                android:textColor="#999" />
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_marginLeft="38dp"
             android:orientation="vertical">
 
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@mipmap/ic_launcher_round" />
+                android:layout_gravity="center_horizontal"
+                android:src="@mipmap/ico_font" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="定时关闭" />
+                android:text="字体大小"
+                android:textColor="#999" />
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_marginLeft="38dp"
             android:orientation="vertical">
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@mipmap/ic_launcher_round" />
+                android:layout_gravity="center_horizontal"
+                android:src="@mipmap/ico_share" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="字体大小" />
+                android:text="文章分享"
+                android:textColor="#999" />
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_marginLeft="38dp"
             android:orientation="vertical">
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@mipmap/ic_launcher_round" />
+                android:layout_gravity="center_horizontal"
+                android:src="@mipmap/ico_detail" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="查看原文" />
+                android:text="查看原文"
+                android:textColor="#999" />
         </LinearLayout>
     </LinearLayout>
 
@@ -106,28 +135,27 @@
 
     <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="60dp"
         android:layout_gravity="center_horizontal"
+        android:gravity="center_vertical"
         android:orientation="horizontal">
 
-        <ImageView
+
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@mipmap/ic_launcher_round" />
+            android:text="已收藏" />
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@mipmap/ic_launcher_round" />
+            android:layout_marginLeft="48dp"
+            android:layout_marginRight="48dp"
+            android:src="@mipmap/ico_play_start" />
 
-        <ImageView
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@mipmap/ic_launcher_round" />
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@mipmap/ic_launcher_round" />
+            android:text="下一篇" />
     </LinearLayout>
 </LinearLayout>

@@ -38,8 +38,7 @@
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            </intent-filter></activity>
         <activity android:name=".ui.activity.SpeechServicActivity" />
         <activity android:name=".ui.activity.GuideActivity" />
         <activity android:name=".ui.activity.LoginActivity" />
@@ -60,6 +59,10 @@
 
                 <data android:scheme="tencent101519024" />
             </intent-filter>
+        </activity>
+
+        <activity android:name=".ui.activity.ArticleDetailActivity"
+            android:theme="@style/DetailTheme">
         </activity>
         <activity
             android:name="com.tencent.connect.common.AssistActivity"

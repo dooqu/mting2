@@ -1,6 +1,7 @@
 package cn.xylink.mting.ui.activity;
 
 import android.content.Intent;
+import android.graphics.Color;
 
 import com.wuhenzhizao.titlebar.widget.CommonTitleBar;
 
@@ -13,12 +14,9 @@ import cn.xylink.mting.base.BaseActivity;
  */
 public class ArticleDetailActivity extends BaseActivity {
 
-
-    @BindView(R.id.titlebar)
-    CommonTitleBar titleBar;
-
     @Override
     protected void preView() {
+        setStatusBarColor(this,R.color.color_main_bllue);
         setContentView(R.layout.activity_article_detail);
     }
 
@@ -36,7 +34,10 @@ public class ArticleDetailActivity extends BaseActivity {
 
     @Override
     protected void initTitleBar() {
-        titleBar.getLeftImageButton().setImageResource(R.mipmap.ic_launcher);
-        titleBar.getRightTextView().setText("反馈");
+//        titleBar.setBackgroundColor(Color.parseColor("#488def"));
+//        titleBar.getLeftImageButton().setImageResource(R.mipmap.back);
+//        titleBar.setStatusBarColor(R.color.color_main_bllue);
+//        titleBar.getRightTextView().setTextColor(Color.parseColor("#ffffff"));
+//        titleBar.getRightTextView().setText("反馈");
     }
 }
