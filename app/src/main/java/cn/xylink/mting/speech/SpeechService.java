@@ -251,7 +251,7 @@ public class SpeechService extends Service {
     public synchronized Article play(String articleId) {
         Article article = this.speechList.select(articleId);
         if (article != null) {
-            prepareArticleInnternal(article);
+            prepareArticle(article, false);
         }
 
         return article;
@@ -283,6 +283,7 @@ public class SpeechService extends Service {
         {
             this.speechor.stop();
         }
+
 
         this.articleDataProvider.updateArticle(article, false, (int errorCode, Article ar)->{
             if(errorCode != 0)

@@ -194,6 +194,8 @@ public class SpeechServicActivity extends Activity {
                         Article article = service.getSpeechList().get(pos);
                         //通过articleid，来查找播放
                         service.play(article.getArticleId());
+
+                        service.setTickCountMode(SpeechService.TickCountMode.NumberCount, 1);
                     }
                 });
             }
