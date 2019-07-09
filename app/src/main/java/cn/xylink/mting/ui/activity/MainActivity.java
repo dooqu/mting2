@@ -6,15 +6,26 @@ import android.animation.ObjectAnimator;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.os.Bundle;
+import android.text.TextPaint;
 import android.view.Gravity;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.TextView;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import cn.xylink.mting.R;
 import cn.xylink.mting.base.BaseActivity;
+import cn.xylink.mting.speech.SpeechService;
+import cn.xylink.mting.speech.SpeechServiceProxy;
+import cn.xylink.mting.speech.event.SpeechErrorEvent;
+import cn.xylink.mting.speech.event.SpeechProgressEvent;
+import cn.xylink.mting.speech.event.SpeechStartEvent;
+import cn.xylink.mting.speech.event.SpeechStopEvent;
 import cn.xylink.mting.ui.adapter.MainFragmentAdapter;
 
 public class MainActivity extends BaseActivity {
@@ -30,6 +41,8 @@ public class MainActivity extends BaseActivity {
     @BindView(R.id.vp_main)
     ViewPager mViewPager;
     private TAB_ENUM mCurrentTabIndex = TAB_ENUM.TAB_UNREAD;
+    public SpeechServiceProxy proxy;
+    private SpeechService service;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +68,16 @@ public class MainActivity extends BaseActivity {
         TAB_ENUM.TAB_UNREAD.setView(mUnreadTextView);
         mViewPager.setAdapter(new MainFragmentAdapter(getSupportFragmentManager()));
         mViewPager.setOffscreenPageLimit(TAB_ENUM.values().length);
+        EventBus.getDefault().register(this);
+        proxy = new SpeechServiceProxy(this) {
+            @Override
+            protected void onConnected(boolean connected, SpeechService service) {
+                if (connected) {
+                    MainActivity.this.service = service;
+                }
+            }
+        };
+
     }
 
     @Override
@@ -130,6 +153,10 @@ public class MainActivity extends BaseActivity {
             animatorSet.playTogether(ccAnimator, gcAnimator, csAnimator, gsAnimator);
             animatorSet.setInterpolator(new DecelerateInterpolator());
             animatorSet.start();
+            TextPaint paint = goTab.getView().getPaint();
+            paint.setFakeBoldText(true);
+            TextPaint paint1 = currentTab.getView().getPaint();
+            paint1.setFakeBoldText(false);
         }
     }
 
@@ -142,4 +169,49 @@ public class MainActivity extends BaseActivity {
         }
     }
 
+    /*
+某一个文章准备开始播报的时候被调用, event.getArticle返回的是文章对象
+注意，该事件被调用并不意味着真正的tts开始播放，在此时间调用后，还有获取Article正文缓冲、以及tts转换等缓冲时间，
+真正的播放开始要在progress的0进度开始
+该事件调用后，可以切换播放器的标题等操作
+ */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onSpeechStart(SpeechStartEvent event) {
+    }
+
+
+    /*
+    播放进度回调， event.getFrameIndex 返回的是当前播报的片段索引,
+    event.getTextFragments，返回所有的片段集合
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onSpeechProgress(SpeechProgressEvent event) {
+    }
+
+
+    /*
+    播放器无内容可播放后，会调用此事件
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onSpeechStop(SpeechStopEvent event) {
+    }
+
+
+    /*
+    播放遇到错误，会调用此事件，比如网络错误等
+    event.getArticle()指示当前错误的文章
+    event.getErrorCode()指示错误码
+    event.getMessage()指示错误提示
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onSpeechError(SpeechErrorEvent event) {
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+        proxy.unbind();
+    }
 }

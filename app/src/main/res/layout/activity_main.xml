@@ -135,18 +135,23 @@
         </LinearLayout>
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/ll_main_left_menu"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
-        android:background="@color/white"
-        android:fitsSystemWindows="true">
+    <!--<LinearLayout-->
+        <!--android:id="@+id/ll_main_left_menu"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_gravity="start"-->
+        <!--android:background="@color/white"-->
+        <!--android:fitsSystemWindows="true">-->
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="saaaaaa" />
-    </LinearLayout>
+        <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="saaaaaa" />-->
+    <!--</LinearLayout>-->
+    <fragment
+        android:layout_width="233dp"
+        android:layout_height="match_parent"
+        android:name="cn.xylink.mting.ui.fragment.CollectFragment"
+        android:layout_gravity="start"/>
 
 </android.support.v4.widget.DrawerLayout>
