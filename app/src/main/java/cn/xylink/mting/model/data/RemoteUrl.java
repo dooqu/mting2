@@ -21,5 +21,9 @@ public class RemoteUrl {
     public static String checkCodeUrl(){
         return URL_BASE + "/api/sms/common/v2/code/check";
     }
+    //待读
+    public static String getUnreadUrl(){
+        return URL_BASE + "/api/sct/v2/article/unread/list";
+    }
 
 }

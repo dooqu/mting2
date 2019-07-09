@@ -10,9 +10,14 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.List;
+
 import butterknife.BindView;
 import cn.xylink.mting.R;
 import cn.xylink.mting.bean.Article;
+import cn.xylink.mting.bean.UnreadRequest;
+import cn.xylink.mting.contract.UnreadContract;
+import cn.xylink.mting.presenter.UnreadPresenter;
 import cn.xylink.mting.speech.data.SpeechList;
 import cn.xylink.mting.speech.event.SpeechErrorEvent;
 import cn.xylink.mting.speech.event.SpeechProgressEvent;
@@ -29,10 +34,11 @@ import cn.xylink.mting.utils.L;
  * 2019/7/8 14:03 : Create UnreadFragment.java (JoDragon);
  * -----------------------------------------------------------------
  */
-public class UnreadFragment extends BaseMainTabFragment implements UnreadAdapter.OnItemClickListener{
+public class UnreadFragment extends BaseMainTabFragment implements UnreadAdapter.OnItemClickListener, UnreadContract.IUnreadView {
     @BindView(R.id.rv_unread)
     RecyclerView mRecyclerView;
     private UnreadAdapter mAdapter;
+    private UnreadPresenter mPresenter;
 
     @Override
     protected int getLayoutViewId() {
@@ -41,6 +47,8 @@ public class UnreadFragment extends BaseMainTabFragment implements UnreadAdapter
 
     @Override
     protected void initView(View view) {
+        mPresenter = (UnreadPresenter) createPresenter(UnreadPresenter.class);
+        mPresenter.attachView(this);
         mAdapter = new UnreadAdapter(getActivity(), SpeechList.getInstance().getArticleList(),this);
         mRecyclerView.addItemDecoration(new SpaceItemDecoration());
         mRecyclerView.setItemAnimator(null);
@@ -53,7 +61,11 @@ public class UnreadFragment extends BaseMainTabFragment implements UnreadAdapter
 
     @Override
     protected void initData() {
-
+        UnreadRequest request = new UnreadRequest();
+        request.setUpdateAt(0);
+        request.setEvent(UnreadRequest.ENENT_TYPE.refresh.name());
+        request.doSign();
+        mPresenter.createUnread(request);
     }
 
 
@@ -101,6 +113,19 @@ public class UnreadFragment extends BaseMainTabFragment implements UnreadAdapter
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSpeechError(SpeechErrorEvent event) {
         L.v(event);
+    }
+
+    @Override
+    public void onSuccessUnread(List<Article> unreadList) {
+        if (unreadList!=null){
+            SpeechList.getInstance().appendArticles(unreadList);
+            mAdapter.refreshData();
+        }
+    }
+
+    @Override
+    public void onErrorUnread(int code, String errorMsg) {
+
     }
 
     class SpaceItemDecoration extends RecyclerView.ItemDecoration {
