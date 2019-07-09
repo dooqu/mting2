@@ -6,10 +6,18 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import butterknife.BindView;
 import cn.xylink.mting.R;
 import cn.xylink.mting.bean.Article;
 import cn.xylink.mting.speech.data.SpeechList;
+import cn.xylink.mting.speech.event.SpeechErrorEvent;
+import cn.xylink.mting.speech.event.SpeechProgressEvent;
+import cn.xylink.mting.speech.event.SpeechStartEvent;
+import cn.xylink.mting.speech.event.SpeechStopEvent;
 import cn.xylink.mting.ui.adapter.UnreadAdapter;
 import cn.xylink.mting.utils.DensityUtil;
 import cn.xylink.mting.utils.L;
@@ -35,10 +43,12 @@ public class UnreadFragment extends BaseMainTabFragment implements UnreadAdapter
     protected void initView(View view) {
         mAdapter = new UnreadAdapter(getActivity(), SpeechList.getInstance().getArticleList(),this);
         mRecyclerView.addItemDecoration(new SpaceItemDecoration());
+        mRecyclerView.setItemAnimator(null);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(linearLayoutManager);
         mRecyclerView.setAdapter(mAdapter);
+        EventBus.getDefault().register(this);
     }
 
     @Override
@@ -67,6 +77,32 @@ public class UnreadFragment extends BaseMainTabFragment implements UnreadAdapter
 
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onSpeechStart(SpeechStartEvent event) {
+        L.v(event.getArticle());
+        mAdapter.refreshData();
+    }
+
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onSpeechProgress(SpeechProgressEvent event) {
+        L.v(event.getArticle());
+        mAdapter.setProgress(event.getArticle());
+    }
+
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onSpeechStop(SpeechStopEvent event) {
+        L.v(event);
+        mAdapter.refreshData();
+    }
+
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onSpeechError(SpeechErrorEvent event) {
+        L.v(event);
+    }
+
     class SpaceItemDecoration extends RecyclerView.ItemDecoration {
         @Override
         public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
@@ -84,5 +120,11 @@ public class UnreadFragment extends BaseMainTabFragment implements UnreadAdapter
                 outRect.top = space;
             }
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
     }
 }
