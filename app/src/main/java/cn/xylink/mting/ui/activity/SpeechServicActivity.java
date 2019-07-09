@@ -195,7 +195,7 @@ public class SpeechServicActivity extends Activity {
                         //通过articleid，来查找播放
                         service.play(article.getArticleId());
 
-                        service.setCountDown(SpeechService.CountDownMode.MinuteCount, 6);
+                        //service.setCountDown(SpeechService.CountDownMode.MinuteCount, 6);
                     }
                 });
             }
@@ -255,7 +255,6 @@ public class SpeechServicActivity extends Activity {
         listArticles.setLayoutManager(linearLayoutManager);
         listArticles.setItemAnimator(null);
         listArticles.addItemDecoration(new SpaceItemDecoration());
-
         //注册订阅者，用于接收开始播放事件(onSpeechStart)、播放结束事件(onSpeechStop)、播放进度事件(onSpeechProgress)、播放错误事件(onSpeechError)
         EventBus.getDefault().register(this);
 
@@ -299,7 +298,6 @@ public class SpeechServicActivity extends Activity {
         adapter.update(event.getArticle());
         Log.d("xylink", "onSpeechProgress: " + event.getArticle().getTitle() + "," + event.getTextFragments().get(event.getFrameIndex()));
         float progress  = event.getFrameIndex() / event.getTextFragments().size();
-
     }
 
 
