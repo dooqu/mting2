@@ -32,7 +32,7 @@ public class SpeechService extends Service {
         Error
     }
 
-    public static enum TickCountMode {
+    public enum CountDownMode {
         None,
         NumberCount,
         MinuteCount
@@ -44,9 +44,9 @@ public class SpeechService extends Service {
     SpeechList speechList = SpeechList.getInstance();
     SpeechServiceState serviceState;
     ArticleDataProvider articleDataProvider;
-    int tickcount;
-    TickCountMode tickCountMode;
-    Timer tickCountTimer;
+    int countdownValue;
+    CountDownMode countDownMode;
+    Timer countdownTimer;
 
 
     public class SpeechBinder extends Binder {
@@ -58,21 +58,27 @@ public class SpeechService extends Service {
 
     @Override
     public void onCreate() {
-        super.onCreate();
 
+        super.onCreate();
 
         serviceState = SpeechServiceState.Ready;
         articleDataProvider = new ArticleDataProvider(this);
         speechor = new SpeechEngineWrapper(this) {
             @Override
             public void onStateChanged(SpeechorState speakerState) {
+
                 synchronized (SpeechService.this) {
-                    //播放完毕
+                    //在每个文章播放完成后，做以下逻辑判定
                     if (speakerState == SpeechorState.SpeechorStateReady) {
 
-                        if (SpeechService.this.tickCountMode == TickCountMode.NumberCount && --tickcount == 0) {
-                            SpeechService.this.cancelTickCountMode();
+                        //先预先设置一个播放停止信号默认值
+                        SpeechStopEvent.StopReason reason = SpeechStopEvent.StopReason.ListIsNull;
+                        //在每个播放完成的时机，判断下当前是否有Number定时器， 如果有，就减一，如果减一等于0，说明定时器到期
+                        if (SpeechService.this.countDownMode == CountDownMode.NumberCount && --countdownValue == 0) {
+                            SpeechService.this.cancelCountDown();
+                            reason = SpeechStopEvent.StopReason.CountDownToZero;
                         }
+                        //如果定时器没有走， 那继续判定是否还有下一个文章可播放， 如果有，去播放；
                         else if (SpeechService.this.hasNext()) {
                             SpeechService.this.playNextInvokeByInternal();
                             return;
@@ -84,14 +90,17 @@ public class SpeechService extends Service {
                         //没有要读的文章了
                         serviceState = SpeechServiceState.Stoped;
 
-                        SpeechService.this.cancelTickCountMode();
-                        EventBus.getDefault().post(new SpeechStopEvent());
+                        EventBus.getDefault().post(new SpeechStopEvent(reason));
                     }
                 }
             }
 
             @Override
             public void onProgress(List<String> textFragments, int index) {
+                synchronized (SpeechService.this)
+                {
+                    speechList.getCurrent().setProgress((float)index / (float)textFragments.size());
+                }
                 EventBus.getDefault().post(new SpeechProgressEvent(index, textFragments, speechList.getCurrent()));
             }
 
@@ -124,54 +133,74 @@ public class SpeechService extends Service {
         return binder;
     }
 
+
+
     public synchronized Speechor.SpeechorState getState() {
         return speechor.getState();
     }
 
-    public synchronized void setTickCountMode(TickCountMode mode, int tickcountValue) {
-        this.tickCountMode = mode;
 
-        if (this.tickCountMode != TickCountMode.None) {
-            if (tickcountValue > 0) {
-                this.tickCountMode = mode;
-                this.tickcount = tickcountValue;
+    /*
+    设定计时器
+     */
+    public synchronized void setCountDown(CountDownMode mode, int tickcountValue) {
 
-                if (this.tickCountMode == TickCountMode.MinuteCount) {
-                    tickCountTimer = new Timer();
-                    tickCountTimer.schedule(new TimerTask() {
-                        @Override
-                        public void run() {
-                            synchronized (SpeechService.this) {
-                                if (--SpeechService.this.tickcount == 0 && SpeechService.this.getState() == Speechor.SpeechorState.SpeechorStatePlaying) {
-                                    SpeechService.this.speechor.stop();
-                                    SpeechService.this.serviceState = SpeechServiceState.Stoped;
-                                    SpeechService.this.cancelTickCountMode();
-                                    EventBus.getDefault().post(new SpeechStopEvent());
-                                }
-                            }
+        //如果一个倒计时正在进行，先取消
+        this.cancelCountDown();
+
+        //参数检查
+        if (tickcountValue <= 0 || mode == CountDownMode.None) {
+            return;
+        }
+
+        this.countDownMode = mode;
+        this.countdownValue = tickcountValue;
+
+        if (mode == CountDownMode.MinuteCount) {
+            countdownTimer = new Timer();
+            countdownTimer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    synchronized (SpeechService.this) {
+                        if (--SpeechService.this.countdownValue == 0 && SpeechService.this.getState() == Speechor.SpeechorState.SpeechorStatePlaying) {
+                            SpeechService.this.speechor.stop();
+                            SpeechService.this.serviceState = SpeechServiceState.Stoped;
+                            SpeechService.this.cancelCountDown();
+                            EventBus.getDefault().post(new SpeechStopEvent(SpeechStopEvent.StopReason.CountDownToZero));
                         }
-                    }, 1000 * 60,  1000 * 60);
+                    }
                 }
-            }
-        }
-        else {
-            this.cancelTickCountMode();
+            }, 1000, 1000);
         }
     }
 
-    public synchronized void cancelTickCountMode() {
+    public synchronized void cancelCountDown() {
 
-        if(this.tickCountMode == TickCountMode.MinuteCount)
+        if(this.countDownMode == CountDownMode.MinuteCount)
         {
-            if(this.tickCountTimer != null)
+            if(this.countdownTimer != null)
             {
-                this.tickCountTimer.cancel();
-                this.tickCountTimer = null;
+                this.countdownTimer.cancel();
+                this.countdownTimer = null;
             }
         }
-        this.tickCountMode = TickCountMode.None;
-        this.tickcount = 0;
+        this.countDownMode = CountDownMode.None;
+        this.countdownValue = 0;
     }
+
+
+    public synchronized  CountDownMode getCountDownMode()
+    {
+        return this.countDownMode;
+    }
+
+
+    public synchronized int getCountDownValue()
+    {
+        return this.countdownValue;
+    }
+
+
 
     public synchronized int seek(float percentage) {
         //如果当前播放不存在，那返回错误
@@ -195,7 +224,7 @@ public class SpeechService extends Service {
         return -5;
     }
 
-    public void playArticle(Article article)
+    private void playArticle(Article article)
     {
         prepareArticle(article, false);
     }
@@ -259,13 +288,18 @@ public class SpeechService extends Service {
         return article;
     }
 
-    public synchronized Article pushFrontAndPlay(Article article) {
-        Article artcleSelected = this.speechList.topAndSelect(article);
+    public synchronized Article addFirstAndPlay(Article article) {
+        Article artcleSelected = this.speechList.pushFrontAndSelect(article);
         if (artcleSelected != null) {
             prepareArticle(article, false);
         }
 
         return artcleSelected;
+    }
+
+    public synchronized  void addFirst(List<Article> list)
+    {
+        this.speechList.pushFront(list);
     }
 
     public synchronized void setSpeed(Speechor.SpeechorSpeed speed)
