@@ -24,7 +24,7 @@
         android:theme="@style/AppTheme"
         tools:replace="android:appComponentFactory">
         <activity
-            android:name=".ui.activity.MainActivity"
+            android:name=".ui.SplashActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_main"
             android:theme="@style/AppTheme">
@@ -38,7 +38,7 @@
 
         <service android:name=".speech.SpeechService" />
 
-        <activity android:name=".ui.SplashActivity">
+        <activity android:name=".ui.activity.MainActivity">
         </activity>
         <activity android:name=".ui.activity.SpeechServicActivity" />
         <activity android:name=".ui.activity.GuideActivity" />
