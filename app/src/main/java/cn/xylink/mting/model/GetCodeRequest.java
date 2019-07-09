@@ -1,4 +1,4 @@
-package cn.xylink.mting.bean;
+package cn.xylink.mting.model;
 
 
 import cn.xylink.mting.base.BaseRequest;

@@ -4,26 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <LinearLayout
-        android:id="@+id/ll_back"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="16dp">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@mipmap/back" />
-    </LinearLayout>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="48dp"
-        android:text="请输入四位数短信验证码"
-        android:textColor="@android:color/black"
-        android:textSize="17sp" />
+    <include layout="@layout/title_include"/>
 
     <TextView
         android:id="@+id/tv_msg_content"
@@ -31,9 +12,24 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="52dp"
-        android:text=""
-        android:textColor="@color/font_gray"
-        android:textSize="14sp" />
+        android:text="验证码已发送至"
+        android:textColor="@color/color_login_text_gray"
+        android:textSize="20sp" />
+    <cn.xylink.mting.widget.ZpPhoneEditText
+        android:id="@+id/et_phone"
+        android:layout_width="match_parent"
+        android:layout_height="42dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginEnd="50dp"
+        android:layout_marginTop="20dp"
+        android:inputType="phone"
+        android:background="@android:color/transparent"
+        android:maxLength="13"
+        android:textColor="@color/color_blue"
+        android:paddingBottom="10dp"
+        android:textSize="20dp" />
+
+
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -42,7 +38,7 @@
         android:layout_marginRight="67dp"
         android:layout_marginTop="46dp">
         <cn.xylink.mting.widget.PhoneCode
-            android:id="@+id/pc_1"
+            android:id="@+id/pc_code"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             />
@@ -51,11 +47,15 @@
 
     <TextView
         android:id="@+id/tv_count_down"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="26dp"
-        android:gravity="center"
+        android:layout_marginRight="40dp"
+        android:gravity="right"
+        android:text=""
+        android:textColor="@color/color_login_text_gray"
+        android:textSize="20sp"
         android:padding="30dp" />
 
 </LinearLayout>

@@ -17,6 +17,7 @@ import cn.xylink.mting.openapi.QQApi;
 import cn.xylink.mting.openapi.WXapi;
 import cn.xylink.mting.speech.SpeechService;
 import cn.xylink.mting.speech.data.SpeechList;
+import cn.xylink.mting.utils.ContentManager;
 import okhttp3.OkHttpClient;
 
 public class MTing extends Application {
@@ -29,6 +30,7 @@ public class MTing extends Application {
     public void onCreate() {
         super.onCreate();
         instance = this;
+        ContentManager.init(this);
         WXapi.init(this);
         QQApi.init(this);
         initOkHttp();
