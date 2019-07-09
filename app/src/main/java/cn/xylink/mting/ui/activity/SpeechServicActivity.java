@@ -5,7 +5,6 @@ import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -13,10 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-
-import com.wuhenzhizao.titlebar.widget.CommonTitleBar;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -24,11 +20,11 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.List;
 
-import butterknife.BindView;
 import cn.xylink.mting.R;
-import cn.xylink.mting.base.BaseActivity;
-import cn.xylink.mting.model.Article;
+import cn.xylink.mting.bean.Article;
 import cn.xylink.mting.speech.SpeechService;
+import cn.xylink.mting.speech.Speechor;
+import cn.xylink.mting.speech.data.ArticleDataProvider;
 import cn.xylink.mting.speech.data.SpeechList;
 import cn.xylink.mting.speech.event.SpeechErrorEvent;
 import cn.xylink.mting.speech.event.SpeechProgressEvent;
@@ -37,69 +33,73 @@ import cn.xylink.mting.speech.event.SpeechStartEvent;
 import cn.xylink.mting.speech.event.SpeechStopEvent;
 
 /**
- *   在Activity中，整合SpeechService；
- *
- *   1、首先使用SpeechServiceProxy 对象，连接服务，并获取SpeechService
- *      也可以自行按需要编写连接服务的代码
- *
- *      eg:
- *      SpeechServiceProxy proxy = new SpeechServiceProxy(this)
- *      {
- *          protected void onConnected(boolean connected, SpeechService service) {
- *          if (connected) {
- *              peechServicActivity.this.service = service;
- *              service.....
- *              }
- *          }
- *      }
- *
- *      SpeechService 对象的常用方法：
- *
- *      a、service.play(articleId:String) ,播放某一个articleId的文章
- *      b、service.pushFrontAndPlay(Article article)，在顶端插入高优先级播放的文章，如果该文章已经在列表中，将其置顶
- *      c、service.pause() 暂停
- *      d、service.resume() 恢复播放
- *      e、service.seek(percentage:float) 按照百分比进度进行播放，返回的是对应的切片文档的索引
- *      f、service.hasNext() 当前播放的文章后面是否还有下一个可读的文章
- *      g、service.playNext() 播放当前正在播放文章的下一个，返回boolean类型，指示是否存在下一个文章
- *      h、service.setRole(Speechor.SpeechorRole role);设定读音角色
- *      i、service.getRole() 返回当前的读音角色
- *      j、service.getState() 返回当前的状态
- *      k、service.getProgress() 返回当前百分比进度
- *      l、service.getSpeechList() 返回播放列表
- *      m、service.removeFromSpeechList(List<String> articleIds> 传入要删除的id集合， 如果被删除的文章正在播放，会自动转入下一个要播放的文章
- *      n、service.clearSpeechList()，清空播放列表，如果播放列表正在播放，会收到SpeechStopEvent 事件
- *
- *
- *
- *    2、订阅播放事件
- *
- *       默认订阅即可
- *       EventBus.getDefault.regist(this)
- *
- *       四种播放事件
- *
- *       SpeechStartEvent
- *       在某一个文章准备开始播放的时候进行订阅通知
- *       event.getArticle() 返回要播放的文章
- *       注意，此时getTextBody()不可用，因为正文还未从网络加载
- *
- *
- *       SpeechProgressEvent
- *       播报进度发生变化时进行订阅通知
- *       event.getFragmentIndex 是当前正在读取的分片的索引
- *       event.getTextFragments() 返回分片列表
- *
- *
- *       SpeechStopEvent
- *       全部列表读取完成时候进行调用
- *
- *
- *       SpeechErrorEvent
- *       播报出错时候进行调用
- *       event.getErrorCode() 返回错误码
- *       event.getMessage() 返回错误描述
- *       event.getArticle() 返回对应的文章
+ * 在Activity中，整合SpeechService；
+ * <p>
+ * 1、首先使用SpeechServiceProxy 对象，连接服务，并获取SpeechService
+ * 也可以自行按需要编写连接服务的代码
+ * <p>
+ * eg:
+ * SpeechServiceProxy proxy = new SpeechServiceProxy(this)
+ * {
+ * protected void onConnected(boolean connected, SpeechService service) {
+ * if (connected) {
+ * peechServicActivity.this.service = service;
+ * service.....
+ * }
+ * }
+ * }
+ * <p>
+ * SpeechService 对象的常用方法：
+ * <p>
+ * a、service.play(articleId:String) ,播放某一个articleId的文章
+ * b、service.pushFrontAndPlay(Article article)，在顶端插入高优先级播放的文章，如果该文章已经在列表中，将其置顶
+ * c、service.pause() 暂停
+ * d、service.resume() 恢复播放
+ * e、service.seek(percentage:float) 按照百分比进度进行播放，返回的是对应的切片文档的索引
+ * f、service.hasNext() 当前播放的文章后面是否还有下一个可读的文章
+ * g、service.playNext() 播放当前正在播放文章的下一个，返回boolean类型，指示是否存在下一个文章
+ * h、service.setRole(Speechor.SpeechorRole role);设定读音角色
+ * i、service.getRole() 返回当前的读音角色
+ * j、service.getState() 返回当前的状态
+ * k、service.getProgress() 返回当前百分比进度
+ * l、service.getSpeechList() 返回播放列表
+ * m、service.removeFromSpeechList(List<String> articleIds> 传入要删除的id集合， 如果被删除的文章正在播放，会自动转入下一个要播放的文章
+ * n、service.clearSpeechList()，清空播放列表，如果播放列表正在播放，会收到SpeechStopEvent 事件
+ * o、service.setTickCountMode(TickCountMode mode, int tickValue) mode= TickCountMode,NumberCount or TickCountMode.MinuteCount or None 设定定时关闭
+ * p、service.cancelTickCount(); 取消定时关闭
+ * q、service.setSpeed(Speechor.SpeechorSpeed speed); 设定语速，默认1
+ * r、service.getSpeed(); 返回当前语速
+ * <p>
+ * <p>
+ * <p>
+ * 2、订阅播放事件
+ * <p>
+ * 默认订阅即可
+ * EventBus.getDefault.regist(this)
+ * <p>
+ * 四种播放事件
+ * <p>
+ * SpeechStartEvent
+ * 在某一个文章准备开始播放的时候进行订阅通知
+ * event.getArticle() 返回要播放的文章
+ * 注意，此时getTextBody()不可用，因为正文还未从网络加载
+ * <p>
+ * <p>
+ * SpeechProgressEvent
+ * 播报进度发生变化时进行订阅通知
+ * event.getFragmentIndex 是当前正在读取的分片的索引
+ * event.getTextFragments() 返回分片列表
+ * <p>
+ * <p>
+ * SpeechStopEvent
+ * 全部列表读取完成时候进行调用
+ * <p>
+ * <p>
+ * SpeechErrorEvent
+ * 播报出错时候进行调用
+ * event.getErrorCode() 返回错误码
+ * event.getMessage() 返回错误描述
+ * event.getArticle() 返回对应的文章
  */
 public class SpeechServicActivity extends Activity {
 
@@ -237,6 +237,7 @@ public class SpeechServicActivity extends Activity {
             protected void onConnected(boolean connected, SpeechService service) {
                 if (connected) {
                     SpeechServicActivity.this.service = service;
+                    //service.setSpeed(Speechor.SpeechorSpeed.SPEECH_SPEED_MULTIPLE_2);
 
                     //服务连接成功后，再初始化Adapter，SpeechService要作为adapter的参数，因为Adapter内部的数据列表来自SpeechService的getSpeechList
                     adapter = new SpeechListAdapter(service);
@@ -315,7 +316,7 @@ public class SpeechServicActivity extends Activity {
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSpeechError(SpeechErrorEvent event) {
-        Log.d("xylink", "onSpeechError:" + event.getArticle().getTitle());
+        Log.d("xylink", "onSpeechError:" + event.getArticle().getTitle() + ",errorCode=" + event.getErrorCode() + ", message=" + event.getMessage());
 
     }
 

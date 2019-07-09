@@ -6,12 +6,9 @@ public class RemoteUrl {
 
     //获取短信验证码
     public static String getCodeUrl() {
-        return URL_BASE + "/api/common/v1/sms/get";
+        return URL_BASE + "/api/sms/common/v2/code/get";
+
     }
 
-    //登录
-    public static String onLogin() {
-        return URL_BASE + "/api/sms/common/v2/code/get";
-    }
 
 }

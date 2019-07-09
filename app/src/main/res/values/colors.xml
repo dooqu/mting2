@@ -12,9 +12,11 @@
     <color name="black_overlay">#66000000</color>
     <color name="color_blue">#488DEF</color>
     <color name="color_blue_hint">#C6DCFA</color>
+    <color name="color_blue_default">#A3C6F7</color>
 
     <color name="transparent">#00ffffff</color>
     <color name="c333333">#333333</color>
     <color name="c999999">#999999</color>
     <color name="c488def">#488def</color>
+    <color name="color_login_text_gray">#bbbbbb</color>
 </resources>

@@ -4,7 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
-import cn.xylink.mting.model.Article;
+import cn.xylink.mting.bean.Article;
 
 
 /*

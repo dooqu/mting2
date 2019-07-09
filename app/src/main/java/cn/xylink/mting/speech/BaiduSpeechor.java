@@ -97,6 +97,7 @@ public abstract class BaiduSpeechor implements Speechor {
                                 self.onStateChanged(SpeechorState.SpeechorStateReady);
                             }
                         }).start();
+
                     }
                 }
             }
@@ -233,6 +234,7 @@ public abstract class BaiduSpeechor implements Speechor {
         }
 
         speechSynthesizer.setParam(SpeechSynthesizer.PARAM_SPEED, paramSpeed);
+        this.speed = speed;
     }
 
 
@@ -367,5 +369,4 @@ public abstract class BaiduSpeechor implements Speechor {
             isReleased = true;
         }
     }
-
 }

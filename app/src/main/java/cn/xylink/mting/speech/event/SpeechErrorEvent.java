@@ -1,6 +1,6 @@
 package cn.xylink.mting.speech.event;
 
-import cn.xylink.mting.model.Article;
+import cn.xylink.mting.bean.Article;
 
 public class SpeechErrorEvent extends RecycleEvent
 {
@@ -9,12 +9,10 @@ public class SpeechErrorEvent extends RecycleEvent
 
     public SpeechErrorEvent(int errorCode, String message, Article article)
     {
-
         this.errorCode = errorCode;
         this.message = message;
 
         this.setArticle(article);
-
     }
 
     public int getErrorCode() {

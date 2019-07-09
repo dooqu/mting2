@@ -1,6 +1,8 @@
 package cn.xylink.mting.bean;
 
 
+import cn.xylink.mting.base.BaseRequest;
+
 public class GetCodeRequest extends BaseRequest {
 
     public String phone;
@@ -18,4 +20,6 @@ public class GetCodeRequest extends BaseRequest {
                 ", sign='" + sign + '\'' +
                 '}';
     }
+
+
 }

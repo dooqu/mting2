@@ -1,4 +1,4 @@
-package cn.xylink.mting.bean;
+package cn.xylink.mting.base;
 
 public class BaseResponse<T> {
     public int code;

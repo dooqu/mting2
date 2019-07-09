@@ -1,13 +1,14 @@
 package cn.xylink.mting.speech.event;
 
-import java.util.LinkedList;
-import java.util.List;
+import android.support.v7.widget.RecyclerView;
 
-import cn.xylink.mting.model.Article;
+import cn.xylink.mting.bean.Article;
 
 public class RecycleEvent
 {
     private Article article;
+
+    private RecycleEvent next;
 
     public Article getArticle()
     {
