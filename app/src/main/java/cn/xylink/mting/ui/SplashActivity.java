@@ -27,7 +27,7 @@ public class SplashActivity extends BaseActivity {
     @Override
     protected void initView() {
 
-        if(false)
+        if(true)
         {
             startActivity(new Intent(this, SpeechServicActivity.class));
             return;
