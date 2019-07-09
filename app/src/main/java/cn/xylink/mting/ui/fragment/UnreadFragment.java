@@ -1,18 +1,12 @@
 package cn.xylink.mting.ui.fragment;
 
 import android.graphics.Rect;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import cn.xylink.mting.R;
 import cn.xylink.mting.bean.Article;
 import cn.xylink.mting.speech.data.SpeechList;
@@ -27,21 +21,18 @@ import cn.xylink.mting.utils.L;
  * 2019/7/8 14:03 : Create UnreadFragment.java (JoDragon);
  * -----------------------------------------------------------------
  */
-public class UnreadFragment extends Fragment implements UnreadAdapter.OnItemClickListener{
+public class UnreadFragment extends BasePresenterFragment implements UnreadAdapter.OnItemClickListener{
     @BindView(R.id.rv_unread)
     RecyclerView mRecyclerView;
     private UnreadAdapter mAdapter;
-    @Nullable
+
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_unread, container, false);
-        ButterKnife.bind(this, view);
-        return view;
+    protected int getLayoutViewId() {
+        return R.layout.fragment_unread;
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+    protected void initView(View view) {
         mAdapter = new UnreadAdapter(getActivity(), SpeechList.getInstance().getArticleList(),this);
         mRecyclerView.addItemDecoration(new SpaceItemDecoration());
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
@@ -51,12 +42,28 @@ public class UnreadFragment extends Fragment implements UnreadAdapter.OnItemClic
     }
 
     @Override
+    protected void initData() {
+
+    }
+
+
+    @Override
     public void onItemClick(Article article) {
         L.v();
     }
     @Override
     public void onItemMoreClick(Article article) {
         L.v();
+    }
+
+    @Override
+    public void showLoading() {
+
+    }
+
+    @Override
+    public void hideLoading() {
+
     }
 
     class SpaceItemDecoration extends RecyclerView.ItemDecoration {
