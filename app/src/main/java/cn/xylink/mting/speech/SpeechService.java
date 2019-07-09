@@ -73,6 +73,9 @@ public class SpeechService extends Service {
                     Article currentArticle = SpeechService.this.getSelected();
                     //在每个文章播放完成后，做以下逻辑判定
                     if (speakerState == SpeechorState.SpeechorStateReady) {
+
+                        currentArticle.setProgress(1);
+                        SpeechService.this.onSaveArticleProgress(currentArticle, 1);
                         //先预先设置一个播放停止信号默认值
                         SpeechStopEvent.StopReason reason = SpeechStopEvent.StopReason.ListIsNull;
                         //在每个播放完成的时机，判断下当前是否有Number定时器， 如果有，就减一，如果减一等于0，说明定时器到期
@@ -83,11 +86,8 @@ public class SpeechService extends Service {
                         //如果定时器没有走， 那继续判定是否还有下一个文章可播放， 如果有，去播放；
                         else if (SpeechService.this.hasNext()) {
                             SpeechService.this.playNextInvokeByInternal();
-                            SpeechService.this.onSaveArticleProgress(currentArticle, 1);
                             return;
                         }
-
-                        SpeechService.this.onSaveArticleProgress(currentArticle, currentArticle.getProgress());
                         //不是要播放下一个，因为当前没有下一个了， 而是要通过playNext、内部为moveNext，删除当前的
                         SpeechService.this.moveNext();
                         //没有要读的文章了
@@ -114,8 +114,11 @@ public class SpeechService extends Service {
         };
     }
 
+
     protected void onSaveArticleProgress(Article article, float progress) {
-        articleDataProvider.readArticle(article.getArticleId(), progress);
+        //articleDataProvider.readArticle(article.getArticleId(), progress);
+
+        Log.d("xylink", "onSaveProgress:" + article.getTitle() + "=>" + progress);
     }
 
     @Override
@@ -275,6 +278,16 @@ public class SpeechService extends Service {
 
 
     public synchronized Article play(String articleId) {
+
+        Article previousArt = this.speechList.getCurrent();
+        if(previousArt != null && articleId.equals(previousArt.getArticleId()) == false)
+        {
+            if(previousArt.getProgress() != 1)
+            {
+                this.onSaveArticleProgress(previousArt, previousArt.getProgress());
+            }
+        }
+
         Article article = this.speechList.select(articleId);
         if (article != null) {
             prepareArticle(article, false);
@@ -284,6 +297,16 @@ public class SpeechService extends Service {
     }
 
     public synchronized Article addFirstAndPlay(Article article) {
+
+        Article previousArt = this.speechList.getCurrent();
+        if(previousArt != null && article.getArticleId().equals(previousArt.getArticleId()) == false)
+        {
+            if(previousArt.getProgress() != 1)
+            {
+                this.onSaveArticleProgress(previousArticle, previousArt.getProgress());
+            }
+        }
+
         Article artcleSelected = this.speechList.pushFrontAndSelect(article);
         if (artcleSelected != null) {
             prepareArticle(article, false);
@@ -312,7 +335,8 @@ public class SpeechService extends Service {
         }
 
         this.serviceState = SpeechServiceState.Loadding;
-        this.articleDataProvider.updateArticle(article, needSourceEffect, (int errorcode, Article articleUpdated) -> {
+        EventBus.getDefault().post(new SpeechStartEvent(speechList.getCurrent()));
+        this.articleDataProvider.loadArticleContent(article, needSourceEffect, (int errorcode, Article articleUpdated) -> {
 
             synchronized (this) {
                 //如果回来之后，状态已经不是Loadding，说明在加载期间，有了其他操作
@@ -347,8 +371,6 @@ public class SpeechService extends Service {
                     this.serviceState = SpeechServiceState.Ready;
                 }
             } // end synchonized
-
-            EventBus.getDefault().post(new SpeechStartEvent(speechList.getCurrent()));
         });
     }
 

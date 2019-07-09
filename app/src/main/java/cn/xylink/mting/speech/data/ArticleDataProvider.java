@@ -1,6 +1,7 @@
 package cn.xylink.mting.speech.data;
 
 import java.util.List;
+
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
@@ -88,9 +89,12 @@ public class ArticleDataProvider {
     }
 
 
-    public void updateArticleTest(Article article, ArticleLoaderCallback callback) {
+    public void loadArticleContent(Article article, boolean needSoundPlay, ArticleLoaderCallback callback) {
         final long tickCountAtTime = ++tickcount;
         currentArticle = article;
+        if (needSoundPlay) {
+            soundEffector.playSwitch(null);
+        }
 
         ArticleInfoRequest request = new ArticleInfoRequest();
         request.setArticleId(article.getArticleId());
@@ -117,13 +121,14 @@ public class ArticleDataProvider {
             @Override
             public void onFailure(int code, String errorMsg) {
                 Log.d("xylink", "onFailure");
-                callback.invoke(-code, null);
+                callback.invoke(-code, article);
             }
 
             @Override
             public void onSuccess(ArticleInfoResponse response) {
                 if (callback != null) {
-                    callback.invoke(0, response.data);
+                    //article.setContent(response.data.getContent());
+                    callback.invoke(0, article);
                 }
             }
 
@@ -171,13 +176,11 @@ public class ArticleDataProvider {
     }
 
 
-    public void saveSpeechListToLocal()
-    {
+    public void saveSpeechListToLocal() {
 
     }
 
-    public List<Article> getSpeechListFromLocal()
-    {
+    public List<Article> getSpeechListFromLocal() {
         return null;
     }
 }
