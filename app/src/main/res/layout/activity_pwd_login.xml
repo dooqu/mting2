@@ -27,7 +27,7 @@
         android:textColor="@color/color_blue"
         android:paddingBottom="10dp"
         android:textSize="20dp"
-        android:hint="登录密码不少于6位" />
+        android:hint="请输入密码" />
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -36,6 +36,17 @@
             android:layout_marginRight="30dp"
             android:layout_marginTop="130dp"
             android:src="@mipmap/pwd_hide"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="忘记密码"
+            android:textColor="@color/color_login_text_gray"
+            android:textSize="18sp"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="30dp"
+            android:layout_below="@+id/et_pwd"
+            android:id="@+id/tv_forget_pwd"/>
 
     </RelativeLayout>
     <Button
@@ -49,7 +60,7 @@
         android:textSize="20sp"
 
         android:background="@drawable/bg_phone_default_btn"
-        android:text="完成" />
+        android:text="登录" />
 
 
 </LinearLayout>

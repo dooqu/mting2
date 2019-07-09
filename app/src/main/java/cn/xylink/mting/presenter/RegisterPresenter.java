@@ -5,20 +5,20 @@ import com.google.gson.reflect.TypeToken;
 
 import cn.xylink.mting.MTing;
 import cn.xylink.mting.base.BaseResponse;
-import cn.xylink.mting.bean.CodeInfo;
-import cn.xylink.mting.bean.GetCodeRequest;
-import cn.xylink.mting.contract.GetCodeContact;
+import cn.xylink.mting.model.RegisterRequset;
+import cn.xylink.mting.bean.UserInfo;
+import cn.xylink.mting.contract.RegisterContact;
 import cn.xylink.mting.model.data.Const;
 import cn.xylink.mting.model.data.OkGoUtils;
 import cn.xylink.mting.model.data.RemoteUrl;
 import cn.xylink.mting.utils.FileUtil;
 import cn.xylink.mting.utils.L;
 
-public class GetCodePresenter extends BasePresenter<GetCodeContact.IGetCodeView> implements GetCodeContact.Presenter {
+public class RegisterPresenter extends BasePresenter<RegisterContact.IRegisterView> implements RegisterContact.Presenter {
     @Override
-    public void onGetCode(GetCodeRequest request) {
+    public void onRegister(RegisterRequset request) {
         L.v("request",request);
-        OkGoUtils.getInstance().postData(mView, RemoteUrl.getCodeUrl(), new Gson().toJson(request), new TypeToken<BaseResponse<CodeInfo>>() {
+        OkGoUtils.getInstance().postData(mView, RemoteUrl.registerUrl(), new Gson().toJson(request), new TypeToken<BaseResponse<UserInfo>>() {
 
         }.getType(), new OkGoUtils.ICallback() {
             @Override
@@ -28,26 +28,21 @@ public class GetCodePresenter extends BasePresenter<GetCodeContact.IGetCodeView>
 
             @Override
             public void onSuccess(Object data) {
-                BaseResponse<CodeInfo> baseResponse = (BaseResponse<CodeInfo>) data;
+                BaseResponse<UserInfo> baseResponse = (BaseResponse<UserInfo>) data;
                 int code = baseResponse.code;
                 L.v("coce",code);
                 if (code == 200) {
-                    mView.onCodeSuccess(baseResponse);
+                    mView.onRegisterSuccess(baseResponse);
                     String userInfoData = new Gson().toJson(baseResponse.data);
                     FileUtil.writeFile(MTing.getInstance(), Const.FileName.USER_INFO_LOGIN, userInfoData);
-                }else if(code == -2){
-                    mView.onCodeSuccess(baseResponse);
-                    String userInfoData = new Gson().toJson(baseResponse.data);
-                    FileUtil.writeFile(MTing.getInstance(), Const.FileName.USER_INFO_LOGIN, userInfoData);
-                }
-                else {
-                    mView.onCodeError(code, baseResponse.message);
+                } else {
+                    mView.onRegisterError(code, baseResponse.message);
                 }
             }
 
             @Override
             public void onFailure(int code, String errorMsg) {
-                mView.onCodeError(code, errorMsg);
+                mView.onRegisterError(code, errorMsg);
             }
 
             @Override

@@ -9,6 +9,7 @@ public class BaseRequest {
     public String token = "";
     public long timestamp;
     public String sign;
+    public String deviceId;
 
     public BaseRequest() {
 //        token = ContentManager.getInstance().getLoginToken();
