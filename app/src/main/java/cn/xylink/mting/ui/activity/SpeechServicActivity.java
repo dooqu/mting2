@@ -152,7 +152,7 @@ public class SpeechServicActivity extends Activity {
             //绑定条目的时候，判定条目的状态
             if (currentArticle != null && service.getSelected() == currentArticle) {
                 //设定某个条目的播放状态和进度
-                speechListViewHolder.artStatus.setText("正在播放:" + service.getProgress());
+                speechListViewHolder.artStatus.setText("正在播放:" + currentArticle.getProgress());
                 //高亮条目背景颜色
                 speechListViewHolder.row.setBackgroundColor(Color.GRAY);
             }
@@ -195,7 +195,7 @@ public class SpeechServicActivity extends Activity {
                         //通过articleid，来查找播放
                         service.play(article.getArticleId());
 
-                        service.setTickCountMode(SpeechService.TickCountMode.NumberCount, 1);
+                        service.setCountDown(SpeechService.CountDownMode.MinuteCount, 6);
                     }
                 });
             }
@@ -261,6 +261,7 @@ public class SpeechServicActivity extends Activity {
 
         //绑定服务，开始连接
         proxy.bind();
+
     }
 
 
@@ -297,6 +298,8 @@ public class SpeechServicActivity extends Activity {
     public void onSpeechProgress(SpeechProgressEvent event) {
         adapter.update(event.getArticle());
         Log.d("xylink", "onSpeechProgress: " + event.getArticle().getTitle() + "," + event.getTextFragments().get(event.getFrameIndex()));
+        float progress  = event.getFrameIndex() / event.getTextFragments().size();
+
     }
 
 

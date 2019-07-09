@@ -35,7 +35,7 @@ public class MTing extends Application {
 
         List<Article> list = new ArrayList<>();
 
-        for(int i = 0; i < 3; i++) {
+        for(int i = 0; i < 6; i++) {
             Article article = new Article();
             article.setArticleId(String.valueOf(i));
             article.setTitle("习总书记讲话" + i);
