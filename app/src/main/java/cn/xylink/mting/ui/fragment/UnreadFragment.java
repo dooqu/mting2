@@ -21,7 +21,7 @@ import cn.xylink.mting.utils.L;
  * 2019/7/8 14:03 : Create UnreadFragment.java (JoDragon);
  * -----------------------------------------------------------------
  */
-public class UnreadFragment extends BasePresenterFragment implements UnreadAdapter.OnItemClickListener{
+public class UnreadFragment extends BaseMainTabFragment implements UnreadAdapter.OnItemClickListener{
     @BindView(R.id.rv_unread)
     RecyclerView mRecyclerView;
     private UnreadAdapter mAdapter;
@@ -49,6 +49,7 @@ public class UnreadFragment extends BasePresenterFragment implements UnreadAdapt
 
     @Override
     public void onItemClick(Article article) {
+        mControllerListener.onPlay(article.getArticleId());
         L.v();
     }
     @Override

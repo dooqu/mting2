@@ -10,7 +10,7 @@ import cn.xylink.mting.R;
  * 2019/7/8 14:05 : Create ReadedFragment.java (JoDragon);
  * -----------------------------------------------------------------
  */
-public class ReadedFragment extends BasePresenterFragment {
+public class ReadedFragment extends BaseMainTabFragment {
 
     @Override
     protected int getLayoutViewId() {
