@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cn.xylink.mting.R;
-import cn.xylink.mting.model.Article;
+import cn.xylink.mting.bean.Article;
 
 /*
  *待读

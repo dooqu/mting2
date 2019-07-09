@@ -14,7 +14,7 @@ import android.view.ViewGroup;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.xylink.mting.R;
-import cn.xylink.mting.model.Article;
+import cn.xylink.mting.bean.Article;
 import cn.xylink.mting.speech.data.SpeechList;
 import cn.xylink.mting.ui.adapter.UnreadAdapter;
 import cn.xylink.mting.utils.DensityUtil;
