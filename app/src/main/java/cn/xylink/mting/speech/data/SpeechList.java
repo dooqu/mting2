@@ -86,11 +86,22 @@ public class SpeechList {
     /*
     选中或者插入一条数
      */
-    public synchronized Article topAndSelect(Article article) {
+    public synchronized Article pushFrontAndSelect(Article article) {
 
         if (article == null || article.getArticleId() == null)
             return null;
 
+        pushFront(article);
+
+        playIterator = internalList.listIterator(0);
+        current = playIterator.next();
+
+        return current;
+    }
+
+
+    private boolean pushFront(Article article)
+    {
         boolean isArticleSelected = false;
         //新建迭代器
         ListIterator<Article> it = internalList.listIterator();
@@ -111,10 +122,17 @@ public class SpeechList {
             playIterator = internalList.listIterator(0);
             current = playIterator.next();
         }
-
-        return current;
+        return isArticleSelected;
     }
 
+
+
+    public synchronized void pushFront(List<Article> list) {
+        for(int i = 0, j = list.size(); i < j; i++)
+        {
+            pushFront(list.get(i));
+        }
+    }
 
     public synchronized boolean moveNext() {
 
@@ -227,6 +245,8 @@ public class SpeechList {
     public synchronized void appendArticles(List<Article> list) {
         internalList.addAll(list);
     }
+
+
 
     public synchronized int size() {
         return this.internalList.size();

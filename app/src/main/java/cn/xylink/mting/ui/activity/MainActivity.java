@@ -47,6 +47,7 @@ public class MainActivity extends BaseActivity implements BaseMainTabFragment.On
     private TAB_ENUM mCurrentTabIndex = TAB_ENUM.TAB_UNREAD;
     public SpeechServiceProxy proxy;
     private SpeechService service;
+    private MainFragmentAdapter mTabAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +71,8 @@ public class MainActivity extends BaseActivity implements BaseMainTabFragment.On
         TAB_ENUM.TAB_LOVE.setView(mLoveTextView);
         TAB_ENUM.TAB_READED.setView(mReadedTextView);
         TAB_ENUM.TAB_UNREAD.setView(mUnreadTextView);
-        mViewPager.setAdapter(new MainFragmentAdapter(getSupportFragmentManager()));
+        mTabAdapter = new MainFragmentAdapter(getSupportFragmentManager());
+        mViewPager.setAdapter(mTabAdapter);
         mViewPager.setOffscreenPageLimit(TAB_ENUM.values().length);
         EventBus.getDefault().register(this);
         proxy = new SpeechServiceProxy(this) {
@@ -81,6 +83,7 @@ public class MainActivity extends BaseActivity implements BaseMainTabFragment.On
                 }
             }
         };
+        proxy.bind();
 
     }
 
@@ -92,6 +95,7 @@ public class MainActivity extends BaseActivity implements BaseMainTabFragment.On
     @Override
     public void onPlay(String id) {
         L.v();
+        if (service!=null)
         service.play(id);
     }
 
@@ -192,6 +196,7 @@ public class MainActivity extends BaseActivity implements BaseMainTabFragment.On
  */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSpeechStart(SpeechStartEvent event) {
+        L.v(event.getArticle());
     }
 
 
@@ -201,6 +206,7 @@ public class MainActivity extends BaseActivity implements BaseMainTabFragment.On
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSpeechProgress(SpeechProgressEvent event) {
+        L.v(event.getArticle());
     }
 
 
@@ -209,6 +215,7 @@ public class MainActivity extends BaseActivity implements BaseMainTabFragment.On
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSpeechStop(SpeechStopEvent event) {
+        L.v(event);
     }
 
 
@@ -220,6 +227,7 @@ public class MainActivity extends BaseActivity implements BaseMainTabFragment.On
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSpeechError(SpeechErrorEvent event) {
+        L.v(event);
     }
 
 

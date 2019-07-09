@@ -4,6 +4,7 @@ import android.content.Context;
 
 import java.util.List;
 
+
 /*
  *主页tab页基类
  *
@@ -24,4 +25,5 @@ public abstract class BaseMainTabFragment extends BasePresenterFragment {
         void onPlay(String id);
         void onDelete(List<String> list);
     }
+
 }
