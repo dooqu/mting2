@@ -72,6 +72,7 @@
         <activity android:name=".ui.activity.PhoneLoginActivity" />
         <activity android:name=".ui.activity.GetCodeActivity" />
         <activity android:name=".ui.activity.SetPhonePwdActivity" />
+        <activity android:name=".ui.activity.user.LoginPwdActivity" />
     </application>
 
 </manifest>

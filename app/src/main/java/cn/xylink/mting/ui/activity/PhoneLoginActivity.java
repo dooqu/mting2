@@ -13,7 +13,7 @@ import butterknife.OnClick;
 import cn.xylink.mting.R;
 import cn.xylink.mting.base.BaseResponse;
 import cn.xylink.mting.bean.CodeInfo;
-import cn.xylink.mting.bean.GetCodeRequest;
+import cn.xylink.mting.model.GetCodeRequest;
 import cn.xylink.mting.contract.GetCodeContact;
 import cn.xylink.mting.presenter.GetCodePresenter;
 import cn.xylink.mting.ui.activity.user.LoginPwdActivity;
@@ -111,12 +111,16 @@ public class PhoneLoginActivity extends BasePresenterActivity implements GetCode
     @Override
     public void onCodeSuccess(BaseResponse<CodeInfo> response) {
         final int code = response.code;
+
         switch (code)
         {
-            case 200: {
+            case 200:
+            case -3:{
+
                 Intent mIntent = new Intent(this, GetCodeActivity.class);
                 mIntent.putExtra(EXTRA_PHONE, phone);
-                mIntent.putExtra(EXTRA_CODE, response.data);
+
+                mIntent.putExtra(EXTRA_CODE, response.data.getCodeId());
                 startActivity(mIntent);
                 break;
             }
@@ -134,7 +138,7 @@ public class PhoneLoginActivity extends BasePresenterActivity implements GetCode
         L.v("code",code);
 //        switch (code)
 //        {
-//            case -2:
+//            case -3:
 //
 //                Intent mIntent = new Intent(this,GetCodeActivity.class);
 //                mIntent.putExtra(EXTRA_PHONE,phone);
