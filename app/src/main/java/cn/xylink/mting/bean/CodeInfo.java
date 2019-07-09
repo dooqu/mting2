@@ -1,6 +1,8 @@
 package cn.xylink.mting.bean;
 
-public class CodeInfo {
+import java.io.Serializable;
+
+public class CodeInfo implements Serializable {
 
     private String codeId;
     private String createAt;
