@@ -7,6 +7,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.os.Bundle;
 import android.text.TextPaint;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
@@ -23,8 +24,10 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import cn.xylink.mting.R;
 import cn.xylink.mting.base.BaseActivity;
+import cn.xylink.mting.bean.Article;
 import cn.xylink.mting.speech.SpeechService;
 import cn.xylink.mting.speech.SpeechServiceProxy;
+import cn.xylink.mting.speech.data.SpeechList;
 import cn.xylink.mting.speech.event.SpeechErrorEvent;
 import cn.xylink.mting.speech.event.SpeechProgressEvent;
 import cn.xylink.mting.speech.event.SpeechStartEvent;
@@ -48,6 +51,8 @@ public class MainActivity extends BaseActivity implements BaseMainTabFragment.On
     ViewPager mViewPager;
     @BindView(R.id.iv_main_title_add)
     ImageView mAddImageView;
+    @BindView(R.id.tv_play_bar_title)
+    TextView mPlayBarTitle;
     private TAB_ENUM mCurrentTabIndex = TAB_ENUM.TAB_UNREAD;
     public SpeechServiceProxy proxy;
     private SpeechService service;
@@ -91,6 +96,17 @@ public class MainActivity extends BaseActivity implements BaseMainTabFragment.On
 
     }
 
+    private void setPlayBarState() {
+        String playTitle = null;
+        Article art= SpeechList.getInstance().getCurrent();
+        if (art==null)
+            art = SpeechList.getInstance().selectFirst();
+        if (art!=null){
+            playTitle = art.getTitle();
+        }
+        mPlayBarTitle.setText(TextUtils.isEmpty(playTitle)?"":playTitle);
+    }
+
     @Override
     protected void initTitleBar() {
 
@@ -106,6 +122,11 @@ public class MainActivity extends BaseActivity implements BaseMainTabFragment.On
     @Override
     public void onDelete(List<String> list) {
         L.v();
+    }
+
+    @Override
+    public void onDataSuccess() {
+        setPlayBarState();
     }
 
     @Override
@@ -213,6 +234,7 @@ public class MainActivity extends BaseActivity implements BaseMainTabFragment.On
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSpeechStart(SpeechStartEvent event) {
         L.v(event.getArticle());
+        setPlayBarState();
     }
 
 

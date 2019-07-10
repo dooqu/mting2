@@ -24,6 +24,7 @@ public abstract class BaseMainTabFragment extends BasePresenterFragment {
     public interface OnControllerListener{
         void onPlay(String id);
         void onDelete(List<String> list);
+        void onDataSuccess();
     }
 
 }

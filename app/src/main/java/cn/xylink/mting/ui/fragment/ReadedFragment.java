@@ -19,6 +19,7 @@ import cn.xylink.mting.bean.UnreadRequest;
 import cn.xylink.mting.contract.UnreadContract;
 import cn.xylink.mting.presenter.ReadedPresenter;
 import cn.xylink.mting.speech.data.SpeechList;
+import cn.xylink.mting.speech.event.SpeechEndEvent;
 import cn.xylink.mting.speech.event.SpeechErrorEvent;
 import cn.xylink.mting.speech.event.SpeechProgressEvent;
 import cn.xylink.mting.speech.event.SpeechStartEvent;
@@ -89,7 +90,9 @@ public class ReadedFragment extends BaseMainTabFragment implements UnreadAdapter
     @Override
     public void onItemClick(Article article) {
         List<Article> list = new ArrayList<>();
+        article.setProgress(0);
         list.add(article);
+
         SpeechList.getInstance().pushFront(list);
         mControllerListener.onPlay(article.getArticleId());
     }
@@ -121,6 +124,13 @@ public class ReadedFragment extends BaseMainTabFragment implements UnreadAdapter
 
 
     @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onSpeechEnd(SpeechEndEvent event) {
+        L.v(event);
+        mAdapter.clearData();
+        getReadedData();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSpeechError(SpeechErrorEvent event) {
         L.v(event);
     }
@@ -128,7 +138,7 @@ public class ReadedFragment extends BaseMainTabFragment implements UnreadAdapter
     @Override
     public void onSuccessUnread(List<Article> unreadList) {
         if (unreadList != null) {
-            mAdapter.refreshData();
+            mAdapter.setData(unreadList);
         }
     }
 

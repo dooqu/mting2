@@ -44,9 +44,16 @@ public class ReadedAdapter extends RecyclerView.Adapter<ReadedAdapter.ReadedHold
     }
 
     public void refreshData() {
-//        mCurrent = SpeechList.getInstance().getCurrent();
-//        mData = SpeechList.getInstance().getArticleList();
-//        notifyDataSetChanged();
+        mCurrent = SpeechList.getInstance().getCurrent();
+        notifyDataSetChanged();
+    }
+    public void setData(List<Article> list) {
+        mData = list;
+        notifyDataSetChanged();
+    }
+
+    public void clearData(){
+        mData.clear();
     }
 
     public void setProgress(Article pro) {
@@ -82,7 +89,7 @@ public class ReadedAdapter extends RecyclerView.Adapter<ReadedAdapter.ReadedHold
         } else {
             holder.tvProgress.setText("");
         }
-        if (mCurrent != null ? mCurrent.getArticleId().equals(data.getArticleId()) : position == 0) {
+        if (mCurrent != null ? mCurrent.getArticleId().equals(data.getArticleId()) : false) {
             mCurrentPosition = position;
             holder.tvTitle.setTextColor(mContext.getResources().getColor(R.color.c488def));
             holder.tvFrom.setTextColor(mContext.getResources().getColor(R.color.c488def));
@@ -108,7 +115,7 @@ public class ReadedAdapter extends RecyclerView.Adapter<ReadedAdapter.ReadedHold
 
     public static String getPercentFormat(double d) {
         NumberFormat nf = java.text.NumberFormat.getPercentInstance();
-        nf.setMaximumIntegerDigits(2);//小数点前保留几位
+        nf.setMaximumIntegerDigits(3);//小数点前保留几位
         nf.setMinimumFractionDigits(0);// 小数点后保留几位
         String str = nf.format(d);
         return str;

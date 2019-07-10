@@ -118,6 +118,7 @@ public class UnreadFragment extends BaseMainTabFragment implements UnreadAdapter
         if (unreadList!=null){
             SpeechList.getInstance().appendArticles(unreadList);
             mAdapter.refreshData();
+            mControllerListener.onDataSuccess();
         }
     }
 

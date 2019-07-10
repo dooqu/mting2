@@ -108,7 +108,7 @@ public class UnreadAdapter extends RecyclerView.Adapter<UnreadAdapter.UnreadHold
 
     public static String getPercentFormat(double d) {
         NumberFormat nf = java.text.NumberFormat.getPercentInstance();
-        nf.setMaximumIntegerDigits(2);//小数点前保留几位
+        nf.setMaximumIntegerDigits(3);//小数点前保留几位
         nf.setMinimumFractionDigits(0);// 小数点后保留几位
         String str = nf.format(d);
         return str;
