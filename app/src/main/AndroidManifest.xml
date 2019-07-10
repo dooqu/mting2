@@ -28,10 +28,6 @@
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_main"
             android:theme="@style/AppTheme">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
 
         <service android:name=".speech.SpeechService" />
@@ -64,6 +60,10 @@
 
         <activity android:name=".ui.activity.ArticleDetailActivity"
             android:theme="@style/DetailTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity
             android:name="com.tencent.connect.common.AssistActivity"
@@ -73,6 +73,8 @@
         <activity android:name=".ui.activity.GetCodeActivity" />
         <activity android:name=".ui.activity.SetPhonePwdActivity" />
         <activity android:name=".ui.activity.user.LoginPwdActivity" />
+        <activity android:name=".ui.activity.BindingPhoneActivity" />
+        <activity android:name=".ui.activity.BindingPhoneQQWxActivity" />
     </application>
 
 </manifest>

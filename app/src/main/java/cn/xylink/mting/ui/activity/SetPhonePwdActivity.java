@@ -34,6 +34,8 @@ public class SetPhonePwdActivity extends BasePresenterActivity implements Regist
 
     public static final String EXTRA_PHONE = "extra_phone";
     public static final String EXTRA_SOURCE = "extra_source";
+    public static final String EXTRA_TYPE = "extra_register_type";
+
     @BindView(R.id.et_pwd)
     EditText etPwd;
     @BindView(R.id.tv_include_title)
@@ -43,8 +45,11 @@ public class SetPhonePwdActivity extends BasePresenterActivity implements Regist
 
     private String phone;
     private String ticket;
+    private String source;
 
     private RegisterPresenter registerPresenter;
+    private int type = 0;
+
 
     @Override
     protected void preView() {
@@ -85,6 +90,8 @@ public class SetPhonePwdActivity extends BasePresenterActivity implements Regist
     protected void initData() {
         phone = getIntent().getStringExtra(GetCodeActivity.EXTRA_PHONE);
         ticket = getIntent().getStringExtra(GetCodeActivity.EXTRA_TICKET);
+        type = getIntent().getIntExtra(EXTRA_TYPE,0);
+        L.v("phone",phone,"ticket",ticket,"type",type);
     }
 
     @Override
@@ -126,7 +133,7 @@ public class SetPhonePwdActivity extends BasePresenterActivity implements Regist
                 requset.setPassword( new Base64().encodeToString(pwds));
                 requset.setTicket(ticket);
                 requset.doSign();
-                registerPresenter.onRegister(requset);
+                registerPresenter.onRegister(requset,type);
                 break;
         }
     }

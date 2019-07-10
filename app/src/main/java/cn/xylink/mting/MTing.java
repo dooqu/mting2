@@ -18,6 +18,7 @@ import cn.xylink.mting.openapi.WXapi;
 import cn.xylink.mting.speech.SpeechService;
 import cn.xylink.mting.speech.data.SpeechList;
 import cn.xylink.mting.utils.ContentManager;
+import cn.xylink.mting.utils.ImageUtils;
 import okhttp3.OkHttpClient;
 
 public class MTing extends Application {
@@ -34,6 +35,7 @@ public class MTing extends Application {
         WXapi.init(this);
         QQApi.init(this);
         initOkHttp();
+        ImageUtils.init(this);
 
         List<Article> list = new ArrayList<>();
 

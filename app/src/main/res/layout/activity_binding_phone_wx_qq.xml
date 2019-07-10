@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/title_include"/>
+
+    <cn.xylink.mting.widget.ZpPhoneEditText
+        android:id="@+id/et_phone"
+        android:layout_width="match_parent"
+        android:layout_height="42dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginEnd="50dp"
+        android:layout_marginTop="60dp"
+        android:inputType="phone"
+        android:enabled="false"
+        android:gravity="center_horizontal"
+        android:background="@android:color/transparent"
+        android:maxLength="13"
+        android:textColor="@color/color_blue"
+        android:paddingBottom="10dp"
+        android:textSize="23dp"
+        android:text="132789432432"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textSize="20dp"
+        android:text="已注册账号，是否绑定?"
+        android:layout_marginTop="20dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="62dp"
+        android:gravity="center_horizontal|center_vertical"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/iv_qq_wx"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleType="centerCrop"
+            android:src="@mipmap/img_default"
+           />
+        <ImageView
+            android:layout_marginRight="30dp"
+            android:layout_marginLeft="30dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/binding_icon"/>
+
+        <ImageView
+            android:id="@+id/iv_xyl_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/img_default"
+            android:background="@android:color/transparent"
+            android:scaleType="centerCrop"
+            />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btn_binding"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="75dp"
+        android:background="@drawable/bg_login_loginbtn"
+        android:textColor="@color/white"
+        android:text="绑定手机号"
+        android:textSize="20sp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="50dp"
+        android:gravity="center"
+        android:text="更换手机号"
+        android:textColor="@color/color_login_text_gray"
+        android:textSize="20sp" />
+
+</LinearLayout>

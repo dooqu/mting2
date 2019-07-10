@@ -12,6 +12,6 @@ public interface RegisterContact {
     }
 
     interface Presenter<T> {
-        void onRegister(RegisterRequset request);
+        void onRegister(RegisterRequset request,int requsetType);
     }
 }

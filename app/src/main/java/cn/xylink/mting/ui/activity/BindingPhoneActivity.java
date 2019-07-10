@@ -14,15 +14,15 @@ import butterknife.OnClick;
 import cn.xylink.mting.R;
 import cn.xylink.mting.base.BaseResponse;
 import cn.xylink.mting.bean.CodeInfo;
-import cn.xylink.mting.model.GetCodeRequest;
 import cn.xylink.mting.contract.GetCodeContact;
+import cn.xylink.mting.model.GetCodeRequest;
 import cn.xylink.mting.presenter.GetCodePresenter;
 import cn.xylink.mting.ui.activity.user.LoginPwdActivity;
 import cn.xylink.mting.utils.L;
 import cn.xylink.mting.utils.TingUtils;
 import cn.xylink.mting.widget.ZpPhoneEditText;
 
-public class PhoneLoginActivity extends BasePresenterActivity implements GetCodeContact.IGetCodeView {
+public class BindingPhoneActivity extends BasePresenterActivity implements GetCodeContact.IGetCodeView {
 
     public static final String EXTRA_PHONE = "extra_phone";
     public static final String EXTRA_SOURCE = "extra_source";
@@ -43,7 +43,7 @@ public class PhoneLoginActivity extends BasePresenterActivity implements GetCode
 
     @Override
     protected void preView() {
-        setContentView(R.layout.activity_phone_login);
+        setContentView(R.layout.activity_binding_phone);
         codePresenter = (GetCodePresenter) createPresenter(GetCodePresenter.class);
         codePresenter.attachView(this);
 
@@ -114,7 +114,6 @@ public class PhoneLoginActivity extends BasePresenterActivity implements GetCode
                 requset.source = "register";
                 requset.doSign();
                 codePresenter.onGetCode(requset);
-
                 break;
         }
     }
@@ -131,7 +130,7 @@ public class PhoneLoginActivity extends BasePresenterActivity implements GetCode
 
                 Intent mIntent = new Intent(this, GetCodeActivity.class);
                 mIntent.putExtra(EXTRA_PHONE, phone);
-                mIntent.putExtra(EXTRA_SOURCE,"register");
+
                 mIntent.putExtra(EXTRA_CODE, response.data.getCodeId());
                 startActivity(mIntent);
                 break;

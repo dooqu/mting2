@@ -1,42 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:orientation="vertical"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <include layout="@layout/title_include"/>
+    <include layout="@layout/title_include" />
 
-
-    <cn.xylink.mting.widget.ZpPhoneEditText
-        android:id="@+id/et_phone"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="42dp"
-        android:layout_marginStart="50dp"
-        android:layout_marginEnd="50dp"
         android:layout_marginTop="130dp"
-        android:inputType="phone"
-        android:background="@drawable/bg_edit_bottom_"
-        android:maxLength="13"
-        android:textColor="@color/color_blue"
-        android:paddingBottom="10dp"
-        android:textSize="20dp"
-        android:hint="请输入手机号码" />
+        android:layout_height="wrap_content">
 
+        <cn.xylink.mting.widget.ZpPhoneEditText
+            android:id="@+id/et_phone"
+            android:layout_width="match_parent"
+            android:layout_height="42dp"
+            android:layout_marginStart="50dp"
+
+            android:layout_marginEnd="50dp"
+            android:background="@drawable/bg_edit_bottom_"
+            android:hint="请输入手机号码"
+            android:inputType="phone"
+            android:maxLength="13"
+            android:paddingBottom="10dp"
+            android:textColor="@color/color_blue"
+            android:textSize="20dp" />
+        <ImageView
+            android:id="@+id/iv_del_et"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="50dp"
+            android:visibility="gone"
+            android:src="@mipmap/del_et"/>
+
+    </RelativeLayout>
 
     <Button
         android:id="@+id/btn_next"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="72dp"
         android:layout_marginStart="50dp"
+        android:layout_marginTop="72dp"
         android:layout_marginEnd="50dp"
-        android:textColor="@color/white"
-        android:textSize="20sp"
         android:background="@drawable/bg_phone_default_btn"
-        android:text="下一步" />
+        android:text="下一步"
+        android:textColor="@color/white"
+        android:textSize="20sp" />
 
     <TextView
         android:layout_width="match_parent"
@@ -44,5 +56,5 @@
         android:layout_marginTop="32dp"
         android:gravity="center"
         android:text="未注册手机号登录后，将自动创建账号"
-        android:textColor="@color/color_login_text_gray"/>
+        android:textColor="@color/color_login_text_gray" />
 </LinearLayout>
