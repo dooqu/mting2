@@ -1,8 +1,8 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-    </style>
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar"></style>
+
     <style name="DetailTheme" parent="Theme.AppCompat.Light.NoActionBar">
 
         <item name="android:statusBarColor">@color/color_main_bllue</item>
@@ -15,6 +15,7 @@
         <!-- 避免控件会顶到状态栏上 -->
         <item name="android:fitsSystemWindows">true</item>
     </style>
+
     <style name="base_dim_dialog">
         <item name="android:statusBarColor" tools:targetApi="lollipop">@color/transparent</item>
         <item name="android:layout_width">match_parent</item>
@@ -35,6 +36,19 @@
 
     <style name="FullscreenActionBarStyle" parent="Widget.AppCompat.ActionBar">
         <item name="android:background">@color/black_overlay</item>
+    </style>
+
+    <style name="dialog_bottom_full" parent="android:style/Theme.Dialog">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:scrollHorizontally">true</item>
+    </style>
+
+    <style name="share_animation" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@anim/dialog_enter</item>
+        <item name="android:windowExitAnimation">@anim/dialog_exit</item>
     </style>
 
 </resources>
