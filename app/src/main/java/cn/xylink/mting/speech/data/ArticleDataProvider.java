@@ -144,9 +144,9 @@ public class ArticleDataProvider {
     public void readArticle(String article, float progress) {
         ReadArticleRequest request = new ReadArticleRequest();
         request.setArticleId(article);
-        request.setProgress(0.6f);
-        //request.setRead(progress == 1f ? 1 : 0);
-        request.setRead(0);
+        request.setProgress(progress);
+        request.setRead(progress == 1f ? 1 : 0);
+        //request.setRead(0);
         request.setToken(ContentManager.getInstance().getLoginToken());
         request.doSign();
 

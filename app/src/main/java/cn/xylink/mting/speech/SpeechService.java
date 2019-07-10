@@ -142,8 +142,8 @@ public class SpeechService extends Service {
 
 
     protected void onSaveArticleProgress(Article article, float progress) {
-        //articleDataProvider.readArticle(article.getArticleId(), progress);
-
+        //与云端同步数据状态
+        articleDataProvider.readArticle(article.getArticleId(), progress);
         if(progress == 1)
         {
             EventBus.getDefault().post(new SpeechEndEvent(article));
