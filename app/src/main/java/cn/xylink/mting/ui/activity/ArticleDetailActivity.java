@@ -1,18 +1,23 @@
 package cn.xylink.mting.ui.activity;
 
-import android.content.Intent;
-import android.graphics.Color;
+import android.view.View;
 
-import com.wuhenzhizao.titlebar.widget.CommonTitleBar;
-
-import butterknife.BindView;
+import butterknife.OnClick;
 import cn.xylink.mting.R;
 import cn.xylink.mting.base.BaseActivity;
+import cn.xylink.mting.ui.dialog.ArticleDetailFont;
+import cn.xylink.mting.ui.dialog.ArticleDetailSetting;
+import cn.xylink.mting.ui.dialog.ArticleDetailShare;
 
 /**
  * Created by liuhe. on Date: 2019/7/2
  */
 public class ArticleDetailActivity extends BaseActivity {
+
+
+    private ArticleDetailSetting mArticleDetailSetting;
+    private ArticleDetailFont mArticleDetailFont;
+    private ArticleDetailShare mArticleDetailShare;
 
     @Override
     protected void preView() {
@@ -27,16 +32,33 @@ public class ArticleDetailActivity extends BaseActivity {
     @Override
     protected void initData() {
 
-
-
     }
 
     @Override
     protected void initTitleBar() {
-//        titleBar.setBackgroundColor(Color.parseColor("#488def"));
-//        titleBar.getLeftImageButton().setImageResource(R.mipmap.back);
-//        titleBar.setStatusBarColor(R.color.color_main_bllue);
-//        titleBar.getRightTextView().setTextColor(Color.parseColor("#ffffff"));
-//        titleBar.getRightTextView().setText("反馈");
+    }
+
+    @OnClick({R.id.ll_setting, R.id.iv_setting, R.id.tv_setting})
+    void onSettingClick(View v) {
+        if (mArticleDetailSetting == null) {
+            mArticleDetailSetting = new ArticleDetailSetting();
+        }
+        mArticleDetailSetting.showDialog(this);
+    }
+
+    @OnClick({R.id.ll_font, R.id.iv_font, R.id.tv_font})
+    void onFontClick(View v) {
+        if (mArticleDetailFont == null) {
+            mArticleDetailFont = new ArticleDetailFont();
+        }
+        mArticleDetailFont.showDialog(this);
+    }
+
+    @OnClick({R.id.ll_share, R.id.iv_share, R.id.tv_share})
+    void onShareClick(View v) {
+        if (mArticleDetailShare == null) {
+            mArticleDetailShare = new ArticleDetailShare();
+        }
+        mArticleDetailShare.showDialog(this);
     }
 }
