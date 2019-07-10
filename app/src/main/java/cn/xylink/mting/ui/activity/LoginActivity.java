@@ -109,7 +109,7 @@ public class LoginActivity extends BaseActivity {
             String access_token = event.getAccess_token();
             String  openId = event.getOpenid();
             LogUtils.e("nana", "WX access_token: " + access_token + ",,,openId: " + openId);
-            Intent intent = new Intent(this,BindUserPhoneThirdPlatformActivity.class);
+            Intent intent = new Intent(this,BindingPhoneQQWxActivity.class);
             startActivity(intent);
         }
 

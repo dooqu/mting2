@@ -31,6 +31,7 @@ public class GetCodeActivity extends BasePresenterActivity implements GetCodeCon
     private CodeInfo codeInfo;
     public static final String EXTRA_TICKET = "extra_ticket";
     public static final String EXTRA_PHONE = "extra_phone";
+    public static final String EXTRA_SOURCE = "extra_source";
 
     @BindView(R.id.tv_count_down)
     TextView tvCountDown;
@@ -42,11 +43,11 @@ public class GetCodeActivity extends BasePresenterActivity implements GetCodeCon
     TextView tvTitle;
 
 
-
     private boolean isFinished;
     private String phone;
     private String codeID;
     private String ticket;
+    private String source;
 
     CountDownTimer timer;
 
@@ -56,8 +57,7 @@ public class GetCodeActivity extends BasePresenterActivity implements GetCodeCon
     }
 
 
-    public void resetDownTimer()
-    {
+    public void resetDownTimer() {
         timer = new CountDownTimer(60 * 1000, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
@@ -75,13 +75,12 @@ public class GetCodeActivity extends BasePresenterActivity implements GetCodeCon
 
     @Override
     protected void initView() {
-
-        resetDownTimer();
-
+        if ("register".equals(source))
+            resetDownTimer();
         pCcode.setOnCompleteListener(new PhoneCode.Listener() {
             @Override
             public void onComplete(String content) {
-                L.v("content",content);
+                L.v("content", content);
                 CheckPhoneRequest requset = new CheckPhoneRequest();
                 requset.source = "register";
                 requset.codeId = codeID;
@@ -108,12 +107,15 @@ public class GetCodeActivity extends BasePresenterActivity implements GetCodeCon
 
         phone = getIntent().getStringExtra(PhoneLoginActivity.EXTRA_PHONE);
         codeID = getIntent().getStringExtra(PhoneLoginActivity.EXTRA_CODE);
+        source = getIntent().getStringExtra(EXTRA_SOURCE);
 
         codePresenter = (GetCodePresenter) createPresenter(GetCodePresenter.class);
         codePresenter.attachView(this);
 
         checkPhonePresenter = (CheckPhonePresenter) createPresenter(CheckPhonePresenter.class);
         checkPhonePresenter.attachView(this);
+
+        requsetCode();
     }
 
     @Override
@@ -123,12 +125,10 @@ public class GetCodeActivity extends BasePresenterActivity implements GetCodeCon
 
     @Override
     public void onCodeSuccess(BaseResponse<CodeInfo> response) {
-        if(response.data != null)
-        {
+        if (response.data != null) {
             codeID = response.data.getCodeId();
         }
-        if(response.code  == 200)
-        {
+        if (response.code == 200) {
             resetDownTimer();
             return;
         }
@@ -139,17 +139,23 @@ public class GetCodeActivity extends BasePresenterActivity implements GetCodeCon
 
     }
 
+
+    public void requsetCode() {
+        GetCodeRequest requset = new GetCodeRequest();
+        requset.phone = phone.replaceAll(" ", "");
+        requset.source = source;
+        requset.doSign();
+        codePresenter.onGetCode(requset);
+    }
+
     @OnClick(R.id.tv_count_down)
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.tv_count_down:
                 if (isFinished) {
-                    GetCodeRequest requset = new GetCodeRequest();
-                    requset.setDeviceId(TingUtils.getDeviceId(getApplicationContext()));
-                    requset.phone = phone.replaceAll(" ", "");
-                    requset.source = "register";
-                    requset.doSign();
-                    codePresenter.onGetCode(requset);
+                    pCcode.clearText();
+                    requsetCode();
+
                 }
                 break;
         }
@@ -157,13 +163,19 @@ public class GetCodeActivity extends BasePresenterActivity implements GetCodeCon
 
     @Override
     public void onCheckPhoneSuccess(BaseResponse<CheckInfo> response) {
-        L.v("code",response.code);
+        L.v("code", response.code);
 
-        if(response.data != null){
+        if (response.data != null) {
             ticket = response.data.getTicket();
-            Intent mIntent = new Intent(this,SetPhonePwdActivity.class);
-            mIntent.putExtra(EXTRA_TICKET,ticket);
-            mIntent.putExtra(EXTRA_PHONE,phone.replaceAll(" ",""));
+            Intent mIntent = new Intent(this, SetPhonePwdActivity.class);
+            mIntent.putExtra(EXTRA_TICKET, ticket);
+            mIntent.putExtra(EXTRA_PHONE, phone.replaceAll(" ", ""));
+            if(source.equals("register")){
+                mIntent.putExtra(SetPhonePwdActivity.EXTRA_TYPE,1);
+            }else if(source.equals("forgot"))
+            {
+                mIntent.putExtra(SetPhonePwdActivity.EXTRA_TYPE,2);
+            }
             startActivity(mIntent);
 
         }

@@ -27,6 +27,7 @@ import cn.xylink.mting.model.LoginRequset;
 import cn.xylink.mting.model.data.Const;
 import cn.xylink.mting.presenter.LoginPresenter;
 import cn.xylink.mting.ui.activity.BasePresenterActivity;
+import cn.xylink.mting.ui.activity.GetCodeActivity;
 import cn.xylink.mting.ui.activity.MainActivity;
 import cn.xylink.mting.ui.activity.PhoneLoginActivity;
 import cn.xylink.mting.utils.ContentManager;
@@ -100,11 +101,23 @@ public class LoginPwdActivity extends BasePresenterActivity implements LoginCont
 
 
     @OnClick({R.id.btn_next
-    ,R.id.pwd_icon})
+    ,R.id.pwd_icon,R.id.btn_left,R.id.tv_forget_pwd})
     public void onClick(View v){
 
         switch (v.getId())
         {
+            case R.id.tv_forget_pwd:{
+
+                Intent mIntent = new Intent(this, GetCodeActivity.class);
+                mIntent.putExtra(EXTRA_PHONE, phone);
+                mIntent.putExtra(EXTRA_SOURCE,"forgot");
+                startActivity(mIntent);
+
+                break;
+            }
+            case R.id.btn_left:
+                finish();
+                break;
             case R.id.pwd_icon:
                 if (isChecked){
                     etPwd.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);// 输入为密码且可见
@@ -158,6 +171,7 @@ public class LoginPwdActivity extends BasePresenterActivity implements LoginCont
             ContentManager.getInstance().setLoginToken(response.data.getToken());
             Intent mIntent = new Intent(this, MainActivity.class);
             startActivity(mIntent);
+            finish();
         }
     }
 
