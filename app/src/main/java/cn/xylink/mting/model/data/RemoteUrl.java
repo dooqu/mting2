@@ -28,5 +28,13 @@ public class RemoteUrl {
     public static String getUnreadUrl(){
         return URL_BASE + "/api/sct/v2/article/unread/list";
     }
+    //已读
+    public static String getReadedUrl(){
+        return URL_BASE + "/api/sct/v2/article/existread/list";
+    }
+    //收藏
+    public static String getStoreUrl(){
+        return URL_BASE + "/api/sct/v2/article/store/list";
+    }
 
 }
