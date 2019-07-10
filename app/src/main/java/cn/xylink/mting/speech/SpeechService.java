@@ -15,6 +15,7 @@ import org.greenrobot.eventbus.EventBus;
 import cn.xylink.mting.bean.Article;
 import cn.xylink.mting.speech.data.ArticleDataProvider;
 import cn.xylink.mting.speech.data.SpeechList;
+import cn.xylink.mting.speech.event.SpeechEndEvent;
 import cn.xylink.mting.speech.event.SpeechErrorEvent;
 import cn.xylink.mting.speech.event.SpeechProgressEvent;
 import cn.xylink.mting.speech.event.SpeechStartEvent;
@@ -142,6 +143,12 @@ public class SpeechService extends Service {
 
     protected void onSaveArticleProgress(Article article, float progress) {
         //articleDataProvider.readArticle(article.getArticleId(), progress);
+
+        if(progress == 1)
+        {
+            EventBus.getDefault().post(new SpeechEndEvent(article));
+            Log.d("xylink", "post:SpeechEndEvent:" + article.getTitle());
+        }
         Log.d("xylink", "onSaveProgress:" + article.getTitle() + "=>" + progress);
     }
 
