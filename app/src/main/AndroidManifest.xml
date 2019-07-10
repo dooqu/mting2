@@ -24,22 +24,24 @@
         android:theme="@style/AppTheme"
         tools:replace="android:appComponentFactory">
         <activity
-            android:name=".ui.activity.MainActivity"
+            android:name=".ui.SplashActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_main"
             android:theme="@style/AppTheme">
-
-        </activity>
-
-        <service android:name=".speech.SpeechService" />
-
-        <activity android:name=".ui.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter></activity>
-        <activity android:name=".ui.activity.SpeechServicActivity" />
+            </intent-filter>
+        </activity>
+
+        <service android:name=".speech.SpeechService" />
+
+        <activity android:name=".ui.activity.MainActivity">
+        </activity>
+        <activity android:name=".ui.activity.SpeechServicActivity" >
+
+        </activity>
         <activity android:name=".ui.activity.GuideActivity" />
         <activity android:name=".ui.activity.LoginActivity" />
         <activity
@@ -70,6 +72,8 @@
             android:screenOrientation="behind"></activity>
         <activity android:name=".ui.activity.PhoneLoginActivity" />
         <activity android:name=".ui.activity.GetCodeActivity" />
+        <activity android:name=".ui.activity.SetPhonePwdActivity" />
+        <activity android:name=".ui.activity.user.LoginPwdActivity" />
     </application>
 
 </manifest>

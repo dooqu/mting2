@@ -11,20 +11,21 @@ import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.OnClick;
 import cn.xylink.mting.R;
-import cn.xylink.mting.base.BaseActivity;
-import cn.xylink.mting.bean.BaseResponse;
+import cn.xylink.mting.base.BaseResponse;
 import cn.xylink.mting.bean.CodeInfo;
-import cn.xylink.mting.bean.GetCodeRequest;
+import cn.xylink.mting.model.GetCodeRequest;
 import cn.xylink.mting.contract.GetCodeContact;
 import cn.xylink.mting.presenter.GetCodePresenter;
+import cn.xylink.mting.ui.activity.user.LoginPwdActivity;
 import cn.xylink.mting.utils.L;
 import cn.xylink.mting.utils.TingUtils;
 import cn.xylink.mting.widget.ZpPhoneEditText;
 
-public class PhoneLoginActivity extends BasePresenterActivity implements GetCodeContact.IGetCodeView  {
+public class PhoneLoginActivity extends BasePresenterActivity implements GetCodeContact.IGetCodeView {
 
     public static final String EXTRA_PHONE = "extra_phone";
     public static final String EXTRA_SOURCE = "extra_source";
+    public static final String EXTRA_CODE = "extra_code";
     @BindView(R.id.et_phone)
     ZpPhoneEditText etPhone;
     @BindView(R.id.tv_include_title)
@@ -33,13 +34,15 @@ public class PhoneLoginActivity extends BasePresenterActivity implements GetCode
     Button mBtnNext;
 
     private GetCodePresenter codePresenter;
+    private String phone;
+
 
     @Override
     protected void preView() {
         setContentView(R.layout.activity_phone_login);
-
         codePresenter = (GetCodePresenter) createPresenter(GetCodePresenter.class);
         codePresenter.attachView(this);
+
     }
 
     @Override
@@ -93,10 +96,9 @@ public class PhoneLoginActivity extends BasePresenterActivity implements GetCode
                     Toast.makeText(this,"请输入正确的手机号",Toast.LENGTH_SHORT).show();
                     return;
                 }
-                String phone = etPhone.getText().toString();
-
+                phone = etPhone.getText().toString();
                 GetCodeRequest requset = new GetCodeRequest();
-                requset.deviceId = TingUtils.getDeviceId(getApplicationContext());
+                requset.setDeviceId(TingUtils.getDeviceId(getApplicationContext()));
                 requset.phone = phone.replaceAll(" ", "");
                 requset.source = "register";
                 requset.doSign();
@@ -105,19 +107,44 @@ public class PhoneLoginActivity extends BasePresenterActivity implements GetCode
         }
     }
 
+
     @Override
     public void onCodeSuccess(BaseResponse<CodeInfo> response) {
-        L.v(response.data.toString());
+        final int code = response.code;
 
+        switch (code)
+        {
+            case 200:
+            case -3:{
+
+                Intent mIntent = new Intent(this, GetCodeActivity.class);
+                mIntent.putExtra(EXTRA_PHONE, phone);
+
+                mIntent.putExtra(EXTRA_CODE, response.data.getCodeId());
+                startActivity(mIntent);
+                break;
+            }
+            case -2: {
+                Intent mIntent = new Intent(this, LoginPwdActivity.class);
+                mIntent.putExtra(EXTRA_PHONE, phone);
+                startActivity(mIntent);
+                break;
+            }
+        }
     }
 
     @Override
     public void onCodeError(int code, String errorMsg) {
-        switch (code)
-        {
-            case -2:
-
-                break;
-        }
+        L.v("code",code);
+//        switch (code)
+//        {
+//            case -3:
+//
+//                Intent mIntent = new Intent(this,GetCodeActivity.class);
+//                mIntent.putExtra(EXTRA_PHONE,phone);
+//                mIntent.putExtra(EXTRA_CODE,)
+//                startActivity(mIntent);
+//                break;
+//        }
     }
 }

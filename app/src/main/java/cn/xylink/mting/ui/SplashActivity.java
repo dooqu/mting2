@@ -14,11 +14,20 @@ import java.util.ArrayList;
 
 import cn.xylink.mting.R;
 import cn.xylink.mting.base.BaseActivity;
+import cn.xylink.mting.base.BaseResponse;
+import cn.xylink.mting.bean.UserInfo;
+import cn.xylink.mting.contract.CheckTokenContact;
+import cn.xylink.mting.model.CheckTokenRequest;
+import cn.xylink.mting.presenter.CheckTokenPresenter;
+import cn.xylink.mting.ui.activity.BasePresenterActivity;
 import cn.xylink.mting.ui.activity.GuideActivity;
+import cn.xylink.mting.ui.activity.MainActivity;
 import cn.xylink.mting.ui.activity.SpeechServicActivity;
 
-public class SplashActivity extends BaseActivity {
+public class SplashActivity extends BasePresenterActivity implements CheckTokenContact.ICheckTokenView {
 
+
+    private CheckTokenPresenter tokenPresenter;
     @Override
     protected void preView() {
         setContentView(R.layout.activity_splash);
@@ -27,7 +36,7 @@ public class SplashActivity extends BaseActivity {
     @Override
     protected void initView() {
 
-        if(true)
+        if(false)
         {
             startActivity(new Intent(this, SpeechServicActivity.class));
             return;
@@ -41,12 +50,10 @@ public class SplashActivity extends BaseActivity {
         new Handler(new Handler.Callback() {
             @Override
             public boolean handleMessage(Message msg) {
-                if (Build.VERSION.SDK_INT < 23) {
-                    startActivity(new Intent(SplashActivity.this, GuideActivity.class));
-                    finish();
-                } else {
-                    initPermission();
-                }
+                CheckTokenRequest requset = new CheckTokenRequest();
+                requset.doSign();
+                tokenPresenter.onCheckToken(requset);
+
                 return false;
             }
         }).sendEmptyMessageDelayed(0, 3000);
@@ -54,6 +61,9 @@ public class SplashActivity extends BaseActivity {
 
     @Override
     protected void initData() {
+
+        tokenPresenter = (CheckTokenPresenter) createPresenter(CheckTokenPresenter.class);
+        tokenPresenter.attachView(this);
 
     }
 
@@ -108,5 +118,40 @@ public class SplashActivity extends BaseActivity {
             startActivity(new Intent(SplashActivity.this, GuideActivity.class));
         }
         finish();
+    }
+
+    @Override
+    public void onCheckTokenSuccess(BaseResponse<UserInfo> response) {
+
+        switch (response.code)
+        {
+            case 200:
+                startActivity(new Intent(SplashActivity.this, MainActivity.class));
+                finish();
+                break;
+            default:
+                if (Build.VERSION.SDK_INT < 23) {
+                    startActivity(new Intent(SplashActivity.this, GuideActivity.class));
+                    finish();
+                } else {
+                    initPermission();
+                }
+                break;
+        }
+    }
+
+    @Override
+    public void onCheckTokenError(int code, String errorMsg) {
+
+    }
+
+    @Override
+    public void showLoading() {
+
+    }
+
+    @Override
+    public void hideLoading() {
+
     }
 }

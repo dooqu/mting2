@@ -42,9 +42,9 @@ public abstract class BaseActivity extends AppCompatActivity {
 //        }
         preView();
         ButterKnife.bind(this);
+        initData();
         initView();
         initTitleBar();
-        initData();
     }
 
 

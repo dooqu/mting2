@@ -8,7 +8,6 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
-import android.telephony.ServiceState;
 import android.util.Log;
 
 import org.greenrobot.eventbus.EventBus;
@@ -24,30 +23,61 @@ import cn.xylink.mting.speech.event.SpeechStopEvent;
 
 public class SpeechService extends Service {
 
+    /*SpeechService的状态描述类型*/
     public enum SpeechServiceState {
+        /*准备就绪*/
         Ready,
+        /*播放中*/
         Playing,
+        /*暂停中*/
         Paused,
+        /*播放完成*/
         Stoped,
+        /*加载中*/
         Loadding,
+        /*发生错误*/
         Error
     }
 
-    public static enum TickCountMode {
+    /*
+    定时器类型，用于service.setCountDown
+     */
+    public enum CountDownMode {
+        /*定时器关闭*/
         None,
+        /*播放数量定时器*/
         NumberCount,
+        /*分钟定时器*/
         MinuteCount
     }
 
+    /*TTS 播报接口对象*/
     Speechor speechor;
+
+    /*binder 对象，用来返回service对象*/
     IBinder binder = new SpeechBinder();
+
+    /*Speech 算法的常用函数*/
     SpeechHelper helper = new SpeechHelper();
+
+    /*播放列表，speechList是对全局SpeechList对象的引用*/
     SpeechList speechList = SpeechList.getInstance();
+
+    /*SpeechService的状态*/
     SpeechServiceState serviceState;
+
+    /*常用对Article的网络操作类*/
     ArticleDataProvider articleDataProvider;
-    int tickcount;
-    TickCountMode tickCountMode;
-    Timer tickCountTimer;
+
+    /*倒计时数值，可以表示倒计时的分钟数，也可以表示倒计时的播放数*/
+    int countdownValue;
+
+    /*指示countdownValue的类型*/
+    CountDownMode countDownMode;
+
+    /*分钟倒计时要使用的Timer，没分钟递减一次*/
+    Timer countdownTimer;
+
 
 
     public class SpeechBinder extends Binder {
@@ -56,10 +86,10 @@ public class SpeechService extends Service {
         }
     }
 
+
     @Override
     public void onCreate() {
         super.onCreate();
-
 
         serviceState = SpeechServiceState.Ready;
         articleDataProvider = new ArticleDataProvider(this);
@@ -67,30 +97,37 @@ public class SpeechService extends Service {
             @Override
             public void onStateChanged(SpeechorState speakerState) {
                 synchronized (SpeechService.this) {
-                    //播放完毕
+                    Article currentArticle = SpeechService.this.getSelected();
+                    //在每个文章播放完成后，做以下逻辑判定
                     if (speakerState == SpeechorState.SpeechorStateReady) {
-
-                        if (SpeechService.this.tickCountMode == TickCountMode.NumberCount && --tickcount == 0) {
-                            SpeechService.this.cancelTickCountMode();
+                        currentArticle.setProgress(1);
+                        SpeechService.this.onSaveArticleProgress(currentArticle, 1);
+                        //先预先设置一个播放停止信号默认值
+                        SpeechStopEvent.StopReason reason = SpeechStopEvent.StopReason.ListIsNull;
+                        //在每个播放完成的时机，判断下当前是否有Number定时器， 如果有，就减一，如果减一等于0，说明定时器到期
+                        if (SpeechService.this.countDownMode == CountDownMode.NumberCount && --countdownValue == 0) {
+                            SpeechService.this.cancelCountDown();
+                            reason = SpeechStopEvent.StopReason.CountDownToZero;
                         }
+                        //如果定时器没有走， 那继续判定是否还有下一个文章可播放， 如果有，去播放；
                         else if (SpeechService.this.hasNext()) {
                             SpeechService.this.playNextInvokeByInternal();
                             return;
                         }
-                        /*
-                        不是要播放下一个，因为当前没有下一个了， 而是要通过playNext、内部为moveNext，删除当前的
-                         */
+                        //不是要播放下一个，因为当前没有下一个了， 而是要通过playNext、内部为moveNext，删除当前的
                         SpeechService.this.moveNext();
                         //没有要读的文章了
                         serviceState = SpeechServiceState.Stoped;
-                        EventBus.getDefault().post(new SpeechStopEvent());
-
+                        EventBus.getDefault().post(new SpeechStopEvent(reason));
                     }
                 }
             }
 
             @Override
             public void onProgress(List<String> textFragments, int index) {
+                synchronized (SpeechService.this) {
+                    speechList.getCurrent().setProgress((float) index / (float) textFragments.size());
+                }
                 EventBus.getDefault().post(new SpeechProgressEvent(index, textFragments, speechList.getCurrent()));
             }
 
@@ -100,6 +137,12 @@ public class SpeechService extends Service {
                 EventBus.getDefault().post(new SpeechErrorEvent(errorCode, message, speechList.getCurrent()));
             }
         };
+    }
+
+
+    protected void onSaveArticleProgress(Article article, float progress) {
+        //articleDataProvider.readArticle(article.getArticleId(), progress);
+        Log.d("xylink", "onSaveProgress:" + article.getTitle() + "=>" + progress);
     }
 
     @Override
@@ -123,53 +166,65 @@ public class SpeechService extends Service {
         return binder;
     }
 
+
     public synchronized Speechor.SpeechorState getState() {
         return speechor.getState();
     }
 
-    public synchronized void setTickCountMode(TickCountMode mode, int tickcountValue) {
-        this.tickCountMode = mode;
 
-        if (this.tickCountMode != TickCountMode.None) {
-            if (tickcountValue > 0) {
-                this.tickCountMode = mode;
-                this.tickcount = tickcountValue;
+    /*
+    设定计时器
+     */
+    public synchronized void setCountDown(CountDownMode mode, int tickcountValue) {
+        //如果一个倒计时正在进行，先取消
+        this.cancelCountDown();
+        //参数检查
+        if (tickcountValue <= 0 || mode == CountDownMode.None) {
+            return;
+        }
 
-                if (this.tickCountMode == TickCountMode.MinuteCount) {
-                    tickCountTimer = new Timer();
-                    tickCountTimer.schedule(new TimerTask() {
-                        @Override
-                        public void run() {
-                            synchronized (SpeechService.this) {
-                                if (SpeechService.this.getState() == Speechor.SpeechorState.SpeechorStatePlaying) {
-                                    SpeechService.this.speechor.stop();
-                                    SpeechService.this.serviceState = SpeechServiceState.Stoped;
-                                    EventBus.getDefault().post(new SpeechStopEvent());
-                                }
-                            }
+        this.countDownMode = mode;
+        this.countdownValue = tickcountValue;
+
+        if (mode == CountDownMode.MinuteCount) {
+            countdownTimer = new Timer();
+            countdownTimer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    synchronized (SpeechService.this) {
+                        if (--SpeechService.this.countdownValue == 0 && SpeechService.this.getState() == Speechor.SpeechorState.SpeechorStatePlaying) {
+                            SpeechService.this.speechor.stop();
+                            SpeechService.this.serviceState = SpeechServiceState.Stoped;
+                            SpeechService.this.cancelCountDown();
+                            EventBus.getDefault().post(new SpeechStopEvent(SpeechStopEvent.StopReason.CountDownToZero));
                         }
-                    }, tickcountValue * 1000);
+                    }
                 }
-            }
-        }
-        else {
-            this.cancelTickCountMode();
+            }, 1000 * 60, 1000 * 60);
         }
     }
 
-    public synchronized void cancelTickCountMode() {
-
-        if(this.tickCountMode == TickCountMode.MinuteCount)
-        {
-            if(this.tickCountTimer != null)
-            {
-                this.tickCountTimer.cancel();
-                this.tickCountTimer = null;
+    public synchronized void cancelCountDown() {
+        if (this.countDownMode == CountDownMode.MinuteCount) {
+            if (this.countdownTimer != null) {
+                this.countdownTimer.cancel();
+                this.countdownTimer = null;
             }
         }
-        this.tickCountMode = TickCountMode.None;
-        this.tickcount = 0;
+        this.countDownMode = CountDownMode.None;
+        this.countdownValue = 0;
     }
+
+
+    public synchronized CountDownMode getCountDownMode() {
+        return this.countDownMode;
+    }
+
+
+    public synchronized int getCountDownValue() {
+        return this.countdownValue;
+    }
+
 
     public synchronized int seek(float percentage) {
         //如果当前播放不存在，那返回错误
@@ -189,14 +244,9 @@ public class SpeechService extends Service {
             }
             return index;
         }
-
         return -5;
     }
 
-    public void playArticle(Article article)
-    {
-        prepareArticle(article, false);
-    }
 
     public synchronized boolean pause() {
         if (speechList.getCurrent() == null) {
@@ -249,16 +299,31 @@ public class SpeechService extends Service {
 
 
     public synchronized Article play(String articleId) {
+        Article previousArt = this.speechList.getCurrent();
+        if (previousArt != null && articleId.equals(previousArt.getArticleId()) == false) {
+            if (previousArt.getProgress() != 1) {
+                this.onSaveArticleProgress(previousArt, previousArt.getProgress());
+            }
+        }
+
         Article article = this.speechList.select(articleId);
         if (article != null) {
-            prepareArticleInnternal(article);
+            prepareArticle(article, false);
         }
 
         return article;
     }
 
-    public synchronized Article pushFrontAndPlay(Article article) {
-        Article artcleSelected = this.speechList.topAndSelect(article);
+
+    public synchronized Article addFirstAndPlay(Article article) {
+        Article previousArt = this.speechList.getCurrent();
+        if (previousArt != null && article.getArticleId().equals(previousArt.getArticleId()) == false) {
+            if (previousArt.getProgress() != 1) {
+                this.onSaveArticleProgress(previousArt, previousArt.getProgress());
+            }
+        }
+
+        Article artcleSelected = this.speechList.pushFrontAndSelect(article);
         if (artcleSelected != null) {
             prepareArticle(article, false);
         }
@@ -266,83 +331,63 @@ public class SpeechService extends Service {
         return artcleSelected;
     }
 
-    public synchronized void setSpeed(Speechor.SpeechorSpeed speed)
-    {
+
+    public synchronized void addFirst(List<Article> list) {
+        this.speechList.pushFront(list);
+    }
+
+    public synchronized void setSpeed(Speechor.SpeechorSpeed speed) {
         this.speechor.setSpeed(speed);
     }
 
-    public synchronized Speechor.SpeechorSpeed getSpeed()
-    {
+    public synchronized Speechor.SpeechorSpeed getSpeed() {
         return this.speechor.getSpeed();
     }
 
 
-    private void prepareArticleInnternal(final Article article)
-    {
-        if(serviceState == SpeechServiceState.Playing)
-        {
-            this.speechor.stop();
-        }
-
-        this.articleDataProvider.updateArticle(article, false, (int errorCode, Article ar)->{
-            if(errorCode != 0)
-            {
-                this.serviceState = SpeechServiceState.Ready;
-                EventBus.getDefault().post(new SpeechErrorEvent(errorCode, null, article));
-                return;
-            }
-
-            if(article != null)
-            {
-                if(serviceState == SpeechServiceState.Loadding)
-                {
-                    speechor.reset();
-                    speechor.prepare(article.getTitle());
-                    speechor.prepare(article.getTextBody());
-                    speechor.seek(0);
-
-                    this.serviceState = SpeechServiceState.Playing;
-                }
-            }
-        });
-        EventBus.getDefault().post(new SpeechStartEvent(speechList.getCurrent()));
-    }
-
     private void prepareArticle(final Article article, boolean needSourceEffect) {
-
-        if (serviceState == SpeechServiceState.Playing && speechList.getCurrent() != null) {
+        if (speechList.getCurrent() != null && serviceState == SpeechServiceState.Playing) {
             this.speechor.stop();
         }
+
         this.serviceState = SpeechServiceState.Loadding;
-        this.articleDataProvider.updateArticle(article, needSourceEffect, (int errorcode, Article ar) -> {
-            //网络加载动作结束后，走到这里， 要判定下errorCode
-            if (errorcode != 0) {
-                Log.d("xylink", "加载错误");
-                this.serviceState = SpeechServiceState.Ready;
-                EventBus.getDefault().post(new SpeechErrorEvent(errorcode, null, speechList.getCurrent()));
-                //EventBus 通知？
-                return;
-            }
+        EventBus.getDefault().post(new SpeechStartEvent(speechList.getCurrent()));
+        this.articleDataProvider.loadArticleContent(article, needSourceEffect, (int errorcode, Article articleUpdated) -> {
 
-            //首先判定下回调回来后，是否物是人非，在加载期间，用户可能做了其他操作
-            //比如暂停、切换文章，点选等等
-            if (article != null
-                    && speechList.getCurrent() != null
-                    && article == speechList.getCurrent()) {
-
+            synchronized (this) {
+                //如果回来之后，状态已经不是Loadding，说明在加载期间，有了其他操作
+                if (serviceState != SpeechServiceState.Loadding || articleUpdated != this.speechList.getCurrent()) {
+                    return;
+                }
+                //网络加载动作结束后，走到这里， 要判定下errorCode
+                if (errorcode != 0) {
+                    //文章正文加载错误
+                    this.serviceState = SpeechServiceState.Ready;
+                    EventBus.getDefault().post(new SpeechErrorEvent(errorcode, null, speechList.getCurrent()));
+                    return;
+                }
+                //首先判定下回调回来后，是否物是人非，在加载期间，用户可能做了其他操作
+                //比如暂停、切换文章，点选等等
                 //如果用户在加载期间，没有做其他操作，比如pause、切换文章
-                if (serviceState == SpeechServiceState.Loadding) {
-                    speechor.reset();
-                    speechor.prepare(article.getTitle());
-                    speechor.prepare(article.getTextBody());
-                    speechor.seek(0);
+                speechor.reset();
+                speechor.prepare(article.getTitle());
+                speechor.prepare(article.getTextBody());
 
+                int fragmentSize = speechor.getTextFragments().size();
+                int destFragIndex = helper.seekFragmentIndex(article.getProgress(), speechor.getTextFragments());
+
+                if (destFragIndex >= fragmentSize) {
+                    destFragIndex = fragmentSize - 1;
+                }
+
+                if (speechor.seek(destFragIndex) >= 0) {
                     this.serviceState = SpeechServiceState.Playing;
                 }
-            }
+                else {
+                    this.serviceState = SpeechServiceState.Ready;
+                }
+            } // end synchonized
         });
-
-        EventBus.getDefault().post(new SpeechStartEvent(speechList.getCurrent()));
     }
 
     private boolean moveNext() {
@@ -404,7 +449,6 @@ public class SpeechService extends Service {
     }
 
     public synchronized void removeFromSpeechList(List<String> articleIds) {
-
         boolean isSelectedDeleted = this.speechList.removeSome(articleIds);
         /*
         如果当前正在播放的被删除掉
@@ -427,7 +471,6 @@ public class SpeechService extends Service {
     public synchronized Article getSelected() {
         return this.speechList.getCurrent();
     }
-
 
 
     public synchronized float getProgress() {

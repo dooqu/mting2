@@ -16,6 +16,8 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import cn.xylink.mting.R;
@@ -27,8 +29,10 @@ import cn.xylink.mting.speech.event.SpeechProgressEvent;
 import cn.xylink.mting.speech.event.SpeechStartEvent;
 import cn.xylink.mting.speech.event.SpeechStopEvent;
 import cn.xylink.mting.ui.adapter.MainFragmentAdapter;
+import cn.xylink.mting.ui.fragment.BaseMainTabFragment;
+import cn.xylink.mting.utils.L;
 
-public class MainActivity extends BaseActivity {
+public class MainActivity extends BaseActivity implements BaseMainTabFragment.OnControllerListener {
 
     @BindView(R.id.tv_main_tabar_unread)
     TextView mUnreadTextView;
@@ -43,6 +47,7 @@ public class MainActivity extends BaseActivity {
     private TAB_ENUM mCurrentTabIndex = TAB_ENUM.TAB_UNREAD;
     public SpeechServiceProxy proxy;
     private SpeechService service;
+    private MainFragmentAdapter mTabAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +71,8 @@ public class MainActivity extends BaseActivity {
         TAB_ENUM.TAB_LOVE.setView(mLoveTextView);
         TAB_ENUM.TAB_READED.setView(mReadedTextView);
         TAB_ENUM.TAB_UNREAD.setView(mUnreadTextView);
-        mViewPager.setAdapter(new MainFragmentAdapter(getSupportFragmentManager()));
+        mTabAdapter = new MainFragmentAdapter(getSupportFragmentManager());
+        mViewPager.setAdapter(mTabAdapter);
         mViewPager.setOffscreenPageLimit(TAB_ENUM.values().length);
         EventBus.getDefault().register(this);
         proxy = new SpeechServiceProxy(this) {
@@ -77,12 +83,25 @@ public class MainActivity extends BaseActivity {
                 }
             }
         };
+        proxy.bind();
 
     }
 
     @Override
     protected void initTitleBar() {
 
+    }
+
+    @Override
+    public void onPlay(String id) {
+        L.v();
+        if (service!=null)
+        service.play(id);
+    }
+
+    @Override
+    public void onDelete(List<String> list) {
+        L.v();
     }
 
     public enum TAB_ENUM {
@@ -177,6 +196,7 @@ public class MainActivity extends BaseActivity {
  */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSpeechStart(SpeechStartEvent event) {
+        L.v(event.getArticle());
     }
 
 
@@ -186,6 +206,7 @@ public class MainActivity extends BaseActivity {
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSpeechProgress(SpeechProgressEvent event) {
+        L.v(event.getArticle());
     }
 
 
@@ -194,6 +215,7 @@ public class MainActivity extends BaseActivity {
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSpeechStop(SpeechStopEvent event) {
+        L.v(event);
     }
 
 
@@ -205,6 +227,7 @@ public class MainActivity extends BaseActivity {
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSpeechError(SpeechErrorEvent event) {
+        L.v(event);
     }
 
 
