@@ -16,5 +16,6 @@
     <dimen name="padding_10">10dp</dimen>
     <dimen name="text_18">18sp</dimen>
     <dimen name="text_15">15sp</dimen>
+    <dimen name="dialog_ico_tv_space">16dp</dimen>
 
 </resources>
