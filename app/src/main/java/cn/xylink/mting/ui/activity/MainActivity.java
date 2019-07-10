@@ -98,13 +98,14 @@ public class MainActivity extends BaseActivity implements BaseMainTabFragment.On
 
     private void setPlayBarState() {
         String playTitle = null;
-        Article art= SpeechList.getInstance().getCurrent();
-        if (art==null)
-            art = SpeechList.getInstance().selectFirst();
-        if (art!=null){
+        List<Article> list = SpeechList.getInstance().getArticleList();
+
+        if(list.size() >= 0)
+        {
+            Article art = list.get(0);
             playTitle = art.getTitle();
+            mPlayBarTitle.setText(TextUtils.isEmpty(playTitle)?"":playTitle);
         }
-        mPlayBarTitle.setText(TextUtils.isEmpty(playTitle)?"":playTitle);
     }
 
     @Override
