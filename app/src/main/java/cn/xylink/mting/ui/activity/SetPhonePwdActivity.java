@@ -109,7 +109,7 @@ public class SetPhonePwdActivity extends BasePresenterActivity implements Regist
                 String pwd = etPwd.getText().toString();
                 L.v("pwd",pwd);
                 RegisterRequset requset = new RegisterRequset();
-                requset.deviceId = TingUtils.getDeviceId(getApplicationContext());
+                requset.setDeviceId(TingUtils.getDeviceId(getApplicationContext()));
                 requset.setPhone(phone);
 
                 byte[] pwds = null;

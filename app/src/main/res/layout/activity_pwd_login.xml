@@ -33,7 +33,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/pwd_icon"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="30dp"
+            android:layout_marginRight="35dp"
             android:layout_marginTop="130dp"
             android:src="@mipmap/pwd_hide"/>
         <TextView

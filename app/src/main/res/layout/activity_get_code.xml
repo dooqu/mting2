@@ -23,6 +23,7 @@
         android:layout_marginEnd="50dp"
         android:layout_marginTop="20dp"
         android:inputType="phone"
+        android:enabled="false"
         android:background="@android:color/transparent"
         android:maxLength="13"
         android:textColor="@color/color_blue"

@@ -17,9 +17,12 @@ public class RemoteUrl {
         return URL_BASE + "/api/user/common/v2/login";
     }
     //验证
-
     public static String checkCodeUrl(){
         return URL_BASE + "/api/sms/common/v2/code/check";
+    }
+    //验证token有效接口
+    public static String checkTokenUrl() {
+        return URL_BASE + "/api/user/common/v2/token/check";
     }
     //待读
     public static String getUnreadUrl(){
