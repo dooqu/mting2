@@ -38,6 +38,8 @@ public class GetCodeActivity extends BasePresenterActivity implements GetCodeCon
     ZpPhoneEditText etPhone;
     @BindView(R.id.pc_code)
     PhoneCode pCcode;
+    @BindView(R.id.tv_include_title)
+    TextView tvTitle;
 
 
 
@@ -46,15 +48,17 @@ public class GetCodeActivity extends BasePresenterActivity implements GetCodeCon
     private String codeID;
     private String ticket;
 
+    CountDownTimer timer;
+
     @Override
     protected void preView() {
         setContentView(R.layout.activity_get_code);
     }
 
-    @Override
-    protected void initView() {
 
-        CountDownTimer timer = new CountDownTimer(60 * 1000, 1000) {
+    public void resetDownTimer()
+    {
+        timer = new CountDownTimer(60 * 1000, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 isFinished = false;
@@ -67,6 +71,12 @@ public class GetCodeActivity extends BasePresenterActivity implements GetCodeCon
                 tvCountDown.setText("重新获取");
             }
         }.start();
+    }
+
+    @Override
+    protected void initView() {
+
+        resetDownTimer();
 
         pCcode.setOnCompleteListener(new PhoneCode.Listener() {
             @Override
@@ -76,7 +86,7 @@ public class GetCodeActivity extends BasePresenterActivity implements GetCodeCon
                 requset.source = "register";
                 requset.codeId = codeID;
                 requset.phone = phone.replaceAll(" ", "");
-                requset.deviceId = TingUtils.getDeviceId(getApplicationContext());
+                requset.setDeviceId(TingUtils.getDeviceId(getApplicationContext()));
                 try {
                     requset.code = SafeUtils.getRsaString(content, Const.publicKey);
                 } catch (Exception e) {
@@ -90,6 +100,7 @@ public class GetCodeActivity extends BasePresenterActivity implements GetCodeCon
         });
 
         etPhone.setText(phone);
+        tvTitle.setText("手机号验证");
     }
 
     @Override
@@ -116,6 +127,11 @@ public class GetCodeActivity extends BasePresenterActivity implements GetCodeCon
         {
             codeID = response.data.getCodeId();
         }
+        if(response.code  == 200)
+        {
+            resetDownTimer();
+            return;
+        }
     }
 
     @Override
@@ -129,7 +145,7 @@ public class GetCodeActivity extends BasePresenterActivity implements GetCodeCon
             case R.id.tv_count_down:
                 if (isFinished) {
                     GetCodeRequest requset = new GetCodeRequest();
-                    requset.deviceId = TingUtils.getDeviceId(getApplicationContext());
+                    requset.setDeviceId(TingUtils.getDeviceId(getApplicationContext()));
                     requset.phone = phone.replaceAll(" ", "");
                     requset.source = "register";
                     requset.doSign();
@@ -141,6 +157,8 @@ public class GetCodeActivity extends BasePresenterActivity implements GetCodeCon
 
     @Override
     public void onCheckPhoneSuccess(BaseResponse<CheckInfo> response) {
+        L.v("code",response.code);
+
         if(response.data != null){
             ticket = response.data.getTicket();
             Intent mIntent = new Intent(this,SetPhonePwdActivity.class);

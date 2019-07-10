@@ -98,7 +98,7 @@ public class PhoneLoginActivity extends BasePresenterActivity implements GetCode
                 }
                 phone = etPhone.getText().toString();
                 GetCodeRequest requset = new GetCodeRequest();
-                requset.deviceId = TingUtils.getDeviceId(getApplicationContext());
+                requset.setDeviceId(TingUtils.getDeviceId(getApplicationContext()));
                 requset.phone = phone.replaceAll(" ", "");
                 requset.source = "register";
                 requset.doSign();

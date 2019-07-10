@@ -13,7 +13,7 @@ public class GetCodeRequest extends BaseRequest {
         return "GetCodeRequest{" +
                 "phone='" + phone + '\'' +
                 ", source='" + source + '\'' +
-                ", deviceId='" + deviceId + '\'' +
+                ", deviceId='" + getDeviceId() + '\'' +
                 ", token='" + token + '\'' +
                 ", timestamp=" + timestamp +
                 ", sign='" + sign + '\'' +

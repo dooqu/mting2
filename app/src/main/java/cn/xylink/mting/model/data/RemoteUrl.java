@@ -21,5 +21,9 @@ public class RemoteUrl {
     public static String checkCodeUrl(){
         return URL_BASE + "/api/sms/common/v2/code/check";
     }
+    //验证token有效接口
+    public static String checkTokenUrl(){
+        return URL_BASE + "/api/user/common/v2/token/check";
+    }
 
 }

@@ -2,10 +2,12 @@ package cn.xylink.mting.ui.activity.user;
 
 import android.content.Intent;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,6 +45,10 @@ public class LoginPwdActivity extends BasePresenterActivity implements LoginCont
     @BindView(R.id.btn_next)
     Button mBtnNext;
 
+    @BindView(R.id.pwd_icon)
+    ImageView pwd_icon;
+
+    private boolean isChecked = true;
     private String phone;
 
     private LoginPresenter loginPresenter;
@@ -92,11 +98,24 @@ public class LoginPwdActivity extends BasePresenterActivity implements LoginCont
 
     }
 
-    @OnClick(R.id.btn_next)
+
+    @OnClick({R.id.btn_next
+    ,R.id.pwd_icon})
     public void onClick(View v){
 
         switch (v.getId())
         {
+            case R.id.pwd_icon:
+                if (isChecked){
+                    etPwd.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);// 输入为密码且可见
+                    pwd_icon.setImageResource(R.mipmap.pwd_show);
+                }else {
+                    pwd_icon.setImageResource(R.mipmap.pwd_hide);
+                    etPwd.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD | InputType.TYPE_CLASS_TEXT);// 设置文本类密码（默认不可见），这两个属性必须同时设置
+                }
+                etPwd.setSelection(etPwd.length());
+                isChecked = !isChecked;
+                break;
             case R.id.btn_next:
                 if(etPwd.getText().length() == 0)
                 {
@@ -106,7 +125,7 @@ public class LoginPwdActivity extends BasePresenterActivity implements LoginCont
                 String pwd = etPwd.getText().toString();
 
                 LoginRequset requset = new LoginRequset();
-                requset.deviceId = TingUtils.getDeviceId(getApplicationContext());
+                requset.setDeviceId(TingUtils.getDeviceId(getApplicationContext()));
                 requset.setPhone(phone.replaceAll(" ",""));
 
                 byte[] pwds = null;
