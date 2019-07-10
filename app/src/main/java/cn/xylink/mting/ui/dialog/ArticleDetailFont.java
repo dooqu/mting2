@@ -9,7 +9,7 @@ import cn.xylink.mting.R;
 public class ArticleDetailFont extends ArticleDetailBottomDialog{
     @Override
     public View initView(Context context, Dialog dialog) {
-        View view = View.inflate(context, R.layout.dialog_setting, null);
+        View view = View.inflate(context, R.layout.dialog_font, null);
         view.findViewById(R.id.tv_cancel).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

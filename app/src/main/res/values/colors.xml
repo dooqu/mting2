@@ -18,10 +18,13 @@
     <color name="c333333">#333333</color>
     <color name="c999999">#999999</color>
     <color name="c488def">#488def</color>
+    <color name="c666666">#666666</color>
     <color name="color_login_text_gray">#bbbbbb</color>
 
     <color name="color_main_bllue">#488def</color>
     <color name="color_999999">#999999</color>
     <color name="color_c9c9c9">#c9c9c9</color>
     <color name="color_666666">#666666</color>
+    <color name="color_333333">#333333</color>
+    <color name="color_dedede">#dedede</color>
 </resources>

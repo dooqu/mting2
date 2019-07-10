@@ -10,6 +10,7 @@ import android.text.TextPaint;
 import android.view.Gravity;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -29,10 +30,11 @@ import cn.xylink.mting.speech.event.SpeechProgressEvent;
 import cn.xylink.mting.speech.event.SpeechStartEvent;
 import cn.xylink.mting.speech.event.SpeechStopEvent;
 import cn.xylink.mting.ui.adapter.MainFragmentAdapter;
+import cn.xylink.mting.ui.dialog.MainAddMenuPop;
 import cn.xylink.mting.ui.fragment.BaseMainTabFragment;
 import cn.xylink.mting.utils.L;
 
-public class MainActivity extends BaseActivity implements BaseMainTabFragment.OnControllerListener {
+public class MainActivity extends BaseActivity implements BaseMainTabFragment.OnControllerListener, MainAddMenuPop.OnMainAddMenuListener {
 
     @BindView(R.id.tv_main_tabar_unread)
     TextView mUnreadTextView;
@@ -44,6 +46,8 @@ public class MainActivity extends BaseActivity implements BaseMainTabFragment.On
     DrawerLayout mDrawerLayout;
     @BindView(R.id.vp_main)
     ViewPager mViewPager;
+    @BindView(R.id.iv_main_title_add)
+    ImageView mAddImageView;
     private TAB_ENUM mCurrentTabIndex = TAB_ENUM.TAB_UNREAD;
     public SpeechServiceProxy proxy;
     private SpeechService service;
@@ -104,6 +108,16 @@ public class MainActivity extends BaseActivity implements BaseMainTabFragment.On
         L.v();
     }
 
+    @Override
+    public void onAdd() {
+
+    }
+
+    @Override
+    public void onArrange() {
+
+    }
+
     public enum TAB_ENUM {
         TAB_UNREAD(0, null),
         TAB_READED(1, null),
@@ -141,6 +155,8 @@ public class MainActivity extends BaseActivity implements BaseMainTabFragment.On
             case R.id.iv_main_title_search:
                 break;
             case R.id.iv_main_title_add:
+                MainAddMenuPop pop= new MainAddMenuPop(MainActivity.this, this);
+                pop.showAsRight(mAddImageView);
                 break;
             case R.id.tv_main_tabar_unread:
                 doAnim(mCurrentTabIndex, TAB_ENUM.TAB_UNREAD);

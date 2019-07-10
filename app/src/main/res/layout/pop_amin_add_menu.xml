@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="80dp"
+    android:layout_height="88dp"
+    android:background="@mipmap/bg_main_add_menu_pop"
+    android:paddingLeft="26dp"
+    android:orientation="vertical">
+
+    <Button
+        android:id="@+id/btn_group_member_pop_invite"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="@color/transparent"
+        android:text="添加"
+        android:gravity="left|center_vertical"
+        android:textSize="15sp" />
+
+
+    <Button
+        android:id="@+id/btn_group_member_pop_remove"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="@color/transparent"
+        android:textColor="@color/c666666"
+        android:text="整理"
+        android:gravity="left|center_vertical"
+        android:textSize="15sp" />
+
+</LinearLayout>
