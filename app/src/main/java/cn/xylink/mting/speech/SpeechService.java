@@ -156,7 +156,6 @@ public class SpeechService extends Service {
         speechor.reset();
         speechor.release();
         speechor = null;
-
         articleDataProvider.release();
         articleDataProvider = null;
     }
@@ -404,7 +403,6 @@ public class SpeechService extends Service {
         if (nextExists) {
             prepareArticle(speechList.getCurrent(), false);
         }
-
         return nextExists;
     }
 
@@ -451,7 +449,6 @@ public class SpeechService extends Service {
     public synchronized void removeFromSpeechList(List<String> articleIds) {
         Article currentArt = this.speechList.getCurrent();
         boolean isSelectedDeleted = this.speechList.removeSome(articleIds);
-
         //如果当前正在播放的被删除掉
         if (isSelectedDeleted) {
             this.speechor.stop();
