@@ -16,6 +16,7 @@ import cn.xylink.mting.model.ArticleInfoResponse;
 import cn.xylink.mting.model.data.OkGoUtils;
 import cn.xylink.mting.model.data.ReadArticleRequest;
 import cn.xylink.mting.speech.SoundEffector;
+import cn.xylink.mting.utils.ContentManager;
 import cn.xylink.mting.utils.GsonUtil;
 
 
@@ -98,7 +99,7 @@ public class ArticleDataProvider {
 
         ArticleInfoRequest request = new ArticleInfoRequest();
         request.setArticleId(article.getArticleId());
-        request.setToken("appe11069626a464dcab7eb2f69901f501b");
+        request.setToken(ContentManager.getInstance().getLoginToken());
         request.doSign();
 
         OkGoUtils.getInstance().postData(new IBaseView() {
@@ -121,13 +122,14 @@ public class ArticleDataProvider {
             @Override
             public void onFailure(int code, String errorMsg) {
                 Log.d("xylink", "onFailure");
-                callback.invoke(-code, article);
+                article.setContent(errorMsg);
+                callback.invoke(code,  article);
             }
 
             @Override
             public void onSuccess(ArticleInfoResponse response) {
                 if (callback != null) {
-                    //article.setContent(response.data.getContent());
+                    article.setContent(response.data.getContent());
                     callback.invoke(0, article);
                 }
             }
@@ -142,9 +144,10 @@ public class ArticleDataProvider {
     public void readArticle(String article, float progress) {
         ReadArticleRequest request = new ReadArticleRequest();
         request.setArticleId(article);
-        request.setProgress(progress);
-        request.setRead(progress == 1f ? 1 : 0);
-        request.setToken("appe11069626a464dcab7eb2f69901f501b");
+        request.setProgress(0.6f);
+        //request.setRead(progress == 1f ? 1 : 0);
+        request.setRead(0);
+        request.setToken(ContentManager.getInstance().getLoginToken());
         request.doSign();
 
         OkGoUtils.getInstance().postData(new IBaseView() {

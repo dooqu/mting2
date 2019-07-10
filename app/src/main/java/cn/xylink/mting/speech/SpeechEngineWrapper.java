@@ -10,6 +10,9 @@ import java.util.List;
 import static android.content.Context.AUDIO_SERVICE;
 import static android.media.AudioManager.AUDIOFOCUS_REQUEST_GRANTED;
 
+/*
+Speechor 装饰器
+ */
 public abstract class SpeechEngineWrapper implements Speechor {
 
     Context context;
