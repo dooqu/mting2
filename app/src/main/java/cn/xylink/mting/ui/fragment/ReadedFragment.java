@@ -1,5 +1,6 @@
 package cn.xylink.mting.ui.fragment;
 
+import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -22,6 +23,7 @@ import cn.xylink.mting.speech.event.SpeechErrorEvent;
 import cn.xylink.mting.speech.event.SpeechProgressEvent;
 import cn.xylink.mting.speech.event.SpeechStartEvent;
 import cn.xylink.mting.speech.event.SpeechStopEvent;
+import cn.xylink.mting.ui.adapter.ReadedAdapter;
 import cn.xylink.mting.ui.adapter.UnreadAdapter;
 import cn.xylink.mting.utils.L;
 import cn.xylink.mting.widget.SpaceItemDecoration;
@@ -33,11 +35,11 @@ import cn.xylink.mting.widget.SpaceItemDecoration;
  * 2019/7/8 14:05 : Create ReadedFragment.java (JoDragon);
  * -----------------------------------------------------------------
  */
-public class ReadedFragment extends BaseMainTabFragment implements UnreadAdapter.OnItemClickListener, UnreadContract.IUnreadView{
+public class ReadedFragment extends BaseMainTabFragment implements UnreadAdapter.OnItemClickListener, UnreadContract.IUnreadView {
 
     @BindView(R.id.rv_readed)
     RecyclerView mRecyclerView;
-    private UnreadAdapter mAdapter;
+    private ReadedAdapter mAdapter;
     private ReadedPresenter mPresenter;
 
     @Override
@@ -49,7 +51,7 @@ public class ReadedFragment extends BaseMainTabFragment implements UnreadAdapter
     protected void initView(View view) {
         mPresenter = (ReadedPresenter) createPresenter(ReadedPresenter.class);
         mPresenter.attachView(this);
-        mAdapter = new UnreadAdapter(getActivity(), SpeechList.getInstance().getArticleList(),this);
+        mAdapter = new ReadedAdapter(getActivity(), null, this);
         mRecyclerView.addItemDecoration(new SpaceItemDecoration());
         mRecyclerView.setItemAnimator(null);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
@@ -61,8 +63,14 @@ public class ReadedFragment extends BaseMainTabFragment implements UnreadAdapter
 
     @Override
     protected void initData() {
+        getReadedData();
+    }
+
+    private void getReadedData() {
+        List<Article> list = mAdapter.getArticleList();
+        long at = list != null && list.size() > 0 ? list.get(list.size() - 1).getUpdateAt() : 0;
         UnreadRequest request = new UnreadRequest();
-        request.setUpdateAt(0);
+        request.setUpdateAt(at);
         request.setEvent(UnreadRequest.ENENT_TYPE.refresh.name());
         request.doSign();
         mPresenter.createUnread(request);
@@ -119,8 +127,7 @@ public class ReadedFragment extends BaseMainTabFragment implements UnreadAdapter
 
     @Override
     public void onSuccessUnread(List<Article> unreadList) {
-        if (unreadList!=null){
-            SpeechList.getInstance().appendArticles(unreadList);
+        if (unreadList != null) {
             mAdapter.refreshData();
         }
     }
@@ -129,6 +136,33 @@ public class ReadedFragment extends BaseMainTabFragment implements UnreadAdapter
     public void onErrorUnread(int code, String errorMsg) {
 
     }
+
+    private int mTotalItemCount = 0;
+    private RecyclerView.OnScrollListener scrollListener = new RecyclerView.OnScrollListener() {
+        @Override
+        public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+            super.onScrollStateChanged(recyclerView, newState);
+        }
+
+        @Override
+        public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+            super.onScrolled(recyclerView, dx, dy);
+            L.v();
+            LinearLayoutManager manager = (LinearLayoutManager) recyclerView.getLayoutManager();
+            int visibleItemCount = manager.getChildCount();
+            int lastVisibleItemPosition = manager.findLastVisibleItemPosition();
+            int totalItemCount = manager.getItemCount();
+            L.v("visibleItemCount=" + visibleItemCount);
+            L.v("lastVisibleItemPosition=" + lastVisibleItemPosition);
+            L.v("totalItemCount=" + totalItemCount);
+            L.v("mTotalItemCount=" + mTotalItemCount);
+            if (visibleItemCount > 0 && lastVisibleItemPosition >= totalItemCount - 15
+                    && totalItemCount != mTotalItemCount) {
+                mTotalItemCount = totalItemCount;
+                getReadedData();
+            }
+        }
+    };
 
     @Override
     public void onDestroy() {
