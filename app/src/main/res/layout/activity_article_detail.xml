@@ -15,6 +15,7 @@
         <ImageView
             android:layout_width="@dimen/dimen_title_height"
             android:layout_height="@dimen/dimen_title_height"
+            android:id="@+id/iv_back"
             android:scaleType="center"
             android:src="@mipmap/back" />
 
@@ -32,6 +33,7 @@
             android:layout_marginRight="16dp"
             android:gravity="center"
             android:text="反馈"
+            android:id="@+id/tv_fk"
             android:textColor="@color/white"
             android:textSize="17sp" />
     </LinearLayout>

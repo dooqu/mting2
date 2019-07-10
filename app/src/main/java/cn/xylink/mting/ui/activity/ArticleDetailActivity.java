@@ -58,6 +58,16 @@ public class ArticleDetailActivity extends BaseActivity {
     protected void initTitleBar() {
     }
 
+    @OnClick(R.id.iv_back)
+    void onBackClick(View v){
+        finish();
+    }
+
+    @OnClick(R.id.tv_fk)
+    void onTvfkClick(View v){
+
+    }
+
     @OnClick({R.id.ll_setting, R.id.iv_setting, R.id.tv_setting})
     void onSettingClick(View v) {
         if (mArticleDetailSetting == null) {
