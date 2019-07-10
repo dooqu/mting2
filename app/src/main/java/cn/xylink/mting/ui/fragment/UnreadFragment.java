@@ -1,7 +1,5 @@
 package cn.xylink.mting.ui.fragment;
 
-import android.graphics.Rect;
-import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -24,8 +22,8 @@ import cn.xylink.mting.speech.event.SpeechProgressEvent;
 import cn.xylink.mting.speech.event.SpeechStartEvent;
 import cn.xylink.mting.speech.event.SpeechStopEvent;
 import cn.xylink.mting.ui.adapter.UnreadAdapter;
-import cn.xylink.mting.utils.DensityUtil;
 import cn.xylink.mting.utils.L;
+import cn.xylink.mting.widget.SpaceItemDecoration;
 
 /*
  *未读
@@ -126,25 +124,6 @@ public class UnreadFragment extends BaseMainTabFragment implements UnreadAdapter
     @Override
     public void onErrorUnread(int code, String errorMsg) {
 
-    }
-
-    class SpaceItemDecoration extends RecyclerView.ItemDecoration {
-        @Override
-        public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
-            super.getItemOffsets(outRect, view, parent, state);
-            int space = DensityUtil.dip2pxComm(getActivity(), 32);
-            if (parent.getChildAdapterPosition(view) != 0) {
-                outRect.left = 0;
-                outRect.right = 0;
-                outRect.bottom = 0;
-                outRect.top = space;
-            } else {
-                outRect.left = 0;
-                outRect.right = 0;
-                outRect.bottom = 0;
-                outRect.top = space;
-            }
-        }
     }
 
     @Override

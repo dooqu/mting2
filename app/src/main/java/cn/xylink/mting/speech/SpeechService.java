@@ -15,6 +15,7 @@ import org.greenrobot.eventbus.EventBus;
 import cn.xylink.mting.bean.Article;
 import cn.xylink.mting.speech.data.ArticleDataProvider;
 import cn.xylink.mting.speech.data.SpeechList;
+import cn.xylink.mting.speech.event.SpeechEndEvent;
 import cn.xylink.mting.speech.event.SpeechErrorEvent;
 import cn.xylink.mting.speech.event.SpeechProgressEvent;
 import cn.xylink.mting.speech.event.SpeechStartEvent;
@@ -141,7 +142,13 @@ public class SpeechService extends Service {
 
 
     protected void onSaveArticleProgress(Article article, float progress) {
-        //articleDataProvider.readArticle(article.getArticleId(), progress);
+        //与云端同步数据状态
+        articleDataProvider.readArticle(article.getArticleId(), progress);
+        if(progress == 1)
+        {
+            EventBus.getDefault().post(new SpeechEndEvent(article));
+            Log.d("xylink", "post:SpeechEndEvent:" + article.getTitle());
+        }
         Log.d("xylink", "onSaveProgress:" + article.getTitle() + "=>" + progress);
     }
 
@@ -156,7 +163,6 @@ public class SpeechService extends Service {
         speechor.reset();
         speechor.release();
         speechor = null;
-
         articleDataProvider.release();
         articleDataProvider = null;
     }
@@ -404,7 +410,6 @@ public class SpeechService extends Service {
         if (nextExists) {
             prepareArticle(speechList.getCurrent(), false);
         }
-
         return nextExists;
     }
 
@@ -449,12 +454,13 @@ public class SpeechService extends Service {
     }
 
     public synchronized void removeFromSpeechList(List<String> articleIds) {
+        Article currentArt = this.speechList.getCurrent();
         boolean isSelectedDeleted = this.speechList.removeSome(articleIds);
-        /*
-        如果当前正在播放的被删除掉
-         */
+        //如果当前正在播放的被删除掉
         if (isSelectedDeleted) {
             this.speechor.stop();
+            //this.onSaveArticleProgress(currentArt, currentArt.getProgress());
+            //??是否还记录播放进度
             if (this.speechList.size() > 0) {
                 //播放列表中的第一个
                 Article article = this.speechList.selectFirst();

@@ -29,8 +29,16 @@ public class RemoteUrl {
         return URL_BASE + "/api/sct/v2/article/unread/list";
     }
     //忘记密码接口
-    public static String forgotUrl(){
+    public static String forgotUrl() {
         return URL_BASE + "/api/user/common/v3/forgot";
+    }
+    //已读
+    public static String getReadedUrl(){
+        return URL_BASE + "/api/sct/v2/article/existread/list";
+    }
+    //收藏
+    public static String getStoreUrl(){
+        return URL_BASE + "/api/sct/v2/article/store/list";
     }
 
 }
