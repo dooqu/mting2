@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/tools"
     xmlns:titlebar="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -13,9 +14,9 @@
         android:gravity="center_vertical">
 
         <ImageView
+            android:id="@+id/iv_back"
             android:layout_width="@dimen/dimen_title_height"
             android:layout_height="@dimen/dimen_title_height"
-            android:id="@+id/iv_back"
             android:scaleType="center"
             android:src="@mipmap/back" />
 
@@ -28,12 +29,12 @@
             android:textSize="14sp" />
 
         <TextView
+            android:id="@+id/tv_fk"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_marginRight="16dp"
             android:gravity="center"
             android:text="反馈"
-            android:id="@+id/tv_fk"
             android:textColor="@color/white"
             android:textSize="17sp" />
     </LinearLayout>
@@ -158,12 +159,37 @@
             android:layout_height="wrap_content"
             android:text="已收藏" />
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="48dp"
-            android:layout_marginRight="48dp"
-            android:src="@mipmap/ico_play_start" />
+        <RelativeLayout
+            android:id="@+id/rl_main_play_bar_play"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_marginLeft="24dp"
+            android:layout_marginRight="24dp"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/iv_play_bar_btn"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_centerInParent="true"
+                android:layout_gravity="center"
+                android:src="@mipmap/ico_playing" />
+
+            <cn.xylink.mting.widget.ArcProgressBar
+                android:id="@+id/apb_main_play_progress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:max="100"
+                android:progress="0"
+                app:arcCapRound="true"
+                app:borderWidth="2dp"
+                app:degree="0"
+                app:progressColor="@color/c488def"
+                app:progressStyle="arc"
+                app:radius="20dp"
+                app:unprogresColor="@color/cbbbbbb" />
+        </RelativeLayout>
 
         <TextView
             android:layout_width="wrap_content"

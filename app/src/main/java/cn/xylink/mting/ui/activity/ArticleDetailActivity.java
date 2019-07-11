@@ -23,6 +23,7 @@ import cn.xylink.mting.speech.event.SpeechStartEvent;
 import cn.xylink.mting.ui.dialog.ArticleDetailFont;
 import cn.xylink.mting.ui.dialog.ArticleDetailSetting;
 import cn.xylink.mting.ui.dialog.ArticleDetailShare;
+import cn.xylink.mting.widget.ArcProgressBar;
 
 /**
  * Created by liuhe. on Date: 2019/7/2
@@ -37,6 +38,8 @@ public class ArticleDetailActivity extends BaseActivity {
     private SpeechServiceProxy proxy;
     @BindView(R.id.tv_content)
     TextView tvContent;
+    @BindView(R.id.apb_main_play_progress)
+    ArcProgressBar apbMain;
     private String aid;
 
 
@@ -110,6 +113,9 @@ public class ArticleDetailActivity extends BaseActivity {
             tvContent.setText(event.getArticle().getContent());
         } else if (event instanceof SpeechProgressEvent) {
             tvContent.setText(event.getArticle().getContent());
+            SpeechProgressEvent spe= (SpeechProgressEvent) event;
+            float progress = (float) spe.getFrameIndex() / (float) spe.getTextFragments().size();
+            apbMain.setProgress((int) (progress * 100));
         }
     }
 

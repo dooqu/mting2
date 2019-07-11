@@ -1,5 +1,6 @@
 package cn.xylink.mting.ui.fragment;
 
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,6 +15,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import cn.xylink.mting.R;
+import cn.xylink.mting.base.BaseActivity;
 import cn.xylink.mting.bean.Article;
 import cn.xylink.mting.bean.UnreadRequest;
 import cn.xylink.mting.contract.UnreadContract;
@@ -24,6 +26,7 @@ import cn.xylink.mting.speech.event.SpeechErrorEvent;
 import cn.xylink.mting.speech.event.SpeechProgressEvent;
 import cn.xylink.mting.speech.event.SpeechStartEvent;
 import cn.xylink.mting.speech.event.SpeechStopEvent;
+import cn.xylink.mting.ui.activity.ArticleDetailActivity;
 import cn.xylink.mting.ui.adapter.ReadedAdapter;
 import cn.xylink.mting.ui.adapter.UnreadAdapter;
 import cn.xylink.mting.utils.L;
@@ -95,6 +98,10 @@ public class ReadedFragment extends BaseMainTabFragment implements UnreadAdapter
 
         SpeechList.getInstance().pushFront(list);
         mControllerListener.onPlay(article.getArticleId());
+
+        Bundle bundle = new Bundle();
+        bundle.putString("aid", article.getArticleId());
+        ((BaseActivity) getActivity()).jumpActivity(ArticleDetailActivity.class, bundle);
     }
 
     @Override
