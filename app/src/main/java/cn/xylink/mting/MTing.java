@@ -43,18 +43,18 @@ public class MTing extends Application {
         initOkHttp();
         ImageUtils.init(this);
 
-        List<Article> list = new ArrayList<>();
-
-        for (int i = 0; i < 6; i++) {
-            Article article = new Article();
-            article.setArticleId(String.valueOf(i));
-            article.setTitle("习总书记讲话" + i);
-            article.setTextBody("习近平强调，当前国际形势正在发生巨大变化");
-
-            list.add(article);
-        }
-
-        SpeechList.getInstance().appendArticles(list);
+//        List<Article> list = new ArrayList<>();
+//
+//        for (int i = 0; i < 6; i++) {
+//            Article article = new Article();
+//            article.setArticleId(String.valueOf(i));
+//            article.setTitle("习总书记讲话" + i);
+//            article.setTextBody("习近平强调，当前国际形势正在发生巨大变化");
+//
+//            list.add(article);
+//        }
+//
+//        SpeechList.getInstance().appendArticles(list);
 
         startService(new Intent(this, SpeechService.class));
     }
