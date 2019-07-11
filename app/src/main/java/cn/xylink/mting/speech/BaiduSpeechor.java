@@ -40,11 +40,11 @@ public abstract class BaiduSpeechor implements Speechor {
         speechOperator = new SpeechHelper();
         speechSynthesizer = SpeechSynthesizer.getInstance();
         speechSynthesizer.setContext(context);
-        speechSynthesizer.setAppId("11676777");
-        speechSynthesizer.setApiKey("aRazCPQBXok8zEt0yZUNqTGV", "c4qpC1f4dKExrhjQvU4FW7iICfVjvQFP");
+        speechSynthesizer.setAppId("16690943");
+        speechSynthesizer.setApiKey("yl2y2gxuV2sVcGTyz1Sl3FyN", "N8kYSQnucGTBt7uNI7Stdui6eBoezZWW");
         speechSynthesizer.auth(TtsMode.ONLINE);
         speechSynthesizer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-        speechSynthesizer.initTts(TtsMode.MIX);
+        speechSynthesizer.initTts(TtsMode.ONLINE);
 
 
         speechSynthesizer.setSpeechSynthesizerListener(new SpeechSynthesizerListener() {
@@ -97,7 +97,6 @@ public abstract class BaiduSpeechor implements Speechor {
                                 self.onStateChanged(SpeechorState.SpeechorStateReady);
                             }
                         }).start();
-
                     }
                 }
             }

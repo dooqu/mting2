@@ -24,6 +24,7 @@ import cn.xylink.mting.speech.event.SpeechStopEvent;
 
 
 public class SpeechService extends Service {
+    static String TAG = "xylink";
 
     /*SpeechService的状态描述类型*/
     public enum SpeechServiceState {
@@ -181,7 +182,7 @@ public class SpeechService extends Service {
     }
 
     private void onSpeechEnd(Article article, float progress) {
-        Log.d("xylink", "onSaveProgress:" + article.getTitle() + "=>" + progress);
+        Log.d(TAG, "onSpeedEnd:" + article.getTitle() + ",progress=" + progress);
         //与云端同步数据状态
         articleDataProvider.readArticle(article.getArticleId(), progress);
         if (progress == 1) {
@@ -389,8 +390,8 @@ public class SpeechService extends Service {
                 //网络加载动作结束后，走到这里， 要判定下errorCode
                 if (errorcode != 0) {
                     //文章正文加载错误
-                    this.serviceState = SpeechServiceState.Ready;
-                    this.onSpeechError(errorcode, "", article);
+                    this.serviceState = SpeechServiceState.Error;
+                    this.onSpeechError(errorcode, "文章正文加载失败", article);
                     return;
                 }
 

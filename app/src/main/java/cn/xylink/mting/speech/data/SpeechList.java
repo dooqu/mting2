@@ -125,7 +125,6 @@ public class SpeechList {
     }
 
 
-
     public synchronized void pushFront(List<Article> list) {
         for(int i = 0, j = list.size(); i < j; i++)
         {
@@ -133,8 +132,8 @@ public class SpeechList {
         }
     }
 
-    public synchronized boolean moveNext() {
 
+    public synchronized boolean moveNext() {
         /*
         如果current == null，那么没有基准点，不能向下迭代
          */
