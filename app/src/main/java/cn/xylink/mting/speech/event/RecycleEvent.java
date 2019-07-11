@@ -19,4 +19,12 @@ public class RecycleEvent
     {
         this.article = article;
     }
+
+    public RecycleEvent()
+    {}
+
+    public RecycleEvent(Article article)
+    {
+        this.article = article;
+    }
 }

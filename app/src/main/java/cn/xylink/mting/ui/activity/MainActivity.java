@@ -105,15 +105,16 @@ public class MainActivity extends BaseActivity implements BaseMainTabFragment.On
 
     private void setPlayBarState() {
         String playTitle = null;
+        List<Article> list = SpeechList.getInstance().getArticleList();
         Article art = SpeechList.getInstance().getCurrent();
         if (art == null)
-            art = SpeechList.getInstance().selectFirst();
+            art = list != null && list.size() > 0 ? list.get(0) : null;
         if (art != null) {
-            playTitle = art.getTitle();
+            playTitle = art.getArticleId();
+            float progress = art.getProgress();
+            mProgress.setProgress((int) (progress * 100));
         }
-        mPlayBarTitle.setText(TextUtils.isEmpty(playTitle) ? "" : playTitle);
-        float progress = art.getProgress();
-        mProgress.setProgress((int) (progress * 100));
+        mPlayBarTitle.setText(TextUtils.isEmpty(playTitle)?"":playTitle);
 
     }
 
@@ -214,7 +215,8 @@ public class MainActivity extends BaseActivity implements BaseMainTabFragment.On
                     String aid = null;
                     Article art = SpeechList.getInstance().getCurrent();
                     if (art == null)
-                        art = SpeechList.getInstance().getArticleList()!=null?SpeechList.getInstance().getArticleList().get(0):null;
+                        art = SpeechList.getInstance().getArticleList() != null && SpeechList.getInstance().getArticleList().size() > 0 ?
+                                SpeechList.getInstance().getArticleList().get(0) : null;
                     if (art != null) {
                         aid = art.getArticleId();
                     }

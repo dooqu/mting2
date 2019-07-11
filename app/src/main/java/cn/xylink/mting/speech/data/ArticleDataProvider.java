@@ -166,10 +166,12 @@ public class ArticleDataProvider {
 
                     @Override
                     public void onSuccess(BaseResponse data) {
+                        Log.d("xylink", data.toString());
                     }
 
                     @Override
                     public void onFailure(int code, String errorMsg) {
+                        Log.d("xylink", "ReadArticle.onFailure: code=" + code + ",msg=" + errorMsg);
                     }
 
                     @Override
