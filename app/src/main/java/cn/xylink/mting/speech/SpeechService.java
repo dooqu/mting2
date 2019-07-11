@@ -81,7 +81,6 @@ public class SpeechService extends Service {
     Timer countdownTimer;
 
 
-
     public class SpeechBinder extends Binder {
         public SpeechService getService() {
             return SpeechService.this;
@@ -164,41 +163,34 @@ public class SpeechService extends Service {
     }
 
 
-    private void onSpeechStart(Article article)
-    {
+    private void onSpeechStart(Article article) {
         EventBus.getDefault().post(new SpeechStartEvent(article));
     }
 
-    private void onSpeechReady(Article article)
-    {
+    private void onSpeechReady(Article article) {
         EventBus.getDefault().post(new SpeechReadyEvent(article));
     }
 
-    private void onSpeechProgress(Article article, int fragmentIndex, List<String> fragments)
-    {
+    private void onSpeechProgress(Article article, int fragmentIndex, List<String> fragments) {
         article.setProgress((float) fragmentIndex / (float) fragments.size());
         EventBus.getDefault().post(new SpeechProgressEvent(fragmentIndex, fragments, article));
     }
 
-    private void onSpeechError(int errorCode, String message, Article article)
-    {
+    private void onSpeechError(int errorCode, String message, Article article) {
         EventBus.getDefault().post(new SpeechErrorEvent(errorCode, message, article));
     }
 
-    private void onSpeechEnd(Article article, float progress)
-    {
+    private void onSpeechEnd(Article article, float progress) {
         Log.d("xylink", "onSaveProgress:" + article.getTitle() + "=>" + progress);
         //与云端同步数据状态
         articleDataProvider.readArticle(article.getArticleId(), progress);
-        if(progress == 1)
-        {
+        if (progress == 1) {
             EventBus.getDefault().post(new SpeechEndEvent(article, progress));
         }
     }
 
 
-    private void onSpeechStoped(SpeechStopEvent.StopReason reason)
-    {
+    private void onSpeechStoped(SpeechStopEvent.StopReason reason) {
         EventBus.getDefault().post(new SpeechStopEvent(reason));
     }
 
