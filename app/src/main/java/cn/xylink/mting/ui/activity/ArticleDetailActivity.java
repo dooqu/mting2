@@ -3,6 +3,7 @@ package cn.xylink.mting.ui.activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -40,6 +41,8 @@ public class ArticleDetailActivity extends BaseActivity {
     TextView tvContent;
     @BindView(R.id.apb_main_play_progress)
     ArcProgressBar apbMain;
+    @BindView(R.id.sk_progress)
+    SeekBar skProgress;
     private String aid;
 
 
@@ -113,9 +116,10 @@ public class ArticleDetailActivity extends BaseActivity {
             tvContent.setText(event.getArticle().getContent());
         } else if (event instanceof SpeechProgressEvent) {
             tvContent.setText(event.getArticle().getContent());
-            SpeechProgressEvent spe= (SpeechProgressEvent) event;
+            SpeechProgressEvent spe = (SpeechProgressEvent) event;
             float progress = (float) spe.getFrameIndex() / (float) spe.getTextFragments().size();
             apbMain.setProgress((int) (progress * 100));
+            skProgress.setProgress((int) (progress * 100));
         }
     }
 
