@@ -17,6 +17,8 @@ import cn.xylink.mting.bean.Article;
 import cn.xylink.mting.speech.SpeechService;
 import cn.xylink.mting.speech.SpeechServiceProxy;
 import cn.xylink.mting.speech.event.RecycleEvent;
+import cn.xylink.mting.speech.event.SpeechProgressEvent;
+import cn.xylink.mting.speech.event.SpeechReadyEvent;
 import cn.xylink.mting.speech.event.SpeechStartEvent;
 import cn.xylink.mting.ui.dialog.ArticleDetailFont;
 import cn.xylink.mting.ui.dialog.ArticleDetailSetting;
@@ -35,6 +37,7 @@ public class ArticleDetailActivity extends BaseActivity {
     private SpeechServiceProxy proxy;
     @BindView(R.id.tv_content)
     TextView tvContent;
+    private String aid;
 
 
     @Override
@@ -43,14 +46,16 @@ public class ArticleDetailActivity extends BaseActivity {
     }
 
     private void initServiceData() {
-        service.play("3");
+        service.play(aid);
         Article selected = service.getSelected();
+        tvContent.setText(selected.getContent());
         float progress = service.getProgress();
     }
 
     @Override
     protected void initView() {
-
+        Bundle extras = getIntent().getExtras();
+        aid = extras.getString("aid");
     }
 
     @Override
@@ -100,8 +105,11 @@ public class ArticleDetailActivity extends BaseActivity {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSpeechStart(RecycleEvent event) {
         if (event instanceof SpeechStartEvent) {
-            SpeechStartEvent sse = (SpeechStartEvent) event;
-            tvContent.setText(event.getArticle().getTitle());
+            tvContent.setText("");
+        } else if (event instanceof SpeechReadyEvent) {
+            tvContent.setText(event.getArticle().getContent());
+        } else if (event instanceof SpeechProgressEvent) {
+            tvContent.setText(event.getArticle().getContent());
         }
     }
 
