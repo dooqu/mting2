@@ -192,7 +192,7 @@ public class SpeechService extends Service {
         articleDataProvider.readArticle(article.getArticleId(), progress);
         if(progress == 1)
         {
-            EventBus.getDefault().post(new SpeechEndEvent(article));
+            EventBus.getDefault().post(new SpeechEndEvent(article, progress));
         }
     }
 

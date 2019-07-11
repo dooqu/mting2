@@ -3,8 +3,15 @@ package cn.xylink.mting.speech.event;
 import cn.xylink.mting.bean.Article;
 
 public class SpeechEndEvent extends RecycleEvent {
-    public SpeechEndEvent(Article article)
+    float progress;
+    public SpeechEndEvent(Article article, float progress)
     {
-        this.setArticle(article);
+        super(article);
+        this.progress = progress;
+    }
+
+    public float getProgress()
+    {
+        return this.progress;
     }
 }
