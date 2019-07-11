@@ -1,6 +1,5 @@
 package cn.xylink.mting.bean;
 
-import cn.xylink.mting.base.BaseRequest;
 
 public class Article
 {
@@ -135,5 +134,22 @@ public class Article
     public int getStore()
     {
         return store;
+    }
+
+    @Override
+    public Article clone() {
+        Article article = new Article();
+        article.setArticleId(this.getArticleId());
+        article.setTitle(this.getTitle());
+        article.setContent(this.getContent());
+        article.setTextBody(this.getTextBody());
+        article.setShareUrl(this.getShareUrl());
+        article.setSourceName(this.getSourceName());
+        article.setSourceLogo(this.getSourceLogo());
+        article.setPicture(this.getPicture());
+        article.setUpdateAt(this.getUpdateAt());
+        article.setProgress(this.getProgress());
+        article.setRead(this.getRead());
+        return article;
     }
 }

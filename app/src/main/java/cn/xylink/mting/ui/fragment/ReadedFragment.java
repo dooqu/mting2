@@ -91,7 +91,7 @@ public class ReadedFragment extends BaseMainTabFragment implements UnreadAdapter
     public void onItemClick(Article article) {
         List<Article> list = new ArrayList<>();
         article.setProgress(0);
-        list.add(article);
+        list.add(article.clone());
 
         SpeechList.getInstance().pushFront(list);
         mControllerListener.onPlay(article.getArticleId());
@@ -112,7 +112,7 @@ public class ReadedFragment extends BaseMainTabFragment implements UnreadAdapter
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSpeechProgress(SpeechProgressEvent event) {
         L.v(event.getArticle());
-        mAdapter.setProgress(event.getArticle());
+//        mAdapter.setProgress(event.getArticle());
     }
 
 

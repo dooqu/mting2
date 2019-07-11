@@ -44,8 +44,8 @@ public class ReadedAdapter extends RecyclerView.Adapter<ReadedAdapter.ReadedHold
     }
 
     public void refreshData() {
-        mCurrent = SpeechList.getInstance().getCurrent();
-        notifyDataSetChanged();
+//        mCurrent = SpeechList.getInstance().getCurrent();
+//        notifyDataSetChanged();
     }
     public void setData(List<Article> list) {
         mData = list;
@@ -57,18 +57,21 @@ public class ReadedAdapter extends RecyclerView.Adapter<ReadedAdapter.ReadedHold
     }
 
     public void setProgress(Article pro) {
-        L.v(pro);
+        L.v(pro.getProgress());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             mData.replaceAll(article -> article.getArticleId().equals(pro.getArticleId())?pro:article);
         }else {
             for (int i = 0 ; i <mData.size();i++){
                 if (mData.get(i).getArticleId().equals(pro.getArticleId())){
                     mData.set(i,pro);
+                    notifyItemChanged(i);
+                    L.v(i);
+                    L.v(mCurrentPosition);
                     return;
                 }
             }
         }
-        notifyItemChanged(mCurrentPosition);
+//        notifyItemChanged(mCurrentPosition);
     }
 
 
@@ -89,16 +92,16 @@ public class ReadedAdapter extends RecyclerView.Adapter<ReadedAdapter.ReadedHold
         } else {
             holder.tvProgress.setText("");
         }
-        if (mCurrent != null ? mCurrent.getArticleId().equals(data.getArticleId()) : false) {
-            mCurrentPosition = position;
-            holder.tvTitle.setTextColor(mContext.getResources().getColor(R.color.c488def));
-            holder.tvFrom.setTextColor(mContext.getResources().getColor(R.color.c488def));
-            holder.tvProgress.setTextColor(mContext.getResources().getColor(R.color.c488def));
-        } else {
-            holder.tvTitle.setTextColor(mContext.getResources().getColor(R.color.c333333));
-            holder.tvFrom.setTextColor(mContext.getResources().getColor(R.color.c999999));
-            holder.tvProgress.setTextColor(mContext.getResources().getColor(R.color.c999999));
-        }
+//        if (mCurrent != null ? mCurrent.getArticleId().equals(data.getArticleId()) : false) {
+//            mCurrentPosition = position;
+//            holder.tvTitle.setTextColor(mContext.getResources().getColor(R.color.c488def));
+//            holder.tvFrom.setTextColor(mContext.getResources().getColor(R.color.c488def));
+//            holder.tvProgress.setTextColor(mContext.getResources().getColor(R.color.c488def));
+//        } else {
+//            holder.tvTitle.setTextColor(mContext.getResources().getColor(R.color.c333333));
+//            holder.tvFrom.setTextColor(mContext.getResources().getColor(R.color.c999999));
+//            holder.tvProgress.setTextColor(mContext.getResources().getColor(R.color.c999999));
+//        }
         holder.ivMore.setOnClickListener(v -> {
             if (mOnItemClickListener != null)
                 mOnItemClickListener.onItemMoreClick(data);

@@ -60,7 +60,7 @@ public class UnreadFragment extends BaseMainTabFragment implements UnreadAdapter
     @Override
     protected void initData() {
         UnreadRequest request = new UnreadRequest();
-        request.setUpdateAt(0);
+//        request.setUpdateAt(0l);
         request.setEvent(UnreadRequest.ENENT_TYPE.refresh.name());
         request.doSign();
         mPresenter.createUnread(request);

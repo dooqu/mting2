@@ -10,7 +10,7 @@ import cn.xylink.mting.base.BaseRequest;
  * -----------------------------------------------------------------
  */
 public class UnreadRequest extends BaseRequest {
-    long updateAt;
+    Long updateAt;
     String event;//刷新(refresh)、更多(more)
     //事件为refresh时：
     //
@@ -22,11 +22,11 @@ public class UnreadRequest extends BaseRequest {
     //
     //updateAt必须有值，加载updateAt时间之前的数据
 
-    public long getUpdateAt() {
+    public Long getUpdateAt() {
         return updateAt;
     }
 
-    public void setUpdateAt(long updateAt) {
+    public void setUpdateAt(Long updateAt) {
         this.updateAt = updateAt;
     }
 

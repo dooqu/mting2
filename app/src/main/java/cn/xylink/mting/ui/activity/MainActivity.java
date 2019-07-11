@@ -12,6 +12,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -27,6 +28,7 @@ import cn.xylink.mting.base.BaseActivity;
 import cn.xylink.mting.bean.Article;
 import cn.xylink.mting.speech.SpeechService;
 import cn.xylink.mting.speech.SpeechServiceProxy;
+import cn.xylink.mting.speech.Speechor;
 import cn.xylink.mting.speech.data.SpeechList;
 import cn.xylink.mting.speech.event.SpeechErrorEvent;
 import cn.xylink.mting.speech.event.SpeechProgressEvent;
@@ -36,6 +38,7 @@ import cn.xylink.mting.ui.adapter.MainFragmentAdapter;
 import cn.xylink.mting.ui.dialog.MainAddMenuPop;
 import cn.xylink.mting.ui.fragment.BaseMainTabFragment;
 import cn.xylink.mting.utils.L;
+import cn.xylink.mting.widget.ArcProgressBar;
 
 public class MainActivity extends BaseActivity implements BaseMainTabFragment.OnControllerListener, MainAddMenuPop.OnMainAddMenuListener {
 
@@ -53,6 +56,10 @@ public class MainActivity extends BaseActivity implements BaseMainTabFragment.On
     ImageView mAddImageView;
     @BindView(R.id.tv_play_bar_title)
     TextView mPlayBarTitle;
+    @BindView(R.id.apb_main_play_progress)
+    ArcProgressBar mProgress;
+    @BindView(R.id.rl_main_play_bar_play)
+    RelativeLayout mPlayBtn;
     private TAB_ENUM mCurrentTabIndex = TAB_ENUM.TAB_UNREAD;
     public SpeechServiceProxy proxy;
     private SpeechService service;
@@ -98,13 +105,16 @@ public class MainActivity extends BaseActivity implements BaseMainTabFragment.On
 
     private void setPlayBarState() {
         String playTitle = null;
-        Article art= SpeechList.getInstance().getCurrent();
-        if (art==null)
+        Article art = SpeechList.getInstance().getCurrent();
+        if (art == null)
             art = SpeechList.getInstance().selectFirst();
-        if (art!=null){
+        if (art != null) {
             playTitle = art.getTitle();
         }
-        mPlayBarTitle.setText(TextUtils.isEmpty(playTitle)?"":playTitle);
+        mPlayBarTitle.setText(TextUtils.isEmpty(playTitle) ? "" : playTitle);
+        float progress = art.getProgress();
+        mProgress.setProgress((int) (progress * 100));
+
     }
 
     @Override
@@ -115,8 +125,8 @@ public class MainActivity extends BaseActivity implements BaseMainTabFragment.On
     @Override
     public void onPlay(String id) {
         L.v();
-        if (service!=null)
-        service.play(id);
+        if (service != null)
+            service.play(id);
     }
 
     @Override
@@ -167,7 +177,7 @@ public class MainActivity extends BaseActivity implements BaseMainTabFragment.On
 
 
     @OnClick({R.id.iv_main_title_my, R.id.iv_main_title_search, R.id.iv_main_title_add
-            , R.id.tv_main_tabar_readed, R.id.tv_main_tabar_unread, R.id.tv_main_tabar_love})
+            , R.id.tv_main_tabar_readed, R.id.tv_main_tabar_unread, R.id.tv_main_tabar_love, R.id.rl_main_play_bar_play})
     void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_main_title_my:
@@ -176,7 +186,7 @@ public class MainActivity extends BaseActivity implements BaseMainTabFragment.On
             case R.id.iv_main_title_search:
                 break;
             case R.id.iv_main_title_add:
-                MainAddMenuPop pop= new MainAddMenuPop(MainActivity.this, this);
+                MainAddMenuPop pop = new MainAddMenuPop(MainActivity.this, this);
                 pop.showAsRight(mAddImageView);
                 break;
             case R.id.tv_main_tabar_unread:
@@ -188,12 +198,42 @@ public class MainActivity extends BaseActivity implements BaseMainTabFragment.On
             case R.id.tv_main_tabar_love:
                 doAnim(mCurrentTabIndex, TAB_ENUM.TAB_LOVE);
                 break;
+            case R.id.rl_main_play_bar_play:
+                L.v("============================");
+                playCtrl();
+                break;
+        }
+    }
+
+    //播放按钮逻辑
+    private void playCtrl() {
+        if (service != null) {
+            Speechor.SpeechorState state = service.getState();
+            switch (state) {
+                case SpeechorStateReady:
+                    String aid = null;
+                    Article art = SpeechList.getInstance().getCurrent();
+                    if (art == null)
+                        art = SpeechList.getInstance().getArticleList()!=null?SpeechList.getInstance().getArticleList().get(0):null;
+                    if (art != null) {
+                        aid = art.getArticleId();
+                    }
+                    if (!TextUtils.isEmpty(aid))
+                        service.play(aid);
+                    break;
+                case SpeechorStatePaused:
+                    service.resume();
+                    break;
+                case SpeechorStatePlaying:
+                    service.pause();
+                    break;
+            }
         }
     }
 
     private void doAnim(TAB_ENUM currentTab, TAB_ENUM goTab) {
         if (currentTab != goTab) {
-            mViewPager.setCurrentItem(goTab.getIndex(),false);
+            mViewPager.setCurrentItem(goTab.getIndex(), false);
             mCurrentTabIndex = goTab;
             ObjectAnimator ccAnimator = ObjectAnimator.ofInt(currentTab.getView(), "textColor", 0xff333333, 0xff999999);
             ccAnimator.setEvaluator(new ArgbEvaluator());
@@ -245,6 +285,8 @@ public class MainActivity extends BaseActivity implements BaseMainTabFragment.On
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSpeechProgress(SpeechProgressEvent event) {
         L.v(event.getArticle());
+        float progress = (float) event.getFrameIndex() / (float) event.getTextFragments().size();
+        mProgress.setProgress((int) (progress * 100));
     }
 
 
