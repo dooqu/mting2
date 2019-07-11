@@ -103,7 +103,7 @@ public class SpeechService extends Service {
                     //在每个文章播放完成后，做以下逻辑判定
                     if (speakerState == SpeechorState.SpeechorStateReady) {
                         currentArticle.setProgress(1);
-                        SpeechService.this.onSaveArticleProgress(currentArticle, 1);
+                        SpeechService.this.onSpeechEnd(currentArticle, 1);
                         //先预先设置一个播放停止信号默认值
                         SpeechStopEvent.StopReason reason = SpeechStopEvent.StopReason.ListIsNull;
                         //在每个播放完成的时机，判断下当前是否有Number定时器， 如果有，就减一，如果减一等于0，说明定时器到期
@@ -196,16 +196,6 @@ public class SpeechService extends Service {
         }
     }
 
-    private void onSaveArticleProgress(Article article, float progress) {
-
-        Log.d("xylink", "onSaveProgress:" + article.getTitle() + "=>" + progress);
-        //与云端同步数据状态
-        articleDataProvider.readArticle(article.getArticleId(), progress);
-        if(progress == 1)
-        {
-            EventBus.getDefault().post(new SpeechEndEvent(article));
-        }
-    }
 
     private void onSpeechStoped(SpeechStopEvent.StopReason reason)
     {
@@ -347,7 +337,7 @@ public class SpeechService extends Service {
         Article previousArt = this.speechList.getCurrent();
         if (previousArt != null && articleId.equals(previousArt.getArticleId()) == false) {
             if (previousArt.getProgress() != 1) {
-                this.onSaveArticleProgress(previousArt, previousArt.getProgress());
+                this.onSpeechEnd(previousArt, previousArt.getProgress());
             }
         }
 
@@ -364,7 +354,7 @@ public class SpeechService extends Service {
         Article previousArt = this.speechList.getCurrent();
         if (previousArt != null && article.getArticleId().equals(previousArt.getArticleId()) == false) {
             if (previousArt.getProgress() != 1) {
-                this.onSaveArticleProgress(previousArt, previousArt.getProgress());
+                this.onSpeechEnd(previousArt, previousArt.getProgress());
             }
         }
 
@@ -500,7 +490,7 @@ public class SpeechService extends Service {
         //如果当前正在播放的被删除掉
         if (isSelectedDeleted) {
             this.speechor.stop();
-            //this.onSaveArticleProgress(currentArt, currentArt.getProgress());
+            //this.onSpeechEnd(currentArt, currentArt.getProgress());
             //??是否还记录播放进度
             if (this.speechList.size() > 0) {
                 //播放列表中的第一个
