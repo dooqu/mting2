@@ -29,9 +29,8 @@ public abstract class SpeechEngineWrapper implements Speechor {
     }
 
 
-    protected  void initEngine(Context context)
-    {
-        audioManager =  (AudioManager) context.getSystemService(AUDIO_SERVICE);
+    protected void initEngine(Context context) {
+        audioManager = (AudioManager) context.getSystemService(AUDIO_SERVICE);
         baiduSpeechor = new BaiduSpeechor(context) {
 
             @Override
@@ -46,8 +45,7 @@ public abstract class SpeechEngineWrapper implements Speechor {
             }
 
             @Override
-            public void onError(int errorCode, String message)
-            {
+            public void onError(int errorCode, String message) {
                 this.stop();
                 SpeechEngineWrapper.this.onError(errorCode, message);
             }
@@ -83,12 +81,10 @@ public abstract class SpeechEngineWrapper implements Speechor {
 
                         //别的应用申请焦点之后又释放焦点时，就会触发此回调，恢复播放音乐
                         Log.d("xylink", "AUDIOFOCUS_GAIN");
-                        if(SpeechEngineWrapper.this.getState() == SpeechorState.SpeechorStatePaused
-                                && isPausedByExternal == true)
-                        {
+                        if (SpeechEngineWrapper.this.getState() == SpeechorState.SpeechorStatePaused
+                                && isPausedByExternal == true) {
                             //这里有个问题， 这期间可能更换了语音包了，导致必须使用seek
-                            if(speechor.resume() == false)
-                            {
+                            if (speechor.resume() == false) {
                                 //如果resume失败， 重读分片
                                 speechor.seek(speechor.getFragmentIndex());
                             }
@@ -106,13 +102,11 @@ public abstract class SpeechEngineWrapper implements Speechor {
     };
 
 
-    private boolean requestFocus()
-    {
+    private boolean requestFocus() {
         return audioManager.requestAudioFocus(focusListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN) == AUDIOFOCUS_REQUEST_GRANTED;
     }
 
-    private boolean abandonFocus()
-    {
+    private boolean abandonFocus() {
         return audioManager.abandonAudioFocus(focusListener) == AUDIOFOCUS_REQUEST_GRANTED;
     }
 
@@ -135,8 +129,7 @@ public abstract class SpeechEngineWrapper implements Speechor {
         synchronized (this) {
             isPausedByExternal = false;
             boolean result = speechor.pause();
-            if(result)
-            {
+            if (result) {
                 abandonFocus();
             }
             return result;
@@ -147,7 +140,7 @@ public abstract class SpeechEngineWrapper implements Speechor {
     public boolean resume() {
         synchronized (this) {
             boolean result = speechor.resume();
-            if(result){
+            if (result) {
                 requestFocus();
             }
             return result;
@@ -177,7 +170,6 @@ public abstract class SpeechEngineWrapper implements Speechor {
 
     @Override
     public void setRole(SpeechorRole role) {
-
         synchronized (this) {
             if (speechor.getRole() == role)
                 return;
@@ -204,12 +196,10 @@ public abstract class SpeechEngineWrapper implements Speechor {
 
                 if (destSpeechor != preSpeechor) {
                     synchronized (destSpeechor) {
-
                         //通过换解决，停掉发音
                         if (preState != SpeechorState.SpeechorStateReady) {
                             preSpeechor.stop();
                         }
-
                         //更换主发音引擎
                         speechor = destSpeechor;
                         //在更换后的 speechor上调用setRole;
@@ -222,8 +212,7 @@ public abstract class SpeechEngineWrapper implements Speechor {
                 }
                 else {
                     preSpeechor.setRole(role);
-                    if(preState == SpeechorState.SpeechorStatePlaying)
-                    {
+                    if (preState == SpeechorState.SpeechorStatePlaying) {
                         preSpeechor.seek(preIndex);
                     }
                 } // end else
@@ -266,19 +255,15 @@ public abstract class SpeechEngineWrapper implements Speechor {
     }
 
     @Override
-    public List<String> getTextFragments()
-    {
-        synchronized (this)
-        {
+    public List<String> getTextFragments() {
+        synchronized (this) {
             return speechor.getTextFragments();
         }
     }
 
     @Override
-    public float getProgress()
-    {
-        synchronized (this)
-        {
+    public float getProgress() {
+        synchronized (this) {
             return speechor.getProgress();
         }
     }

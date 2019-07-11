@@ -60,7 +60,6 @@ public class SpeechList {
         ListIterator<Article> it = internalList.listIterator();
         while (it.hasNext()) {
             Article currArt = it.next();
-
             if (articleId.equals(currArt.getArticleId())) {
                 current = currArt;
                 playIterator = it;

@@ -18,6 +18,7 @@ import cn.xylink.mting.speech.data.SpeechList;
 import cn.xylink.mting.speech.event.SpeechEndEvent;
 import cn.xylink.mting.speech.event.SpeechErrorEvent;
 import cn.xylink.mting.speech.event.SpeechProgressEvent;
+import cn.xylink.mting.speech.event.SpeechReadyEvent;
 import cn.xylink.mting.speech.event.SpeechStartEvent;
 import cn.xylink.mting.speech.event.SpeechStopEvent;
 
@@ -119,7 +120,7 @@ public class SpeechService extends Service {
                         SpeechService.this.moveNext();
                         //没有要读的文章了
                         serviceState = SpeechServiceState.Stoped;
-                        EventBus.getDefault().post(new SpeechStopEvent(reason));
+                        onSpeechStoped(reason);
                     }
                 }
             }
@@ -127,30 +128,20 @@ public class SpeechService extends Service {
             @Override
             public void onProgress(List<String> textFragments, int index) {
                 synchronized (SpeechService.this) {
-                    speechList.getCurrent().setProgress((float) index / (float) textFragments.size());
+                    onSpeechProgress(speechList.getCurrent(), index, textFragments);
                 }
-                EventBus.getDefault().post(new SpeechProgressEvent(index, textFragments, speechList.getCurrent()));
             }
 
             @Override
             public void onError(int errorCode, String message) {
-                SpeechService.this.serviceState = SpeechServiceState.Error;
-                EventBus.getDefault().post(new SpeechErrorEvent(errorCode, message, speechList.getCurrent()));
+                synchronized (SpeechService.this) {
+                    SpeechService.this.serviceState = SpeechServiceState.Error;
+                    onSpeechError(errorCode, message, speechList.getCurrent());
+                }
             }
         };
     }
 
-
-    protected void onSaveArticleProgress(Article article, float progress) {
-        //与云端同步数据状态
-        articleDataProvider.readArticle(article.getArticleId(), progress);
-        if(progress == 1)
-        {
-            EventBus.getDefault().post(new SpeechEndEvent(article));
-            Log.d("xylink", "post:SpeechEndEvent:" + article.getTitle());
-        }
-        Log.d("xylink", "onSaveProgress:" + article.getTitle() + "=>" + progress);
-    }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -173,10 +164,58 @@ public class SpeechService extends Service {
     }
 
 
+    private void onSpeechStart(Article article)
+    {
+        EventBus.getDefault().post(new SpeechStartEvent(article));
+    }
+
+    private void onSpeechReady(Article article)
+    {
+        EventBus.getDefault().post(new SpeechReadyEvent(article));
+    }
+
+    private void onSpeechProgress(Article article, int fragmentIndex, List<String> fragments)
+    {
+        article.setProgress((float) fragmentIndex / (float) fragments.size());
+        EventBus.getDefault().post(new SpeechProgressEvent(fragmentIndex, fragments, article));
+    }
+
+    private void onSpeechError(int errorCode, String message, Article article)
+    {
+        EventBus.getDefault().post(new SpeechErrorEvent(errorCode, message, article));
+    }
+
+    private void onSpeechEnd(Article article, float progress)
+    {
+        Log.d("xylink", "onSaveProgress:" + article.getTitle() + "=>" + progress);
+        //与云端同步数据状态
+        articleDataProvider.readArticle(article.getArticleId(), progress);
+        if(progress == 1)
+        {
+            EventBus.getDefault().post(new SpeechEndEvent(article));
+        }
+    }
+
+    private void onSaveArticleProgress(Article article, float progress) {
+
+        Log.d("xylink", "onSaveProgress:" + article.getTitle() + "=>" + progress);
+        //与云端同步数据状态
+        articleDataProvider.readArticle(article.getArticleId(), progress);
+        if(progress == 1)
+        {
+            EventBus.getDefault().post(new SpeechEndEvent(article));
+        }
+    }
+
+    private void onSpeechStoped(SpeechStopEvent.StopReason reason)
+    {
+        EventBus.getDefault().post(new SpeechStopEvent(reason));
+    }
+
+
     public synchronized Speechor.SpeechorState getState() {
         return speechor.getState();
     }
-
 
     /*
     设定计时器
@@ -202,7 +241,7 @@ public class SpeechService extends Service {
                             SpeechService.this.speechor.stop();
                             SpeechService.this.serviceState = SpeechServiceState.Stoped;
                             SpeechService.this.cancelCountDown();
-                            EventBus.getDefault().post(new SpeechStopEvent(SpeechStopEvent.StopReason.CountDownToZero));
+                            SpeechService.this.onSpeechStoped(SpeechStopEvent.StopReason.CountDownToZero);
                         }
                     }
                 }
@@ -357,7 +396,7 @@ public class SpeechService extends Service {
         }
 
         this.serviceState = SpeechServiceState.Loadding;
-        EventBus.getDefault().post(new SpeechStartEvent(speechList.getCurrent()));
+        this.onSpeechStart(article);
         this.articleDataProvider.loadArticleContent(article, needSourceEffect, (int errorcode, Article articleUpdated) -> {
 
             synchronized (this) {
@@ -369,9 +408,11 @@ public class SpeechService extends Service {
                 if (errorcode != 0) {
                     //文章正文加载错误
                     this.serviceState = SpeechServiceState.Ready;
-                    EventBus.getDefault().post(new SpeechErrorEvent(errorcode, null, speechList.getCurrent()));
+                    this.onSpeechError(errorcode, "", article);
                     return;
                 }
+
+                this.onSpeechReady(article);
                 //首先判定下回调回来后，是否物是人非，在加载期间，用户可能做了其他操作
                 //比如暂停、切换文章，点选等等
                 //如果用户在加载期间，没有做其他操作，比如pause、切换文章
@@ -449,7 +490,7 @@ public class SpeechService extends Service {
         boolean isSelectedDeleted = this.speechList.removeAll();
         if (isSelectedDeleted) {
             this.speechor.stop();
-            EventBus.getDefault().post(new SpeechStopEvent());
+            this.onSpeechStoped(SpeechStopEvent.StopReason.ListIsNull);
         }
     }
 
@@ -468,7 +509,7 @@ public class SpeechService extends Service {
             }
             else {
                 //没有要播放的内容了
-                EventBus.getDefault().post(new SpeechStopEvent());
+                this.onSpeechStoped(SpeechStopEvent.StopReason.ListIsNull);
             }
         }
     }
