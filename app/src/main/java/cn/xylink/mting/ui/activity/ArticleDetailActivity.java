@@ -3,6 +3,7 @@ package cn.xylink.mting.ui.activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -17,10 +18,13 @@ import cn.xylink.mting.bean.Article;
 import cn.xylink.mting.speech.SpeechService;
 import cn.xylink.mting.speech.SpeechServiceProxy;
 import cn.xylink.mting.speech.event.RecycleEvent;
+import cn.xylink.mting.speech.event.SpeechProgressEvent;
+import cn.xylink.mting.speech.event.SpeechReadyEvent;
 import cn.xylink.mting.speech.event.SpeechStartEvent;
 import cn.xylink.mting.ui.dialog.ArticleDetailFont;
 import cn.xylink.mting.ui.dialog.ArticleDetailSetting;
 import cn.xylink.mting.ui.dialog.ArticleDetailShare;
+import cn.xylink.mting.widget.ArcProgressBar;
 
 /**
  * Created by liuhe. on Date: 2019/7/2
@@ -35,6 +39,11 @@ public class ArticleDetailActivity extends BaseActivity {
     private SpeechServiceProxy proxy;
     @BindView(R.id.tv_content)
     TextView tvContent;
+    @BindView(R.id.apb_main_play_progress)
+    ArcProgressBar apbMain;
+    @BindView(R.id.sk_progress)
+    SeekBar skProgress;
+    private String aid;
 
 
     @Override
@@ -43,14 +52,16 @@ public class ArticleDetailActivity extends BaseActivity {
     }
 
     private void initServiceData() {
-        service.play("3");
+        service.play(aid);
         Article selected = service.getSelected();
+        tvContent.setText(selected.getContent());
         float progress = service.getProgress();
     }
 
     @Override
     protected void initView() {
-
+        Bundle extras = getIntent().getExtras();
+        aid = extras.getString("aid");
     }
 
     @Override
@@ -100,8 +111,15 @@ public class ArticleDetailActivity extends BaseActivity {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSpeechStart(RecycleEvent event) {
         if (event instanceof SpeechStartEvent) {
-            SpeechStartEvent sse = (SpeechStartEvent) event;
-            tvContent.setText(event.getArticle().getTitle());
+            tvContent.setText("");
+        } else if (event instanceof SpeechReadyEvent) {
+            tvContent.setText(event.getArticle().getContent());
+        } else if (event instanceof SpeechProgressEvent) {
+            tvContent.setText(event.getArticle().getContent());
+            SpeechProgressEvent spe = (SpeechProgressEvent) event;
+            float progress = (float) spe.getFrameIndex() / (float) spe.getTextFragments().size();
+            apbMain.setProgress((int) (progress * 100));
+            skProgress.setProgress((int) (progress * 100));
         }
     }
 
