@@ -13,6 +13,7 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import cn.xylink.mting.R;
 import cn.xylink.mting.base.BaseActivity;
+import cn.xylink.mting.bean.Article;
 import cn.xylink.mting.speech.SpeechService;
 import cn.xylink.mting.speech.SpeechServiceProxy;
 import cn.xylink.mting.speech.event.RecycleEvent;
@@ -42,6 +43,9 @@ public class ArticleDetailActivity extends BaseActivity {
     }
 
     private void initServiceData() {
+        service.play("3");
+        Article selected = service.getSelected();
+        float progress = service.getProgress();
     }
 
     @Override
@@ -59,12 +63,12 @@ public class ArticleDetailActivity extends BaseActivity {
     }
 
     @OnClick(R.id.iv_back)
-    void onBackClick(View v){
+    void onBackClick(View v) {
         finish();
     }
 
     @OnClick(R.id.tv_fk)
-    void onTvfkClick(View v){
+    void onTvfkClick(View v) {
 
     }
 

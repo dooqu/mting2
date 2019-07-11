@@ -2,8 +2,10 @@ package cn.xylink.mting;
 
 import android.app.Application;
 import android.content.Intent;
+import android.util.Log;
 
 import java.util.ArrayList;
+
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.https.HttpsUtils;
 import com.lzy.okgo.interceptor.HttpLoggingInterceptor;
@@ -33,13 +35,17 @@ public class MTing extends Application {
         instance = this;
         ContentManager.init(this);
         WXapi.init(this);
-        QQApi.init(this);
+        try {
+            QQApi.init(this);
+        } catch (Exception e) {
+            Log.e("Application", "qq未安装");
+        }
         initOkHttp();
         ImageUtils.init(this);
 
         List<Article> list = new ArrayList<>();
 
-        for(int i = 0; i < 6; i++) {
+        for (int i = 0; i < 6; i++) {
             Article article = new Article();
             article.setArticleId(String.valueOf(i));
             article.setTitle("习总书记讲话" + i);
