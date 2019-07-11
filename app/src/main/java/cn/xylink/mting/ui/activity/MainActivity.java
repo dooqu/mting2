@@ -110,11 +110,11 @@ public class MainActivity extends BaseActivity implements BaseMainTabFragment.On
         if (art == null)
             art = list != null && list.size() > 0 ? list.get(0) : null;
         if (art != null) {
-            playTitle = art.getArticleId();
+            playTitle = art.getTitle();
             float progress = art.getProgress();
             mProgress.setProgress((int) (progress * 100));
         }
-        mPlayBarTitle.setText(TextUtils.isEmpty(playTitle)?"":playTitle);
+        mPlayBarTitle.setText(TextUtils.isEmpty(playTitle) ? "" : playTitle);
 
     }
 
@@ -201,7 +201,8 @@ public class MainActivity extends BaseActivity implements BaseMainTabFragment.On
                 break;
             case R.id.rl_main_play_bar_play:
                 L.v("============================");
-                playCtrl();
+                if (!isSpeechStart)
+                    playCtrl();
                 break;
         }
     }
@@ -267,6 +268,8 @@ public class MainActivity extends BaseActivity implements BaseMainTabFragment.On
         }
     }
 
+    private boolean isSpeechStart = false;
+
     /*
 某一个文章准备开始播报的时候被调用, event.getArticle返回的是文章对象
 注意，该事件被调用并不意味着真正的tts开始播放，在此时间调用后，还有获取Article正文缓冲、以及tts转换等缓冲时间，
@@ -277,6 +280,7 @@ public class MainActivity extends BaseActivity implements BaseMainTabFragment.On
     public void onSpeechStart(SpeechStartEvent event) {
         L.v(event.getArticle());
         setPlayBarState();
+        isSpeechStart = true;
     }
 
 
@@ -287,6 +291,7 @@ public class MainActivity extends BaseActivity implements BaseMainTabFragment.On
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSpeechProgress(SpeechProgressEvent event) {
         L.v(event.getArticle());
+        isSpeechStart = false;
         float progress = (float) event.getFrameIndex() / (float) event.getTextFragments().size();
         mProgress.setProgress((int) (progress * 100));
     }

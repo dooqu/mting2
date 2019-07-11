@@ -4,6 +4,8 @@ import android.content.Context;
 
 import java.util.List;
 
+import cn.xylink.mting.ui.dialog.MainListMenuDialog;
+
 
 /*
  *主页tab页基类
@@ -14,6 +16,7 @@ import java.util.List;
  */
 public abstract class BaseMainTabFragment extends BasePresenterFragment {
     protected OnControllerListener mControllerListener;
+    protected MainListMenuDialog mBottomDialog;
 
     @Override
     public void onAttach(Context context) {
@@ -25,6 +28,11 @@ public abstract class BaseMainTabFragment extends BasePresenterFragment {
         void onPlay(String id);
         void onDelete(List<String> list);
         void onDataSuccess();
+    }
+
+    protected void showBottonDialog(){
+        mBottomDialog = new MainListMenuDialog(getActivity());
+        mBottomDialog.show();
     }
 
 }

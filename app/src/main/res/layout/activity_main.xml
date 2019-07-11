@@ -178,7 +178,7 @@
     <fragment
         android:layout_width="233dp"
         android:layout_height="match_parent"
-        android:name="cn.xylink.mting.ui.fragment.CollectFragment"
+        android:name="cn.xylink.mting.ui.fragment.LeftMenuFragment"
         android:layout_gravity="start"/>
 
 </android.support.v4.widget.DrawerLayout>

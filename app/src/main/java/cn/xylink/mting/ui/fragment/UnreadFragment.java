@@ -75,6 +75,7 @@ public class UnreadFragment extends BaseMainTabFragment implements UnreadAdapter
     @Override
     public void onItemMoreClick(Article article) {
         L.v();
+        showBottonDialog();
     }
 
     @Override
