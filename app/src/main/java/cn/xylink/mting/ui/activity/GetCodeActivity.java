@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.CountDownTimer;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -20,6 +21,7 @@ import cn.xylink.mting.presenter.CheckPhonePresenter;
 import cn.xylink.mting.presenter.GetCodePresenter;
 import cn.xylink.mting.utils.L;
 import cn.xylink.mting.utils.SafeUtils;
+import cn.xylink.mting.utils.SharedPreHelper;
 import cn.xylink.mting.utils.TingUtils;
 import cn.xylink.mting.widget.PhoneCode;
 import cn.xylink.mting.widget.ZpPhoneEditText;
@@ -32,6 +34,7 @@ public class GetCodeActivity extends BasePresenterActivity implements GetCodeCon
     public static final String EXTRA_TICKET = "extra_ticket";
     public static final String EXTRA_PHONE = "extra_phone";
     public static final String EXTRA_SOURCE = "extra_source";
+    public static final String EXTRA_platform = "extra_platform";
 
     @BindView(R.id.tv_count_down)
     TextView tvCountDown;
@@ -48,6 +51,7 @@ public class GetCodeActivity extends BasePresenterActivity implements GetCodeCon
     private String codeID;
     private String ticket;
     private String source;
+    private String platform;
 
     CountDownTimer timer;
 
@@ -108,7 +112,9 @@ public class GetCodeActivity extends BasePresenterActivity implements GetCodeCon
         phone = getIntent().getStringExtra(PhoneLoginActivity.EXTRA_PHONE);
         codeID = getIntent().getStringExtra(PhoneLoginActivity.EXTRA_CODE);
         source = getIntent().getStringExtra(EXTRA_SOURCE);
+        platform = getIntent().getStringExtra(BindingPhoneActivity.EXTRA_PLATFORM);
 
+        L.v("phone",phone,"ticket",ticket,"codeID",codeID);
         codePresenter = (GetCodePresenter) createPresenter(GetCodePresenter.class);
         codePresenter.attachView(this);
 
@@ -125,6 +131,7 @@ public class GetCodeActivity extends BasePresenterActivity implements GetCodeCon
 
     @Override
     public void onCodeSuccess(BaseResponse<CodeInfo> response) {
+        Toast.makeText(this,response.message,Toast.LENGTH_SHORT).show();
         if (response.data != null) {
             codeID = response.data.getCodeId();
         }
@@ -167,8 +174,11 @@ public class GetCodeActivity extends BasePresenterActivity implements GetCodeCon
 
         if (response.data != null) {
             ticket = response.data.getTicket();
+            SharedPreHelper.getInstance(this).put(SharedPreHelper.SharedAttribute.TICKET,ticket);
+
             Intent mIntent = new Intent(this, SetPhonePwdActivity.class);
             mIntent.putExtra(EXTRA_TICKET, ticket);
+            mIntent.putExtra(BindingPhoneActivity.EXTRA_PLATFORM,platform);
             mIntent.putExtra(EXTRA_PHONE, phone.replaceAll(" ", ""));
             if(source.equals("register")){
                 mIntent.putExtra(SetPhonePwdActivity.EXTRA_TYPE,1);

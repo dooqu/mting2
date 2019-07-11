@@ -22,10 +22,13 @@ import butterknife.OnClick;
 import cn.xylink.mting.R;
 import cn.xylink.mting.base.BaseResponse;
 import cn.xylink.mting.bean.UserInfo;
+import cn.xylink.mting.contract.BindThirdPlatformContact;
 import cn.xylink.mting.contract.LoginContact;
 import cn.xylink.mting.model.LoginRequset;
+import cn.xylink.mting.model.ThirdPlatformRequest;
 import cn.xylink.mting.model.data.Const;
 import cn.xylink.mting.presenter.LoginPresenter;
+import cn.xylink.mting.presenter.ThirdPlatformPresenter;
 import cn.xylink.mting.ui.activity.BasePresenterActivity;
 import cn.xylink.mting.ui.activity.GetCodeActivity;
 import cn.xylink.mting.ui.activity.MainActivity;
@@ -34,12 +37,14 @@ import cn.xylink.mting.utils.ContentManager;
 import cn.xylink.mting.utils.EncryptionUtil;
 import cn.xylink.mting.utils.L;
 import cn.xylink.mting.utils.MD5;
+import cn.xylink.mting.utils.SharedPreHelper;
 import cn.xylink.mting.utils.TingUtils;
 
-public class LoginPwdActivity extends BasePresenterActivity implements LoginContact.ILoginView  {
+public class BindLoginPwdActivity extends BasePresenterActivity implements BindThirdPlatformContact.IThirdPlatformView {
 
     public static final String EXTRA_PHONE = "extra_phone";
     public static final String EXTRA_SOURCE = "extra_source";
+    public static final String EXTRA_PLATFORM = "extra_platform";
     @BindView(R.id.et_pwd)
     EditText etPwd;
     @BindView(R.id.tv_include_title)
@@ -52,15 +57,20 @@ public class LoginPwdActivity extends BasePresenterActivity implements LoginCont
 
     private boolean isChecked = true;
     private String phone;
+    private String platform;
 
-    private LoginPresenter loginPresenter;
+    private ThirdPlatformPresenter thirdPlatformPresenter;
+
+    private SharedPreHelper sharedPreHelper;
 
     @Override
     protected void preView() {
         setContentView(R.layout.activity_pwd_login);
 
-        loginPresenter = (LoginPresenter) createPresenter(LoginPresenter.class);
-        loginPresenter.attachView(this);
+        thirdPlatformPresenter = (ThirdPlatformPresenter) createPresenter(ThirdPlatformPresenter.class);
+        thirdPlatformPresenter.attachView(this);
+
+        sharedPreHelper = SharedPreHelper.getInstance(this);
     }
 
     @Override
@@ -93,6 +103,7 @@ public class LoginPwdActivity extends BasePresenterActivity implements LoginCont
     @Override
     protected void initData() {
         phone = getIntent().getStringExtra(PhoneLoginActivity.EXTRA_PHONE);
+        platform = getIntent().getStringExtra(EXTRA_PLATFORM);
     }
 
     @Override
@@ -111,7 +122,8 @@ public class LoginPwdActivity extends BasePresenterActivity implements LoginCont
 
                 Intent mIntent = new Intent(this, GetCodeActivity.class);
                 mIntent.putExtra(EXTRA_PHONE, phone);
-                mIntent.putExtra(EXTRA_SOURCE,"forgot");
+                mIntent.putExtra(EXTRA_SOURCE,"bind_phone");
+                mIntent.putExtra(EXTRA_PLATFORM,platform);
                 startActivity(mIntent);
 
                 break;
@@ -136,35 +148,43 @@ public class LoginPwdActivity extends BasePresenterActivity implements LoginCont
                     Toast.makeText(this,"密码不能为空",Toast.LENGTH_SHORT).show();
                     return;
                 }
-                String pwd = etPwd.getText().toString();
-
-                LoginRequset requset = new LoginRequset();
-                requset.setDeviceId(TingUtils.getDeviceId(getApplicationContext()));
-                requset.setPhone(phone.replaceAll(" ",""));
-
-                byte[] pwds = null;
-                try {
-                    pwds =  EncryptionUtil.encrypt(MD5.md5crypt(pwd), EncryptionUtil.getPublicKey(Const.publicKey));
-                } catch (NoSuchAlgorithmException e) {
-                    e.printStackTrace();
-                } catch (InvalidKeySpecException e) {
-                    e.printStackTrace();
-                } catch (NoSuchProviderException e) {
-                    e.printStackTrace();
-                }
-                L.v("pwd decode",pwd);
-                requset.setPassword( new Base64().encodeToString(pwds));
-                requset.doSign();
-                loginPresenter.onLogin(requset);
+                thirdPlatformRequest();
                 break;
         }
     }
 
+    public void thirdPlatformRequest(){
 
+        ThirdPlatformRequest requset = new ThirdPlatformRequest();
 
+        String access_token = (String) sharedPreHelper.getSharedPreference(SharedPreHelper.SharedAttribute.ACCESS_TOKEN,"");
+        String appid = (String) sharedPreHelper.getSharedPreference(SharedPreHelper.SharedAttribute.OPENID,"");
+        String ticket = (String) sharedPreHelper.getSharedPreference(SharedPreHelper.SharedAttribute.TICKET,"");
 
+        requset.setAccess_token(access_token);
+        requset.setOpenid(appid);
+        requset.setTicket(ticket);
+        requset.setPhone(phone.replaceAll(" ",""));
+        requset.setPlatform(platform);
+
+        byte[] pwds = null;
+        try {
+            pwds =  EncryptionUtil.encrypt(MD5.md5crypt(etPwd.getText().toString()), EncryptionUtil.getPublicKey(Const.publicKey));
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (InvalidKeySpecException e) {
+            e.printStackTrace();
+        } catch (NoSuchProviderException e) {
+            e.printStackTrace();
+        }
+        requset.setPassword( new Base64().encodeToString(pwds));
+        requset.doSign();
+        thirdPlatformPresenter.onThirdPlatform(requset);
+    }
     @Override
-    public void onLoginSuccess(BaseResponse<UserInfo> response) {
+    public void onThirdPlatformSuccess(BaseResponse<UserInfo> response) {
+        L.v(response);
+        Toast.makeText(this,response.message,Toast.LENGTH_SHORT).show();
         if(response.data != null)
         {
             L.v("message",response.message);
@@ -178,7 +198,7 @@ public class LoginPwdActivity extends BasePresenterActivity implements LoginCont
     }
 
     @Override
-    public void onLoginError(int code, String errorMsg) {
+    public void onThirdPlatformError(int code, String errorMsg) {
         Toast.makeText(this,errorMsg,Toast.LENGTH_SHORT).show();
     }
 }

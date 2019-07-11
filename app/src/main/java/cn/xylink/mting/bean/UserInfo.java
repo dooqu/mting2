@@ -148,6 +148,29 @@ public class UserInfo implements Serializable {
         return city;
     }
 
+    @Override
+    public String toString() {
+        return "UserInfo{" +
+                "userId='" + userId + '\'' +
+                ", phone='" + phone + '\'' +
+                ", nickName='" + nickName + '\'' +
+                ", headImg='" + headImg + '\'' +
+                ", headThumb='" + headThumb + '\'' +
+                ", sex=" + sex +
+                ", status=" + status +
+                ", regSource='" + regSource + '\'' +
+                ", token='" + token + '\'' +
+                ", createAt=" + createAt +
+                ", birthdate=" + birthdate +
+                ", provinceId='" + provinceId + '\'' +
+                ", province='" + province + '\'' +
+                ", cityId='" + cityId + '\'' +
+                ", city='" + city + '\'' +
+                ", company='" + company + '\'' +
+                ", concernTotal=" + concernTotal +
+                '}';
+    }
+
     public void setCity(String city) {
         this.city = city;
     }

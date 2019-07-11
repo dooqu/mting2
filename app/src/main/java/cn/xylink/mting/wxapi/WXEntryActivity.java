@@ -127,7 +127,7 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
                     JSONObject jsonObject = new JSONObject(data.toString());
                     String access_token = jsonObject.getString("access_token");
                     String openid = jsonObject.getString("openid");
-                    EventBus.getDefault().post(new WXQQDataBean(access_token, openid, "wechat"));
+                    EventBus.getDefault().post(new WXQQDataBean(access_token, openid, "wechat",null));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

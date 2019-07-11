@@ -40,5 +40,17 @@ public class RemoteUrl {
     public static String getStoreUrl(){
         return URL_BASE + "/api/sct/v2/article/store/list";
     }
+    //第三方登录
+    public static String thirdLoginUrl(){
+        return URL_BASE + "/api/user/v1/third_platform/login";
+    }
+    //手机号绑定检测接口
+    public static String bindCheckUrl(){
+        return URL_BASE + "/api/user/v1/third_platform/bind_check";
+    }
+    //第三方账号绑定手机号接口
+    public static String bindThirdPlatformUrl(){
+        return URL_BASE + "/api/user/v2/third_platform/bind";
+    }
 
 }

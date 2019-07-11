@@ -123,27 +123,27 @@ public class SplashActivity extends BasePresenterActivity implements CheckTokenC
     @Override
     public void onCheckTokenSuccess(BaseResponse<UserInfo> response) {
 
-       /* if (Build.VERSION.SDK_INT < 23) {
+        if (Build.VERSION.SDK_INT < 23) {
             startActivity(new Intent(SplashActivity.this, GuideActivity.class));
             finish();
         } else {
             initPermission();
-        }*/
-        switch (response.code)
-        {
-            case 200:
-                startActivity(new Intent(SplashActivity.this, MainActivity.class));
-                finish();
-                break;
-            default:
-                if (Build.VERSION.SDK_INT < 23) {
-                    startActivity(new Intent(SplashActivity.this, GuideActivity.class));
-                    finish();
-                } else {
-                    initPermission();
-                }
-                break;
         }
+//        switch (response.code)
+//        {
+//            case 200:
+//                startActivity(new Intent(SplashActivity.this, MainActivity.class));
+//                finish();
+//                break;
+//            default:
+//                if (Build.VERSION.SDK_INT < 23) {
+//                    startActivity(new Intent(SplashActivity.this, GuideActivity.class));
+//                    finish();
+//                } else {
+//                    initPermission();
+//                }
+//                break;
+//        }
     }
 
     @Override

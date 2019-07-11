@@ -2,6 +2,7 @@ package cn.xylink.mting.ui.activity;
 
 import android.content.Intent;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
@@ -28,6 +29,7 @@ import cn.xylink.mting.presenter.RegisterPresenter;
 import cn.xylink.mting.utils.ContentManager;
 import cn.xylink.mting.utils.EncryptionUtil;
 import cn.xylink.mting.utils.L;
+import cn.xylink.mting.utils.MD5;
 import cn.xylink.mting.utils.TingUtils;
 
 public class SetPhonePwdActivity extends BasePresenterActivity implements RegisterContact.IRegisterView  {
@@ -46,6 +48,7 @@ public class SetPhonePwdActivity extends BasePresenterActivity implements Regist
     private String phone;
     private String ticket;
     private String source;
+    private String platform;
 
     private RegisterPresenter registerPresenter;
     private int type = 0;
@@ -91,6 +94,7 @@ public class SetPhonePwdActivity extends BasePresenterActivity implements Regist
         phone = getIntent().getStringExtra(GetCodeActivity.EXTRA_PHONE);
         ticket = getIntent().getStringExtra(GetCodeActivity.EXTRA_TICKET);
         type = getIntent().getIntExtra(EXTRA_TYPE,0);
+        platform = getIntent().getStringExtra(BindingPhoneActivity.EXTRA_PLATFORM);
         L.v("phone",phone,"ticket",ticket,"type",type);
     }
 
@@ -121,7 +125,7 @@ public class SetPhonePwdActivity extends BasePresenterActivity implements Regist
 
                 byte[] pwds = null;
                 try {
-                   pwds =  EncryptionUtil.encrypt(pwd, EncryptionUtil.getPublicKey(Const.publicKey));
+                   pwds =  EncryptionUtil.encrypt(MD5.md5crypt(pwd), EncryptionUtil.getPublicKey(Const.publicKey));
                 } catch (NoSuchAlgorithmException e) {
                     e.printStackTrace();
                 } catch (InvalidKeySpecException e) {
@@ -144,10 +148,18 @@ public class SetPhonePwdActivity extends BasePresenterActivity implements Regist
     public void onRegisterSuccess(BaseResponse<UserInfo> response) {
             if(response.data != null)
             {
-                L.v("token",response.data.getToken());
-                ContentManager.getInstance().setLoginToken(response.data.getToken());
-                Intent mIntent = new Intent(this,MainActivity.class);
-                startActivity(mIntent);
+//                if(TextUtils.isEmpty(platform)) {
+                    L.v("token", response.data.getToken());
+                    ContentManager.getInstance().setLoginToken(response.data.getToken());
+                    Intent mIntent = new Intent(this, MainActivity.class);
+                    startActivity(mIntent);
+//                }else{
+//                    Intent mIntent = new Intent(this, BindingPhoneQQWxActivity.class);
+//                    mIntent.putExtra(EXTRA_PHONE, phone);
+//                    mIntent.putExtra(EXTRA_SOURCE, source);
+//                    mIntent.putExtra(BindingPhoneActivity.EXTRA_PLATFORM,platform);
+//                    startActivity(mIntent);
+//                }
             }
     }
 

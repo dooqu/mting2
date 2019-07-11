@@ -32,6 +32,9 @@ public class RegisterPresenter extends BasePresenter<RegisterContact.IRegisterVi
             case FORGOT_TYPE:
                 url = RemoteUrl.forgotUrl();
                 break;
+            default:
+                url = RemoteUrl.registerUrl();
+                break;
         }
         L.v(url);
         OkGoUtils.getInstance().postData(mView, url, json, new TypeToken<BaseResponse<UserInfo>>() {
