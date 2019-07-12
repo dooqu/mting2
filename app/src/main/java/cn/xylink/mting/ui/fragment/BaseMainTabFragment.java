@@ -21,7 +21,7 @@ public abstract class BaseMainTabFragment extends BasePresenterFragment implemen
     public enum TAB_TYPE{
         UNREAD,
         READED,
-        COLLECT;
+        COLLECT,
     }
 
     @Override

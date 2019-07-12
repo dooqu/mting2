@@ -17,6 +17,8 @@ import cn.xylink.mting.R;
 import cn.xylink.mting.bean.Article;
 import cn.xylink.mting.bean.UnreadRequest;
 import cn.xylink.mting.contract.UnreadContract;
+import cn.xylink.mting.event.AddStoreSuccessEvent;
+import cn.xylink.mting.event.DeleteArticleSuccessEvent;
 import cn.xylink.mting.presenter.CollectPresenter;
 import cn.xylink.mting.speech.data.SpeechList;
 import cn.xylink.mting.speech.event.SpeechEndEvent;
@@ -64,7 +66,14 @@ public class CollectFragment extends BaseMainTabFragment implements UnreadAdapte
 
     @Override
     protected void initData() {
-        getReadedData();
+        getInitData();
+    }
+
+    private void getInitData(){
+        UnreadRequest request = new UnreadRequest();
+        request.setEvent(UnreadRequest.ENENT_TYPE.refresh.name());
+        request.doSign();
+        mPresenter.createUnread(request);
     }
 
     private void getReadedData() {
@@ -99,7 +108,7 @@ public class CollectFragment extends BaseMainTabFragment implements UnreadAdapte
 
     @Override
     public void onItemMoreClick(Article article) {
-        showBottonDialog(TAB_TYPE.UNREAD,article);
+        showBottonDialog(TAB_TYPE.COLLECT, article);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -133,6 +142,19 @@ public class CollectFragment extends BaseMainTabFragment implements UnreadAdapte
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSpeechError(SpeechErrorEvent event) {
         L.v(event);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onDelSuccess(DeleteArticleSuccessEvent event) {
+        L.v(event);
+        if (event.getTab_type() == TAB_TYPE.COLLECT)
+            getInitData();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onAddStoreSuccess(AddStoreSuccessEvent event) {
+        L.v(event);
+        getInitData();
     }
 
     @Override

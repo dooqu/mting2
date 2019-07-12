@@ -19,7 +19,10 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -29,6 +32,8 @@ import cn.xylink.mting.bean.Article;
 import cn.xylink.mting.bean.DelReadedRequest;
 import cn.xylink.mting.bean.DelUnreadRequest;
 import cn.xylink.mting.contract.DelMainContract;
+import cn.xylink.mting.event.AddStoreSuccessEvent;
+import cn.xylink.mting.event.DeleteArticleSuccessEvent;
 import cn.xylink.mting.presenter.DelMainPresenter;
 import cn.xylink.mting.speech.SpeechService;
 import cn.xylink.mting.speech.SpeechServiceProxy;
@@ -152,11 +157,16 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
         request.doSign();
         mPresenter.addLove(request);
     }
-
+    private Queue<BaseMainTabFragment.TAB_TYPE> mMessageQueue = new LinkedList<>();
     @Override
     public void onDel(BaseMainTabFragment.TAB_TYPE tabType, String id) {
+        mMessageQueue.add(tabType);
         switch (tabType){
             case UNREAD:
+                List<String> list =new ArrayList<>();
+                list.add(id);
+//                SpeechList.getInstance().removeSome(list);
+                service.removeFromSpeechList(list);
                 DelUnreadRequest request = new DelUnreadRequest();
                 request.setArticleIds(id);
                 request.doSign();
@@ -190,6 +200,7 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
     @Override
     public void onSuccessDel(String str) {
         T.s(this,"删除成功");
+        EventBus.getDefault().post(new DeleteArticleSuccessEvent(mMessageQueue.poll()));
     }
 
     @Override
@@ -200,6 +211,7 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
     @Override
     public void onSuccessAddLove(String str) {
         T.s(this,"收藏成功");
+        EventBus.getDefault().post(new AddStoreSuccessEvent());
     }
 
     @Override

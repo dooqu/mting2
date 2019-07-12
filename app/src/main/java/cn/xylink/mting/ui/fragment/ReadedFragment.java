@@ -19,6 +19,7 @@ import cn.xylink.mting.base.BaseActivity;
 import cn.xylink.mting.bean.Article;
 import cn.xylink.mting.bean.UnreadRequest;
 import cn.xylink.mting.contract.UnreadContract;
+import cn.xylink.mting.event.DeleteArticleSuccessEvent;
 import cn.xylink.mting.presenter.ReadedPresenter;
 import cn.xylink.mting.speech.data.SpeechList;
 import cn.xylink.mting.speech.event.SpeechEndEvent;
@@ -67,7 +68,14 @@ public class ReadedFragment extends BaseMainTabFragment implements UnreadAdapter
 
     @Override
     protected void initData() {
-        getReadedData();
+        getInitData();
+    }
+
+    private void getInitData(){
+        UnreadRequest request = new UnreadRequest();
+        request.setEvent(UnreadRequest.ENENT_TYPE.refresh.name());
+        request.doSign();
+        mPresenter.createUnread(request);
     }
 
     private void getReadedData() {
@@ -106,7 +114,7 @@ public class ReadedFragment extends BaseMainTabFragment implements UnreadAdapter
 
     @Override
     public void onItemMoreClick(Article article) {
-        showBottonDialog(TAB_TYPE.UNREAD,article);
+        showBottonDialog(TAB_TYPE.READED,article);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -140,6 +148,13 @@ public class ReadedFragment extends BaseMainTabFragment implements UnreadAdapter
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSpeechError(SpeechErrorEvent event) {
         L.v(event);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onDelSuccess(DeleteArticleSuccessEvent event) {
+        L.v(event);
+        if (event.getTab_type()==TAB_TYPE.READED)
+            getInitData();
     }
 
     @Override

@@ -84,7 +84,7 @@ public class MainListMenuDialog extends BaseDimDialog {
                 break;
             case R.id.tv_dialog_main_list_menu_del:
                 if (mArticle != null)
-                    mListener.onItemDel(mTabType,mArticle.getArticleId());
+                    mListener.onItemDel(mTabType,mTabType== BaseMainTabFragment.TAB_TYPE.UNREAD?mArticle.getArticleId():mArticle.getId());
             case R.id.tv_dialog_main_list_menu_cancel:
                 break;
         }
