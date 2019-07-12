@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import butterknife.ButterKnife;
+import cn.xylink.mting.MTing;
 import cn.xylink.mting.utils.T;
 
 public abstract class BaseActivity extends AppCompatActivity {

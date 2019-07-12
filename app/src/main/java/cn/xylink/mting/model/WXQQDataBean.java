@@ -9,10 +9,21 @@ public class WXQQDataBean {
     private String openid;
     private String type;
 
-    public WXQQDataBean(String access_token, String openid, String type) {
+    public String getExpires_in() {
+        return expires_in;
+    }
+
+    public void setExpires_in(String expires_in) {
+        this.expires_in = expires_in;
+    }
+
+    private String expires_in;
+
+    public WXQQDataBean(String access_token, String openid, String type,String expires_in) {
         this.access_token = access_token;
         this.openid = openid;
         this.type = type;
+        this.expires_in = expires_in;
     }
 
     public String getAccess_token() {
