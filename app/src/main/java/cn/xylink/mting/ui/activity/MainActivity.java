@@ -24,8 +24,12 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
 import cn.xylink.mting.R;
-import cn.xylink.mting.base.BaseActivity;
+import cn.xylink.mting.bean.AddLoveRequest;
 import cn.xylink.mting.bean.Article;
+import cn.xylink.mting.bean.DelReadedRequest;
+import cn.xylink.mting.bean.DelUnreadRequest;
+import cn.xylink.mting.contract.DelMainContract;
+import cn.xylink.mting.presenter.DelMainPresenter;
 import cn.xylink.mting.speech.SpeechService;
 import cn.xylink.mting.speech.SpeechServiceProxy;
 import cn.xylink.mting.speech.Speechor;
@@ -38,9 +42,11 @@ import cn.xylink.mting.ui.adapter.MainFragmentAdapter;
 import cn.xylink.mting.ui.dialog.MainAddMenuPop;
 import cn.xylink.mting.ui.fragment.BaseMainTabFragment;
 import cn.xylink.mting.utils.L;
+import cn.xylink.mting.utils.T;
 import cn.xylink.mting.widget.ArcProgressBar;
 
-public class MainActivity extends BaseActivity implements BaseMainTabFragment.OnControllerListener, MainAddMenuPop.OnMainAddMenuListener {
+public class MainActivity extends BasePresenterActivity implements BaseMainTabFragment.OnControllerListener, MainAddMenuPop.OnMainAddMenuListener
+        , DelMainContract.IDelMainView {
 
     @BindView(R.id.tv_main_tabar_unread)
     TextView mUnreadTextView;
@@ -64,6 +70,7 @@ public class MainActivity extends BaseActivity implements BaseMainTabFragment.On
     public SpeechServiceProxy proxy;
     private SpeechService service;
     private MainFragmentAdapter mTabAdapter;
+    private DelMainPresenter mPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +87,8 @@ public class MainActivity extends BaseActivity implements BaseMainTabFragment.On
     protected void initView() {
         mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         mDrawerLayout.setFocusableInTouchMode(false);
+        mPresenter = (DelMainPresenter) createPresenter(DelMainPresenter.class);
+        mPresenter.attachView(this);
     }
 
     @Override
@@ -131,13 +140,41 @@ public class MainActivity extends BaseActivity implements BaseMainTabFragment.On
     }
 
     @Override
-    public void onDelete(List<String> list) {
-        L.v();
+    public void onDataSuccess() {
+        setPlayBarState();
     }
 
     @Override
-    public void onDataSuccess() {
-        setPlayBarState();
+    public void onLove(String id) {
+        AddLoveRequest request = new AddLoveRequest();
+        request.setArticleId(id);
+        request.setType(AddLoveRequest.TYPE.STORE.name());
+        request.doSign();
+        mPresenter.addLove(request);
+    }
+
+    @Override
+    public void onDel(BaseMainTabFragment.TAB_TYPE tabType, String id) {
+        switch (tabType){
+            case UNREAD:
+                DelUnreadRequest request = new DelUnreadRequest();
+                request.setArticleIds(id);
+                request.doSign();
+                mPresenter.delUnread(request);
+                break;
+            case READED:
+                DelReadedRequest readedRequest = new DelReadedRequest();
+                readedRequest.setIds(id);
+                readedRequest.doSign();
+                mPresenter.delReaded(readedRequest);
+                break;
+            case COLLECT:
+                DelReadedRequest stroeRequest = new DelReadedRequest();
+                stroeRequest.setIds(id);
+                stroeRequest.doSign();
+                mPresenter.delConllect(stroeRequest);
+                break;
+        }
     }
 
     @Override
@@ -148,6 +185,26 @@ public class MainActivity extends BaseActivity implements BaseMainTabFragment.On
     @Override
     public void onArrange() {
 
+    }
+
+    @Override
+    public void onSuccessDel(String str) {
+        T.s(this,"删除成功");
+    }
+
+    @Override
+    public void onErrorDel(int code, String errorMsg) {
+        T.s(this,"删除失败");
+    }
+
+    @Override
+    public void onSuccessAddLove(String str) {
+        T.s(this,"收藏成功");
+    }
+
+    @Override
+    public void onErrorAddLove(int code, String errorMsg) {
+        T.s(this,"收藏失败");
     }
 
     public enum TAB_ENUM {

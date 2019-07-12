@@ -99,7 +99,7 @@ public class CollectFragment extends BaseMainTabFragment implements UnreadAdapte
 
     @Override
     public void onItemMoreClick(Article article) {
-
+        showBottonDialog(TAB_TYPE.UNREAD,article);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

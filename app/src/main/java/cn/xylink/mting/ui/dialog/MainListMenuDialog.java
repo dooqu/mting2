@@ -1,15 +1,21 @@
 package cn.xylink.mting.ui.dialog;
 
 import android.app.Activity;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.view.View;
 
 import butterknife.OnClick;
 import cn.xylink.mting.R;
+import cn.xylink.mting.bean.Article;
+import cn.xylink.mting.openapi.QQApi;
 import cn.xylink.mting.openapi.WXapi;
+import cn.xylink.mting.ui.fragment.BaseMainTabFragment;
+import cn.xylink.mting.utils.T;
 
 /*
- *底部选择通用dialog,2item
+ *条目菜单
  *
  * -----------------------------------------------------------------
  * 2019/5/22 16:04 : Create BottomSelect2Dialog.java (JoDragon);
@@ -23,8 +29,17 @@ public class MainListMenuDialog extends BaseDimDialog {
         super(context);
     }
 
-    public void setData(String first, OnBottomSelectDialogListener listener) {
+    public void setListener(OnBottomSelectDialogListener listener) {
         this.mListener = listener;
+    }
+
+    private Article mArticle;
+    private BaseMainTabFragment.TAB_TYPE mTabType;
+
+    public void show(BaseMainTabFragment.TAB_TYPE tabType, Article article) {
+        super.show();
+        mTabType = tabType;
+        mArticle = article;
     }
 
     @Override
@@ -40,20 +55,36 @@ public class MainListMenuDialog extends BaseDimDialog {
             case R.id.v_dialog_main_list_menu_out:
                 break;
             case R.id.tv_dialog_main_list_menu_wx:
-                WXapi.shareWx((Activity) mContext,"111",null,"nihao","dddd");
+                if (mArticle != null)
+                    WXapi.shareWx((Activity) mContext, mArticle.getShareUrl(), null, mArticle.getTitle(), mArticle.getContent());
                 break;
             case R.id.tv_dialog_main_list_menu_wxp:
+                if (mArticle != null)
+                    WXapi.sharePyq((Activity) mContext, mArticle.getShareUrl(), null, mArticle.getTitle(), mArticle.getContent());
                 break;
             case R.id.tv_dialog_main_list_menu_qq:
+                if (mArticle != null)
+                    QQApi.shareQQ((Activity) mContext, mArticle.getShareUrl(), null, mArticle.getTitle(), mArticle.getContent());
                 break;
             case R.id.tv_dialog_main_list_menu_quen:
+                if (mArticle != null)
+                    QQApi.shareSpace((Activity) mContext, mArticle.getShareUrl(), null, mArticle.getTitle(), mArticle.getContent());
                 break;
             case R.id.tv_dialog_main_list_menu_copy:
+                if (mArticle != null) {
+                    ClipboardManager cm = (ClipboardManager) mContext.getSystemService(Context.CLIPBOARD_SERVICE);
+                    ClipData mClipData = ClipData.newPlainText("Label", mArticle.getShareUrl());
+                    cm.setPrimaryClip(mClipData);
+                    T.showCustomToast("分享链接复制成功");
+                }
                 break;
             case R.id.tv_dialog_main_list_menu_love:
+                if (mArticle != null)
+                    mListener.onItemLove(mArticle.getArticleId());
                 break;
             case R.id.tv_dialog_main_list_menu_del:
-                break;
+                if (mArticle != null)
+                    mListener.onItemDel(mTabType,mArticle.getArticleId());
             case R.id.tv_dialog_main_list_menu_cancel:
                 break;
         }
@@ -61,7 +92,9 @@ public class MainListMenuDialog extends BaseDimDialog {
     }
 
     public interface OnBottomSelectDialogListener {
-        void onFirstClick();
+        void onItemDel(BaseMainTabFragment.TAB_TYPE tabType, String id);
+
+        void onItemLove(String id);
     }
 
 }

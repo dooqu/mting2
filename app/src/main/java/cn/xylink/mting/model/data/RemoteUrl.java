@@ -36,9 +36,25 @@ public class RemoteUrl {
     public static String getReadedUrl(){
         return URL_BASE + "/api/sct/v2/article/existread/list";
     }
-    //收藏
+    //删除待读
+    public static String getDelUnreadUrl(){
+        return URL_BASE + "/api/sct/v2/article/unread/delete";
+    }
+    //删除已读
+    public static String getDelReadedUrl(){
+        return URL_BASE + "/api/sct/v2/article/existread/delete";
+    }
+    //删除收藏
+    public static String getDelStoreUrl(){
+        return URL_BASE + "/api/sct/v2/article/store/delete";
+    }
+    //收藏列表
     public static String getStoreUrl(){
         return URL_BASE + "/api/sct/v2/article/store/list";
+    }
+    //添加收藏
+    public static String getAddStoreUrl(){
+        return URL_BASE + "/api/sct/v2/article/store";
     }
 
 }

@@ -106,7 +106,7 @@ public class ReadedFragment extends BaseMainTabFragment implements UnreadAdapter
 
     @Override
     public void onItemMoreClick(Article article) {
-
+        showBottonDialog(TAB_TYPE.UNREAD,article);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
