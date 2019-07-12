@@ -7,7 +7,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
-import cn.xylink.mting.base.BaseRequest;
 import cn.xylink.mting.base.BaseResponse;
 import cn.xylink.mting.bean.Article;
 import cn.xylink.mting.contract.IBaseView;
@@ -102,43 +101,44 @@ public class ArticleDataProvider {
         request.setToken(ContentManager.getInstance().getLoginToken());
         request.doSign();
 
-        OkGoUtils.getInstance().postData(new IBaseView() {
-            @Override
-            public void showLoading() {
+        OkGoUtils.getInstance().postData(
+                new IBaseView() {
+                    @Override
+                    public void showLoading() {
+                    }
 
-            }
+                    @Override
+                    public void hideLoading() {
+                    }
+                },
+                "http://test.xylink.cn/api/sct/v2/article/detail",
+                GsonUtil.GsonString(request), ArticleInfoResponse.class,
+                new OkGoUtils.ICallback<ArticleInfoResponse>() {
+                    @Override
+                    public void onStart() {
+                    }
 
-            @Override
-            public void hideLoading() {
+                    @Override
+                    public void onFailure(int code, String errorMsg) {
+                        if (callback != null && tickCountAtTime == tickcount) {
+                            article.setContent(errorMsg);
+                            callback.invoke(code, article);
+                        }
+                    }
 
-            }
-        }, "http://test.xylink.cn/api/sct/v2/article/detail", GsonUtil.GsonString(request), ArticleInfoResponse.class, new OkGoUtils.ICallback<ArticleInfoResponse>() {
+                    @Override
+                    public void onSuccess(ArticleInfoResponse response) {
+                        if (callback != null && tickCountAtTime == tickcount) {
+                            article.setContent(response.data.getContent());
+                            callback.invoke(0, article);
+                        }
+                    }
 
-            @Override
-            public void onStart() {
-                Log.d("xylink", "onStart");
-            }
-
-            @Override
-            public void onFailure(int code, String errorMsg) {
-                Log.d("xylink", "onFailure");
-                article.setContent(errorMsg);
-                callback.invoke(code,  article);
-            }
-
-            @Override
-            public void onSuccess(ArticleInfoResponse response) {
-                if (callback != null) {
-                    article.setContent(response.data.getContent());
-                    callback.invoke(0, article);
-                }
-            }
-
-            @Override
-            public void onComplete() {
-                Log.d("xylink", "onComplete");
-            }
-        });
+                    @Override
+                    public void onComplete() {
+                        Log.d("xylink", "onComplete");
+                    }
+                });
     }
 
     public void readArticle(String article, float progress) {
@@ -146,20 +146,23 @@ public class ArticleDataProvider {
         request.setArticleId(article);
         request.setProgress(progress);
         request.setRead(progress == 1f ? 1 : 0);
-        //request.setRead(0);
         request.setToken(ContentManager.getInstance().getLoginToken());
         request.doSign();
 
-        OkGoUtils.getInstance().postData(new IBaseView() {
-                                             @Override
-                                             public void showLoading() {
-                                             }
+        OkGoUtils.getInstance().postData(
+                new IBaseView() {
+                    @Override
+                    public void showLoading() {
+                    }
 
-                                             @Override
-                                             public void hideLoading() {
-                                             }
-                                         }
-                , "http://test.xylink.cn//api/sct/v2/article/read", GsonUtil.GsonString(request), BaseResponse.class, new OkGoUtils.ICallback<BaseResponse<Object>>() {
+                    @Override
+                    public void hideLoading() {
+                    }
+                }
+                , "http://test.xylink.cn//api/sct/v2/article/read",
+                GsonUtil.GsonString(request),
+                BaseResponse.class,
+                new OkGoUtils.ICallback<BaseResponse<Object>>() {
                     @Override
                     public void onStart() {
                     }
@@ -182,7 +185,6 @@ public class ArticleDataProvider {
 
 
     public void saveSpeechListToLocal() {
-
     }
 
     public List<Article> getSpeechListFromLocal() {

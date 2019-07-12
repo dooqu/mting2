@@ -69,14 +69,12 @@ import cn.xylink.mting.speech.event.SpeechStopEvent;
  * p、service.cancelTickCount(); 取消定时关闭
  * q、service.setSpeed(Speechor.SpeechorSpeed speed); 设定语速，默认1
  * r、service.getSpeed(); 返回当前语速
- * <p>
- * <p>
- * <p>
+ *
+ *
+ *
  * 2、订阅播放事件
- * <p>
  * 默认订阅即可
  * EventBus.getDefault.regist(this)
- * <p>
  * 四种播放事件
  * <p>
  * SpeechStartEvent
@@ -84,6 +82,8 @@ import cn.xylink.mting.speech.event.SpeechStopEvent;
  * event.getArticle() 返回要播放的文章
  * 注意，此时getTextBody()不可用，因为正文还未从网络加载
  * <p>
+ * SpeechReadyEvent
+ * 文章的正文已经加载完毕
  * <p>
  * SpeechProgressEvent
  * 播报进度发生变化时进行订阅通知

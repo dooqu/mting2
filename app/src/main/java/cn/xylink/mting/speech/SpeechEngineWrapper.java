@@ -78,7 +78,6 @@ public abstract class SpeechEngineWrapper implements Speechor {
                         isPausedByExternal = true;
                         break;
                     case AudioManager.AUDIOFOCUS_GAIN:
-
                         //别的应用申请焦点之后又释放焦点时，就会触发此回调，恢复播放音乐
                         Log.d("xylink", "AUDIOFOCUS_GAIN");
                         if (SpeechEngineWrapper.this.getState() == SpeechorState.SpeechorStatePaused
