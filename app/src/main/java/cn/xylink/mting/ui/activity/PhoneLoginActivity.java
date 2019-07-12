@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import cn.xylink.mting.MTing;
 import cn.xylink.mting.R;
 import cn.xylink.mting.base.BaseResponse;
 import cn.xylink.mting.bean.CodeInfo;
@@ -46,6 +47,7 @@ public class PhoneLoginActivity extends BasePresenterActivity implements GetCode
         setContentView(R.layout.activity_phone_login);
         codePresenter = (GetCodePresenter) createPresenter(GetCodePresenter.class);
         codePresenter.attachView(this);
+        MTing.getActivityManager().pushActivity(this);
 
     }
 

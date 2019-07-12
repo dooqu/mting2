@@ -8,6 +8,7 @@ import android.widget.Toast;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import cn.xylink.mting.MTing;
 import cn.xylink.mting.R;
 import cn.xylink.mting.base.BaseResponse;
 import cn.xylink.mting.bean.CheckInfo;
@@ -58,6 +59,7 @@ public class GetCodeActivity extends BasePresenterActivity implements GetCodeCon
     @Override
     protected void preView() {
         setContentView(R.layout.activity_get_code);
+        MTing.getActivityManager().pushActivity(this);
     }
 
 
@@ -75,6 +77,13 @@ public class GetCodeActivity extends BasePresenterActivity implements GetCodeCon
                 tvCountDown.setText("重新获取");
             }
         }.start();
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        timer.cancel();
     }
 
     @Override
@@ -171,7 +180,7 @@ public class GetCodeActivity extends BasePresenterActivity implements GetCodeCon
     @Override
     public void onCheckPhoneSuccess(BaseResponse<CheckInfo> response) {
         L.v("code", response.code);
-
+        timer.onFinish();
         if (response.data != null) {
             ticket = response.data.getTicket();
             SharedPreHelper.getInstance(this).put(SharedPreHelper.SharedAttribute.TICKET,ticket);
@@ -193,6 +202,6 @@ public class GetCodeActivity extends BasePresenterActivity implements GetCodeCon
 
     @Override
     public void onCheckPhoneError(int code, String errorMsg) {
-
+        timer.onFinish();
     }
 }

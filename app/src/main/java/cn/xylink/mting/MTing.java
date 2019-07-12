@@ -28,11 +28,19 @@ public class MTing extends Application {
     private static MTing instance;
     private int mActivityCount = 0;
 
+    public static ActivityManager activityManager = null;
+
+    public  static ActivityManager getActivityManager()
+    {
+        return activityManager;
+    }
+
 
     @Override
     public void onCreate() {
         super.onCreate();
         instance = this;
+        activityManager = ActivityManager.getScreenManager();
         ContentManager.init(this);
         WXapi.init(this);
         try {

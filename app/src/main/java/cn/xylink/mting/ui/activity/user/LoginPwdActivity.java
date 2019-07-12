@@ -19,6 +19,7 @@ import java.security.spec.InvalidKeySpecException;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import cn.xylink.mting.MTing;
 import cn.xylink.mting.R;
 import cn.xylink.mting.base.BaseResponse;
 import cn.xylink.mting.bean.UserInfo;
@@ -61,6 +62,7 @@ public class LoginPwdActivity extends BasePresenterActivity implements LoginCont
 
         loginPresenter = (LoginPresenter) createPresenter(LoginPresenter.class);
         loginPresenter.attachView(this);
+        MTing.getActivityManager().pushActivity(this);
     }
 
     @Override
@@ -107,8 +109,8 @@ public class LoginPwdActivity extends BasePresenterActivity implements LoginCont
 
         switch (v.getId())
         {
-            case R.id.tv_forget_pwd:{
 
+            case R.id.tv_forget_pwd:{
                 Intent mIntent = new Intent(this, GetCodeActivity.class);
                 mIntent.putExtra(EXTRA_PHONE, phone);
                 mIntent.putExtra(EXTRA_SOURCE,"forgot");
@@ -160,9 +162,6 @@ public class LoginPwdActivity extends BasePresenterActivity implements LoginCont
         }
     }
 
-
-
-
     @Override
     public void onLoginSuccess(BaseResponse<UserInfo> response) {
         if(response.data != null)
@@ -174,6 +173,7 @@ public class LoginPwdActivity extends BasePresenterActivity implements LoginCont
             Intent mIntent = new Intent(this, MainActivity.class);
             startActivity(mIntent);
             finish();
+            MTing.getActivityManager().popAllActivitys();
         }
     }
 

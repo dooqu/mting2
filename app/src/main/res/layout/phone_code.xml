@@ -18,7 +18,7 @@
                 android:id="@+id/tv_code1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="17dp"
+                android:textSize="@dimen/text_20"
                 android:textColor="@color/color_blue"
                 android:background="@null"
                 android:gravity="center"/>
@@ -40,7 +40,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/color_blue"
-                android:textSize="17sp"
+                android:textSize="@dimen/text_20"
                 android:background="@null"
                 android:gravity="center"/>
             <View
@@ -60,7 +60,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/color_blue"
-                android:textSize="17dp"
+                android:textSize="@dimen/text_20"
                 android:background="@null"
                 android:gravity="center"/>
             <View
@@ -81,7 +81,7 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/color_blue"
                 android:background="@null"
-                android:textSize="17dp"
+                android:textSize="@dimen/text_20"
                 android:gravity="center"/>
             <View
                 android:id="@+id/v4"

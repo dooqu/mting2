@@ -19,6 +19,7 @@ import java.security.spec.InvalidKeySpecException;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import cn.xylink.mting.MTing;
 import cn.xylink.mting.R;
 import cn.xylink.mting.base.BaseResponse;
 import cn.xylink.mting.bean.UserInfo;
@@ -71,6 +72,8 @@ public class BindLoginPwdActivity extends BasePresenterActivity implements BindT
         thirdPlatformPresenter.attachView(this);
 
         sharedPreHelper = SharedPreHelper.getInstance(this);
+
+        MTing.getActivityManager().pushActivity(this);
     }
 
     @Override
@@ -194,6 +197,7 @@ public class BindLoginPwdActivity extends BasePresenterActivity implements BindT
             Intent mIntent = new Intent(this, MainActivity.class);
             startActivity(mIntent);
             finish();
+            MTing.getActivityManager().popAllActivitys();
         }
     }
 

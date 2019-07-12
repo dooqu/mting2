@@ -15,6 +15,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import butterknife.OnClick;
+import cn.xylink.mting.MTing;
 import cn.xylink.mting.R;
 import cn.xylink.mting.base.BaseActivity;
 import cn.xylink.mting.base.BaseResponse;
@@ -47,6 +48,7 @@ public class LoginActivity extends BasePresenterActivity implements ThirdLoginCo
 
     @Override
     protected void preView() {
+        MTing.getActivityManager().pushActivity(this);
         EventBus.getDefault().register(this);
         setContentView(R.layout.activity_login);
         mTencent = QQApi.getInstance();
@@ -82,6 +84,9 @@ public class LoginActivity extends BasePresenterActivity implements ThirdLoginCo
     @OnClick({R.id.imv_login_weChat, R.id.imv_login_qq, R.id.tv_phone})
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.btn_left:
+                finish();
+                break;
             case R.id.imv_login_weChat:
                 if (WXapi.isInstallWX()) {
                     WXapi.loginWX();
@@ -152,7 +157,7 @@ public class LoginActivity extends BasePresenterActivity implements ThirdLoginCo
                 ContentManager.getInstance().setLoginToken(response.data.getToken());
                 Intent mIntent = new Intent(this, MainActivity.class);
                 startActivity(mIntent);
-
+                finish();
                 break;
             }
         }
@@ -190,9 +195,7 @@ class BaseUiListener implements IUiListener {
     @Override
     public void onError(UiError e) {
         L.v("nana", "code:" + e.errorCode + ", msg:"
-
                 + e.errorMessage + ", detail:" + e.errorDetail);
-
     }
 
     @Override

@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import cn.xylink.mting.MTing;
 import cn.xylink.mting.R;
 import cn.xylink.mting.base.BaseResponse;
 import cn.xylink.mting.bean.CodeInfo;
@@ -52,6 +53,7 @@ public class BindingPhoneActivity extends BasePresenterActivity implements BindC
         setContentView(R.layout.activity_binding_phone);
         codePresenter = (BindCheckPresenter) createPresenter(BindCheckPresenter.class);
         codePresenter.attachView(this);
+        MTing.getActivityManager().pushActivity(this);
 
     }
 

@@ -21,6 +21,7 @@ import java.util.HashMap;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import cn.xylink.mting.MTing;
 import cn.xylink.mting.R;
 import cn.xylink.mting.model.WXQQDataBean;
 import cn.xylink.mting.model.data.OkGoUtils;
@@ -56,6 +57,7 @@ public class BindingPhoneQQWxActivity extends BasePresenterActivity {
     protected void preView() {
         setContentView(R.layout.activity_binding_phone_wx_qq);
         sharedPreHelper = SharedPreHelper.getInstance(this);
+        MTing.getActivityManager().pushActivity(this);
     }
 
     @Override
@@ -156,10 +158,13 @@ public class BindingPhoneQQWxActivity extends BasePresenterActivity {
 
 
 
-    @OnClick({R.id.btn_binding,R.id.tv_change_phone})
+    @OnClick({R.id.btn_binding,R.id.tv_change_phone,R.id.btn_left})
     public void onClick(View v){
         final int id = v.getId();
         switch (id){
+            case R.id.btn_left:
+                finish();
+                break;
             case R.id.btn_binding: {
                 Intent mIntent = new Intent(this, BindLoginPwdActivity.class);
                 mIntent.putExtra(BindLoginPwdActivity.EXTRA_PHONE,phone);
