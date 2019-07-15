@@ -101,7 +101,17 @@ public class ArticleDetailActivity extends BaseActivity {
     @OnClick({R.id.ll_setting, R.id.iv_setting, R.id.tv_setting})
     void onSettingClick(View v) {
         if (mArticleDetailSetting == null) {
-            mArticleDetailSetting = new ArticleDetailSetting();
+            mArticleDetailSetting = new ArticleDetailSetting(new ArticleDetailSetting.SettingListener() {
+                @Override
+                public void onSpeed(int speed) {
+
+                }
+
+                @Override
+                public void onTime(int time) {
+
+                }
+            });
         }
         mArticleDetailSetting.showDialog(this);
     }
@@ -122,6 +132,20 @@ public class ArticleDetailActivity extends BaseActivity {
         mArticleDetailShare.showDialog(this);
     }
 
+    @OnClick(R.id.tv_fav)
+    void onFav(View v) {
+
+    }
+
+    @OnClick(R.id.tv_next)
+    void onNext(View v) {
+
+    }
+
+    @OnClick({R.id.rl_main_play_bar_play, R.id.iv_play_bar_btn})
+    void onPlay(View v){
+
+    }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSpeechStart(RecycleEvent event) {
@@ -140,7 +164,7 @@ public class ArticleDetailActivity extends BaseActivity {
             float progress = 1;
             apbMain.setProgress((int) (progress * 100));
             skProgress.setProgress((int) (progress * 100));
-        }else if (event instanceof SpeechErrorEvent){
+        } else if (event instanceof SpeechErrorEvent) {
             ivPlayBarBtn.setImageResource(R.mipmap.ico_playing);
             float progress = 0;
             apbMain.setProgress((int) (progress * 100));

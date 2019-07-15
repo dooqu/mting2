@@ -124,7 +124,7 @@
                 android:id="@+id/tv_share"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="文章分享"
+                android:text="分享文章"
                 android:textColor="#999" />
         </LinearLayout>
 
@@ -162,6 +162,7 @@
 
 
         <TextView
+            android:id="@+id/tv_fav"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="已收藏" />
@@ -199,6 +200,7 @@
         </RelativeLayout>
 
         <TextView
+            android:id="@+id/tv_next"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="下一篇" />
