@@ -10,7 +10,6 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
-import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import org.greenrobot.eventbus.EventBus;
@@ -19,6 +18,7 @@ import cn.xylink.mting.R;
 import cn.xylink.mting.bean.Article;
 import cn.xylink.mting.speech.data.ArticleDataProvider;
 import cn.xylink.mting.speech.data.SpeechList;
+import cn.xylink.mting.speech.event.SpeechArticleStatusSavedAtServerEvent;
 import cn.xylink.mting.speech.event.SpeechEndEvent;
 import cn.xylink.mting.speech.event.SpeechErrorEvent;
 import cn.xylink.mting.speech.event.SpeechProgressEvent;
@@ -193,7 +193,9 @@ public class SpeechService extends Service {
     private void onSpeechEnd(Article article, float progress) {
         Log.d(TAG, "onSpeedEnd:" + article.getTitle() + ",progress=" + progress);
         //与云端同步数据状态
-        articleDataProvider.readArticle(article.getArticleId(), progress);
+        articleDataProvider.readArticle(article, progress, ((errorCode, articleResult) -> {
+            EventBus.getDefault().post(new SpeechArticleStatusSavedAtServerEvent(errorCode, "", articleResult));
+        } ));
         if (progress == 1) {
             EventBus.getDefault().post(new SpeechEndEvent(article, progress));
         }
@@ -518,6 +520,17 @@ public class SpeechService extends Service {
 
 
     private void initNotification() {
-
+        notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+        Notification.Builder builder = new Notification.Builder(this)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setTicker("通知栏的标题")
+                .setContentTitle("这个是标题")
+                .setContentText("这些是内容")
+                .setOngoing(false)
+                .setAutoCancel(true);
+        Notification.MediaStyle mMediaStyle = new Notification.MediaStyle();
+        //mMediaStyle.setShowActionsInCompactView(0,1,2);
+        builder.setStyle(mMediaStyle);
+        notificationManager.notify(7, builder.build());
     }
 }
