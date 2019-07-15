@@ -14,7 +14,15 @@ public class Article
     float progress;
     int store;
     int read;
+    String id;
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public void setArticleId(String articleId)
     {
@@ -150,6 +158,7 @@ public class Article
         article.setUpdateAt(this.getUpdateAt());
         article.setProgress(this.getProgress());
         article.setRead(this.getRead());
+        article.setId(this.getId());
         return article;
     }
 }
