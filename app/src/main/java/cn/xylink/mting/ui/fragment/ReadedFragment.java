@@ -13,7 +13,6 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.BindView;
 import cn.xylink.mting.R;
 import cn.xylink.mting.base.BaseActivity;
 import cn.xylink.mting.bean.Article;
@@ -141,7 +140,7 @@ public class ReadedFragment extends BaseMainTabFragment implements UnreadAdapter
     public void onSpeechEnd(SpeechEndEvent event) {
         L.v(event);
         mAdapter.clearData();
-        getReadedData();
+        getInitData();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

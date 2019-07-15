@@ -96,4 +96,9 @@ public class RemoteUrl {
         return URL_BASE + "api/sct/v1/article/check";
     }
 
+    //加入待读
+    public static String addUnreadUrl(){
+        return URL_BASE + "/api/sct/v1/article/unread/add";
+    }
+
 }

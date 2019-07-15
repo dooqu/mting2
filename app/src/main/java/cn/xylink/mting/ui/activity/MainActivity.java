@@ -29,12 +29,15 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import cn.xylink.mting.R;
 import cn.xylink.mting.bean.AddLoveRequest;
+import cn.xylink.mting.bean.AddUnreadRequest;
 import cn.xylink.mting.bean.Article;
 import cn.xylink.mting.bean.DelReadedRequest;
 import cn.xylink.mting.bean.DelUnreadRequest;
+import cn.xylink.mting.contract.AddUnreadContract;
 import cn.xylink.mting.contract.DelMainContract;
 import cn.xylink.mting.event.AddStoreSuccessEvent;
 import cn.xylink.mting.event.DeleteArticleSuccessEvent;
+import cn.xylink.mting.presenter.AddUnreadPresenter;
 import cn.xylink.mting.presenter.DelMainPresenter;
 import cn.xylink.mting.speech.SpeechService;
 import cn.xylink.mting.speech.SpeechServiceProxy;
@@ -52,7 +55,7 @@ import cn.xylink.mting.utils.T;
 import cn.xylink.mting.widget.ArcProgressBar;
 
 public class MainActivity extends BasePresenterActivity implements BaseMainTabFragment.OnControllerListener, MainAddMenuPop.OnMainAddMenuListener
-        , DelMainContract.IDelMainView {
+        , DelMainContract.IDelMainView , AddUnreadContract.IAddUnreadView {
 
     @BindView(R.id.tv_main_tabar_unread)
     TextView mUnreadTextView;
@@ -77,6 +80,7 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
     private SpeechService service;
     private MainFragmentAdapter mTabAdapter;
     private DelMainPresenter mPresenter;
+    private AddUnreadPresenter mAddUreadPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,6 +99,8 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
         mDrawerLayout.setFocusableInTouchMode(false);
         mPresenter = (DelMainPresenter) createPresenter(DelMainPresenter.class);
         mPresenter.attachView(this);
+        mAddUreadPresenter = (AddUnreadPresenter) createPresenter(AddUnreadPresenter.class);
+        mAddUreadPresenter.attachView(this);
     }
 
     @Override
@@ -143,6 +149,10 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
         L.v();
         if (service != null)
             service.play(id);
+        AddUnreadRequest request = new AddUnreadRequest();
+        request.setArticleIds(id);
+        request.doSign();
+        mAddUreadPresenter.addUnread(request);
     }
 
     @Override
@@ -221,6 +231,16 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
     @Override
     public void onErrorAddLove(int code, String errorMsg) {
         T.s(this, "收藏失败");
+    }
+
+    @Override
+    public void onSuccessAddUnread(String msg) {
+
+    }
+
+    @Override
+    public void onErrorAddUnread(int code, String errorMsg) {
+
     }
 
     public enum TAB_ENUM {
