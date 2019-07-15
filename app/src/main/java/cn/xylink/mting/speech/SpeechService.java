@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
@@ -12,9 +14,11 @@ import android.util.Log;
 
 import org.greenrobot.eventbus.EventBus;
 
+import cn.xylink.mting.R;
 import cn.xylink.mting.bean.Article;
 import cn.xylink.mting.speech.data.ArticleDataProvider;
 import cn.xylink.mting.speech.data.SpeechList;
+import cn.xylink.mting.speech.event.SpeechArticleStatusSavedOnServerEvent;
 import cn.xylink.mting.speech.event.SpeechEndEvent;
 import cn.xylink.mting.speech.event.SpeechErrorEvent;
 import cn.xylink.mting.speech.event.SpeechProgressEvent;
@@ -82,6 +86,9 @@ public class SpeechService extends Service {
     Timer countdownTimer;
 
 
+    NotificationManager notificationManager;
+
+
     public class SpeechBinder extends Binder {
         public SpeechService getService() {
             return SpeechService.this;
@@ -140,6 +147,8 @@ public class SpeechService extends Service {
                 }
             }
         };
+
+        initNotification();
     }
 
 
@@ -184,7 +193,9 @@ public class SpeechService extends Service {
     private void onSpeechEnd(Article article, float progress) {
         Log.d(TAG, "onSpeedEnd:" + article.getTitle() + ",progress=" + progress);
         //与云端同步数据状态
-        articleDataProvider.readArticle(article.getArticleId(), progress);
+        articleDataProvider.readArticle(article, progress, ((errorCode, articleResult) -> {
+            EventBus.getDefault().post(new SpeechArticleStatusSavedOnServerEvent(errorCode, "", articleResult));
+        } ));
         if (progress == 1) {
             EventBus.getDefault().post(new SpeechEndEvent(article, progress));
         }
@@ -505,5 +516,21 @@ public class SpeechService extends Service {
 
     public synchronized float getProgress() {
         return speechor.getProgress();
+    }
+
+
+    private void initNotification() {
+        notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+        Notification.Builder builder = new Notification.Builder(this)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setTicker("通知栏的标题")
+                .setContentTitle("这个是标题")
+                .setContentText("这些是内容")
+                .setOngoing(false)
+                .setAutoCancel(true);
+        Notification.MediaStyle mMediaStyle = new Notification.MediaStyle();
+        //mMediaStyle.setShowActionsInCompactView(0,1,2);
+        builder.setStyle(mMediaStyle);
+        notificationManager.notify(7, builder.build());
     }
 }

@@ -1,14 +1,21 @@
 package cn.xylink.mting.ui.activity;
 
+import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.TextPaint;
+import android.text.style.ClickableSpan;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -18,9 +25,12 @@ import cn.xylink.mting.bean.Article;
 import cn.xylink.mting.speech.SpeechService;
 import cn.xylink.mting.speech.SpeechServiceProxy;
 import cn.xylink.mting.speech.event.RecycleEvent;
+import cn.xylink.mting.speech.event.SpeechEndEvent;
+import cn.xylink.mting.speech.event.SpeechErrorEvent;
 import cn.xylink.mting.speech.event.SpeechProgressEvent;
 import cn.xylink.mting.speech.event.SpeechReadyEvent;
 import cn.xylink.mting.speech.event.SpeechStartEvent;
+import cn.xylink.mting.speech.event.SpeechStopEvent;
 import cn.xylink.mting.ui.dialog.ArticleDetailFont;
 import cn.xylink.mting.ui.dialog.ArticleDetailSetting;
 import cn.xylink.mting.ui.dialog.ArticleDetailShare;
@@ -43,6 +53,10 @@ public class ArticleDetailActivity extends BaseActivity {
     ArcProgressBar apbMain;
     @BindView(R.id.sk_progress)
     SeekBar skProgress;
+    @BindView(R.id.tv_title)
+    TextView tvTitle;
+    @BindView(R.id.iv_play_bar_btn)
+    ImageView ivPlayBarBtn;
     private String aid;
 
 
@@ -55,6 +69,7 @@ public class ArticleDetailActivity extends BaseActivity {
         service.play(aid);
         Article selected = service.getSelected();
         tvContent.setText(selected.getContent());
+        tvTitle.setText(selected.getTitle());
         float progress = service.getProgress();
     }
 
@@ -113,13 +128,75 @@ public class ArticleDetailActivity extends BaseActivity {
         if (event instanceof SpeechStartEvent) {
             tvContent.setText("");
         } else if (event instanceof SpeechReadyEvent) {
+            ivPlayBarBtn.setImageResource(R.mipmap.ico_pause);
             tvContent.setText(event.getArticle().getContent());
         } else if (event instanceof SpeechProgressEvent) {
-            tvContent.setText(event.getArticle().getContent());
             SpeechProgressEvent spe = (SpeechProgressEvent) event;
+            showContent(spe);
             float progress = (float) spe.getFrameIndex() / (float) spe.getTextFragments().size();
             apbMain.setProgress((int) (progress * 100));
             skProgress.setProgress((int) (progress * 100));
+        } else if (event instanceof SpeechEndEvent) {
+            float progress = 1;
+            apbMain.setProgress((int) (progress * 100));
+            skProgress.setProgress((int) (progress * 100));
+        }else if (event instanceof SpeechErrorEvent){
+            ivPlayBarBtn.setImageResource(R.mipmap.ico_playing);
+            float progress = 0;
+            apbMain.setProgress((int) (progress * 100));
+            skProgress.setProgress((int) (progress * 100));
+        }
+    }
+
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onSpeechStart(SpeechStopEvent event) {
+        ivPlayBarBtn.setImageResource(R.mipmap.ico_playing);
+        float progress = 0;
+        apbMain.setProgress((int) (progress * 100));
+        skProgress.setProgress((int) (progress * 100));
+    }
+
+    private void showContent(SpeechProgressEvent spe) {
+        int frameIndex = spe.getFrameIndex();
+        List<String> textFragments = spe.getTextFragments();
+        tvContent.setText("");
+        for (int i = 0; i < textFragments.size(); i++) {
+            String s = textFragments.get(i);
+            SpannableString spannableString = new SpannableString(s);
+            ClickableSpan clickableSpan;
+            if (i == frameIndex) {
+                clickableSpan = new ClickableSpan() {
+                    @Override
+                    public void onClick(View widget) {
+                    }
+
+                    @Override
+                    public void updateDrawState(TextPaint ds) {
+                        super.updateDrawState(ds);
+                        ds.setColor(Color.parseColor("#488def"));
+                        ds.setUnderlineText(false);
+                        ds.clearShadowLayer();
+                    }
+                };
+            } else {
+                clickableSpan = new ClickableSpan() {
+                    @Override
+                    public void onClick(View widget) {
+                        //Do something.
+                    }
+
+                    @Override
+                    public void updateDrawState(TextPaint ds) {
+                        super.updateDrawState(ds);
+                        ds.setColor(Color.parseColor("#333333"));
+                        ds.setUnderlineText(false);
+                        ds.clearShadowLayer();
+                    }
+                };
+            }
+            spannableString.setSpan(clickableSpan, 0, s.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            tvContent.append(spannableString);
         }
     }
 

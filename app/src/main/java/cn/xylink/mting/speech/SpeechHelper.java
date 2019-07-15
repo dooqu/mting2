@@ -11,10 +11,10 @@ public class SpeechHelper {
         String[] strArr = textBody.split("[\n。，！？；.,!?]");
 
         for (int i = 0, j = strArr.length; i < j; i++) {
-            if (strArr[i].trim() == "")
+            if (strArr[i].trim().equals(""))
                 continue;
 
-            fragments.add(strArr[i]);
+            fragments.add(strArr[i].trim());
         }
 
         return fragments;
