@@ -17,6 +17,7 @@
     <dimen name="text_18">18sp</dimen>
     <dimen name="text_15">15sp</dimen>
     <dimen name="dialog_ico_tv_space">16dp</dimen>
-    <dimen name="text_20">20dp</dimen>
+    <dimen name="text_20">20sp</dimen>
+    <dimen name="text_23">23sp</dimen>
 
 </resources>

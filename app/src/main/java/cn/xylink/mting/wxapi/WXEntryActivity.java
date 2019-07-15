@@ -21,7 +21,7 @@ import org.json.JSONObject;
 import java.util.HashMap;
 
 import cn.xylink.mting.common.Const;
-import cn.xylink.mting.model.WXQQDataBean;
+import cn.xylink.mting.event.WXQQDataBean;
 import cn.xylink.mting.model.data.OkGoUtils;
 import cn.xylink.mting.utils.L;
 
