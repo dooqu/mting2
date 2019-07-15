@@ -37,8 +37,6 @@ import cn.xylink.mting.widget.SpaceItemDecoration;
  * -----------------------------------------------------------------
  */
 public class UnreadFragment extends BaseMainTabFragment implements UnreadAdapter.OnItemClickListener, UnreadContract.IUnreadView {
-    @BindView(R.id.rv_unread)
-    RecyclerView mRecyclerView;
     private UnreadAdapter mAdapter;
     private UnreadPresenter mPresenter;
 
@@ -52,8 +50,9 @@ public class UnreadFragment extends BaseMainTabFragment implements UnreadAdapter
         mPresenter = (UnreadPresenter) createPresenter(UnreadPresenter.class);
         mPresenter.attachView(this);
         mAdapter = new UnreadAdapter(getActivity(), SpeechList.getInstance().getArticleList(), this);
+        mRecyclerView = view.findViewById(R.id.rv_unread);
         mRecyclerView.addItemDecoration(new SpaceItemDecoration());
-        mRecyclerView.setItemAnimator(null);
+//        mRecyclerView.setItemAnimator(null);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(linearLayoutManager);

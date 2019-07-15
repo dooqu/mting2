@@ -157,13 +157,15 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
         request.doSign();
         mPresenter.addLove(request);
     }
+
     private Queue<BaseMainTabFragment.TAB_TYPE> mMessageQueue = new LinkedList<>();
+
     @Override
     public void onDel(BaseMainTabFragment.TAB_TYPE tabType, String id) {
         mMessageQueue.add(tabType);
-        switch (tabType){
+        switch (tabType) {
             case UNREAD:
-                List<String> list =new ArrayList<>();
+                List<String> list = new ArrayList<>();
                 list.add(id);
 //                SpeechList.getInstance().removeSome(list);
                 service.removeFromSpeechList(list);
@@ -199,24 +201,24 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
 
     @Override
     public void onSuccessDel(String str) {
-        T.s(this,"删除成功");
+        T.s(this, "删除成功");
         EventBus.getDefault().post(new DeleteArticleSuccessEvent(mMessageQueue.poll()));
     }
 
     @Override
     public void onErrorDel(int code, String errorMsg) {
-        T.s(this,"删除失败");
+        T.s(this, "删除失败");
     }
 
     @Override
     public void onSuccessAddLove(String str) {
-        T.s(this,"收藏成功");
+        T.s(this, "收藏成功");
         EventBus.getDefault().post(new AddStoreSuccessEvent());
     }
 
     @Override
     public void onErrorAddLove(int code, String errorMsg) {
-        T.s(this,"收藏失败");
+        T.s(this, "收藏失败");
     }
 
     public enum TAB_ENUM {
@@ -247,7 +249,7 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
 
 
     @OnClick({R.id.iv_main_title_my, R.id.iv_main_title_search, R.id.iv_main_title_add
-            , R.id.tv_main_tabar_readed, R.id.tv_main_tabar_unread, R.id.tv_main_tabar_love, R.id.rl_main_play_bar_play})
+            , R.id.tv_main_tabar_readed, R.id.tv_main_tabar_unread, R.id.tv_main_tabar_love, R.id.rl_main_play_bar_play,R.id.rl_main_title_layout})
     void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_main_title_my:
@@ -270,8 +272,11 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
                 break;
             case R.id.rl_main_play_bar_play:
                 L.v("============================");
-                if (!isSpeechStart)
-                    playCtrl();
+                playCtrl();
+                break;
+            case R.id.rl_main_title_layout:
+                L.v("============================");
+                mTabAdapter.getItem(mCurrentTabIndex.index).backTop();
                 break;
         }
     }
@@ -337,7 +342,6 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
         }
     }
 
-    private boolean isSpeechStart = false;
 
     /*
 某一个文章准备开始播报的时候被调用, event.getArticle返回的是文章对象
@@ -349,7 +353,6 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
     public void onSpeechStart(SpeechStartEvent event) {
         L.v(event.getArticle());
         setPlayBarState();
-        isSpeechStart = true;
     }
 
 
@@ -360,7 +363,6 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSpeechProgress(SpeechProgressEvent event) {
         L.v(event.getArticle());
-        isSpeechStart = false;
         float progress = (float) event.getFrameIndex() / (float) event.getTextFragments().size();
         mProgress.setProgress((int) (progress * 100));
     }

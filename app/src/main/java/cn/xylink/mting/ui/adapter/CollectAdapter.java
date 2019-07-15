@@ -21,20 +21,20 @@ import cn.xylink.mting.speech.data.SpeechList;
 import cn.xylink.mting.utils.L;
 
 /*
- *已读
+ *收藏
  *
  * -----------------------------------------------------------------
- * 2019/7/10 14:53 : Create ReadedAdapter.java (JoDragon);
+ * 2019/7/15 10:50 : Create CollectAdapter.java (JoDragon);
  * -----------------------------------------------------------------
  */
-public class ReadedAdapter extends RecyclerView.Adapter<ReadedAdapter.ReadedHolder> {
+public class CollectAdapter extends RecyclerView.Adapter<CollectAdapter.ReadedHolder> {
     private Context mContext;
     private static List<Article> mData;
     private UnreadAdapter.OnItemClickListener mOnItemClickListener;
     private Article mCurrent = SpeechList.getInstance().getCurrent();
     private int mCurrentPosition = 0;
 
-    public ReadedAdapter(Context context, List<Article> list, UnreadAdapter.OnItemClickListener listener) {
+    public CollectAdapter(Context context, List<Article> list, UnreadAdapter.OnItemClickListener listener) {
         this.mContext = context;
         this.mData = list;
         this.mOnItemClickListener = listener;
@@ -77,13 +77,13 @@ public class ReadedAdapter extends RecyclerView.Adapter<ReadedAdapter.ReadedHold
 
     @NonNull
     @Override
-    public ReadedHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int position) {
+    public CollectAdapter.ReadedHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int position) {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_unread, viewGroup, false);
-        return new ReadedHolder(view);
+        return new CollectAdapter.ReadedHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ReadedHolder holder, int position) {
+    public void onBindViewHolder(@NonNull CollectAdapter.ReadedHolder holder, int position) {
         Article data = mData.get(position);
         holder.tvTitle.setText(data.getTitle());
         holder.tvFrom.setText(TextUtils.isEmpty(data.getSourceName()) ? "其他" : data.getSourceName());

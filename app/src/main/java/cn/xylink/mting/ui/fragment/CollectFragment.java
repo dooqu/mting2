@@ -26,7 +26,7 @@ import cn.xylink.mting.speech.event.SpeechErrorEvent;
 import cn.xylink.mting.speech.event.SpeechProgressEvent;
 import cn.xylink.mting.speech.event.SpeechStartEvent;
 import cn.xylink.mting.speech.event.SpeechStopEvent;
-import cn.xylink.mting.ui.adapter.ReadedAdapter;
+import cn.xylink.mting.ui.adapter.CollectAdapter;
 import cn.xylink.mting.ui.adapter.UnreadAdapter;
 import cn.xylink.mting.utils.L;
 import cn.xylink.mting.widget.SpaceItemDecoration;
@@ -40,9 +40,7 @@ import cn.xylink.mting.widget.SpaceItemDecoration;
  */
 public class CollectFragment extends BaseMainTabFragment implements UnreadAdapter.OnItemClickListener, UnreadContract.IUnreadView {
 
-    @BindView(R.id.rv_collect)
-    RecyclerView mRecyclerView;
-    private ReadedAdapter mAdapter;
+    private CollectAdapter mAdapter;
     private CollectPresenter mPresenter;
 
     @Override
@@ -54,7 +52,8 @@ public class CollectFragment extends BaseMainTabFragment implements UnreadAdapte
     protected void initView(View view) {
         mPresenter = (CollectPresenter) createPresenter(CollectPresenter.class);
         mPresenter.attachView(this);
-        mAdapter = new ReadedAdapter(getActivity(), null, this);
+        mAdapter = new CollectAdapter(getActivity(), null, this);
+        mRecyclerView = view.findViewById(R.id.rv_collect);
         mRecyclerView.addItemDecoration(new SpaceItemDecoration());
         mRecyclerView.setItemAnimator(null);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());

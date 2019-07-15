@@ -42,8 +42,6 @@ import cn.xylink.mting.widget.SpaceItemDecoration;
  */
 public class ReadedFragment extends BaseMainTabFragment implements UnreadAdapter.OnItemClickListener, UnreadContract.IUnreadView {
 
-    @BindView(R.id.rv_readed)
-    RecyclerView mRecyclerView;
     private ReadedAdapter mAdapter;
     private ReadedPresenter mPresenter;
 
@@ -57,6 +55,7 @@ public class ReadedFragment extends BaseMainTabFragment implements UnreadAdapter
         mPresenter = (ReadedPresenter) createPresenter(ReadedPresenter.class);
         mPresenter.attachView(this);
         mAdapter = new ReadedAdapter(getActivity(), null, this);
+        mRecyclerView = view.findViewById(R.id.rv_readed);
         mRecyclerView.addItemDecoration(new SpaceItemDecoration());
         mRecyclerView.setItemAnimator(null);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());

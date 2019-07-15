@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cn.xylink.mting.ui.activity.MainActivity;
+import cn.xylink.mting.ui.fragment.BaseMainTabFragment;
 import cn.xylink.mting.ui.fragment.CollectFragment;
 import cn.xylink.mting.ui.fragment.ReadedFragment;
 import cn.xylink.mting.ui.fragment.UnreadFragment;
@@ -15,7 +16,7 @@ import cn.xylink.mting.ui.fragment.UnreadFragment;
 
 public class MainFragmentAdapter extends FragmentPagerAdapter {
 
-    List<Fragment> fragments = new ArrayList<>();
+    List<BaseMainTabFragment> fragments = new ArrayList<>();
 
     public MainFragmentAdapter(FragmentManager fm) {
         super(fm);
@@ -25,7 +26,7 @@ public class MainFragmentAdapter extends FragmentPagerAdapter {
     }
 
     @Override
-    public Fragment getItem(int i) {
+    public BaseMainTabFragment getItem(int i) {
         return fragments!=null?fragments.get(i):null;
     }
 
