@@ -4,12 +4,11 @@ import cn.xylink.mting.bean.Article;
 
 public class SpeechStopEvent {
     public static enum StopReason {
-        ListIsNull ,
+        ListIsNull,
         CountDownToZero
     }
 
-    public SpeechStopEvent()
-    {
+    public SpeechStopEvent() {
         this.stopReason = StopReason.ListIsNull;
     }
 

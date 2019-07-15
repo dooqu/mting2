@@ -4,14 +4,18 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import org.greenrobot.eventbus.EventBus;
 
+import cn.xylink.mting.R;
 import cn.xylink.mting.bean.Article;
 import cn.xylink.mting.speech.data.ArticleDataProvider;
 import cn.xylink.mting.speech.data.SpeechList;
@@ -82,6 +86,9 @@ public class SpeechService extends Service {
     Timer countdownTimer;
 
 
+    NotificationManager notificationManager;
+
+
     public class SpeechBinder extends Binder {
         public SpeechService getService() {
             return SpeechService.this;
@@ -140,6 +147,8 @@ public class SpeechService extends Service {
                 }
             }
         };
+
+        initNotification();
     }
 
 
@@ -505,5 +514,10 @@ public class SpeechService extends Service {
 
     public synchronized float getProgress() {
         return speechor.getProgress();
+    }
+
+
+    private void initNotification() {
+
     }
 }

@@ -212,7 +212,6 @@ public abstract class BaiduSpeechor implements Speechor {
 
     @Override
     public void setSpeed(SpeechorSpeed speed) {
-
         if (isReleased)
             return;
 
