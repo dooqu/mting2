@@ -5,7 +5,9 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.view.View;
+import android.widget.TextView;
 
+import butterknife.BindView;
 import butterknife.OnClick;
 import cn.xylink.mting.R;
 import cn.xylink.mting.bean.Article;
@@ -24,6 +26,8 @@ import cn.xylink.mting.utils.T;
 public class MainListMenuDialog extends BaseDimDialog {
 
     private OnBottomSelectDialogListener mListener;
+    @BindView(R.id.tv_dialog_main_list_menu_love)
+    TextView mLoveTextView;
 
     public MainListMenuDialog(Context context) {
         super(context);
@@ -40,6 +44,8 @@ public class MainListMenuDialog extends BaseDimDialog {
         super.show();
         mTabType = tabType;
         mArticle = article;
+        if (mArticle.getStore()==1)
+            mLoveTextView.setCompoundDrawablesWithIntrinsicBounds(null,mContext.getResources().getDrawable(R.mipmap.back),null,null);
     }
 
     @Override
@@ -80,11 +86,11 @@ public class MainListMenuDialog extends BaseDimDialog {
                 break;
             case R.id.tv_dialog_main_list_menu_love:
                 if (mArticle != null)
-                    mListener.onItemLove(mArticle.getArticleId());
+                    mListener.onItemLove(mArticle.getArticleId(), mArticle.getStore());
                 break;
             case R.id.tv_dialog_main_list_menu_del:
                 if (mArticle != null)
-                    mListener.onItemDel(mTabType,mTabType== BaseMainTabFragment.TAB_TYPE.UNREAD?mArticle.getArticleId():mArticle.getId());
+                    mListener.onItemDel(mTabType, mTabType == BaseMainTabFragment.TAB_TYPE.UNREAD ? mArticle.getArticleId() : mArticle.getId());
             case R.id.tv_dialog_main_list_menu_cancel:
                 break;
         }
@@ -94,7 +100,7 @@ public class MainListMenuDialog extends BaseDimDialog {
     public interface OnBottomSelectDialogListener {
         void onItemDel(BaseMainTabFragment.TAB_TYPE tabType, String id);
 
-        void onItemLove(String id);
+        void onItemLove(String id, int store);
     }
 
 }

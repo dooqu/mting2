@@ -21,6 +21,7 @@ import cn.xylink.mting.event.AddStoreSuccessEvent;
 import cn.xylink.mting.event.DeleteArticleSuccessEvent;
 import cn.xylink.mting.presenter.CollectPresenter;
 import cn.xylink.mting.speech.data.SpeechList;
+import cn.xylink.mting.speech.event.SpeechArticleStatusSavedOnServerEvent;
 import cn.xylink.mting.speech.event.SpeechEndEvent;
 import cn.xylink.mting.speech.event.SpeechErrorEvent;
 import cn.xylink.mting.speech.event.SpeechProgressEvent;
@@ -134,8 +135,6 @@ public class CollectFragment extends BaseMainTabFragment implements UnreadAdapte
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSpeechEnd(SpeechEndEvent event) {
         L.v(event);
-        mAdapter.clearData();
-        getReadedData();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -153,6 +152,13 @@ public class CollectFragment extends BaseMainTabFragment implements UnreadAdapte
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onAddStoreSuccess(AddStoreSuccessEvent event) {
         L.v(event);
+        getInitData();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onSpeechArticleStatusSavedOnServerSuccess(SpeechArticleStatusSavedOnServerEvent event) {
+        L.v(event);
+        if (event.isSuccessed())
         getInitData();
     }
 

@@ -55,7 +55,7 @@ import cn.xylink.mting.utils.T;
 import cn.xylink.mting.widget.ArcProgressBar;
 
 public class MainActivity extends BasePresenterActivity implements BaseMainTabFragment.OnControllerListener, MainAddMenuPop.OnMainAddMenuListener
-        , DelMainContract.IDelMainView , AddUnreadContract.IAddUnreadView {
+        , DelMainContract.IDelMainView, AddUnreadContract.IAddUnreadView {
 
     @BindView(R.id.tv_main_tabar_unread)
     TextView mUnreadTextView;
@@ -161,10 +161,10 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
     }
 
     @Override
-    public void onLove(String id) {
+    public void onLove(String id, int store) {
         AddLoveRequest request = new AddLoveRequest();
         request.setArticleId(id);
-        request.setType(AddLoveRequest.TYPE.STORE.name());
+        request.setType(store == 0 ? AddLoveRequest.TYPE.STORE.name() : AddLoveRequest.TYPE.CANCLE.name());
         request.doSign();
         mPresenter.addLove(request);
     }
@@ -202,7 +202,7 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
 
     @Override
     public void onAdd() {
-        Intent mIntent = new Intent(this,AddArticleActivity.class);
+        Intent mIntent = new Intent(this, AddArticleActivity.class);
         startActivity(mIntent);
     }
 
@@ -224,7 +224,7 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
 
     @Override
     public void onSuccessAddLove(String str) {
-        T.s(this, "收藏成功");
+        T.s(this, str);
         EventBus.getDefault().post(new AddStoreSuccessEvent());
     }
 
@@ -271,7 +271,7 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
 
 
     @OnClick({R.id.iv_main_title_my, R.id.iv_main_title_search, R.id.iv_main_title_add
-            , R.id.tv_main_tabar_readed, R.id.tv_main_tabar_unread, R.id.tv_main_tabar_love, R.id.rl_main_play_bar_play,R.id.rl_main_title_layout})
+            , R.id.tv_main_tabar_readed, R.id.tv_main_tabar_unread, R.id.tv_main_tabar_love, R.id.rl_main_play_bar_play, R.id.rl_main_title_layout})
     void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_main_title_my:

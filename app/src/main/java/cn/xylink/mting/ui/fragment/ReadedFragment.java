@@ -21,6 +21,7 @@ import cn.xylink.mting.contract.UnreadContract;
 import cn.xylink.mting.event.DeleteArticleSuccessEvent;
 import cn.xylink.mting.presenter.ReadedPresenter;
 import cn.xylink.mting.speech.data.SpeechList;
+import cn.xylink.mting.speech.event.SpeechArticleStatusSavedOnServerEvent;
 import cn.xylink.mting.speech.event.SpeechEndEvent;
 import cn.xylink.mting.speech.event.SpeechErrorEvent;
 import cn.xylink.mting.speech.event.SpeechProgressEvent;
@@ -139,8 +140,6 @@ public class ReadedFragment extends BaseMainTabFragment implements UnreadAdapter
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSpeechEnd(SpeechEndEvent event) {
         L.v(event);
-        mAdapter.clearData();
-        getInitData();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -153,6 +152,13 @@ public class ReadedFragment extends BaseMainTabFragment implements UnreadAdapter
         L.v(event);
         if (event.getTab_type()==TAB_TYPE.READED)
             getInitData();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onSpeechArticleStatusSavedOnServerSuccess(SpeechArticleStatusSavedOnServerEvent event) {
+        L.v(event);
+        if (event.isSuccessed())
+        getInitData();
     }
 
     @Override

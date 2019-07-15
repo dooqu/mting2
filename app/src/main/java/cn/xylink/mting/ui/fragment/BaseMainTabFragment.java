@@ -40,7 +40,7 @@ public abstract class BaseMainTabFragment extends BasePresenterFragment implemen
 
         void onDataSuccess();
 
-        void onLove(String id);
+        void onLove(String id, int store);
 
         void onDel(TAB_TYPE tabType, String id);
     }
@@ -64,16 +64,16 @@ public abstract class BaseMainTabFragment extends BasePresenterFragment implemen
     }
 
     @Override
-    public void onItemLove(String id) {
+    public void onItemLove(String id, int store) {
         if (mControllerListener != null)
-            mControllerListener.onLove(id);
+            mControllerListener.onLove(id, store);
     }
 
     public void backTop() {
         if (mRecyclerView != null) {
-            int firstItem = mRecyclerView.getChildLayoutPosition(mRecyclerView.getChildAt(0))+1;
+            int firstItem = mRecyclerView.getChildLayoutPosition(mRecyclerView.getChildAt(0)) + 1;
             int heiht = mRecyclerView.getChildAt(0).getHeight();
-            int sy = -firstItem * heiht*2;
+            int sy = -firstItem * heiht * 2;
             mRecyclerView.smoothScrollBy(0, sy, new DecelerateInterpolator(1.8f));
         }
     }
