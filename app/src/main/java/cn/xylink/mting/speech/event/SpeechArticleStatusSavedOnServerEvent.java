@@ -2,12 +2,12 @@ package cn.xylink.mting.speech.event;
 
 import cn.xylink.mting.bean.Article;
 
-public class SpeechArticleStatusSavedAtServerEvent extends RecycleEvent {
+public class SpeechArticleStatusSavedOnServerEvent extends RecycleEvent {
 
     private int errorCode;
     private String message;
 
-    public SpeechArticleStatusSavedAtServerEvent(int errorCode, String mesage, Article article) {
+    public SpeechArticleStatusSavedOnServerEvent(int errorCode, String mesage, Article article) {
         super(article);
     }
 

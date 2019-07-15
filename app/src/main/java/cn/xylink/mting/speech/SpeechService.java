@@ -18,7 +18,7 @@ import cn.xylink.mting.R;
 import cn.xylink.mting.bean.Article;
 import cn.xylink.mting.speech.data.ArticleDataProvider;
 import cn.xylink.mting.speech.data.SpeechList;
-import cn.xylink.mting.speech.event.SpeechArticleStatusSavedAtServerEvent;
+import cn.xylink.mting.speech.event.SpeechArticleStatusSavedOnServerEvent;
 import cn.xylink.mting.speech.event.SpeechEndEvent;
 import cn.xylink.mting.speech.event.SpeechErrorEvent;
 import cn.xylink.mting.speech.event.SpeechProgressEvent;
@@ -194,7 +194,7 @@ public class SpeechService extends Service {
         Log.d(TAG, "onSpeedEnd:" + article.getTitle() + ",progress=" + progress);
         //与云端同步数据状态
         articleDataProvider.readArticle(article, progress, ((errorCode, articleResult) -> {
-            EventBus.getDefault().post(new SpeechArticleStatusSavedAtServerEvent(errorCode, "", articleResult));
+            EventBus.getDefault().post(new SpeechArticleStatusSavedOnServerEvent(errorCode, "", articleResult));
         } ));
         if (progress == 1) {
             EventBus.getDefault().post(new SpeechEndEvent(article, progress));
