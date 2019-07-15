@@ -1,7 +1,6 @@
 package cn.xylink.mting.ui.activity;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -13,7 +12,6 @@ import com.tencent.tauth.IUiListener;
 import com.tencent.tauth.Tencent;
 import com.tencent.tauth.UiError;
 
-import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -23,7 +21,6 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import cn.xylink.mting.MTing;
 import cn.xylink.mting.R;
-import cn.xylink.mting.model.WXQQDataBean;
 import cn.xylink.mting.model.data.OkGoUtils;
 import cn.xylink.mting.openapi.QQApi;
 import cn.xylink.mting.ui.activity.user.BindLoginPwdActivity;

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_marginRight="20dp"
+    android:layout_marginLeft="20dp"
+    android:layout_height="match_parent"
+    android:focusableInTouchMode="true"
+    android:focusable="false"
+    android:orientation="vertical">
+
+    <EditText
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/et_article_title"
+        android:hint="文章标题"
+        android:textStyle="bold"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="20dp"
+        android:background="@android:color/transparent"
+        android:textSize="@dimen/text_18"/>
+    <View
+        android:id="@+id/v_1"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="20dp"
+        android:background="@color/font_gray" />
+    <EditText
+    android:layout_marginTop="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_width="match_parent"
+        android:gravity="top"
+        android:layout_height="match_parent"
+        android:id="@+id/et_article_content"
+        android:hint="文章内容......"
+        android:background="@android:color/transparent"
+        android:textSize="@dimen/text_18"/>
+</LinearLayout>

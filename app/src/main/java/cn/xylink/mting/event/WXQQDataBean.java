@@ -1,4 +1,4 @@
-package cn.xylink.mting.model;
+package cn.xylink.mting.event;
 
 /**
  * Created by wjn on 2018/10/31.

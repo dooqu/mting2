@@ -3,6 +3,7 @@ package cn.xylink.mting.ui.activity;
 import android.animation.AnimatorSet;
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
+import android.content.Intent;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.os.Bundle;
@@ -191,7 +192,8 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
 
     @Override
     public void onAdd() {
-
+        Intent mIntent = new Intent(this,AddArticleActivity.class);
+        startActivity(mIntent);
     }
 
     @Override

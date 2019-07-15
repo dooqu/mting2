@@ -3,7 +3,6 @@ package cn.xylink.mting.ui.activity;
 import android.content.Intent;
 import android.view.View;
 
-import com.google.gson.JsonObject;
 import com.tencent.tauth.IUiListener;
 import com.tencent.tauth.Tencent;
 import com.tencent.tauth.UiError;
@@ -17,19 +16,17 @@ import org.json.JSONObject;
 import butterknife.OnClick;
 import cn.xylink.mting.MTing;
 import cn.xylink.mting.R;
-import cn.xylink.mting.base.BaseActivity;
 import cn.xylink.mting.base.BaseResponse;
 import cn.xylink.mting.bean.UserInfo;
 import cn.xylink.mting.common.Const;
 import cn.xylink.mting.contract.ThirdLoginContact;
 import cn.xylink.mting.model.ThirdLoginRequset;
-import cn.xylink.mting.model.WXQQDataBean;
+import cn.xylink.mting.event.WXQQDataBean;
 import cn.xylink.mting.openapi.QQApi;
 import cn.xylink.mting.openapi.WXapi;
 import cn.xylink.mting.presenter.ThirdLoginPresenter;
 import cn.xylink.mting.utils.ContentManager;
 import cn.xylink.mting.utils.L;
-import cn.xylink.mting.utils.LogUtils;
 import cn.xylink.mting.utils.SharedPreHelper;
 
 public class LoginActivity extends BasePresenterActivity implements ThirdLoginContact.IThirdLoginView {

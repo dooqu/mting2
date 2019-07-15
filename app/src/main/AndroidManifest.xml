@@ -47,7 +47,6 @@
             android:name=".wxapi.WXEntryActivity"
             android:exported="true"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
-        <activity android:name=".ui.activity.BindUserPhoneThirdPlatformActivity" /> <!-- qq分享 -->
         <activity
             android:name="com.tencent.tauth.AuthActivity"
             android:launchMode="singleTask"
@@ -75,6 +74,7 @@
         <activity android:name=".ui.activity.BindingPhoneActivity" />
         <activity android:name=".ui.activity.BindingPhoneQQWxActivity" />
         <activity android:name=".ui.activity.user.BindLoginPwdActivity" />
+        <activity android:name=".ui.activity.AddArticleActivity" android:windowSoftInputMode="adjustPan" />
     </application>
 
 </manifest>
