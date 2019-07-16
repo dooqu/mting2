@@ -48,6 +48,9 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
     TextView tvFeedback;
     @BindView(R.id.ll_error)
     LinearLayout llError;
+    @BindView(R.id.tv_loading_error)
+    TextView tvLoadingError;
+
 
     //文章类型 1 手动添加， 2 链接添加
     public int inLink = 2;
@@ -76,21 +79,19 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
             }
-
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
             }
-
             @Override
             public void afterTextChanged(Editable s) {
                 L.v("s.length", s.length());
-//                if(s.length() > 0)
-//                {
-//                    tvPreview.setTextColor(getResources().getColor(R.color.color_blue));
-//                }else{
-//                    tvPreview.setTextColor(getResources().getColor(R.color.color_login_text_gray));
-//                }
+                if(s.length() > 0)
+                {
+                    tvPreview.setTextColor(getResources().getColor(R.color.color_blue));
+                }else{
+                    tvPreview.setText("立即预览");
+                    tvPreview.setTextColor(getResources().getColor(R.color.color_login_text_gray));
+                }
             }
         });
         tvPreview.setTextColor(getResources().getColorStateList(R.color.color_blue));
@@ -99,7 +100,6 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
 
         checkLinkPresenter = (CheckLinkPresenter) createPresenter(CheckLinkPresenter.class);
         checkLinkPresenter.attachView(this);
-
 
     }
 
@@ -245,8 +245,9 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
             case -3:
                 tvFeedback.setVisibility(View.VISIBLE);
                 llError.setVisibility(View.VISIBLE);
-
+                tvLoadingError.setVisibility(View.VISIBLE);
                 break;
         }
+        tvPreview.setText("重新加载");
     }
 }
