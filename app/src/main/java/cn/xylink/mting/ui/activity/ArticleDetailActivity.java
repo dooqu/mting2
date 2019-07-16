@@ -24,6 +24,7 @@ import cn.xylink.mting.base.BaseActivity;
 import cn.xylink.mting.bean.Article;
 import cn.xylink.mting.speech.SpeechService;
 import cn.xylink.mting.speech.SpeechServiceProxy;
+import cn.xylink.mting.speech.Speechor;
 import cn.xylink.mting.speech.event.RecycleEvent;
 import cn.xylink.mting.speech.event.SpeechEndEvent;
 import cn.xylink.mting.speech.event.SpeechErrorEvent;
@@ -41,7 +42,7 @@ import cn.xylink.mting.widget.ArcProgressBar;
  */
 public class ArticleDetailActivity extends BaseActivity {
 
-
+    private boolean isPlaying = false;
     private ArticleDetailSetting mArticleDetailSetting;
     private ArticleDetailFont mArticleDetailFont;
     private ArticleDetailShare mArticleDetailShare;
@@ -104,12 +105,41 @@ public class ArticleDetailActivity extends BaseActivity {
             mArticleDetailSetting = new ArticleDetailSetting(new ArticleDetailSetting.SettingListener() {
                 @Override
                 public void onSpeed(int speed) {
-
+                    switch (speed) {
+                        case 0:
+                            service.setSpeed(Speechor.SpeechorSpeed.SPEECH_SPEED_NORMAL);
+                            break;
+                        case 1:
+                            service.setSpeed(Speechor.SpeechorSpeed.SPEECH_SPEED_MULTIPLE_1_POINT_5);
+                            break;
+                        case 2:
+                            service.setSpeed(Speechor.SpeechorSpeed.SPEECH_SPEED_MULTIPLE_2);
+                            break;
+                        case 3:
+                            service.setSpeed(Speechor.SpeechorSpeed.SPEECH_SPEED_MULTIPLE_2_POINT_5);
+                            break;
+                    }
                 }
 
                 @Override
                 public void onTime(int time) {
-
+                    switch (time) {
+                        case 0:
+                            service.setCountDown(SpeechService.CountDownMode.None, 0);
+                            break;
+                        case 1:
+                            service.setCountDown(SpeechService.CountDownMode.NumberCount, 1);
+                            break;
+                        case 2:
+                            service.setCountDown(SpeechService.CountDownMode.MinuteCount, 10);
+                            break;
+                        case 3:
+                            service.setCountDown(SpeechService.CountDownMode.MinuteCount, 20);
+                            break;
+                        case 4:
+                            service.setCountDown(SpeechService.CountDownMode.MinuteCount, 30);
+                            break;
+                    }
                 }
             });
         }
@@ -134,17 +164,20 @@ public class ArticleDetailActivity extends BaseActivity {
 
     @OnClick(R.id.tv_fav)
     void onFav(View v) {
-
     }
 
     @OnClick(R.id.tv_next)
     void onNext(View v) {
-
+        service.playNext();
     }
 
     @OnClick({R.id.rl_main_play_bar_play, R.id.iv_play_bar_btn})
-    void onPlay(View v){
-
+    void onPlay(View v) {
+        if (isPlaying) {
+            service.pause();
+        } else {
+            service.play(aid);
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -152,6 +185,8 @@ public class ArticleDetailActivity extends BaseActivity {
         if (event instanceof SpeechStartEvent) {
             tvContent.setText("");
         } else if (event instanceof SpeechReadyEvent) {
+            isPlaying = false;
+            aid = event.getArticle().getId();
             ivPlayBarBtn.setImageResource(R.mipmap.ico_pause);
             tvContent.setText(event.getArticle().getContent());
         } else if (event instanceof SpeechProgressEvent) {
@@ -165,6 +200,7 @@ public class ArticleDetailActivity extends BaseActivity {
             apbMain.setProgress((int) (progress * 100));
             skProgress.setProgress((int) (progress * 100));
         } else if (event instanceof SpeechErrorEvent) {
+            isPlaying = true;
             ivPlayBarBtn.setImageResource(R.mipmap.ico_playing);
             float progress = 0;
             apbMain.setProgress((int) (progress * 100));
@@ -175,6 +211,7 @@ public class ArticleDetailActivity extends BaseActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSpeechStart(SpeechStopEvent event) {
+        isPlaying = true;
         ivPlayBarBtn.setImageResource(R.mipmap.ico_playing);
         float progress = 0;
         apbMain.setProgress((int) (progress * 100));

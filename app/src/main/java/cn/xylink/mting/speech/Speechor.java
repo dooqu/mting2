@@ -101,9 +101,7 @@ public interface Speechor {
     void onProgress(List<String> textFragments, int index);
 
 
+
     void onError(int errorCode, String message);
 
-    // void setStateChangedListener(StateChangedListener listener);
-    //void setSpeakProgressListener(SpeakProgressListener listener);
-    //void setErrorListener(ErrorListener listener);
 }
