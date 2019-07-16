@@ -4,21 +4,29 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import butterknife.BindView;
 import butterknife.OnClick;
 import cn.xylink.mting.R;
+import cn.xylink.mting.event.AddArticleHomeEvent;
 import cn.xylink.mting.event.OneArticleEvent;
 import cn.xylink.mting.event.TwoArticleEvent;
 import cn.xylink.mting.ui.adapter.FragmentAdapter;
 import cn.xylink.mting.ui.fragment.AddOneNoteFragment;
 import cn.xylink.mting.ui.fragment.AddTwoNoteFragment;
+import cn.xylink.mting.utils.L;
 
 public class AddArticleActivity extends BasePresenterActivity {
 
@@ -79,22 +87,53 @@ public class AddArticleActivity extends BasePresenterActivity {
 
     @Override
     protected void initData() {
+        EventBus.getDefault().register(this);
 
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
+
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(AddArticleHomeEvent event) {
+        L.v("event 1");
+        switch (event.type)
+        {
+            case 1:  // 变色
+                tvRight.setTextColor(getResources().getColorStateList(R.color.color_blue));
+                break;
+            case 0: //不变色
+                tvRight.setTextColor(getResources().getColorStateList(R.color.color_login_text_gray));
+                break;
+
+        }
+
+
+    }
+
+
 
     @Override
     protected void initTitleBar() {
 
     }
 
-    @OnClick(R.id.tv_right)
+    @OnClick({R.id.tv_right,R.id.btn_left})
     public void onClick(View v)
     {
         switch (v.getId())
         {
+            case R.id.btn_left:
+                EventBus.getDefault().post(new OneArticleEvent(OneArticleEvent.TYPE_BACK));
+                finish();
+                break;
             case R.id.tv_right:
                 if(pageIndex == 0){
-                    EventBus.getDefault().post(new OneArticleEvent());
+                    EventBus.getDefault().post(new OneArticleEvent(OneArticleEvent.TYPE_SAVE));
                 }else {
                     EventBus.getDefault().post(new TwoArticleEvent());
                 }

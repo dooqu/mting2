@@ -74,7 +74,8 @@
         <activity android:name=".ui.activity.BindingPhoneActivity" />
         <activity android:name=".ui.activity.BindingPhoneQQWxActivity" />
         <activity android:name=".ui.activity.user.BindLoginPwdActivity" />
-        <activity android:name=".ui.activity.AddArticleActivity" android:windowSoftInputMode="adjustPan" />
+        <activity android:name=".ui.activity.AddArticleActivity" android:windowSoftInputMode="stateHidden|adjustResize" />
+        <activity android:name=".ui.activity.HtmlActivity"  android:usesCleartextTraffic="true" />
     </application>
 
 </manifest>
