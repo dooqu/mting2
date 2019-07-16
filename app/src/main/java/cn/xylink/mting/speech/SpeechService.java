@@ -1,6 +1,5 @@
 package cn.xylink.mting.speech;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -18,10 +17,7 @@ import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
-import android.support.v4.app.NotificationCompat;
-import android.telephony.ServiceState;
-import android.util.Log;
-import android.widget.RemoteViews;
+
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -32,11 +28,12 @@ import cn.xylink.mting.speech.data.SpeechList;
 import cn.xylink.mting.speech.event.SpeechArticleStatusSavedOnServerEvent;
 import cn.xylink.mting.speech.event.SpeechEndEvent;
 import cn.xylink.mting.speech.event.SpeechErrorEvent;
+import cn.xylink.mting.speech.event.SpeechPauseEvent;
 import cn.xylink.mting.speech.event.SpeechProgressEvent;
 import cn.xylink.mting.speech.event.SpeechReadyEvent;
+import cn.xylink.mting.speech.event.SpeechResumeEvent;
 import cn.xylink.mting.speech.event.SpeechStartEvent;
 import cn.xylink.mting.speech.event.SpeechStopEvent;
-import cn.xylink.mting.ui.activity.MainActivity;
 
 
 public class SpeechService extends Service {
@@ -102,8 +99,6 @@ public class SpeechService extends Service {
 
 
     BroadcastReceiver receiver;
-
-    Handler mainHandler = new Handler(Looper.getMainLooper());
 
 
     static int executeCode = 0;
@@ -245,6 +240,14 @@ public class SpeechService extends Service {
         }
     }
 
+    private void onSpeechPause(Article article) {
+        EventBus.getDefault().post(new SpeechPauseEvent(article));
+    }
+
+    private void onSpeechResume(Article article) {
+        EventBus.getDefault().post(new SpeechResumeEvent(article));
+    }
+
 
     private void onSpeechStoped(SpeechStopEvent.StopReason reason) {
         notificationManager.cancelAll();
@@ -347,11 +350,13 @@ public class SpeechService extends Service {
                 if (result) {
                     this.serviceState = SpeechServiceState.Paused;
                     initNotification();
+                    onSpeechPause(speechList.getCurrent());
                 }
                 return result;
             case Loadding:
                 this.serviceState = SpeechServiceState.Ready;
                 initNotification();
+                onSpeechPause(speechList.getCurrent());
                 return true;
         }
         return false;
@@ -372,8 +377,10 @@ public class SpeechService extends Service {
                 result = this.speechor.resume();
                 if (result) {
                     this.serviceState = SpeechServiceState.Playing;
+                    initNotification();
+                    onSpeechResume(speechList.getCurrent());
                 }
-                initNotification();
+
                 return result;
             case Ready:
                 this.serviceState = SpeechServiceState.Playing;
@@ -612,7 +619,7 @@ public class SpeechService extends Service {
 
             switch (serviceState) {
                 case Loadding:
-                    actionFav = new Notification.Action(favorited? R.mipmap.favorited : R.mipmap.unfavorited, "", PendingIntent.getBroadcast(this, ++executeCode, noneIntent, PendingIntent.FLAG_UPDATE_CURRENT));
+                    actionFav = new Notification.Action(favorited ? R.mipmap.favorited : R.mipmap.unfavorited, "", PendingIntent.getBroadcast(this, ++executeCode, noneIntent, PendingIntent.FLAG_UPDATE_CURRENT));
                     actionPlay = new Notification.Action(R.mipmap.ico_pause, "", PendingIntent.getBroadcast(this, ++executeCode, noneIntent, PendingIntent.FLAG_UPDATE_CURRENT));
                     actionNext = new Notification.Action(R.mipmap.next, "", PendingIntent.getBroadcast(this, ++executeCode, (hasNext() ? nextIntent : noneIntent), PendingIntent.FLAG_UPDATE_CURRENT));
                     break;

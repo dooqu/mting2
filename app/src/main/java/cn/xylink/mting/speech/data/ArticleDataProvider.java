@@ -131,6 +131,7 @@ public class ArticleDataProvider {
                     public void onSuccess(ArticleInfoResponse response) {
                         if (callback != null && tickCountAtTime == tickcount) {
                             article.setContent(response.data.getContent());
+                            article.setStore(response.data.getStore());
                             callback.invoke(0, article);
                         }
                     }
