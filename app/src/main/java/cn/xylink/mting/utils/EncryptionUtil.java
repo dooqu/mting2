@@ -1,5 +1,7 @@
 package cn.xylink.mting.utils;
 
+import android.os.Build;
+
 import org.apaches.commons.codec.binary.Base64;
 
 import java.security.KeyFactory;
@@ -43,7 +45,13 @@ public class EncryptionUtil {
      */
     public static RSAPublicKey getPublicKey(String publicKey) throws NoSuchAlgorithmException, InvalidKeySpecException, NoSuchProviderException {
         //通过X509编码的Key指令获得公钥对象
-        KeyFactory keyFactory = KeyFactory.getInstance(ALGORITHM, PROVIDER);
+        KeyFactory keyFactory;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            keyFactory = KeyFactory.getInstance("RSA");     //适配Android P及以后版本，否则报错NoSuchAlgorithmException
+        } else {
+            keyFactory = KeyFactory.getInstance("RSA", "BC");
+        }
+//        KeyFactory keyFactory = KeyFactory.getInstance(ALGORITHM, PROVIDER);
         X509EncodedKeySpec x509KeySpec = new X509EncodedKeySpec(Base64.decodeBase64(publicKey));
 //        X509EncodedKeySpec x509KeySpec = new X509EncodedKeySpec(android.util.Base64.decode(publicKey, android.util.Base64.DEFAULT));
         RSAPublicKey key = (RSAPublicKey) keyFactory.generatePublic(x509KeySpec);

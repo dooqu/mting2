@@ -1,7 +1,9 @@
 package cn.xylink.mting.ui.fragment;
 
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -12,15 +14,16 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.text.BreakIterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import butterknife.BindView;
 import cn.xylink.mting.R;
-import cn.xylink.mting.base.BaseFragment;
 import cn.xylink.mting.base.BaseResponse;
 import cn.xylink.mting.bean.Article;
 import cn.xylink.mting.contract.InputCreateContact;
+import cn.xylink.mting.event.AddArticleHomeEvent;
 import cn.xylink.mting.event.OneArticleEvent;
 import cn.xylink.mting.model.InputCreateRequest;
 import cn.xylink.mting.presenter.InputCreatePresenter;
@@ -52,6 +55,27 @@ public class AddOneNoteFragment extends BasePresenterFragment implements InputCr
         EventBus.getDefault().register(this);
         inputCreatePresenter = (InputCreatePresenter) createPresenter(InputCreatePresenter.class);
         inputCreatePresenter.attachView(this);
+        etContent.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if(s.length() > 0)
+                {
+                    EventBus.getDefault().post(new AddArticleHomeEvent(1));
+                }else {
+                    EventBus.getDefault().post(new AddArticleHomeEvent(0));
+                }
+            }
+        });
     }
 
     @Override
@@ -71,21 +95,33 @@ public class AddOneNoteFragment extends BasePresenterFragment implements InputCr
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(OneArticleEvent event) {
-        L.v("event 1");
-        if(TextUtils.isEmpty(etContent.getText().toString()))
-            return;
-        String title = etTitle.getText().toString();
 
+        String title = etTitle.getText().toString();
+        String content = etContent.getText().toString();
+        if(event.type == OneArticleEvent.TYPE_BACK)
+        {
+            L.v("title",content);
+            if (TextUtils.isEmpty(content)) {
+                getActivity().finish();
+                return;
+            }
+        }
+        if(TextUtils.isEmpty(content)) {
+            Toast.makeText(getContext(),"请输入文章正文",Toast.LENGTH_SHORT).show();
+            return;
+        }
+        L.v("title",title);
         if (TextUtils.isEmpty(title)) {
             Pattern p = Pattern.compile(sRegEx);
-            Matcher matcher = p.matcher(etContent.getText().toString());
-            while (matcher.find()) {
-                title = matcher.group();
-                Toast.makeText(this.getContext(), title, Toast.LENGTH_SHORT).show();
+            BreakIterator iterator = BreakIterator.getSentenceInstance();
+            iterator.setText(content);
+            int start = iterator.first();
+            for (int end = iterator.next(); end != BreakIterator.DONE; start = end,end = iterator.next()) {
+                title = content.substring(start,end);
+                L.v(title);
                 break;
             }
         }
-
         inputCreateRequset(title,etContent.getText().toString());
 
     }
@@ -111,9 +147,11 @@ public class AddOneNoteFragment extends BasePresenterFragment implements InputCr
     }
 
     @Override
-    public void onCreateSuccess(BaseResponse<Article> requset) {
-      String json =  new Gson().toJson(requset.data);
-      L.v(json);
+    public void onCreateSuccess(BaseResponse<Article> response) {
+        L.v("response.msg",response.message);
+        Toast.makeText(getContext(),response.message,Toast.LENGTH_SHORT).show();
+      String json =  new Gson().toJson(response.data);
+      getActivity().finish();
     }
 
     @Override
