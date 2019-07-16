@@ -33,6 +33,7 @@ public class InputCreatePresenter extends BasePresenter<InputCreateContact.ICrea
             @Override
             public void onSuccess(Object data) {
                 BaseResponse<Article> baseResponse = (BaseResponse<Article>) data;
+                L.v(baseResponse.code);
                 int code = baseResponse.code;
                 if(code == 200) {
                     mView.onCreateSuccess(baseResponse);

@@ -61,6 +61,7 @@ public class CollectFragment extends BaseMainTabFragment implements UnreadAdapte
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(linearLayoutManager);
         mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.addOnScrollListener(scrollListener);
         EventBus.getDefault().register(this);
     }
 
@@ -69,9 +70,9 @@ public class CollectFragment extends BaseMainTabFragment implements UnreadAdapte
         getInitData();
     }
 
-    private void getInitData(){
+    private void getInitData() {
         UnreadRequest request = new UnreadRequest();
-        request.setEvent(UnreadRequest.ENENT_TYPE.refresh.name());
+        request.setEvent(UnreadRequest.ENENT_TYPE.more.name());
         request.doSign();
         mPresenter.createUnread(request);
     }
@@ -81,7 +82,7 @@ public class CollectFragment extends BaseMainTabFragment implements UnreadAdapte
         long at = list != null && list.size() > 0 ? list.get(list.size() - 1).getUpdateAt() : 0;
         UnreadRequest request = new UnreadRequest();
         request.setUpdateAt(at);
-        request.setEvent(UnreadRequest.ENENT_TYPE.refresh.name());
+        request.setEvent(UnreadRequest.ENENT_TYPE.more.name());
         request.doSign();
         mPresenter.createUnread(request);
     }
@@ -145,21 +146,26 @@ public class CollectFragment extends BaseMainTabFragment implements UnreadAdapte
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onDelSuccess(DeleteArticleSuccessEvent event) {
         L.v(event);
-        if (event.getTab_type() == TAB_TYPE.COLLECT)
+        if (event.getTab_type() == TAB_TYPE.COLLECT) {
+            mAdapter.clearData();
             getInitData();
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onAddStoreSuccess(AddStoreSuccessEvent event) {
         L.v(event);
+        mAdapter.clearData();
         getInitData();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSpeechArticleStatusSavedOnServerSuccess(SpeechArticleStatusSavedOnServerEvent event) {
         L.v(event);
-        if (event.isSuccessed())
-        getInitData();
+        if (event.isSuccessed()) {
+            mAdapter.clearData();
+            getInitData();
+        }
     }
 
     @Override
@@ -193,7 +199,7 @@ public class CollectFragment extends BaseMainTabFragment implements UnreadAdapte
             L.v("lastVisibleItemPosition=" + lastVisibleItemPosition);
             L.v("totalItemCount=" + totalItemCount);
             L.v("mTotalItemCount=" + mTotalItemCount);
-            if (visibleItemCount > 0 && lastVisibleItemPosition >= totalItemCount - 15
+            if (visibleItemCount > 0 && lastVisibleItemPosition >= totalItemCount - 30
                     && totalItemCount != mTotalItemCount) {
                 mTotalItemCount = totalItemCount;
                 getReadedData();
@@ -204,6 +210,7 @@ public class CollectFragment extends BaseMainTabFragment implements UnreadAdapte
     @Override
     public void onDestroy() {
         super.onDestroy();
+        mRecyclerView.removeOnScrollListener(scrollListener);
         EventBus.getDefault().unregister(this);
     }
 }
