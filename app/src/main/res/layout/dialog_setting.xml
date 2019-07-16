@@ -133,8 +133,8 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="32dp"
-        android:layout_marginTop="10dp"
         android:layout_marginLeft="16dp"
+        android:layout_marginTop="10dp"
         android:gravity="center_vertical"
         android:text="朗读速度"
         android:textColor="#333333"
@@ -149,11 +149,13 @@
         android:orientation="horizontal">
 
         <RadioGroup
+            android:id="@+id/rg_speed"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
             <RadioButton
+                android:id="@+id/rb_normal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:buttonTint="@color/selector_button_color"
@@ -165,6 +167,7 @@
                 android:layout_weight="1" />
 
             <RadioButton
+                android:id="@+id/rb_1_5"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:buttonTint="@color/selector_button_color"
@@ -176,6 +179,7 @@
                 android:layout_weight="1" />
 
             <RadioButton
+                android:id="@+id/rb_2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:buttonTint="@color/selector_button_color"
@@ -187,6 +191,7 @@
                 android:layout_weight="1" />
 
             <RadioButton
+                android:id="@+id/rb_2_5"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:buttonTint="@color/selector_button_color"
@@ -202,15 +207,36 @@
         android:layout_marginTop="20dp"
         android:background="@color/color_dedede" />
 
-    <TextView
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="32dp"
-        android:layout_marginLeft="16dp"
-        android:gravity="center_vertical"
-        android:text="定时关闭"
         android:layout_marginTop="10dp"
-        android:textColor="#333333"
-        android:textSize="16sp" />
+        android:gravity="bottom">
+
+        <TextView
+            android:id="@+id/tv_time_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:text="定时关闭"
+            android:textColor="#333333"
+            android:textSize="16sp" />
+
+        <Switch
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_toRightOf="@id/tv_time_title" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="16dp"
+            android:text="5分钟后关闭"
+            android:textColor="#488def" />
+
+    </RelativeLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
