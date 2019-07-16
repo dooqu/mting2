@@ -47,23 +47,29 @@ public class ReadedAdapter extends RecyclerView.Adapter<ReadedAdapter.ReadedHold
 //        mCurrent = SpeechList.getInstance().getCurrent();
 //        notifyDataSetChanged();
     }
+
     public void setData(List<Article> list) {
-        mData = list;
+        if (mData == null) {
+            mData = list;
+        } else {
+            mData.addAll(list);
+        }
         notifyDataSetChanged();
     }
 
-    public void clearData(){
-        mData.clear();
+    public void clearData() {
+        if (mData != null)
+            mData.clear();
     }
 
     public void setProgress(Article pro) {
         L.v(pro.getProgress());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            mData.replaceAll(article -> article.getArticleId().equals(pro.getArticleId())?pro:article);
-        }else {
-            for (int i = 0 ; i <mData.size();i++){
-                if (mData.get(i).getArticleId().equals(pro.getArticleId())){
-                    mData.set(i,pro);
+            mData.replaceAll(article -> article.getArticleId().equals(pro.getArticleId()) ? pro : article);
+        } else {
+            for (int i = 0; i < mData.size(); i++) {
+                if (mData.get(i).getArticleId().equals(pro.getArticleId())) {
+                    mData.set(i, pro);
                     notifyItemChanged(i);
                     L.v(i);
                     L.v(mCurrentPosition);

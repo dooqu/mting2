@@ -1,14 +1,13 @@
 package cn.xylink.mting.ui.adapter;
 
 import android.content.Context;
-import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import java.text.NumberFormat;
@@ -17,24 +16,29 @@ import java.util.List;
 
 import cn.xylink.mting.R;
 import cn.xylink.mting.bean.Article;
-import cn.xylink.mting.speech.data.SpeechList;
-import cn.xylink.mting.utils.L;
 
 /*
- *收藏
+ *整理
  *
  * -----------------------------------------------------------------
- * 2019/7/15 10:50 : Create CollectAdapter.java (JoDragon);
+ * 2019/7/15 19:42 : Create ArrangeAdapter.java (JoDragon);
  * -----------------------------------------------------------------
  */
-public class CollectAdapter extends RecyclerView.Adapter<CollectAdapter.ReadedHolder> {
+public class ArrangeAdapter extends RecyclerView.Adapter<ArrangeAdapter.ReadedHolder> {
     private Context mContext;
     private static List<Article> mData;
-    private UnreadAdapter.OnItemClickListener mOnItemClickListener;
-    private Article mCurrent = SpeechList.getInstance().getCurrent();
-    private int mCurrentPosition = 0;
+    private OnItemClickListener mOnItemClickListener;
 
-    public CollectAdapter(Context context, List<Article> list, UnreadAdapter.OnItemClickListener listener) {
+    public ArrangeAdapter(Context context) {
+        this.mContext = context;
+    }
+
+    public ArrangeAdapter(Context context, OnItemClickListener listener) {
+        this.mContext = context;
+        this.mOnItemClickListener = listener;
+    }
+
+    public ArrangeAdapter(Context context, List<Article> list, OnItemClickListener listener) {
         this.mContext = context;
         this.mData = list;
         this.mOnItemClickListener = listener;
@@ -43,35 +47,20 @@ public class CollectAdapter extends RecyclerView.Adapter<CollectAdapter.ReadedHo
         }
     }
 
-    public void refreshData() {
-//        mCurrent = SpeechList.getInstance().getCurrent();
-//        notifyDataSetChanged();
-    }
-
     public void setData(List<Article> list) {
-        if (mData == null) {
-            mData = list;
-        } else {
-            mData.addAll(list);
-        }
+        mData = list;
         notifyDataSetChanged();
     }
 
-    public void clearData() {
-        if (mData != null)
-            mData.clear();
-    }
-
-
     @NonNull
     @Override
-    public CollectAdapter.ReadedHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int position) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_unread, viewGroup, false);
-        return new CollectAdapter.ReadedHolder(view);
+    public ArrangeAdapter.ReadedHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int position) {
+        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_arrange, viewGroup, false);
+        return new ArrangeAdapter.ReadedHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull CollectAdapter.ReadedHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ArrangeAdapter.ReadedHolder holder, int position) {
         Article data = mData.get(position);
         holder.tvTitle.setText(data.getTitle());
         holder.tvFrom.setText(TextUtils.isEmpty(data.getSourceName()) ? "其他" : data.getSourceName());
@@ -80,20 +69,6 @@ public class CollectAdapter extends RecyclerView.Adapter<CollectAdapter.ReadedHo
         } else {
             holder.tvProgress.setText("");
         }
-//        if (mCurrent != null ? mCurrent.getArticleId().equals(data.getArticleId()) : false) {
-//            mCurrentPosition = position;
-//            holder.tvTitle.setTextColor(mContext.getResources().getColor(R.color.c488def));
-//            holder.tvFrom.setTextColor(mContext.getResources().getColor(R.color.c488def));
-//            holder.tvProgress.setTextColor(mContext.getResources().getColor(R.color.c488def));
-//        } else {
-//            holder.tvTitle.setTextColor(mContext.getResources().getColor(R.color.c333333));
-//            holder.tvFrom.setTextColor(mContext.getResources().getColor(R.color.c999999));
-//            holder.tvProgress.setTextColor(mContext.getResources().getColor(R.color.c999999));
-//        }
-        holder.ivMore.setOnClickListener(v -> {
-            if (mOnItemClickListener != null)
-                mOnItemClickListener.onItemMoreClick(data);
-        });
         holder.itemView.setOnClickListener(v -> {
             if (mOnItemClickListener != null)
                 mOnItemClickListener.onItemClick(data);
@@ -118,23 +93,21 @@ public class CollectAdapter extends RecyclerView.Adapter<CollectAdapter.ReadedHo
     }
 
     class ReadedHolder extends RecyclerView.ViewHolder {
-        ImageView ivMore;
         TextView tvTitle;
         TextView tvFrom;
         TextView tvProgress;
+        CheckBox checkBox;
 
         public ReadedHolder(@NonNull View itemView) {
             super(itemView);
-            ivMore = itemView.findViewById(R.id.iv_unread_item_more);
             tvTitle = itemView.findViewById(R.id.tv_unread_item_title);
             tvFrom = itemView.findViewById(R.id.tv_unread_item_from);
             tvProgress = itemView.findViewById(R.id.tv_unread_item_progress);
+            checkBox = itemView.findViewById(R.id.cb_arrange_item_check);
         }
     }
 
     public interface OnItemClickListener {
         void onItemClick(Article article);
-
-        void onItemMoreClick(Article article);
     }
 }

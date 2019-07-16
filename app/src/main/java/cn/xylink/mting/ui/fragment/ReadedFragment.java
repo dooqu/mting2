@@ -62,6 +62,7 @@ public class ReadedFragment extends BaseMainTabFragment implements UnreadAdapter
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(linearLayoutManager);
         mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.addOnScrollListener(scrollListener);
         EventBus.getDefault().register(this);
     }
 
@@ -70,9 +71,9 @@ public class ReadedFragment extends BaseMainTabFragment implements UnreadAdapter
         getInitData();
     }
 
-    private void getInitData(){
+    private void getInitData() {
         UnreadRequest request = new UnreadRequest();
-        request.setEvent(UnreadRequest.ENENT_TYPE.refresh.name());
+        request.setEvent(UnreadRequest.ENENT_TYPE.more.name());
         request.doSign();
         mPresenter.createUnread(request);
     }
@@ -82,7 +83,7 @@ public class ReadedFragment extends BaseMainTabFragment implements UnreadAdapter
         long at = list != null && list.size() > 0 ? list.get(list.size() - 1).getUpdateAt() : 0;
         UnreadRequest request = new UnreadRequest();
         request.setUpdateAt(at);
-        request.setEvent(UnreadRequest.ENENT_TYPE.refresh.name());
+        request.setEvent(UnreadRequest.ENENT_TYPE.more.name());
         request.doSign();
         mPresenter.createUnread(request);
     }
@@ -113,7 +114,7 @@ public class ReadedFragment extends BaseMainTabFragment implements UnreadAdapter
 
     @Override
     public void onItemMoreClick(Article article) {
-        showBottonDialog(TAB_TYPE.READED,article);
+        showBottonDialog(TAB_TYPE.READED, article);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -150,20 +151,25 @@ public class ReadedFragment extends BaseMainTabFragment implements UnreadAdapter
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onDelSuccess(DeleteArticleSuccessEvent event) {
         L.v(event);
-        if (event.getTab_type()==TAB_TYPE.READED)
+        if (event.getTab_type() == TAB_TYPE.READED) {
+            mAdapter.clearData();
             getInitData();
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSpeechArticleStatusSavedOnServerSuccess(SpeechArticleStatusSavedOnServerEvent event) {
         L.v(event);
-        if (event.isSuccessed())
-        getInitData();
+        if (event.isSuccessed()) {
+            mAdapter.clearData();
+            getInitData();
+        }
     }
 
     @Override
     public void onSuccessUnread(List<Article> unreadList) {
         if (unreadList != null) {
+            L.v(unreadList.size());
             mAdapter.setData(unreadList);
         }
     }
@@ -192,7 +198,7 @@ public class ReadedFragment extends BaseMainTabFragment implements UnreadAdapter
             L.v("lastVisibleItemPosition=" + lastVisibleItemPosition);
             L.v("totalItemCount=" + totalItemCount);
             L.v("mTotalItemCount=" + mTotalItemCount);
-            if (visibleItemCount > 0 && lastVisibleItemPosition >= totalItemCount - 15
+            if (visibleItemCount > 0 && lastVisibleItemPosition >= totalItemCount - 30
                     && totalItemCount != mTotalItemCount) {
                 mTotalItemCount = totalItemCount;
                 getReadedData();
@@ -203,6 +209,8 @@ public class ReadedFragment extends BaseMainTabFragment implements UnreadAdapter
     @Override
     public void onDestroy() {
         super.onDestroy();
+        if (mRecyclerView != null)
+            mRecyclerView.removeOnScrollListener(scrollListener);
         EventBus.getDefault().unregister(this);
     }
 }
