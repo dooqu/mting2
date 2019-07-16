@@ -231,6 +231,7 @@ public class SpeechService extends Service {
 
     private void onSpeechError(int errorCode, String message, Article article) {
         EventBus.getDefault().post(new SpeechErrorEvent(errorCode, message, article));
+        initNotification();
     }
 
     private void onSpeechEnd(Article article, float progress, boolean deleteFromList) {
@@ -611,7 +612,7 @@ public class SpeechService extends Service {
 
             switch (serviceState) {
                 case Loadding:
-                    actionFav = new Notification.Action(R.mipmap.unfavorited, "", PendingIntent.getBroadcast(this, ++executeCode, noneIntent, PendingIntent.FLAG_UPDATE_CURRENT));
+                    actionFav = new Notification.Action(favorited? R.mipmap.favorited : R.mipmap.unfavorited, "", PendingIntent.getBroadcast(this, ++executeCode, noneIntent, PendingIntent.FLAG_UPDATE_CURRENT));
                     actionPlay = new Notification.Action(R.mipmap.ico_pause, "", PendingIntent.getBroadcast(this, ++executeCode, noneIntent, PendingIntent.FLAG_UPDATE_CURRENT));
                     actionNext = new Notification.Action(R.mipmap.next, "", PendingIntent.getBroadcast(this, ++executeCode, (hasNext() ? nextIntent : noneIntent), PendingIntent.FLAG_UPDATE_CURRENT));
                     break;
@@ -665,30 +666,52 @@ public class SpeechService extends Service {
         public void onReceive(Context context, Intent intent) {
 
             synchronized (service) {
-                String action = intent.getAction();
-                if ("play".equals(action)) {
-                    if(service.getSelected() != null)
-                    {
-                        service.playSelected();
-                    }
+                final String action = intent.getAction();
+                Article currentArticle = service.getSelected();
+                if (currentArticle == null) {
+                    return;
                 }
-                else if ("pause".equals(action)) {
-                    service.pause();
-                }
-                else if ("resume".equals(action)) {
-                    service.resume();
-                }
-                else if ("next".equals(action)) {
-                    if (service.hasNext()) {
-                        service.playNext();
-                    }
-                }
-                else if ("favorite".equals("action")) {
 
-                }
-            }
-        }
-    }
+                switch (action) {
+                    case "play":
+                        if (service.getSelected() != null) {
+                            service.playSelected();
+                        }
+                        break;
+
+                    case "pause":
+                        service.pause();
+                        break;
+
+                    case "resume":
+                        service.resume();
+                        break;
+
+                    case "next":
+                        if (service.hasNext()) {
+                            service.playNext();
+                        }
+                        break;
+
+                    case "favorite":
+                        if (currentArticle.getStore() == 1) {
+                            break;
+                        }
+                        articleDataProvider.favorite(currentArticle, true, ((errorCode, article) -> {
+                            initNotification();
+                        }));
+                    case "unfavorite":
+                        if (currentArticle.getStore() == 0) {
+                            break;
+                        }
+                        articleDataProvider.favorite(currentArticle, false, ((errorCode, article) -> {
+                            initNotification();
+                        }));
+                        break;
+                } // end switch
+            } // end sychornized
+        } // end onReceive
+    } // end class
 }
 
 
