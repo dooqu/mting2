@@ -216,8 +216,8 @@ public class ArticleDataProvider {
 
                     @Override
                     public void onSuccess(BaseResponse data) {
-                        if(callback != null) {
-                            article.setStore(isStore? 1 : 0);
+                        if (callback != null) {
+                            article.setStore(isStore ? 1 : 0);
                             callback.invoke(0, article);
                         }
                     }
@@ -235,11 +235,4 @@ public class ArticleDataProvider {
                 });
     }
 
-
-    public void saveSpeechListToLocal() {
-    }
-
-    public List<Article> getSpeechListFromLocal() {
-        return null;
-    }
 }

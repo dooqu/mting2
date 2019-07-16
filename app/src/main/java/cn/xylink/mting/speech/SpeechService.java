@@ -637,7 +637,7 @@ public class SpeechService extends Service {
                     break;
 
                 case Error:
-                    actionFav = new Notification.Action(R.mipmap.unfavorited, "", PendingIntent.getBroadcast(this, ++executeCode, noneIntent, PendingIntent.FLAG_UPDATE_CURRENT));
+                    actionFav = new Notification.Action(favorited ? R.mipmap.favorited : R.mipmap.unfavorited, "", PendingIntent.getBroadcast(this, ++executeCode, noneIntent, PendingIntent.FLAG_UPDATE_CURRENT));
                     actionPlay = new Notification.Action(R.mipmap.ico_playing, "", PendingIntent.getBroadcast(this, ++executeCode, playIntent, PendingIntent.FLAG_UPDATE_CURRENT));
                     actionNext = new Notification.Action(R.mipmap.next, "", PendingIntent.getBroadcast(this, ++executeCode, (hasNext() ? nextIntent : noneIntent), PendingIntent.FLAG_UPDATE_CURRENT));
                     break;
