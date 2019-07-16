@@ -1,16 +1,27 @@
 package cn.xylink.mting.speech;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.graphics.BitmapFactory;
 import android.os.Binder;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
+import android.support.v4.app.NotificationCompat;
+import android.telephony.ServiceState;
 import android.util.Log;
+import android.widget.RemoteViews;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -25,6 +36,7 @@ import cn.xylink.mting.speech.event.SpeechProgressEvent;
 import cn.xylink.mting.speech.event.SpeechReadyEvent;
 import cn.xylink.mting.speech.event.SpeechStartEvent;
 import cn.xylink.mting.speech.event.SpeechStopEvent;
+import cn.xylink.mting.ui.activity.MainActivity;
 
 
 public class SpeechService extends Service {
@@ -89,6 +101,14 @@ public class SpeechService extends Service {
     NotificationManager notificationManager;
 
 
+    BroadcastReceiver receiver;
+
+    Handler mainHandler = new Handler(Looper.getMainLooper());
+
+
+    static int executeCode = 0;
+
+
     public class SpeechBinder extends Binder {
         public SpeechService getService() {
             return SpeechService.this;
@@ -97,21 +117,52 @@ public class SpeechService extends Service {
 
 
     @Override
+    public IBinder onBind(Intent intent) {
+        return binder;
+    }
+
+
+    @Override
     public void onCreate() {
         super.onCreate();
+        initService();
+        initReceiver();
+    }
 
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        return super.onStartCommand(intent, flags, startId);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(receiver);
+        speechor.reset();
+        speechor.release();
+        speechor = null;
+        articleDataProvider.release();
+        articleDataProvider = null;
+    }
+
+
+    private void initService() {
         serviceState = SpeechServiceState.Ready;
         articleDataProvider = new ArticleDataProvider(this);
+
         speechor = new SpeechEngineWrapper(this) {
             @Override
             public void onStateChanged(SpeechorState speakerState) {
                 synchronized (SpeechService.this) {
                     Article currentArticle = SpeechService.this.getSelected();
-                    //在每个文章播放完成后，做以下逻辑判定
+                    //在每个文章播正常放完成后，注意是正常不受外部操作干扰的读玩， 像playNext()除外，因为他不触发结束的onReady
                     if (speakerState == SpeechorState.SpeechorStateReady) {
+                        //强制设定progress为1
                         currentArticle.setProgress(1);
-                        SpeechService.this.onSpeechEnd(currentArticle, 1);
-                        //先预先设置一个播放停止信号默认值
+                        //调用onSpeechEnd事件
+                        SpeechService.this.onSpeechEnd(currentArticle, 1, true);
+                        //以下代码，判定播放后续动作，包括定时器或者列表为空的情况；先预先设置一个播放停止信号默认值
                         SpeechStopEvent.StopReason reason = SpeechStopEvent.StopReason.ListIsNull;
                         //在每个播放完成的时机，判断下当前是否有Number定时器， 如果有，就减一，如果减一等于0，说明定时器到期
                         if (SpeechService.this.countDownMode == CountDownMode.NumberCount && --countdownValue == 0) {
@@ -123,7 +174,7 @@ public class SpeechService extends Service {
                             SpeechService.this.playNextInvokeByInternal();
                             return;
                         }
-                        //不是要播放下一个，因为当前没有下一个了， 而是要通过playNext、内部为moveNext，删除当前的
+                        //调用moveNext，不是为了要播放下一个，因为当前没有下一个了， 而是要通过moveNext的调用，把指向的当前元素删除掉;
                         SpeechService.this.moveNext();
                         //没有要读的文章了
                         serviceState = SpeechServiceState.Stoped;
@@ -148,32 +199,23 @@ public class SpeechService extends Service {
             }
         };
 
-        initNotification();
     }
 
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        return super.onStartCommand(intent, flags, startId);
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        speechor.reset();
-        speechor.release();
-        speechor = null;
-        articleDataProvider.release();
-        articleDataProvider = null;
-    }
-
-    @Override
-    public IBinder onBind(Intent intent) {
-        return binder;
+    private void initReceiver() {
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("play");
+        filter.addAction("pause");
+        filter.addAction("next");
+        filter.addAction("resume");
+        filter.addAction("favorite");
+        filter.addAction("unfavorite");
+        receiver = new SpeechActionReceiver();
+        registerReceiver(receiver, filter);
     }
 
 
     private void onSpeechStart(Article article) {
+        initNotification();
         EventBus.getDefault().post(new SpeechStartEvent(article));
     }
 
@@ -183,6 +225,7 @@ public class SpeechService extends Service {
 
     private void onSpeechProgress(Article article, int fragmentIndex, List<String> fragments) {
         article.setProgress((float) fragmentIndex / (float) fragments.size());
+        initNotification();
         EventBus.getDefault().post(new SpeechProgressEvent(fragmentIndex, fragments, article));
     }
 
@@ -190,12 +233,12 @@ public class SpeechService extends Service {
         EventBus.getDefault().post(new SpeechErrorEvent(errorCode, message, article));
     }
 
-    private void onSpeechEnd(Article article, float progress) {
-        Log.d(TAG, "onSpeedEnd:" + article.getTitle() + ",progress=" + progress);
+    private void onSpeechEnd(Article article, float progress, boolean deleteFromList) {
         //与云端同步数据状态
-        articleDataProvider.readArticle(article, progress, ((errorCode, articleResult) -> {
+        articleDataProvider.readArticle(article, progress, deleteFromList, ((errorCode, articleResult) -> {
             EventBus.getDefault().post(new SpeechArticleStatusSavedOnServerEvent(errorCode, "", articleResult));
-        } ));
+        }));
+
         if (progress == 1) {
             EventBus.getDefault().post(new SpeechEndEvent(article, progress));
         }
@@ -203,6 +246,7 @@ public class SpeechService extends Service {
 
 
     private void onSpeechStoped(SpeechStopEvent.StopReason reason) {
+        notificationManager.cancelAll();
         EventBus.getDefault().post(new SpeechStopEvent(reason));
     }
 
@@ -287,6 +331,9 @@ public class SpeechService extends Service {
     }
 
 
+    /*
+    pause的结果，可能导致当前状态为Paused或者Ready
+     */
     public synchronized boolean pause() {
         if (speechList.getCurrent() == null) {
             return false;
@@ -298,15 +345,21 @@ public class SpeechService extends Service {
                 result = this.speechor.pause();
                 if (result) {
                     this.serviceState = SpeechServiceState.Paused;
+                    initNotification();
                 }
                 return result;
             case Loadding:
                 this.serviceState = SpeechServiceState.Ready;
+                initNotification();
                 return true;
         }
         return false;
     }
 
+    /*
+    resume的时候要分情况，如果当前是Paused，那使用resume
+    如果是ready，那么用playSelected();
+     */
     public synchronized boolean resume() {
         if (speechList.getCurrent() == null) {
             return false;
@@ -319,9 +372,11 @@ public class SpeechService extends Service {
                 if (result) {
                     this.serviceState = SpeechServiceState.Playing;
                 }
+                initNotification();
                 return result;
             case Ready:
                 this.serviceState = SpeechServiceState.Playing;
+                initNotification();
                 return playSelected();
         }
 
@@ -341,7 +396,7 @@ public class SpeechService extends Service {
         Article previousArt = this.speechList.getCurrent();
         if (previousArt != null && articleId.equals(previousArt.getArticleId()) == false) {
             if (previousArt.getProgress() != 1) {
-                this.onSpeechEnd(previousArt, previousArt.getProgress());
+                this.onSpeechEnd(previousArt, previousArt.getProgress(), false);
             }
         }
 
@@ -358,7 +413,7 @@ public class SpeechService extends Service {
         Article previousArt = this.speechList.getCurrent();
         if (previousArt != null && article.getArticleId().equals(previousArt.getArticleId()) == false) {
             if (previousArt.getProgress() != 1) {
-                this.onSpeechEnd(previousArt, previousArt.getProgress());
+                this.onSpeechEnd(previousArt, previousArt.getProgress(), false);
             }
         }
 
@@ -439,6 +494,7 @@ public class SpeechService extends Service {
     public synchronized boolean playNext() {
         if (speechList.getCurrent() != null) {
             speechor.stop();
+            this.onSpeechEnd(speechList.getCurrent(), speechList.getCurrent().getProgress(), true);
         }
 
         boolean nextExists = speechList.moveNext();
@@ -520,17 +576,119 @@ public class SpeechService extends Service {
 
 
     private void initNotification() {
-        notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
-        Notification.Builder builder = new Notification.Builder(this)
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setTicker("通知栏的标题")
-                .setContentTitle("这个是标题")
-                .setContentText("这些是内容")
-                .setOngoing(false)
-                .setAutoCancel(true);
-        Notification.MediaStyle mMediaStyle = new Notification.MediaStyle();
-        //mMediaStyle.setShowActionsInCompactView(0,1,2);
-        builder.setStyle(mMediaStyle);
-        notificationManager.notify(7, builder.build());
+
+        synchronized (this) {
+            //Intent intent = new Intent(this, MainActivity.class);
+            //PendingIntent pendingIntent = PendingIntent.getActivity(this, 1, intent, 0);
+            Article currentArticle = this.speechList.getCurrent();
+            if (currentArticle == null) {
+                return;
+            }
+
+            notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            Notification.Builder builder = new Notification.Builder(this)
+                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.notification_album))
+                    .setTicker(currentArticle.getTitle())
+                    .setContentTitle("轩辕听")
+                    .setContentText(currentArticle.getTitle())
+                    .setOngoing(false)
+                    .setAutoCancel(true)
+                    .setShowWhen(false);
+
+
+            Intent playIntent = new Intent("play");
+            Intent resumeIntent = new Intent("resume");
+            Intent pauseIntent = new Intent("pause");
+            Intent favIntent = new Intent("favorite");
+            Intent unFavIntent = new Intent("unfavorite");
+            Intent nextIntent = new Intent("next");
+            Intent noneIntent = new Intent("null");
+
+            Notification.Action actionPlay = null, actionNext = null, actionFav = null;
+
+            boolean favorited = currentArticle.getStore() == 1;
+
+            switch (serviceState) {
+                case Loadding:
+                    actionFav = new Notification.Action(R.mipmap.unfavorited, "", PendingIntent.getBroadcast(this, ++executeCode, noneIntent, PendingIntent.FLAG_UPDATE_CURRENT));
+                    actionPlay = new Notification.Action(R.mipmap.ico_pause, "", PendingIntent.getBroadcast(this, ++executeCode, noneIntent, PendingIntent.FLAG_UPDATE_CURRENT));
+                    actionNext = new Notification.Action(R.mipmap.next, "", PendingIntent.getBroadcast(this, ++executeCode, (hasNext() ? nextIntent : noneIntent), PendingIntent.FLAG_UPDATE_CURRENT));
+                    break;
+
+                case Playing:
+                    actionFav = new Notification.Action(favorited ? R.mipmap.favorited : R.mipmap.unfavorited, "", PendingIntent.getBroadcast(this, ++executeCode, favorited ? unFavIntent : favIntent, PendingIntent.FLAG_UPDATE_CURRENT));
+                    actionPlay = new Notification.Action(R.mipmap.ico_pause, "", PendingIntent.getBroadcast(this, ++executeCode, pauseIntent, PendingIntent.FLAG_UPDATE_CURRENT));
+                    actionNext = new Notification.Action(R.mipmap.next, "", PendingIntent.getBroadcast(this, ++executeCode, (hasNext() ? nextIntent : noneIntent), PendingIntent.FLAG_UPDATE_CURRENT));
+                    break;
+
+                case Paused:
+                    actionFav = new Notification.Action(favorited ? R.mipmap.favorited : R.mipmap.unfavorited, "", PendingIntent.getBroadcast(this, ++executeCode, favorited ? unFavIntent : favIntent, PendingIntent.FLAG_UPDATE_CURRENT));
+                    actionPlay = new Notification.Action(R.mipmap.ico_playing, "", PendingIntent.getBroadcast(this, ++executeCode, resumeIntent, PendingIntent.FLAG_UPDATE_CURRENT));
+                    actionNext = new Notification.Action(R.mipmap.next, "", PendingIntent.getBroadcast(this, ++executeCode, (hasNext() ? nextIntent : noneIntent), PendingIntent.FLAG_UPDATE_CURRENT));
+                    break;
+
+                case Error:
+                    actionFav = new Notification.Action(R.mipmap.unfavorited, "", PendingIntent.getBroadcast(this, ++executeCode, noneIntent, PendingIntent.FLAG_UPDATE_CURRENT));
+                    actionPlay = new Notification.Action(R.mipmap.ico_playing, "", PendingIntent.getBroadcast(this, ++executeCode, playIntent, PendingIntent.FLAG_UPDATE_CURRENT));
+                    actionNext = new Notification.Action(R.mipmap.next, "", PendingIntent.getBroadcast(this, ++executeCode, (hasNext() ? nextIntent : noneIntent), PendingIntent.FLAG_UPDATE_CURRENT));
+                    break;
+
+                default:
+                    return;
+            }
+
+            if (actionFav != null) {
+                builder.addAction(actionFav);
+            }
+
+            if (actionPlay != null) {
+                builder.addAction(actionPlay);
+            }
+
+            if (actionNext != null) {
+                builder.addAction(actionNext);
+            }
+
+            Notification.MediaStyle mediaStyle = new Notification.MediaStyle();
+            mediaStyle.setShowActionsInCompactView(1, 2);
+            builder.setStyle(mediaStyle);
+
+            notificationManager.notify(7, builder.build());
+        }
+    }
+
+    public class SpeechActionReceiver extends BroadcastReceiver {
+        SpeechService service = SpeechService.this;
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            synchronized (service) {
+                String action = intent.getAction();
+                if ("play".equals(action)) {
+                    if(service.getSelected() != null)
+                    {
+                        service.playSelected();
+                    }
+                }
+                else if ("pause".equals(action)) {
+                    service.pause();
+                }
+                else if ("resume".equals(action)) {
+                    service.resume();
+                }
+                else if ("next".equals(action)) {
+                    if (service.hasNext()) {
+                        service.playNext();
+                    }
+                }
+                else if ("favorite".equals("action")) {
+
+                }
+            }
+        }
     }
 }
+
+

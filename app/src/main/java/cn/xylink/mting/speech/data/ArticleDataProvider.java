@@ -141,11 +141,12 @@ public class ArticleDataProvider {
                 });
     }
 
-    public void readArticle(Article article, float progress, ArticleLoaderCallback callback) {
+
+    public void readArticle(Article article, float progress, boolean deleteFromReadList, ArticleLoaderCallback callback) {
         ReadArticleRequest request = new ReadArticleRequest();
         request.setArticleId(article.getArticleId());
         request.setProgress(progress);
-        request.setRead(progress == 1f ? 1 : 0);
+        request.setRead(deleteFromReadList ? 1 : 0);
         request.setToken(ContentManager.getInstance().getLoginToken());
         request.doSign();
 
@@ -176,7 +177,7 @@ public class ArticleDataProvider {
                     @Override
                     public void onFailure(int code, String errorMsg) {
                         Log.d("xylink", "ReadArticle.onFailure: code=" + code + ",msg=" + errorMsg);
-                        if(callback != null) {
+                        if (callback != null) {
                             callback.invoke(-200, article);
                         }
                     }
