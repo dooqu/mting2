@@ -24,11 +24,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:theme="@style/AppTheme"
         tools:replace="android:appComponentFactory">
-<<<<<<< HEAD
 
-=======
         <uses-library android:name="org.apache.http.legacy" android:required="false" />
->>>>>>> 8f54834c5d3e7f4d58443f038da42a273ed63393
+
         <activity android:name=".ui.activity.ArrangeActivity"></activity>
         <activity
             android:name=".ui.SplashActivity"
