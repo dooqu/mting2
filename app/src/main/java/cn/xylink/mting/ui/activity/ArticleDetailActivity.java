@@ -1,14 +1,18 @@
 package cn.xylink.mting.ui.activity;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextPaint;
+import android.text.TextUtils;
 import android.text.style.ClickableSpan;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -29,8 +33,10 @@ import cn.xylink.mting.speech.Speechor;
 import cn.xylink.mting.speech.event.RecycleEvent;
 import cn.xylink.mting.speech.event.SpeechEndEvent;
 import cn.xylink.mting.speech.event.SpeechErrorEvent;
+import cn.xylink.mting.speech.event.SpeechPauseEvent;
 import cn.xylink.mting.speech.event.SpeechProgressEvent;
 import cn.xylink.mting.speech.event.SpeechReadyEvent;
+import cn.xylink.mting.speech.event.SpeechResumeEvent;
 import cn.xylink.mting.speech.event.SpeechStartEvent;
 import cn.xylink.mting.speech.event.SpeechStopEvent;
 import cn.xylink.mting.ui.dialog.ArticleDetailFont;
@@ -44,7 +50,7 @@ import cn.xylink.mting.widget.ArcProgressBar;
  */
 public class ArticleDetailActivity extends BaseActivity {
 
-    private boolean isPlaying = false;
+    private int isPlaying = 0;
     private ArticleDetailSetting mArticleDetailSetting;
     private ArticleDetailFont mArticleDetailFont;
     private ArticleDetailShare mArticleDetailShare;
@@ -60,7 +66,16 @@ public class ArticleDetailActivity extends BaseActivity {
     TextView tvTitle;
     @BindView(R.id.iv_play_bar_btn)
     ImageView ivPlayBarBtn;
+    @BindView(R.id.ll_article_edit)
+    LinearLayout llArticleEdit;
+    @BindView(R.id.ll_source_detail)
+    LinearLayout llSourceDetail;
+    @BindView(R.id.tv_ar_title)
+    TextView tvArTitle;
+    @BindView(R.id.tv_author)
+    TextView tvAuthor;
     private String aid;
+    private String articleUrl;
 
 
     @Override
@@ -70,15 +85,31 @@ public class ArticleDetailActivity extends BaseActivity {
 
     private void initServiceData() {
         if (aid != null) {
-            isPlaying = true;
+            isPlaying = 1;
             service.play(aid);
         }
         Article selected = service.getSelected();
         if (selected != null) {
+            articleUrl = selected.getUrl();
             tvContent.setText(selected.getContent());
             tvTitle.setText(selected.getTitle());
+            if (TextUtils.isEmpty(selected.getTitle())) {
+                tvArTitle.setVisibility(View.GONE);
+            } else {
+                tvArTitle.setVisibility(View.VISIBLE);
+                tvArTitle.setText(selected.getTitle());
+            }
+            if (TextUtils.isEmpty(selected.getSourceName())) {
+                tvAuthor.setVisibility(View.GONE);
+            } else {
+                tvAuthor.setVisibility(View.VISIBLE);
+                tvAuthor.setText(selected.getSourceName());
+            }
+            if (selected.getInType() == 1) {
+                llArticleEdit.setVisibility(View.VISIBLE);
+                llSourceDetail.setVisibility(View.GONE);
+            }
         }
-
     }
 
     @Override
@@ -101,6 +132,22 @@ public class ArticleDetailActivity extends BaseActivity {
 
     @Override
     protected void initTitleBar() {
+    }
+
+    @OnClick(R.id.ll_source_detail)
+    void onSourceDetail(View v) {
+        Intent intent = new Intent();
+        intent.setClass(this, HtmlActivity.class);
+        intent.putExtra(HtmlActivity.EXTRA_HTML, articleUrl);
+        startActivity(intent);
+    }
+
+    @OnClick(R.id.ll_article_edit)
+    void onEditDetail(View v) {
+//        Intent intent = new Intent();
+//        intent.setClass(this, HtmlActivity.class);
+//        intent.putExtra(HtmlActivity.EXTRA_HTML, articleUrl);
+//        startActivity(intent);
     }
 
     @OnClick(R.id.iv_back)
@@ -171,12 +218,18 @@ public class ArticleDetailActivity extends BaseActivity {
                     ContentManager.getInstance().setTextSize(change);
                     switch (change) {
                         case 0:
+                            tvArTitle.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
+                            tvAuthor.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
                             tvContent.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
                             break;
                         case 1:
+                            tvArTitle.setTextSize(TypedValue.COMPLEX_UNIT_SP, 21);
+                            tvAuthor.setTextSize(TypedValue.COMPLEX_UNIT_SP, 21);
                             tvContent.setTextSize(TypedValue.COMPLEX_UNIT_SP, 21);
                             break;
                         case 2:
+                            tvArTitle.setTextSize(TypedValue.COMPLEX_UNIT_SP, 26);
+                            tvAuthor.setTextSize(TypedValue.COMPLEX_UNIT_SP, 26);
                             tvContent.setTextSize(TypedValue.COMPLEX_UNIT_SP, 26);
                             break;
                     }
@@ -206,10 +259,12 @@ public class ArticleDetailActivity extends BaseActivity {
 
     @OnClick({R.id.rl_main_play_bar_play, R.id.iv_play_bar_btn})
     void onPlay(View v) {
-        if (isPlaying) {
+        if (isPlaying == 1) {
             service.pause();
-        } else {
+        } else if (isPlaying == 0) {
             service.play(aid);
+        } else if (isPlaying == -1) {
+            service.resume();
         }
     }
 
@@ -218,7 +273,7 @@ public class ArticleDetailActivity extends BaseActivity {
         if (event instanceof SpeechStartEvent) {
             tvContent.setText("");
         } else if (event instanceof SpeechReadyEvent) {
-            isPlaying = true;
+            isPlaying = 1;
             aid = event.getArticle().getId();
             ivPlayBarBtn.setImageResource(R.mipmap.ico_pause);
             tvContent.setText(event.getArticle().getContent());
@@ -229,23 +284,30 @@ public class ArticleDetailActivity extends BaseActivity {
             apbMain.setProgress((int) (progress * 100));
             skProgress.setProgress((int) (progress * 100));
         } else if (event instanceof SpeechEndEvent) {
-            isPlaying = false;
+            isPlaying = 0;
             float progress = 1;
             apbMain.setProgress((int) (progress * 100));
             skProgress.setProgress((int) (progress * 100));
         } else if (event instanceof SpeechErrorEvent) {
-            isPlaying = false;
+            isPlaying = 0;
             ivPlayBarBtn.setImageResource(R.mipmap.ico_playing);
             float progress = 0;
             apbMain.setProgress((int) (progress * 100));
             skProgress.setProgress((int) (progress * 100));
+        } else if (event instanceof SpeechPauseEvent) {
+            isPlaying = -1;
+            ivPlayBarBtn.setImageResource(R.mipmap.ico_playing);
+        } else if (event instanceof SpeechResumeEvent) {
+            isPlaying = 1;
+            aid = event.getArticle().getId();
+            ivPlayBarBtn.setImageResource(R.mipmap.ico_pause);
         }
     }
 
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSpeechStop(SpeechStopEvent event) {
-        isPlaying = false;
+        isPlaying = 0;
         ivPlayBarBtn.setImageResource(R.mipmap.ico_playing);
         float progress = 0;
         apbMain.setProgress((int) (progress * 100));
