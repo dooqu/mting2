@@ -23,7 +23,6 @@ public abstract class BaiduSpeechor implements Speechor {
     SpeechSynthesizer speechSynthesizer;
 
     public BaiduSpeechor(Context context) {
-
         state = SpeechorState.SpeechorStateReady;
         this.initSpeechor(context);
         this.setRole(SpeechorRole.XiaoMei);

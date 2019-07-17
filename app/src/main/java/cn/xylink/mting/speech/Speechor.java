@@ -43,7 +43,7 @@ public interface Speechor {
         /*暂停中*/
         SpeechorStatePaused,
 
-        SpeechorStateListNull
+        SpeechorStateLoadding
     }
 
     static enum SpeechorRole

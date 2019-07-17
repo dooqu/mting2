@@ -132,6 +132,8 @@ public class ArticleDataProvider {
                         if (callback != null && tickCountAtTime == tickcount) {
                             article.setContent(response.data.getContent());
                             article.setStore(response.data.getStore());
+                            article.setInType(response.data.getInType());
+                            article.setUrl(response.data.getUrl());
                             callback.invoke(0, article);
                         }
                     }

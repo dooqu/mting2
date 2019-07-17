@@ -14,10 +14,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.BitmapFactory;
 import android.os.Binder;
-import android.os.Handler;
 import android.os.IBinder;
-import android.os.Looper;
-
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -25,6 +22,7 @@ import cn.xylink.mting.R;
 import cn.xylink.mting.bean.Article;
 import cn.xylink.mting.speech.data.ArticleDataProvider;
 import cn.xylink.mting.speech.data.SpeechList;
+import cn.xylink.mting.speech.data.XiaoIceTTSAudioLoader;
 import cn.xylink.mting.speech.event.SpeechArticleStatusSavedOnServerEvent;
 import cn.xylink.mting.speech.event.SpeechEndEvent;
 import cn.xylink.mting.speech.event.SpeechErrorEvent;
@@ -193,6 +191,9 @@ public class SpeechService extends Service {
                 }
             }
         };
+
+        XiaoIceTTSAudioLoader loader = new XiaoIceTTSAudioLoader();
+        loader.textToSpeech("android系统源代码分析", null);
 
     }
 
