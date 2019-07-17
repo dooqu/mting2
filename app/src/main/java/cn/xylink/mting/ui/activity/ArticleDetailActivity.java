@@ -1,5 +1,7 @@
 package cn.xylink.mting.ui.activity;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -27,6 +29,9 @@ import butterknife.OnClick;
 import cn.xylink.mting.R;
 import cn.xylink.mting.base.BaseActivity;
 import cn.xylink.mting.bean.Article;
+import cn.xylink.mting.openapi.QQApi;
+import cn.xylink.mting.openapi.WXapi;
+import cn.xylink.mting.openapi.WxUtil;
 import cn.xylink.mting.speech.SpeechService;
 import cn.xylink.mting.speech.SpeechServiceProxy;
 import cn.xylink.mting.speech.Speechor;
@@ -76,6 +81,7 @@ public class ArticleDetailActivity extends BaseActivity {
     TextView tvAuthor;
     private String aid;
     private String articleUrl;
+    private Article mCurrentArticle;
 
 
     @Override
@@ -88,24 +94,24 @@ public class ArticleDetailActivity extends BaseActivity {
             isPlaying = 1;
             service.play(aid);
         }
-        Article selected = service.getSelected();
-        if (selected != null) {
-            articleUrl = selected.getUrl();
-            tvContent.setText(selected.getContent());
-            tvTitle.setText(selected.getTitle());
-            if (TextUtils.isEmpty(selected.getTitle())) {
+        mCurrentArticle = service.getSelected();
+        if (mCurrentArticle != null) {
+            articleUrl = mCurrentArticle.getUrl();
+            tvContent.setText(mCurrentArticle.getContent());
+            tvTitle.setText(mCurrentArticle.getTitle());
+            if (TextUtils.isEmpty(mCurrentArticle.getTitle())) {
                 tvArTitle.setVisibility(View.GONE);
             } else {
                 tvArTitle.setVisibility(View.VISIBLE);
-                tvArTitle.setText(selected.getTitle());
+                tvArTitle.setText(mCurrentArticle.getTitle());
             }
-            if (TextUtils.isEmpty(selected.getSourceName())) {
+            if (TextUtils.isEmpty(mCurrentArticle.getSourceName())) {
                 tvAuthor.setVisibility(View.GONE);
             } else {
                 tvAuthor.setVisibility(View.VISIBLE);
-                tvAuthor.setText(selected.getSourceName());
+                tvAuthor.setText(mCurrentArticle.getSourceName());
             }
-            if (selected.getInType() == 1) {
+            if (mCurrentArticle.getInType() == 1) {
                 llArticleEdit.setVisibility(View.VISIBLE);
                 llSourceDetail.setVisibility(View.GONE);
             }
@@ -243,7 +249,44 @@ public class ArticleDetailActivity extends BaseActivity {
     @OnClick({R.id.ll_share, R.id.iv_share, R.id.tv_share})
     void onShareClick(View v) {
         if (mArticleDetailShare == null) {
-            mArticleDetailShare = new ArticleDetailShare();
+            mArticleDetailShare = new ArticleDetailShare(new ArticleDetailShare.ShareClickListener() {
+                @Override
+                public void onShareChange(int type) {
+                    if (mCurrentArticle == null) {
+                        return;
+                    }
+                    switch (type) {
+                        case 0:
+                            WXapi.shareWx(ArticleDetailActivity.this, mCurrentArticle.getShareUrl(),
+                                    mCurrentArticle.getPicture(), mCurrentArticle.getTitle(),
+                                    mCurrentArticle.getContent().substring(0, 20));
+                            break;
+                        case 1:
+                            WXapi.sharePyq(ArticleDetailActivity.this, mCurrentArticle.getShareUrl(),
+                                    mCurrentArticle.getPicture(), mCurrentArticle.getTitle(),
+                                    mCurrentArticle.getContent().substring(0, 20));
+                            break;
+                        case 2:
+                            QQApi.shareQQ(ArticleDetailActivity.this, mCurrentArticle.getShareUrl(),
+                                    mCurrentArticle.getPicture(), mCurrentArticle.getTitle(),
+                                    mCurrentArticle.getContent().substring(0, 20));
+                            break;
+                        case 3:
+                            QQApi.shareSpace(ArticleDetailActivity.this, mCurrentArticle.getShareUrl(),
+                                    mCurrentArticle.getPicture(), mCurrentArticle.getTitle(),
+                                    mCurrentArticle.getContent().substring(0, 20));
+                            break;
+                        case 4:
+                            if (mCurrentArticle != null) {
+                                ClipboardManager cm = (ClipboardManager) ArticleDetailActivity.this.getSystemService(ArticleDetailActivity.this.CLIPBOARD_SERVICE);
+                                ClipData mClipData = ClipData.newPlainText("Label", mCurrentArticle.getShareUrl());
+                                cm.setPrimaryClip(mClipData);
+                                toastShort("分享链接复制成功");
+                            }
+                            break;
+                    }
+                }
+            });
         }
         mArticleDetailShare.showDialog(this);
     }
@@ -273,6 +316,7 @@ public class ArticleDetailActivity extends BaseActivity {
         if (event instanceof SpeechStartEvent) {
             tvContent.setText("");
         } else if (event instanceof SpeechReadyEvent) {
+            mCurrentArticle = event.getArticle();
             isPlaying = 1;
             aid = event.getArticle().getId();
             ivPlayBarBtn.setImageResource(R.mipmap.ico_pause);

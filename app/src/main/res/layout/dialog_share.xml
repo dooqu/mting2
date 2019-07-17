@@ -22,6 +22,7 @@
         android:orientation="horizontal">
 
         <LinearLayout
+            android:id="@+id/ll_wx"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -43,6 +44,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/ll_wx_quan"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -64,6 +66,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/ll_qq"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -85,6 +88,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/ll_qq_space"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -119,6 +123,7 @@
         android:orientation="horizontal">
 
         <LinearLayout
+            android:id="@+id/ll_link"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
