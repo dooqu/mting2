@@ -50,7 +50,8 @@ public class ArticleDetailSetting extends ArticleDetailBottomDialog {
         } else if (countDownMode == SpeechService.CountDownMode.NumberCount) {
             rgCountDown.check(R.id.rb_current);
         } else {
-
+            rgCountDown.check(R.id.rb_current);
+            swCount.setChecked(true);
         }
         rgCountDown.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -90,6 +91,7 @@ public class ArticleDetailSetting extends ArticleDetailBottomDialog {
                     rgCountDown.check(-1);
                     listener.onTime(0);
                 }
+                buttonView.setChecked(isChecked);
             }
         });
         rgSpeed.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
