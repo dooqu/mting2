@@ -149,7 +149,12 @@ public class ArticleDetailActivity extends BaseActivity {
     @OnClick({R.id.ll_font, R.id.iv_font, R.id.tv_font})
     void onFontClick(View v) {
         if (mArticleDetailFont == null) {
-            mArticleDetailFont = new ArticleDetailFont();
+            mArticleDetailFont = new ArticleDetailFont(new ArticleDetailFont.FontClickListener() {
+                @Override
+                public void onFontChange(int change) {
+
+                }
+            });
         }
         mArticleDetailFont.showDialog(this);
     }
