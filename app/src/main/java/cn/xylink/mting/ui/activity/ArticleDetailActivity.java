@@ -6,6 +6,7 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextPaint;
 import android.text.style.ClickableSpan;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -35,6 +36,7 @@ import cn.xylink.mting.speech.event.SpeechStopEvent;
 import cn.xylink.mting.ui.dialog.ArticleDetailFont;
 import cn.xylink.mting.ui.dialog.ArticleDetailSetting;
 import cn.xylink.mting.ui.dialog.ArticleDetailShare;
+import cn.xylink.mting.utils.ContentManager;
 import cn.xylink.mting.widget.ArcProgressBar;
 
 /**
@@ -67,10 +69,15 @@ public class ArticleDetailActivity extends BaseActivity {
     }
 
     private void initServiceData() {
-        service.play(aid);
+        if (aid != null) {
+            isPlaying = true;
+            service.play(aid);
+        }
         Article selected = service.getSelected();
-        tvContent.setText(selected.getContent());
-        tvTitle.setText(selected.getTitle());
+        if (selected != null) {
+            tvContent.setText(selected.getContent());
+            tvTitle.setText(selected.getTitle());
+        }
         float progress = service.getProgress();
     }
 
@@ -78,6 +85,13 @@ public class ArticleDetailActivity extends BaseActivity {
     protected void initView() {
         Bundle extras = getIntent().getExtras();
         aid = extras.getString("aid");
+        int textSize = 16;
+        if (ContentManager.getInstance().getTextSize() == 1) {
+            textSize = 21;
+        } else if (ContentManager.getInstance().getTextSize() == 2) {
+            textSize = 26;
+        }
+        tvContent.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSize);
     }
 
     @Override
@@ -143,6 +157,8 @@ public class ArticleDetailActivity extends BaseActivity {
                 }
             });
         }
+        mArticleDetailSetting.setSpeed(service.getSpeed());
+        mArticleDetailSetting.setCountDown(service.getCountDownMode(), service.getCountDownValue());
         mArticleDetailSetting.showDialog(this);
     }
 
@@ -152,10 +168,22 @@ public class ArticleDetailActivity extends BaseActivity {
             mArticleDetailFont = new ArticleDetailFont(new ArticleDetailFont.FontClickListener() {
                 @Override
                 public void onFontChange(int change) {
-
+                    ContentManager.getInstance().setTextSize(change);
+                    switch (change) {
+                        case 0:
+                            tvContent.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
+                            break;
+                        case 1:
+                            tvContent.setTextSize(TypedValue.COMPLEX_UNIT_SP, 21);
+                            break;
+                        case 2:
+                            tvContent.setTextSize(TypedValue.COMPLEX_UNIT_SP, 26);
+                            break;
+                    }
                 }
             });
         }
+        mArticleDetailFont.getTextSize(ContentManager.getInstance().getTextSize());
         mArticleDetailFont.showDialog(this);
     }
 
@@ -190,7 +218,7 @@ public class ArticleDetailActivity extends BaseActivity {
         if (event instanceof SpeechStartEvent) {
             tvContent.setText("");
         } else if (event instanceof SpeechReadyEvent) {
-            isPlaying = false;
+            isPlaying = true;
             aid = event.getArticle().getId();
             ivPlayBarBtn.setImageResource(R.mipmap.ico_pause);
             tvContent.setText(event.getArticle().getContent());
@@ -201,11 +229,12 @@ public class ArticleDetailActivity extends BaseActivity {
             apbMain.setProgress((int) (progress * 100));
             skProgress.setProgress((int) (progress * 100));
         } else if (event instanceof SpeechEndEvent) {
+            isPlaying = false;
             float progress = 1;
             apbMain.setProgress((int) (progress * 100));
             skProgress.setProgress((int) (progress * 100));
         } else if (event instanceof SpeechErrorEvent) {
-            isPlaying = true;
+            isPlaying = false;
             ivPlayBarBtn.setImageResource(R.mipmap.ico_playing);
             float progress = 0;
             apbMain.setProgress((int) (progress * 100));
@@ -215,8 +244,8 @@ public class ArticleDetailActivity extends BaseActivity {
 
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onSpeechStart(SpeechStopEvent event) {
-        isPlaying = true;
+    public void onSpeechStop(SpeechStopEvent event) {
+        isPlaying = false;
         ivPlayBarBtn.setImageResource(R.mipmap.ico_playing);
         float progress = 0;
         apbMain.setProgress((int) (progress * 100));

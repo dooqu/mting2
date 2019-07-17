@@ -8,7 +8,7 @@ import cn.xylink.mting.R;
 
 public class ArticleDetailFont extends ArticleDetailBottomDialog {
     private FontClickListener listener;
-
+    private int textSize;
 
     public ArticleDetailFont(FontClickListener listener) {
         this.listener = listener;
@@ -21,6 +21,10 @@ public class ArticleDetailFont extends ArticleDetailBottomDialog {
         View v1 = view.findViewById(R.id.iv_small);
         View v2 = view.findViewById(R.id.iv_normal);
         View v3 = view.findViewById(R.id.iv_large);
+
+        v1.setVisibility(textSize == 0 ? View.VISIBLE : View.INVISIBLE);
+        v2.setVisibility(textSize == 1 ? View.VISIBLE : View.INVISIBLE);
+        v3.setVisibility(textSize == 2 ? View.VISIBLE : View.INVISIBLE);
         if (listener != null) {
             view.findViewById(R.id.rl_small).setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -59,6 +63,10 @@ public class ArticleDetailFont extends ArticleDetailBottomDialog {
             }
         });
         return view;
+    }
+
+    public void getTextSize(int textSize) {
+        this.textSize = textSize;
     }
 
     public interface FontClickListener {
