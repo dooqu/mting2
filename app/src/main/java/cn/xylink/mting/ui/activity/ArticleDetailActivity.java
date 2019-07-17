@@ -78,7 +78,7 @@ public class ArticleDetailActivity extends BaseActivity {
             tvContent.setText(selected.getContent());
             tvTitle.setText(selected.getTitle());
         }
-        float progress = service.getProgress();
+
     }
 
     @Override
