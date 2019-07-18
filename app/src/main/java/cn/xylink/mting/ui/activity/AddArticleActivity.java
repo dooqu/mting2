@@ -115,7 +115,12 @@ public class AddArticleActivity extends BasePresenterActivity {
 
     }
 
-
+    @Override
+    public void onBackPressed() {
+        L.v("onBackPressed");
+        EventBus.getDefault().post(new OneArticleEvent(OneArticleEvent.TYPE_BACK));
+        super.onBackPressed();
+    }
 
     @Override
     protected void initTitleBar() {

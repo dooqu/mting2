@@ -51,7 +51,6 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
     @BindView(R.id.tv_loading_error)
     TextView tvLoadingError;
 
-
     //文章类型 1 手动添加， 2 链接添加
     public int inLink = 2;
     private LinkCreatePresenter linkCreatePresenter;
@@ -63,6 +62,23 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
         AddTwoNoteFragment fragment = new AddTwoNoteFragment();
         fragment.setArguments(args);
         return fragment;
+    }
+
+
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        L.v("isVisibleToUser",isVisibleToUser);
+        if(!isVisibleToUser){
+            EventBus.getDefault().post(new AddArticleHomeEvent(0));
+        }else
+        {
+            if(!TextUtils.isEmpty(tv_content.getText())){
+
+                EventBus.getDefault().post(new AddArticleHomeEvent(1));
+            }
+        }
     }
 
     @Override
@@ -177,7 +193,6 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
     @Override
     public void onPushError(int code, String errorMsg) {
         L.v("code", code);
-
     }
 
     @Override
@@ -208,13 +223,11 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
                     linkPushRequset(responseUrl);
 //                    checkArticleDialog.dismiss();
                 }
-
                 @Override
                 public void onLook() {
                     Intent mIntent = new Intent(getActivity(), HtmlActivity.class);
                     mIntent.putExtra(HtmlActivity.EXTRA_HTML, responseUrl);
                     startActivity(mIntent);
-
                 }
             });
 
