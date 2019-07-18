@@ -33,6 +33,7 @@ import cn.xylink.mting.presenter.CheckLinkPresenter;
 import cn.xylink.mting.presenter.LinkCreatePresenter;
 import cn.xylink.mting.ui.activity.HtmlActivity;
 import cn.xylink.mting.ui.dialog.CheckArticleDialog;
+import cn.xylink.mting.ui.dialog.LoadingDialog;
 import cn.xylink.mting.utils.DateUtils;
 import cn.xylink.mting.utils.L;
 
@@ -63,6 +64,9 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
         fragment.setArguments(args);
         return fragment;
     }
+
+
+
 
 
 
@@ -171,8 +175,12 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
     public void onMessageEvent(TwoArticleEvent event) {
         L.v("eventType", 2);
         String link = responseUrl;
+        if (!TextUtils.isEmpty(etLink.getText()) && TextUtils.isEmpty(link)) {
+            Toast.makeText(this.getContext(), "请先点击预览", Toast.LENGTH_SHORT).show();
+            return;
+        }
         if (TextUtils.isEmpty(link)) {
-            Toast.makeText(this.getContext(), "不能解析分地址", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this.getContext(), "不能解析空地址", Toast.LENGTH_SHORT).show();
             return;
         }
         link = link.trim().replaceAll(" ", "");
@@ -197,12 +205,12 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
 
     @Override
     public void showLoading() {
-
+        super.showLoading();
     }
 
     @Override
     public void hideLoading() {
-
+        super.hideLoading();
     }
 
     @Override

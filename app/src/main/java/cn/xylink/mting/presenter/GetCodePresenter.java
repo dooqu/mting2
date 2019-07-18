@@ -25,7 +25,7 @@ public class GetCodePresenter extends BasePresenter<GetCodeContact.IGetCodeView>
         }.getType(), new OkGoUtils.ICallback() {
             @Override
             public void onStart() {
-
+                mView.showLoading();
             }
 
             @Override
@@ -54,7 +54,7 @@ public class GetCodePresenter extends BasePresenter<GetCodeContact.IGetCodeView>
 
             @Override
             public void onComplete() {
-
+                mView.hideLoading();
             }
         });
     }

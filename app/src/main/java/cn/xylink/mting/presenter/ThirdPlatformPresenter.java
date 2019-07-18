@@ -28,6 +28,7 @@ public class ThirdPlatformPresenter extends BasePresenter<BindThirdPlatformConta
         }.getType(), new OkGoUtils.ICallback() {
             @Override
             public void onStart() {
+                mView.showLoading();
             }
 
             @Override
@@ -47,6 +48,7 @@ public class ThirdPlatformPresenter extends BasePresenter<BindThirdPlatformConta
 
             @Override
             public void onComplete() {
+                mView.hideLoading();
             }
         });
     }

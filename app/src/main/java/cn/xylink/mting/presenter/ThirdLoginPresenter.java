@@ -26,6 +26,7 @@ public class ThirdLoginPresenter extends BasePresenter<ThirdLoginContact.IThirdL
         }.getType(), new OkGoUtils.ICallback() {
             @Override
             public void onStart() {
+                mView.showLoading();
             }
 
             @Override
@@ -45,7 +46,7 @@ public class ThirdLoginPresenter extends BasePresenter<ThirdLoginContact.IThirdL
 
             @Override
             public void onComplete() {
-
+                mView.hideLoading();
             }
         });
     }

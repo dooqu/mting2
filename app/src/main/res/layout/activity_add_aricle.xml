@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         app:tabIndicatorColor="@color/color_blue"
         app:tabTextColor="@color/font_gray3"
-        app:tabSelectedTextColor="@color/color_blue"
+        app:tabSelectedTextColor="@android:color/black"
         app:tabPaddingStart="20dp"
         app:tabPaddingEnd="20dp"
         app:tabIndicatorHeight="3dp"

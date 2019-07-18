@@ -28,7 +28,7 @@ public class CheckPhonePresenter extends BasePresenter<CheckPhoneContact.ICheckP
         }.getType(), new OkGoUtils.ICallback() {
             @Override
             public void onStart() {
-
+                mView.showLoading();
             }
 
             @Override
@@ -53,7 +53,7 @@ public class CheckPhonePresenter extends BasePresenter<CheckPhoneContact.ICheckP
 
             @Override
             public void onComplete() {
-
+                mView.hideLoading();
             }
         });
     }

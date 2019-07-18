@@ -149,12 +149,12 @@ public class AddOneNoteFragment extends BasePresenterFragment implements InputCr
 
     @Override
     public void showLoading() {
-
+        super.showLoading();
     }
 
     @Override
     public void hideLoading() {
-
+        super.hideLoading();
     }
 
     @Override

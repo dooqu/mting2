@@ -82,10 +82,10 @@ public class AddArticleActivity extends BasePresenterActivity {
         fragments.add(oneNoteFragment);
         fragments.add(twoNoteFragment);
         FragmentAdapter adapter = new FragmentAdapter(fm,fragments,new String[]{"手动输入","从文章链接输入"});
-        tabLayout.setTabsFromPagerAdapter(adapter);
+//        tabLayout.setTabsFromPagerAdapter(adapter);
         vpContent.setAdapter(adapter);
 
-        vpContent.setCanScroll(false);
+        vpContent.setCanScroll(true);
     }
 
     @Override
