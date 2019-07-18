@@ -24,6 +24,8 @@ public class MemoryCache {
     private String deviceUuid;
     private boolean changeFavor;
     private int keyBordHeight;
+    private int rgTime;
+    private int textSize;
 
     private MemoryCache() {
     }
@@ -104,5 +106,21 @@ public class MemoryCache {
 
     public int getKeyBordHeight() {
         return keyBordHeight;
+    }
+
+    public void setRgTime(int rgTime) {
+        this.rgTime = rgTime;
+    }
+
+    public int getRgTime() {
+        return rgTime;
+    }
+
+    public void setTextSize(int textSize) {
+        this.textSize = textSize;
+    }
+
+    public int getTextSize() {
+        return textSize;
     }
 }

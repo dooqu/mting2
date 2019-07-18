@@ -12,8 +12,9 @@ import cn.xylink.mting.bean.Article;
 import cn.xylink.mting.contract.IBaseView;
 import cn.xylink.mting.model.ArticleInfoRequest;
 import cn.xylink.mting.model.ArticleInfoResponse;
+import cn.xylink.mting.model.FavoriteArticleRequest;
 import cn.xylink.mting.model.data.OkGoUtils;
-import cn.xylink.mting.model.data.ReadArticleRequest;
+import cn.xylink.mting.model.ReadArticleRequest;
 import cn.xylink.mting.speech.SoundEffector;
 import cn.xylink.mting.utils.ContentManager;
 import cn.xylink.mting.utils.GsonUtil;
@@ -130,6 +131,9 @@ public class ArticleDataProvider {
                     public void onSuccess(ArticleInfoResponse response) {
                         if (callback != null && tickCountAtTime == tickcount) {
                             article.setContent(response.data.getContent());
+                            article.setStore(response.data.getStore());
+                            article.setInType(response.data.getInType());
+                            article.setUrl(response.data.getUrl());
                             callback.invoke(0, article);
                         }
                     }
@@ -141,11 +145,12 @@ public class ArticleDataProvider {
                 });
     }
 
-    public void readArticle(Article article, float progress, ArticleLoaderCallback callback) {
+
+    public void readArticle(Article article, float progress, boolean deleteFromReadList, ArticleLoaderCallback callback) {
         ReadArticleRequest request = new ReadArticleRequest();
         request.setArticleId(article.getArticleId());
         request.setProgress(progress);
-        request.setRead(progress == 1f ? 1 : 0);
+        request.setRead(deleteFromReadList ? 1 : 0);
         request.setToken(ContentManager.getInstance().getLoginToken());
         request.doSign();
 
@@ -176,7 +181,7 @@ public class ArticleDataProvider {
                     @Override
                     public void onFailure(int code, String errorMsg) {
                         Log.d("xylink", "ReadArticle.onFailure: code=" + code + ",msg=" + errorMsg);
-                        if(callback != null) {
+                        if (callback != null) {
                             callback.invoke(-200, article);
                         }
                     }
@@ -188,10 +193,48 @@ public class ArticleDataProvider {
     }
 
 
-    public void saveSpeechListToLocal() {
+    public void favorite(Article article, boolean isStore, ArticleLoaderCallback callback) {
+        FavoriteArticleRequest request = new FavoriteArticleRequest(article.getArticleId(), isStore);
+        request.setToken(ContentManager.getInstance().getLoginToken());
+        request.doSign();
+
+        OkGoUtils.getInstance().postData(
+                new IBaseView() {
+                    @Override
+                    public void showLoading() {
+                    }
+
+                    @Override
+                    public void hideLoading() {
+                    }
+                }
+                , "http://test.xylink.cn//api/sct/v2/article/store",
+                GsonUtil.GsonString(request),
+                BaseResponse.class,
+                new OkGoUtils.ICallback<BaseResponse<Object>>() {
+                    @Override
+                    public void onStart() {
+                    }
+
+                    @Override
+                    public void onSuccess(BaseResponse data) {
+                        if (callback != null) {
+                            article.setStore(isStore ? 1 : 0);
+                            callback.invoke(0, article);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(int code, String errorMsg) {
+                        if (callback != null) {
+                            callback.invoke(-200, article);
+                        }
+                    }
+
+                    @Override
+                    public void onComplete() {
+                    }
+                });
     }
 
-    public List<Article> getSpeechListFromLocal() {
-        return null;
-    }
 }

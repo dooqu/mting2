@@ -23,7 +23,6 @@ public abstract class BaiduSpeechor implements Speechor {
     SpeechSynthesizer speechSynthesizer;
 
     public BaiduSpeechor(Context context) {
-
         state = SpeechorState.SpeechorStateReady;
         this.initSpeechor(context);
         this.setRole(SpeechorRole.XiaoMei);
@@ -60,6 +59,10 @@ public abstract class BaiduSpeechor implements Speechor {
             public void onSynthesizeFinish(String s) {
             }
 
+            /*
+            该方法调用的时机是在每一个分片被调用的时候，所以要依靠多次的
+            onSpeechStart事件，来累计分片索引，计算进度
+             */
             @Override
             public void onSpeechStart(String s) {
                 //System.out.println("onSpeechStart:" + s);

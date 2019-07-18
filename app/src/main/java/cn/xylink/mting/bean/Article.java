@@ -6,6 +6,8 @@ public class Article
     String articleId;
     String title;
     String content;
+    int inType;
+    String url;
     String shareUrl;
     String sourceName;
     String sourceLogo;
@@ -153,6 +155,23 @@ public class Article
         isChecked = checked;
     }
 
+    public int getInType() {
+        return inType;
+    }
+
+    public void setInType(int inType) {
+        this.inType = inType;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+
     @Override
     public Article clone() {
         Article article = new Article();
@@ -169,6 +188,8 @@ public class Article
         article.setRead(this.getRead());
         article.setId(this.getId());
         article.setChecked(this.isChecked());
+        article.setUrl(this.getUrl());
+        article.setInType(this.getInType());
         return article;
     }
 }

@@ -6,10 +6,49 @@ import android.view.View;
 
 import cn.xylink.mting.R;
 
-public class ArticleDetailShare extends ArticleDetailBottomDialog{
+public class ArticleDetailShare extends ArticleDetailBottomDialog {
+
+    private ShareClickListener listener;
+
+    public ArticleDetailShare(ShareClickListener listener) {
+        this.listener = listener;
+    }
+
     @Override
     public View initView(Context context, Dialog dialog) {
         View view = View.inflate(context, R.layout.dialog_share, null);
+        if (listener != null) {
+            view.findViewById(R.id.ll_wx).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onShareChange(0);
+                }
+            });
+            view.findViewById(R.id.ll_wx_quan).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onShareChange(1);
+                }
+            });
+            view.findViewById(R.id.ll_qq).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onShareChange(2);
+                }
+            });
+            view.findViewById(R.id.ll_qq_space).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onShareChange(3);
+                }
+            });
+            view.findViewById(R.id.ll_link).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onShareChange(4);
+                }
+            });
+        }
         view.findViewById(R.id.tv_cancel).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -19,5 +58,9 @@ public class ArticleDetailShare extends ArticleDetailBottomDialog{
             }
         });
         return view;
+    }
+
+    public interface ShareClickListener {
+        void onShareChange(int i);
     }
 }

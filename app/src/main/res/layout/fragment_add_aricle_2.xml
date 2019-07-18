@@ -17,6 +17,7 @@
         android:layout_marginLeft="20dp"
         android:background="@android:color/transparent"
         android:hint="文章地址"
+        android:textStyle="bold"
         android:textSize="@dimen/text_18" />
 
     <FrameLayout
@@ -44,8 +45,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
 
-            android:background="@android:color/transparent"
             android:hint="立即预览"
+            android:textColor="@color/color_login_text_gray"
             android:textSize="@dimen/text_18" />
         <TextView
             android:id="@+id/tv_feedback"
@@ -60,6 +61,7 @@
     </RelativeLayout>
 
     <LinearLayout
+        android:id="@+id/ll_error"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"

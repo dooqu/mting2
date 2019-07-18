@@ -146,7 +146,10 @@ public class LoginPwdActivity extends BasePresenterActivity implements LoginCont
 
                 byte[] pwds = null;
                 try {
-                    pwds =  EncryptionUtil.encrypt(MD5.md5crypt(pwd), EncryptionUtil.getPublicKey(Const.publicKey));
+                    String md5Pwd = MD5.md5crypt(pwd);
+                    L.v(md5Pwd);
+                    pwds =  EncryptionUtil.encrypt(md5Pwd, EncryptionUtil.getPublicKey(Const.publicKey));
+                    L.v("pwds.length",pwds.length);
                 } catch (NoSuchAlgorithmException e) {
                     e.printStackTrace();
                 } catch (InvalidKeySpecException e) {

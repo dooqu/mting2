@@ -223,6 +223,7 @@
             android:textSize="16sp" />
 
         <Switch
+            android:id="@+id/sw_count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
@@ -249,16 +250,19 @@
         <RadioGroup
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:id="@+id/rg_count_down"
             android:orientation="horizontal">
 
 
             <RadioButton
+                android:id="@+id/rb_current"
                 android:layout_width="140dp"
                 android:layout_height="wrap_content"
                 android:buttonTint="@color/selector_button_color"
                 android:text="读完本篇后关闭" />
 
             <RadioButton
+                android:id="@+id/rb_time10"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="-140dp"
@@ -272,6 +276,7 @@
                 android:layout_weight="1" />
 
             <RadioButton
+                android:id="@+id/rb_time20"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"
@@ -284,6 +289,7 @@
                 android:layout_weight="1" />
 
             <RadioButton
+                android:id="@+id/rb_time30"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"
