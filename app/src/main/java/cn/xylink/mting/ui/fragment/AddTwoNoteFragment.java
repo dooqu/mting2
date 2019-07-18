@@ -246,18 +246,17 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
             String msg = String.format(hint, day);
             checkArticleDialog.setUpdateMsg(msg);
             checkArticleDialog.show();
-        } else {
-            if (describe.length() > 0) {
-                EventBus.getDefault().post(new AddArticleHomeEvent(1));
-            } else {
-                EventBus.getDefault().post(new AddArticleHomeEvent(0));
-            }
         }
         if (tvFeedback.getVisibility() == View.VISIBLE)
             tvFeedback.setVisibility(View.GONE);
         if(llError.getVisibility() == View.VISIBLE)
         {
             llError.setVisibility(View.GONE);
+        }
+        if (describe.length() > 0) {
+            EventBus.getDefault().post(new AddArticleHomeEvent(1));
+        } else {
+            EventBus.getDefault().post(new AddArticleHomeEvent(0));
         }
     }
 

@@ -108,9 +108,11 @@ public class AddArticleActivity extends BasePresenterActivity {
         {
             case 1:  // 变色
                 tvRight.setTextColor(getResources().getColorStateList(R.color.color_blue));
+                tvRight.setEnabled(true);
                 break;
             case 0: //不变色
                 tvRight.setTextColor(getResources().getColorStateList(R.color.color_login_text_gray));
+                tvRight.setEnabled(false);
                 break;
 
         }
