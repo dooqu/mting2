@@ -2,6 +2,7 @@ package cn.xylink.mting.ui.activity;
 
 import android.content.Intent;
 import android.os.CountDownTimer;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -94,6 +95,8 @@ public class GetCodeActivity extends BasePresenterActivity implements GetCodeCon
             @Override
             public void onComplete(String content) {
                 L.v("content", content);
+                if(TextUtils.isEmpty(phone))
+                    return;
                 CheckPhoneRequest requset = new CheckPhoneRequest();
                 requset.source = "register";
                 requset.codeId = codeID;
@@ -157,6 +160,8 @@ public class GetCodeActivity extends BasePresenterActivity implements GetCodeCon
 
 
     public void requsetCode() {
+        if(TextUtils.isEmpty(phone))
+            return;
         GetCodeRequest requset = new GetCodeRequest();
         requset.phone = phone.replaceAll(" ", "");
         requset.source = source;
