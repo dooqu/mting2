@@ -27,7 +27,7 @@
             android:src="@mipmap/dialog_close"/>
         <TextView
             android:id="@+id/tv_message"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="0px"
             android:layout_weight="1.0"
             android:padding="10dp"
@@ -35,14 +35,13 @@
             android:layout_marginTop="30dp"
             android:text="4324234324"
             android:textColor="#2d2d2d"
-            android:gravity="center" />
+           />
         
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/tv_update_msg"
             android:textColor="#2d2d2d"
-
             android:padding="10dp"
             android:textSize="14sp"/>
 

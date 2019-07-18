@@ -25,6 +25,7 @@ import cn.xylink.mting.ui.activity.MainActivity;
 import cn.xylink.mting.ui.activity.SpeechServicActivity;
 import cn.xylink.mting.ui.activity.user.BindLoginPwdActivity;
 import cn.xylink.mting.ui.activity.user.LoginPwdActivity;
+import cn.xylink.mting.utils.L;
 
 public class SplashActivity extends BasePresenterActivity implements CheckTokenContact.ICheckTokenView {
 
@@ -150,7 +151,9 @@ public class SplashActivity extends BasePresenterActivity implements CheckTokenC
 
     @Override
     public void onCheckTokenError(int code, String errorMsg) {
-
+        L.v("code",code,"errorMsg",errorMsg);
+        startActivity(new Intent(SplashActivity.this, MainActivity.class));
+        finish();
     }
 
     @Override

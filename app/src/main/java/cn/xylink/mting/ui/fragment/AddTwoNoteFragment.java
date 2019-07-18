@@ -208,6 +208,8 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
     @Override
     public void onCheckLinkSuccess(BaseResponse<LinkArticle> response) {
         L.v(response.data);
+
+        tvPreview.setVisibility(View.INVISIBLE);
         String title = response.data.getTitle();
         String describe = response.data.getDescribe();
         responseUrl = response.data.getUrl();
