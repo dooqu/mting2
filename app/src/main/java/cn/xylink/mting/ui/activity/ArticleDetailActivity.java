@@ -5,6 +5,7 @@ import android.content.ClipboardManager;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.text.Html;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextPaint;
@@ -362,43 +363,15 @@ public class ArticleDetailActivity extends BaseActivity {
         int frameIndex = spe.getFrameIndex();
         List<String> textFragments = spe.getTextFragments();
         tvContent.setText("");
+        String txt = "";
         for (int i = 0; i < textFragments.size(); i++) {
             String s = textFragments.get(i);
-            SpannableString spannableString = new SpannableString(s);
-            ClickableSpan clickableSpan;
             if (i == frameIndex) {
-                clickableSpan = new ClickableSpan() {
-                    @Override
-                    public void onClick(View widget) {
-                    }
-
-                    @Override
-                    public void updateDrawState(TextPaint ds) {
-                        super.updateDrawState(ds);
-                        ds.setColor(Color.parseColor("#488def"));
-                        ds.setUnderlineText(false);
-                        ds.clearShadowLayer();
-                    }
-                };
-            } else {
-                clickableSpan = new ClickableSpan() {
-                    @Override
-                    public void onClick(View widget) {
-                        //Do something.
-                    }
-
-                    @Override
-                    public void updateDrawState(TextPaint ds) {
-                        super.updateDrawState(ds);
-                        ds.setColor(Color.parseColor("#333333"));
-                        ds.setUnderlineText(false);
-                        ds.clearShadowLayer();
-                    }
-                };
+                s = "<font color=\"#488def\">" + s + "</font>";
             }
-            spannableString.setSpan(clickableSpan, 0, s.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-            tvContent.append(spannableString);
+            txt += s;
         }
+        tvContent.setText(Html.fromHtml(txt));
     }
 
 

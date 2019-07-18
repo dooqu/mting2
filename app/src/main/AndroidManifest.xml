@@ -82,6 +82,7 @@
         </activity>
         <activity
             android:name=".ui.activity.ArticleDetailActivity"
+            android:launchMode="singleInstance"
             android:screenOrientation="portrait"
             android:theme="@style/DetailTheme"></activity>
         <activity
