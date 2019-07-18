@@ -101,4 +101,9 @@ public class RemoteUrl {
         return URL_BASE + "/api/sct/v1/article/unread/add";
     }
 
+    //加入待读
+    public static String getSearchUrl(){
+        return URL_BASE + "/api/search/v1/article";
+    }
+
 }
