@@ -75,6 +75,8 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
     ArcProgressBar mProgress;
     @BindView(R.id.rl_main_play_bar_play)
     RelativeLayout mPlayBtn;
+    @BindView(R.id.iv_play_bar_btn)
+    ImageView mPlayBtnSRC;
     private TAB_ENUM mCurrentTabIndex = TAB_ENUM.TAB_UNREAD;
     public SpeechServiceProxy proxy;
     private SpeechService service;
@@ -147,8 +149,8 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
     @Override
     public void onPlay(String id) {
         L.v();
-        if (service != null)
-            service.play(id);
+//        if (service != null)
+//            service.play(id);
         AddUnreadRequest request = new AddUnreadRequest();
         request.setArticleIds(id);
         request.doSign();
@@ -322,12 +324,15 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
                     }
                     if (!TextUtils.isEmpty(aid))
                         service.play(aid);
+                    mPlayBtnSRC.setImageDrawable(getResources().getDrawable(R.mipmap.ico_pause));
                     break;
                 case SpeechorStatePaused:
-                    service.resume();
+                    if(service.resume())
+                    mPlayBtnSRC.setImageDrawable(getResources().getDrawable(R.mipmap.ico_pause));
                     break;
                 case SpeechorStatePlaying:
-                    service.pause();
+                    if (service.pause())
+                    mPlayBtnSRC.setImageDrawable(getResources().getDrawable(R.mipmap.ico_playing));
                     break;
             }
         }
@@ -378,6 +383,7 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
     public void onSpeechStart(SpeechStartEvent event) {
         L.v(event.getArticle());
         setPlayBarState();
+        mPlayBtnSRC.setImageDrawable(getResources().getDrawable(R.mipmap.ico_pause));
     }
 
 
@@ -399,6 +405,7 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSpeechStop(SpeechStopEvent event) {
         L.v(event);
+        mPlayBtnSRC.setImageDrawable(getResources().getDrawable(R.mipmap.ico_playing));
     }
 
 
@@ -411,6 +418,7 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSpeechError(SpeechErrorEvent event) {
         L.v(event);
+        mPlayBtnSRC.setImageDrawable(getResources().getDrawable(R.mipmap.ico_playing));
     }
 
 
