@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="52dp"
-        android:text="验证码已发送至"
+        android:text="验证码已发送至:"
         android:textColor="@color/color_login_text_gray"
         android:textSize="20sp" />
     <cn.xylink.mting.widget.ZpPhoneEditText
@@ -24,12 +24,13 @@
         android:layout_marginTop="20dp"
         android:inputType="phone"
         android:enabled="false"
+        android:text="136843243242"
         android:gravity="center"
         android:background="@android:color/transparent"
         android:maxLength="13"
         android:textColor="@color/color_blue"
         android:paddingBottom="10dp"
-        android:textSize="20dp" />
+        android:textSize="@dimen/text_23" />
 
 
 
@@ -57,7 +58,7 @@
         android:gravity="right"
         android:text=""
         android:textColor="@color/color_login_text_gray"
-        android:textSize="20sp"
+        android:textSize="18sp"
         android:padding="30dp" />
 
 </LinearLayout>

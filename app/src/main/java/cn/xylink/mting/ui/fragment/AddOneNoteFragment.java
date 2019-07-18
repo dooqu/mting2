@@ -15,7 +15,6 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.text.BreakIterator;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import butterknife.BindView;
@@ -38,7 +37,6 @@ public class AddOneNoteFragment extends BasePresenterFragment implements InputCr
 
     private InputCreatePresenter inputCreatePresenter;
 
-
     public static AddOneNoteFragment newInstance(Bundle args) {
         AddOneNoteFragment fragment = new AddOneNoteFragment();
         fragment.setArguments(args);
@@ -58,12 +56,10 @@ public class AddOneNoteFragment extends BasePresenterFragment implements InputCr
         etContent.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
             }
 
             @Override
@@ -89,8 +85,6 @@ public class AddOneNoteFragment extends BasePresenterFragment implements InputCr
 
     }
 
-    public static final String sRegEx = "[`~!@#$%^&*()+=\\-\\s*|\t|\r|\n|{}':;',\\[\\].<>/?~！@#￥%……&*（）——+|{}【】‘；：”“’。，、？]";
-
 
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -112,7 +106,6 @@ public class AddOneNoteFragment extends BasePresenterFragment implements InputCr
         }
         L.v("title",title);
         if (TextUtils.isEmpty(title)) {
-            Pattern p = Pattern.compile(sRegEx);
             BreakIterator iterator = BreakIterator.getSentenceInstance();
             iterator.setText(content);
             int start = iterator.first();
@@ -120,6 +113,9 @@ public class AddOneNoteFragment extends BasePresenterFragment implements InputCr
                 title = content.substring(start,end);
                 L.v(title);
                 break;
+            }
+            if(title.length() > 30){
+                title = title.substring(0,30);
             }
         }
         inputCreateRequset(title,etContent.getText().toString());
@@ -134,6 +130,21 @@ public class AddOneNoteFragment extends BasePresenterFragment implements InputCr
         requset.doSign();
         inputCreatePresenter.onCreateNote(requset);
 
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        L.v("isVisibleToUser",isVisibleToUser);
+        if(!isVisibleToUser){
+            EventBus.getDefault().post(new AddArticleHomeEvent(0));
+        }else
+        {
+            if(!TextUtils.isEmpty(etContent.getText())){
+
+                EventBus.getDefault().post(new AddArticleHomeEvent(1));
+            }
+        }
     }
 
     @Override
@@ -156,6 +167,7 @@ public class AddOneNoteFragment extends BasePresenterFragment implements InputCr
 
     @Override
     public void onCreateError(int code, String errorMsg) {
+        L.v("code",code,"errorMsg",errorMsg);
 
     }
 }

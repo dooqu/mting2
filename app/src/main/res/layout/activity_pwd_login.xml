@@ -9,7 +9,11 @@
 
     <include layout="@layout/title_include"/>
 
-
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fitsSystemWindows="true"
+        >
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -39,7 +43,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="忘记密码"
+            android:text="忘记密码?"
             android:textColor="@color/color_login_text_gray"
             android:textSize="18sp"
             android:layout_alignParentRight="true"
@@ -49,18 +53,18 @@
             android:id="@+id/tv_forget_pwd"/>
 
     </RelativeLayout>
+
+    </ScrollView>
     <Button
         android:id="@+id/btn_next"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="72dp"
+        android:layout_marginTop="50dp"
         android:layout_marginStart="50dp"
         android:layout_marginEnd="50dp"
         android:textColor="@color/white"
         android:textSize="20sp"
-
         android:background="@drawable/bg_phone_default_btn"
         android:text="登录" />
-
 
 </LinearLayout>

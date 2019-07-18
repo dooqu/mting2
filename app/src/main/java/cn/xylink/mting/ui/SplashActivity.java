@@ -23,6 +23,9 @@ import cn.xylink.mting.ui.activity.BasePresenterActivity;
 import cn.xylink.mting.ui.activity.GuideActivity;
 import cn.xylink.mting.ui.activity.MainActivity;
 import cn.xylink.mting.ui.activity.SpeechServicActivity;
+import cn.xylink.mting.ui.activity.user.BindLoginPwdActivity;
+import cn.xylink.mting.ui.activity.user.LoginPwdActivity;
+import cn.xylink.mting.utils.L;
 
 public class SplashActivity extends BasePresenterActivity implements CheckTokenContact.ICheckTokenView {
 
@@ -38,7 +41,7 @@ public class SplashActivity extends BasePresenterActivity implements CheckTokenC
 
         if(false)
         {
-            startActivity(new Intent(this, SpeechServicActivity.class));
+            startActivity(new Intent(this, BindLoginPwdActivity.class));
             return;
         }
 
@@ -123,12 +126,12 @@ public class SplashActivity extends BasePresenterActivity implements CheckTokenC
     @Override
     public void onCheckTokenSuccess(BaseResponse<UserInfo> response) {
 
-//        if (Build.VERSION.SDK_INT < 23) {
-//            startActivity(new Intent(SplashActivity.this, GuideActivity.class));
-//            finish();
-//        } else {
-//            initPermission();
-//        }
+       /* if (Build.VERSION.SDK_INT < 23) {
+            startActivity(new Intent(SplashActivity.this, LoginPwdActivity.class));
+            finish();
+        } else {
+            initPermission();
+        }*/
         switch (response.code)
         {
             case 200:
@@ -148,7 +151,9 @@ public class SplashActivity extends BasePresenterActivity implements CheckTokenC
 
     @Override
     public void onCheckTokenError(int code, String errorMsg) {
-
+        L.v("code",code,"errorMsg",errorMsg);
+        startActivity(new Intent(SplashActivity.this, MainActivity.class));
+        finish();
     }
 
     @Override

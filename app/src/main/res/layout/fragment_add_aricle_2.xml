@@ -22,20 +22,21 @@
 
     <FrameLayout
         android:layout_width="match_parent"
+        android:layout_marginTop="37dp"
         android:layout_height="wrap_content">
 
         <ProgressBar
             android:id="@+id/pb_speech_bar"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:layout_marginTop="10dp"
+            android:layout_height="1dp"
+
             android:progressDrawable="@drawable/progressbar" />
     </FrameLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="32dp"
         android:layout_marginRight="20dp"
         android:layout_marginLeft="20dp"
         android:layout_height="wrap_content">
