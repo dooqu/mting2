@@ -16,6 +16,7 @@ import java.util.List;
 
 import cn.xylink.mting.R;
 import cn.xylink.mting.bean.Article;
+import cn.xylink.mting.utils.L;
 
 /*
  *整理
@@ -26,8 +27,12 @@ import cn.xylink.mting.bean.Article;
  */
 public class ArrangeAdapter extends RecyclerView.Adapter<ArrangeAdapter.ReadedHolder> {
     private Context mContext;
-    private static List<Article> mData;
+    private List<Article> mData = new ArrayList<>();
     private OnItemClickListener mOnItemClickListener;
+    private int mTabType;
+    private int mSelectCount = 0;
+    private int mUnPlayedTotal = 0;
+    private int mUnPlayedCount = 0;
 
     public ArrangeAdapter(Context context) {
         this.mContext = context;
@@ -47,32 +52,82 @@ public class ArrangeAdapter extends RecyclerView.Adapter<ArrangeAdapter.ReadedHo
         }
     }
 
+    public void setTabType(int tabType) {
+        this.mTabType = tabType;
+    }
+
     public void setData(List<Article> list) {
-        mData = list;
+        if (mData == null) {
+            mData = list;
+        } else {
+            mData.addAll(list);
+            if (mOnItemClickListener != null)
+                mOnItemClickListener.checkChanged(mSelectCount, mUnPlayedTotal > 0 ? mUnPlayedCount == mUnPlayedTotal : false);
+        }
+        mData.get(0).setProgress(0.5f);
+        mUnPlayedTotal = 0;
+        for (Article article : mData) {
+            if (article.getProgress() < 1.0f)
+                mUnPlayedTotal++;
+        }
         notifyDataSetChanged();
+    }
+
+    public void clearData() {
+        if (mData != null)
+            mData.clear();
     }
 
     @NonNull
     @Override
     public ArrangeAdapter.ReadedHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int position) {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_arrange, viewGroup, false);
-        return new ArrangeAdapter.ReadedHolder(view);
+        ReadedHolder holder = new ReadedHolder(view);
+        return holder;
     }
 
     @Override
     public void onBindViewHolder(@NonNull ArrangeAdapter.ReadedHolder holder, int position) {
         Article data = mData.get(position);
+        holder.checkBox.setChecked(data.isChecked());
         holder.tvTitle.setText(data.getTitle());
         holder.tvFrom.setText(TextUtils.isEmpty(data.getSourceName()) ? "其他" : data.getSourceName());
-        if (data.getProgress() > 0) {
+        if (data.getProgress() > 0 && mTabType != 2) {
             holder.tvProgress.setText("已播放：" + getPercentFormat(data.getProgress()));
         } else {
             holder.tvProgress.setText("");
         }
         holder.itemView.setOnClickListener(v -> {
-            if (mOnItemClickListener != null)
-                mOnItemClickListener.onItemClick(data);
+            holder.checkBox.setChecked(!holder.checkBox.isChecked());
+            notifCheckChange(holder, data);
         });
+        holder.checkBox.setOnClickListener(v -> {
+            notifCheckChange(holder, data);
+        });
+    }
+
+    private void notifCheckChange(@NonNull ReadedHolder holder, Article data) {
+        data.setChecked(holder.checkBox.isChecked());
+        if (!holder.checkBox.isChecked()) {
+            if (mSelectCount > 0)
+                mSelectCount--;
+            if (data.getProgress() < 1.0f && mUnPlayedCount > 0)
+                mUnPlayedCount--;
+
+        } else {
+            mSelectCount++;
+            if (mSelectCount > getItemCount())
+                mSelectCount = getItemCount();
+            if (data.getProgress() < 1.0f)
+                mUnPlayedCount++;
+            if (mUnPlayedCount > mUnPlayedTotal)
+                mUnPlayedCount = mUnPlayedTotal;
+        }
+        L.v(mUnPlayedTotal);
+        L.v(mUnPlayedCount);
+        L.v(data.getProgress());
+        if (mOnItemClickListener != null)
+            mOnItemClickListener.checkChanged(mSelectCount, mUnPlayedTotal > 0 ? mUnPlayedCount == mUnPlayedTotal : false);
     }
 
     public List<Article> getArticleList() {
@@ -92,6 +147,59 @@ public class ArrangeAdapter extends RecyclerView.Adapter<ArrangeAdapter.ReadedHo
         return mData.size();
     }
 
+    public String getSelectItemArticleID(){
+        StringBuffer buffer = new StringBuffer();
+        for (Article article:mData){
+            if (article.isChecked())
+            buffer.append(article.getArticleId()+",");
+        }
+        return buffer.toString();
+    }
+
+    public String getSelectItemID(){
+        StringBuffer buffer = new StringBuffer();
+        for (Article article:mData){
+            if (article.isChecked())
+            buffer.append(article.getId()+",");
+        }
+        return buffer.toString();
+    }
+
+    public void selectAllItem(boolean isCheck) {
+        for (Article a : mData) {
+            a.setChecked(isCheck);
+        }
+        if (isCheck) {
+            mSelectCount = getItemCount();
+            mUnPlayedCount = mUnPlayedTotal;
+        } else {
+            mUnPlayedCount = 0;
+            mSelectCount = 0;
+        }
+        if (mOnItemClickListener != null)
+            mOnItemClickListener.checkChanged(mSelectCount, mUnPlayedTotal > 0 ? mUnPlayedCount == mUnPlayedTotal : false);
+        notifyDataSetChanged();
+    }
+
+    public void selectAllUnreadItem(boolean isCheck) {
+        int count = 0;
+        for (Article a : mData) {
+            if (a.getProgress() < 1.0f) {
+                a.setChecked(isCheck);
+            }
+            if (a.isChecked())
+                count++;
+        }
+        if (isCheck)
+            mUnPlayedCount = mUnPlayedTotal;
+        else
+            mUnPlayedCount = 0;
+        mSelectCount = count;
+        if (mOnItemClickListener != null)
+            mOnItemClickListener.checkChanged(mSelectCount, mUnPlayedTotal > 0 ? mUnPlayedCount == mUnPlayedTotal : false);
+        notifyDataSetChanged();
+    }
+
     class ReadedHolder extends RecyclerView.ViewHolder {
         TextView tvTitle;
         TextView tvFrom;
@@ -100,14 +208,14 @@ public class ArrangeAdapter extends RecyclerView.Adapter<ArrangeAdapter.ReadedHo
 
         public ReadedHolder(@NonNull View itemView) {
             super(itemView);
-            tvTitle = itemView.findViewById(R.id.tv_unread_item_title);
-            tvFrom = itemView.findViewById(R.id.tv_unread_item_from);
-            tvProgress = itemView.findViewById(R.id.tv_unread_item_progress);
+            tvTitle = itemView.findViewById(R.id.tv_arrange_item_title);
+            tvFrom = itemView.findViewById(R.id.tv_arrange_item_from);
+            tvProgress = itemView.findViewById(R.id.tv_arrange_item_progress);
             checkBox = itemView.findViewById(R.id.cb_arrange_item_check);
         }
     }
 
     public interface OnItemClickListener {
-        void onItemClick(Article article);
+        void checkChanged(int selectCount, boolean isSelectAllUnplay);
     }
 }

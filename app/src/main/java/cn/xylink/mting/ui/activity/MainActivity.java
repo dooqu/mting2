@@ -208,7 +208,9 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
 
     @Override
     public void onArrange() {
-
+        Intent mIntent = new Intent(this, ArrangeActivity.class);
+        mIntent.putExtra(ArrangeActivity.ACTION_ARRANGE_TYPE, mCurrentTabIndex.getIndex());
+        startActivity(mIntent);
     }
 
     @Override
