@@ -280,6 +280,7 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
                 mDrawerLayout.openDrawer(Gravity.LEFT);
                 break;
             case R.id.iv_main_title_search:
+                startActivity(new Intent(this, SearchActivity.class));
                 break;
             case R.id.iv_main_title_add:
                 MainAddMenuPop pop = new MainAddMenuPop(MainActivity.this, this);

@@ -24,10 +24,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:theme="@style/AppTheme"
         tools:replace="android:appComponentFactory">
+        <activity
+            android:name=".ui.activity.SearchActivity"
+            android:windowSoftInputMode="adjustNothing"/>
 
-        <uses-library android:name="org.apache.http.legacy" android:required="false" />
+        <uses-library
+            android:name="org.apache.http.legacy"
+            android:required="false" />
 
-        <activity android:name=".ui.activity.ArrangeActivity"></activity>
+        <activity android:name=".ui.activity.ArrangeActivity" />
         <activity
             android:name=".ui.SplashActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
@@ -41,8 +46,8 @@
 
         <service android:name=".speech.SpeechService" />
 
-        <activity android:name=".ui.activity.MainActivity"></activity>
-        <activity android:name=".ui.activity.SpeechServicActivity"></activity>
+        <activity android:name=".ui.activity.MainActivity" />
+        <activity android:name=".ui.activity.SpeechServicActivity" />
         <activity android:name=".ui.activity.GuideActivity" />
         <activity android:name=".ui.activity.LoginActivity" />
         <activity
@@ -64,7 +69,7 @@
         </activity>
         <activity
             android:name=".ui.activity.ArticleDetailActivity"
-            android:theme="@style/DetailTheme"></activity>
+            android:theme="@style/DetailTheme" />
         <activity
             android:name="com.tencent.connect.common.AssistActivity"
             android:configChanges="orientation|keyboardHidden"
@@ -76,8 +81,12 @@
         <activity android:name=".ui.activity.BindingPhoneActivity" />
         <activity android:name=".ui.activity.BindingPhoneQQWxActivity" />
         <activity android:name=".ui.activity.user.BindLoginPwdActivity" />
-        <activity android:name=".ui.activity.AddArticleActivity" android:windowSoftInputMode="stateHidden|adjustResize" />
-        <activity android:name=".ui.activity.HtmlActivity"  android:usesCleartextTraffic="true" />
+        <activity
+            android:name=".ui.activity.AddArticleActivity"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
+        <activity
+            android:name=".ui.activity.HtmlActivity"
+            android:usesCleartextTraffic="true" />
     </application>
 
 </manifest>
