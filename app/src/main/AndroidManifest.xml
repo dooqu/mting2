@@ -25,12 +25,17 @@
         android:theme="@style/AppTheme"
         tools:replace="android:appComponentFactory">
 
-        <uses-library android:name="org.apache.http.legacy" android:required="false" />
+        <uses-library
+            android:name="org.apache.http.legacy"
+            android:required="false" />
 
-        <activity android:name=".ui.activity.ArrangeActivity"></activity>
+        <activity
+            android:name=".ui.activity.ArrangeActivity"
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name=".ui.SplashActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -41,18 +46,28 @@
 
         <service android:name=".speech.SpeechService" />
 
-        <activity android:name=".ui.activity.MainActivity"></activity>
-        <activity android:name=".ui.activity.SpeechServicActivity"></activity>
-        <activity android:name=".ui.activity.GuideActivity" />
-        <activity android:name=".ui.activity.LoginActivity" />
+        <activity
+            android:name=".ui.activity.MainActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".ui.activity.SpeechServicActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".ui.activity.GuideActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activity.LoginActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".wxapi.WXEntryActivity"
             android:exported="true"
+            android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
         <activity
             android:name="com.tencent.tauth.AuthActivity"
             android:launchMode="singleTask"
-            android:noHistory="true">
+            android:noHistory="true"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -64,20 +79,41 @@
         </activity>
         <activity
             android:name=".ui.activity.ArticleDetailActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/DetailTheme"></activity>
         <activity
             android:name="com.tencent.connect.common.AssistActivity"
             android:configChanges="orientation|keyboardHidden"
-            android:screenOrientation="behind" />
-        <activity android:name=".ui.activity.PhoneLoginActivity" />
-        <activity android:name=".ui.activity.GetCodeActivity" />
-        <activity android:name=".ui.activity.SetPhonePwdActivity" />
-        <activity android:name=".ui.activity.user.LoginPwdActivity" />
-        <activity android:name=".ui.activity.BindingPhoneActivity" />
-        <activity android:name=".ui.activity.BindingPhoneQQWxActivity" />
-        <activity android:name=".ui.activity.user.BindLoginPwdActivity" />
-        <activity android:name=".ui.activity.AddArticleActivity" android:windowSoftInputMode="stateHidden|adjustResize" />
-        <activity android:name=".ui.activity.HtmlActivity"  android:usesCleartextTraffic="true" />
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activity.PhoneLoginActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activity.GetCodeActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activity.SetPhonePwdActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activity.user.LoginPwdActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activity.BindingPhoneActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activity.BindingPhoneQQWxActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activity.user.BindLoginPwdActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activity.AddArticleActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
+        <activity
+            android:name=".ui.activity.HtmlActivity"
+            android:screenOrientation="portrait"
+            android:usesCleartextTraffic="true" />
     </application>
 
 </manifest>
