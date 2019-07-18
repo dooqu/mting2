@@ -33,6 +33,7 @@ import cn.xylink.mting.presenter.CheckLinkPresenter;
 import cn.xylink.mting.presenter.LinkCreatePresenter;
 import cn.xylink.mting.ui.activity.HtmlActivity;
 import cn.xylink.mting.ui.dialog.CheckArticleDialog;
+import cn.xylink.mting.ui.dialog.LoadingDialog;
 import cn.xylink.mting.utils.DateUtils;
 import cn.xylink.mting.utils.L;
 
@@ -51,7 +52,6 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
     @BindView(R.id.tv_loading_error)
     TextView tvLoadingError;
 
-
     //文章类型 1 手动添加， 2 链接添加
     public int inLink = 2;
     private LinkCreatePresenter linkCreatePresenter;
@@ -63,6 +63,26 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
         AddTwoNoteFragment fragment = new AddTwoNoteFragment();
         fragment.setArguments(args);
         return fragment;
+    }
+
+
+
+
+
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        L.v("isVisibleToUser",isVisibleToUser);
+        if(!isVisibleToUser){
+            EventBus.getDefault().post(new AddArticleHomeEvent(0));
+        }else
+        {
+            if(!TextUtils.isEmpty(tv_content.getText())){
+
+                EventBus.getDefault().post(new AddArticleHomeEvent(1));
+            }
+        }
     }
 
     @Override
@@ -155,8 +175,12 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
     public void onMessageEvent(TwoArticleEvent event) {
         L.v("eventType", 2);
         String link = responseUrl;
+        if (!TextUtils.isEmpty(etLink.getText()) && TextUtils.isEmpty(link)) {
+            Toast.makeText(this.getContext(), "请先点击预览", Toast.LENGTH_SHORT).show();
+            return;
+        }
         if (TextUtils.isEmpty(link)) {
-            Toast.makeText(this.getContext(), "不能解析分地址", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this.getContext(), "不能解析空地址", Toast.LENGTH_SHORT).show();
             return;
         }
         link = link.trim().replaceAll(" ", "");
@@ -177,22 +201,23 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
     @Override
     public void onPushError(int code, String errorMsg) {
         L.v("code", code);
-
     }
 
     @Override
     public void showLoading() {
-
+        super.showLoading();
     }
 
     @Override
     public void hideLoading() {
-
+        super.hideLoading();
     }
 
     @Override
     public void onCheckLinkSuccess(BaseResponse<LinkArticle> response) {
         L.v(response.data);
+
+        tvPreview.setVisibility(View.INVISIBLE);
         String title = response.data.getTitle();
         String describe = response.data.getDescribe();
         responseUrl = response.data.getUrl();
@@ -208,13 +233,11 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
                     linkPushRequset(responseUrl);
 //                    checkArticleDialog.dismiss();
                 }
-
                 @Override
                 public void onLook() {
                     Intent mIntent = new Intent(getActivity(), HtmlActivity.class);
                     mIntent.putExtra(HtmlActivity.EXTRA_HTML, responseUrl);
                     startActivity(mIntent);
-
                 }
             });
 
@@ -223,18 +246,17 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
             String msg = String.format(hint, day);
             checkArticleDialog.setUpdateMsg(msg);
             checkArticleDialog.show();
-        } else {
-            if (describe.length() > 0) {
-                EventBus.getDefault().post(new AddArticleHomeEvent(1));
-            } else {
-                EventBus.getDefault().post(new AddArticleHomeEvent(0));
-            }
         }
         if (tvFeedback.getVisibility() == View.VISIBLE)
             tvFeedback.setVisibility(View.GONE);
         if(llError.getVisibility() == View.VISIBLE)
         {
             llError.setVisibility(View.GONE);
+        }
+        if (describe.length() > 0) {
+            EventBus.getDefault().post(new AddArticleHomeEvent(1));
+        } else {
+            EventBus.getDefault().post(new AddArticleHomeEvent(0));
         }
     }
 

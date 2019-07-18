@@ -57,6 +57,16 @@ public class LoginActivity extends BasePresenterActivity implements ThirdLoginCo
     }
 
     @Override
+    public void showLoading() {
+        super.showLoading();
+    }
+
+    @Override
+    public void hideLoading() {
+        super.hideLoading();
+    }
+
+    @Override
     protected void initView() {
 
     }

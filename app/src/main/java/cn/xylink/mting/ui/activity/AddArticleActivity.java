@@ -27,11 +27,12 @@ import cn.xylink.mting.ui.adapter.FragmentAdapter;
 import cn.xylink.mting.ui.fragment.AddOneNoteFragment;
 import cn.xylink.mting.ui.fragment.AddTwoNoteFragment;
 import cn.xylink.mting.utils.L;
+import cn.xylink.mting.widget.CustomViewPager;
 
 public class AddArticleActivity extends BasePresenterActivity {
 
     @BindView(R.id.vp_content)
-    ViewPager vpContent;
+    CustomViewPager vpContent;
     @BindView(R.id.vp_tab)
     TabLayout tabLayout;
     @BindView(R.id.tv_include_title)
@@ -81,8 +82,10 @@ public class AddArticleActivity extends BasePresenterActivity {
         fragments.add(oneNoteFragment);
         fragments.add(twoNoteFragment);
         FragmentAdapter adapter = new FragmentAdapter(fm,fragments,new String[]{"手动输入","从文章链接输入"});
-        tabLayout.setTabsFromPagerAdapter(adapter);
+//        tabLayout.setTabsFromPagerAdapter(adapter);
         vpContent.setAdapter(adapter);
+
+        vpContent.setCanScroll(true);
     }
 
     @Override
@@ -105,9 +108,11 @@ public class AddArticleActivity extends BasePresenterActivity {
         {
             case 1:  // 变色
                 tvRight.setTextColor(getResources().getColorStateList(R.color.color_blue));
+                tvRight.setEnabled(true);
                 break;
             case 0: //不变色
                 tvRight.setTextColor(getResources().getColorStateList(R.color.color_login_text_gray));
+                tvRight.setEnabled(false);
                 break;
 
         }
@@ -115,7 +120,12 @@ public class AddArticleActivity extends BasePresenterActivity {
 
     }
 
-
+    @Override
+    public void onBackPressed() {
+        L.v("onBackPressed");
+        EventBus.getDefault().post(new OneArticleEvent(OneArticleEvent.TYPE_BACK));
+        super.onBackPressed();
+    }
 
     @Override
     protected void initTitleBar() {

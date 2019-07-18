@@ -24,6 +24,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:theme="@style/AppTheme"
         tools:replace="android:appComponentFactory">
+        <activity
+            android:name=".ui.activity.SearchActivity"
+            android:windowSoftInputMode="adjustNothing" />
 
         <uses-library
             android:name="org.apache.http.legacy"
@@ -82,10 +85,6 @@
             android:screenOrientation="portrait"
             android:theme="@style/DetailTheme"></activity>
         <activity
-            android:name="com.tencent.connect.common.AssistActivity"
-            android:configChanges="orientation|keyboardHidden"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".ui.activity.PhoneLoginActivity"
             android:screenOrientation="portrait" />
         <activity
@@ -113,7 +112,12 @@
         <activity
             android:name=".ui.activity.HtmlActivity"
             android:screenOrientation="portrait"
+            android:theme="@style/DetailTheme"
             android:usesCleartextTraffic="true" />
+        <activity
+            android:name="com.tencent.connect.common.AssistActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="behind" />
     </application>
 
 </manifest>

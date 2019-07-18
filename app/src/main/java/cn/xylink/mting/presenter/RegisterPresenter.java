@@ -42,7 +42,7 @@ public class RegisterPresenter extends BasePresenter<RegisterContact.IRegisterVi
         }.getType(), new OkGoUtils.ICallback() {
             @Override
             public void onStart() {
-
+                mView.showLoading();
             }
 
             @Override
@@ -66,7 +66,7 @@ public class RegisterPresenter extends BasePresenter<RegisterContact.IRegisterVi
 
             @Override
             public void onComplete() {
-
+                mView.hideLoading();
             }
         });
     }

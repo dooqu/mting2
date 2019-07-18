@@ -5,6 +5,7 @@ import java.util.List;
 
 import cn.xylink.mting.contract.IBaseView;
 import cn.xylink.mting.presenter.BasePresenter;
+import cn.xylink.mting.ui.dialog.LoadingDialog;
 
 
 public abstract class BasePresenterFragment<T extends BasePresenter> extends BaseFragment implements IBaseView<T> {
@@ -32,4 +33,21 @@ public abstract class BasePresenterFragment<T extends BasePresenter> extends Bas
         }
         super.onDetach();
     }
+
+    private LoadingDialog mLoading;
+
+    @Override
+    public void showLoading() {
+        if (mLoading == null)
+            mLoading = new LoadingDialog(this.getActivity());
+        if (!mLoading.isShowing())
+            mLoading.show();
+    }
+
+    @Override
+    public void hideLoading() {
+        if (mLoading != null)
+            mLoading.dismiss();
+    }
+
 }

@@ -18,6 +18,8 @@
     <dimen name="text_15">15sp</dimen>
     <dimen name="dialog_ico_tv_space">16dp</dimen>
     <dimen name="text_20">20sp</dimen>
+    <dimen name="text_24">24sp</dimen>
     <dimen name="text_23">23sp</dimen>
+    <dimen name="code_line_margin_width">8dp</dimen>
 
 </resources>

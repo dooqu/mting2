@@ -17,6 +17,7 @@ public class Article
     int store;
     int read;
     String id;
+    boolean isChecked;
 
     public String getId() {
         return id;
@@ -146,6 +147,14 @@ public class Article
         return store;
     }
 
+    public boolean isChecked() {
+        return isChecked;
+    }
+
+    public void setChecked(boolean checked) {
+        isChecked = checked;
+    }
+
     public int getInType() {
         return inType;
     }
@@ -178,6 +187,7 @@ public class Article
         article.setProgress(this.getProgress());
         article.setRead(this.getRead());
         article.setId(this.getId());
+        article.setChecked(this.isChecked());
         article.setUrl(this.getUrl());
         article.setInType(this.getInType());
         return article;

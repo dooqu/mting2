@@ -27,7 +27,7 @@ public class InputCreatePresenter extends BasePresenter<InputCreateContact.ICrea
         }.getType(), new OkGoUtils.ICallback() {
             @Override
             public void onStart() {
-
+                mView.showLoading();
             }
 
             @Override
@@ -50,7 +50,7 @@ public class InputCreatePresenter extends BasePresenter<InputCreateContact.ICrea
 
             @Override
             public void onComplete() {
-
+                mView.hideLoading();
             }
         });
     }

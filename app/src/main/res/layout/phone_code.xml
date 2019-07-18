@@ -18,14 +18,17 @@
                 android:id="@+id/tv_code1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/text_20"
+                android:textSize="@dimen/text_24"
+                android:textStyle="bold"
                 android:textColor="@color/color_blue"
                 android:background="@null"
                 android:gravity="center"/>
             <View
                 android:id="@+id/v1"
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
+                android:layout_height="2dp"
+                android:layout_marginStart="@dimen/code_line_margin_width"
+                android:layout_marginEnd="@dimen/code_line_margin_width"
                 android:background="@color/color_blue" />
         </LinearLayout>
 
@@ -40,13 +43,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/color_blue"
-                android:textSize="@dimen/text_20"
+                android:textStyle="bold"
+                android:textSize="@dimen/text_24"
                 android:background="@null"
                 android:gravity="center"/>
             <View
                 android:id="@+id/v2"
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
+                android:layout_height="2dp"
+                android:layout_marginStart="@dimen/code_line_margin_width"
+                android:layout_marginEnd="@dimen/code_line_margin_width"
                 android:background="@color/color_blue_hint" />
         </LinearLayout>
         <LinearLayout
@@ -60,13 +66,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/color_blue"
-                android:textSize="@dimen/text_20"
+                android:textSize="@dimen/text_24"
+                android:textStyle="bold"
                 android:background="@null"
                 android:gravity="center"/>
             <View
                 android:id="@+id/v3"
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
+                android:layout_height="2dp"
+                android:layout_marginStart="@dimen/code_line_margin_width"
+                android:layout_marginEnd="@dimen/code_line_margin_width"
                 android:background="@color/color_blue_hint" />
         </LinearLayout>
         <LinearLayout
@@ -81,12 +90,15 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/color_blue"
                 android:background="@null"
-                android:textSize="@dimen/text_20"
+                android:textSize="@dimen/text_24"
+                android:textStyle="bold"
                 android:gravity="center"/>
             <View
                 android:id="@+id/v4"
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
+                android:layout_height="2dp"
+                android:layout_marginStart="@dimen/code_line_margin_width"
+                android:layout_marginEnd="@dimen/code_line_margin_width"
                 android:background="@color/color_blue_hint" />
         </LinearLayout>
     </LinearLayout>
