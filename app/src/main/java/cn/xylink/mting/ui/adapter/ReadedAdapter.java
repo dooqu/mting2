@@ -29,7 +29,7 @@ import cn.xylink.mting.utils.L;
  */
 public class ReadedAdapter extends RecyclerView.Adapter<ReadedAdapter.ReadedHolder> {
     private Context mContext;
-    private static List<Article> mData;
+    private List<Article> mData;
     private UnreadAdapter.OnItemClickListener mOnItemClickListener;
     private Article mCurrent = SpeechList.getInstance().getCurrent();
     private int mCurrentPosition = 0;

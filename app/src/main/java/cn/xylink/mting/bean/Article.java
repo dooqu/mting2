@@ -15,6 +15,7 @@ public class Article
     int store;
     int read;
     String id;
+    boolean isChecked;
 
     public String getId() {
         return id;
@@ -144,6 +145,14 @@ public class Article
         return store;
     }
 
+    public boolean isChecked() {
+        return isChecked;
+    }
+
+    public void setChecked(boolean checked) {
+        isChecked = checked;
+    }
+
     @Override
     public Article clone() {
         Article article = new Article();
@@ -159,6 +168,7 @@ public class Article
         article.setProgress(this.getProgress());
         article.setRead(this.getRead());
         article.setId(this.getId());
+        article.setChecked(this.isChecked());
         return article;
     }
 }
