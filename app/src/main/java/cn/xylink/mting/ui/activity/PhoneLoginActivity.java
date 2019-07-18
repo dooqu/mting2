@@ -52,6 +52,17 @@ public class PhoneLoginActivity extends BasePresenterActivity implements GetCode
     }
 
     @Override
+    public void showLoading() {
+        super.showLoading();
+    }
+
+    @Override
+    public void hideLoading() {
+        super.hideLoading();
+    }
+
+
+    @Override
     protected void initView() {
         tvTitle.setText("手机号登录");
         etPhone.addTextChangedListener(new TextWatcher() {

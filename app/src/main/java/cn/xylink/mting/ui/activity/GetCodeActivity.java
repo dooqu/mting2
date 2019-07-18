@@ -82,6 +82,18 @@ public class GetCodeActivity extends BasePresenterActivity implements GetCodeCon
 
 
     @Override
+    public void showLoading() {
+        super.showLoading();
+    }
+
+    @Override
+    public void hideLoading() {
+        super.hideLoading();
+    }
+
+
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         timer.cancel();

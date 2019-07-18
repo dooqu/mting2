@@ -84,6 +84,17 @@ public class BindingPhoneActivity extends BasePresenterActivity implements BindC
         });
     }
 
+
+    @Override
+    public void showLoading() {
+        super.showLoading();
+    }
+
+    @Override
+    public void hideLoading() {
+        super.hideLoading();
+    }
+
     @Override
     protected void onStop() {
         super.onStop();

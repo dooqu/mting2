@@ -27,7 +27,7 @@ public class BindCheckPresenter extends BasePresenter<BindCheckContact.IBindChec
         }.getType(), new OkGoUtils.ICallback() {
             @Override
             public void onStart() {
-
+                mView.showLoading();
             }
 
             @Override
@@ -47,7 +47,7 @@ public class BindCheckPresenter extends BasePresenter<BindCheckContact.IBindChec
 
             @Override
             public void onComplete() {
-
+                mView.hideLoading();
             }
         });
     }

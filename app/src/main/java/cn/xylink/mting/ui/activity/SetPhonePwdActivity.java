@@ -114,6 +114,17 @@ public class SetPhonePwdActivity extends BasePresenterActivity implements Regist
         L.v("phone", phone, "ticket", ticket, "type", type);
     }
 
+
+    @Override
+    public void showLoading() {
+        super.showLoading();
+    }
+
+    @Override
+    public void hideLoading() {
+        super.hideLoading();
+    }
+
     @Override
     protected void initTitleBar() {
 
