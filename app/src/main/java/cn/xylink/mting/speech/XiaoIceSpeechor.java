@@ -72,6 +72,7 @@ public abstract class XiaoIceSpeechor implements Speechor {
     List<SpeechTextFragment> speechTextFragments;
     SpeechorState state;
     SpeechorSpeed speed;
+    String speedInternal;
     SpeechHelper speechHelper;
     MediaPlayer mediaPlayer;
     static int LOADER_QUEUE_SIZE = 5;
@@ -79,11 +80,19 @@ public abstract class XiaoIceSpeechor implements Speechor {
 
     public XiaoIceSpeechor() {
         state = SpeechorState.SpeechorStateReady;
+        speed = SpeechorSpeed.SPEECH_SPEED_NORMAL;
+        speedInternal = "0";
         speechHelper = new SpeechHelper();
         textFragments = new ArrayList<>();
         speechTextFragments = new ArrayList<>();
+
+        //init mediaplay
         mediaPlayer = new MediaPlayer();
         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        mediaPlayer.setOnPreparedListener(this::onMediaFragmentPrepared);
+        mediaPlayer.setOnCompletionListener(this::onMediaFragmentComplete);
+        mediaPlayer.setOnErrorListener(this::onMediaFragmentError);
+
         this.reset();
     }
 
@@ -137,7 +146,6 @@ public abstract class XiaoIceSpeechor implements Speechor {
 
 
     private void seekAndPlay(int frameIndex) {
-        Log.i("xylink", "xiaoIce.seekAndPlay:" + frameIndex);
         int segmentSize = this.textFragments.size();
         for (int startIndex = frameIndex, endIndex = Math.min(startIndex + LOADER_QUEUE_SIZE, segmentSize); startIndex < endIndex; ++startIndex) {
             boolean isSegumentCurrentToPlay = startIndex == frameIndex;
@@ -164,7 +172,7 @@ public abstract class XiaoIceSpeechor implements Speechor {
                     }
 
                     XiaoIceTTSAudioLoader loader = new XiaoIceTTSAudioLoader();
-                    loader.textToSpeech(fragment.getFragmentText(), new LoaderResult(fragment) {
+                    loader.textToSpeech(fragment.getFragmentText(), speed, new LoaderResult(fragment) {
                         @Override
                         public void invoke(int errorCode, String message, String audioUrl) {
                             synchronized (XiaoIceSpeechor.this) {
@@ -205,62 +213,62 @@ public abstract class XiaoIceSpeechor implements Speechor {
     private void playSegment(int segmentIndex) {
         try {
             mediaPlayer.reset();
-            mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                @Override
-                public void onPrepared(MediaPlayer mp) {
-                    synchronized (XiaoIceSpeechor.this) {
-                        if (state == SpeechorState.SpeechorStatePlaying) {
-                            new Thread(() -> {
-                                onProgress(textFragments, fragmentIndex);
-                                mp.start();
-                            }).start();
-                        }
-                    }
-                }
-            });
-            mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                @Override
-                public void onCompletion(MediaPlayer mp) {
-                    synchronized (XiaoIceSpeechor.this) {
-                        Log.d("SPEECH", "mediaPlay:onComplete:(state=" + state + ", fragmentIndex=" + fragmentIndex + ",size=" + textFragments.size() + ",frgtext=" + textFragments.get(fragmentIndex));
-                        //一个切片播放完成之后，下一步的操作：
-                        //1、判断播放器是否被停止：可能在一个切片播放完成之后，被外部抢入控制权
-                        //2、当前还存在下一个切片
-                        if (state != SpeechorState.SpeechorStatePlaying) {
-                            return;
-                        }
-
-                        ++fragmentIndex;
-                        int fragmentSize = speechTextFragments.size();
-
-                        if (fragmentIndex < fragmentSize) {
-                            seekAndPlay(fragmentIndex);
-                        }
-                        else if (fragmentIndex == fragmentSize) {
-                            state = SpeechorState.SpeechorStateReady;
-                            fragmentIndex = 0;
-                            //在这里灵气线程进行事件通知，防止上层回调有锁调用防止死锁；
-                            new Thread(() -> {
-                                onStateChanged(SpeechorState.SpeechorStateReady);
-                            }).start();
-                        }
-                    }
-                }
-            });
-
-            mediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
-                @Override
-                public boolean onError(MediaPlayer mp, int what, int extra) {
-                    return false;
-                }
-            });
-
             mediaPlayer.setDataSource(speechTextFragments.get(segmentIndex).getAudioUrl());
             mediaPlayer.prepareAsync();
         }
         catch (IOException ex) {
             onError(-1, ex.getMessage());
         }
+    }
+
+    /*
+    media player播放完一个媒体切片后进行回调；
+     */
+    private synchronized void onMediaFragmentComplete(MediaPlayer player) {
+        Log.d("SPEECH", "mediaPlay:onComplete:(state=" + state + ", fragmentIndex=" + fragmentIndex + ",size=" + textFragments.size() + ",frgtext=" + textFragments.get(fragmentIndex));
+        //一个切片播放完成之后，下一步的操作：
+        //1、判断播放器是否被停止：可能在一个切片播放完成之后，被外部抢入控制权
+        //2、当前还存在下一个切片
+        if (state != SpeechorState.SpeechorStatePlaying) {
+            return;
+        }
+
+        ++fragmentIndex;
+        int fragmentSize = speechTextFragments.size();
+
+        if (fragmentIndex < fragmentSize) {
+            seekAndPlay(fragmentIndex);
+        }
+        else if (fragmentIndex == fragmentSize) {
+            state = SpeechorState.SpeechorStateReady;
+            fragmentIndex = 0;
+            //在这里灵气线程进行事件通知，防止上层回调有锁调用防止死锁；
+            new Thread(() -> {
+                onStateChanged(SpeechorState.SpeechorStateReady);
+            }).start();
+        }
+    }
+
+    /*
+    media player完成一个媒体切片加载后进行回调调用
+     */
+    private synchronized void onMediaFragmentPrepared(MediaPlayer mp) {
+        if (state == SpeechorState.SpeechorStatePlaying) {
+            new Thread(() -> {
+                onProgress(textFragments, fragmentIndex);
+                mp.start();
+            }).start();
+        }
+    }
+
+    /*
+    media player在播放中遇到播放错误后，进行回调调用
+     */
+    private synchronized boolean onMediaFragmentError(MediaPlayer mp, int what, int extra) {
+        new Thread(() -> {
+            onError(what, "media player播放错误");
+        });
+        return false;
     }
 
 
@@ -328,9 +336,6 @@ public abstract class XiaoIceSpeechor implements Speechor {
         this.textFragments = new ArrayList<>();
 
         if (currState != SpeechorState.SpeechorStateReady) {
-            mediaPlayer.setOnErrorListener(null);
-            mediaPlayer.setOnCompletionListener(null);
-            mediaPlayer.setOnPreparedListener(null);
             mediaPlayer.reset();
             XiaoIceTTSAudioLoader.cancel();
             this.onStateChanged(SpeechorState.SpeechorStateReady);
@@ -342,11 +347,16 @@ public abstract class XiaoIceSpeechor implements Speechor {
         if (isReleased) {
             return;
         }
+
+        XiaoIceTTSAudioLoader.cancel();
+
+        mediaPlayer.setOnErrorListener(null);
+        mediaPlayer.setOnCompletionListener(null);
+        mediaPlayer.setOnPreparedListener(null);
+
         if (this.state == SpeechorState.SpeechorStatePlaying) {
             mediaPlayer.stop();
         }
-
-        XiaoIceTTSAudioLoader.cancel();
         mediaPlayer.release();
     }
 
@@ -356,8 +366,38 @@ public abstract class XiaoIceSpeechor implements Speechor {
     }
 
     @Override
-    public void setSpeed(SpeechorSpeed speed) {
+    public synchronized void setSpeed(SpeechorSpeed speed) {
+        if (this.speed == speed) {
+            return;
+        }
+        switch (speed) {
+            case SPEECH_SPEED_NORMAL:
+                speedInternal = "0";
+                break;
 
+            case SPEECH_SPEED_MULTIPLE_1_POINT_5:
+                speedInternal = "50";
+                break;
+
+            case SPEECH_SPEED_MULTIPLE_2:
+                speedInternal = "100";
+                break;
+
+            case SPEECH_SPEED_MULTIPLE_2_POINT_5:
+                speedInternal = "200";
+                break;
+
+            default:
+                speedInternal = "0";
+                break;
+        }
+
+        this.speed = speed;
+
+        //设定好速度后，用新速度播放该片段
+        if (state == SpeechorState.SpeechorStatePlaying) {
+            seekAndPlay(fragmentIndex);
+        }
     }
 
     @Override
@@ -366,8 +406,8 @@ public abstract class XiaoIceSpeechor implements Speechor {
     }
 
     @Override
-    public SpeechorSpeed getSpeed() {
-        return null;
+    public synchronized SpeechorSpeed getSpeed() {
+        return speed;
     }
 
     @Override
@@ -387,6 +427,14 @@ public abstract class XiaoIceSpeechor implements Speechor {
 
     @Override
     public synchronized float getProgress() {
-        return 0;
+        switch (this.state) {
+            case SpeechorStateReady:
+                return 0f;
+
+            default:
+                if (this.textFragments.size() <= 0)
+                    return 0f;
+                return (float) fragmentIndex / (float) this.textFragments.size();
+        }
     }
 }

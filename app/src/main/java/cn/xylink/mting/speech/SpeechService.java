@@ -138,7 +138,6 @@ public class SpeechService extends Service {
         speechor = null;
         articleDataProvider.release();
         articleDataProvider = null;
-
     }
 
 
