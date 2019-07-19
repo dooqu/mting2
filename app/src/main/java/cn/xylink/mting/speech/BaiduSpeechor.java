@@ -349,7 +349,7 @@ public abstract class BaiduSpeechor implements Speechor {
             }
             this.textFragments = new ArrayList<>();
 
-            if (currState != SpeechorState.SpeechorStateReady) {
+            if (currState == SpeechorState.SpeechorStatePlaying) {
                 this.speechSynthesizer.stop();
                 this.onStateChanged(SpeechorState.SpeechorStateReady);
             }

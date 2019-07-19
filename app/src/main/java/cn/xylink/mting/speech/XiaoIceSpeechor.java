@@ -335,7 +335,7 @@ public abstract class XiaoIceSpeechor implements Speechor {
         }
         this.textFragments = new ArrayList<>();
 
-        if (currState != SpeechorState.SpeechorStateReady) {
+        if (currState == SpeechorState.SpeechorStatePlaying) {
             mediaPlayer.reset();
             XiaoIceTTSAudioLoader.cancel();
             this.onStateChanged(SpeechorState.SpeechorStateReady);
