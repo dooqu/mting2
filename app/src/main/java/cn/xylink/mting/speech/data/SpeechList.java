@@ -86,7 +86,6 @@ public class SpeechList {
     选中或者插入一条数
      */
     public synchronized Article pushFrontAndSelect(Article article) {
-
         if (article == null || article.getArticleId() == null)
             return null;
 

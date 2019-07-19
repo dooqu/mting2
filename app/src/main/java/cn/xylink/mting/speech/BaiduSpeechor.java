@@ -121,7 +121,7 @@ public abstract class BaiduSpeechor implements Speechor {
             if (this.state != SpeechorState.SpeechorStateReady) {
                 this.reset();
             }
-            List<String> textFragmentsNew = speechOperator.prepare(text);
+            List<String> textFragmentsNew = speechOperator.prepareTextFragments(text, false);
             this.textFragments.addAll(textFragmentsNew);
         }
     }

@@ -1,6 +1,8 @@
 package cn.xylink.mting.speech.data;
 
 
+import android.util.Log;
+
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.callback.Callback;
 import com.lzy.okgo.callback.FileCallback;
@@ -33,13 +35,14 @@ public class XiaoIceTTSAudioLoader {
         void invoke(int errorCode, String message, String audioUrl);
     }
 
-    public void cancel() {
-        OkGo.getInstance().cancelTag(this);
+    public static void cancel() {
+        OkGo.getInstance().cancelAll();
     }
 
 
     public void textToSpeech(String text, LoadResult result) {
 
+        Log.d("xylink", "TTS:" + text);
         String postData = null;
 
         try {
@@ -125,7 +128,6 @@ public class XiaoIceTTSAudioLoader {
         itemObject.put("msgId", MSG_ID);
         itemObject.put("timestamp", String.valueOf(System.currentTimeMillis()));
         return itemObject.toString();
-
     }
 
 
@@ -135,7 +137,6 @@ public class XiaoIceTTSAudioLoader {
 
     /**
      * 字符串 SHA 加密
-     *
      * @return
      */
     private static String SHA(final String strText, final String strType) {

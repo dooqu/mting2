@@ -13,7 +13,6 @@ import android.support.v4.content.ContextCompat;
 import java.util.ArrayList;
 
 import cn.xylink.mting.R;
-import cn.xylink.mting.base.BaseActivity;
 import cn.xylink.mting.base.BaseResponse;
 import cn.xylink.mting.bean.UserInfo;
 import cn.xylink.mting.contract.CheckTokenContact;
@@ -22,9 +21,7 @@ import cn.xylink.mting.presenter.CheckTokenPresenter;
 import cn.xylink.mting.ui.activity.BasePresenterActivity;
 import cn.xylink.mting.ui.activity.GuideActivity;
 import cn.xylink.mting.ui.activity.MainActivity;
-import cn.xylink.mting.ui.activity.SpeechServicActivity;
 import cn.xylink.mting.ui.activity.user.BindLoginPwdActivity;
-import cn.xylink.mting.ui.activity.user.LoginPwdActivity;
 import cn.xylink.mting.utils.L;
 
 public class SplashActivity extends BasePresenterActivity implements CheckTokenContact.ICheckTokenView {
@@ -38,7 +35,6 @@ public class SplashActivity extends BasePresenterActivity implements CheckTokenC
 
     @Override
     protected void initView() {
-
         if(false)
         {
             startActivity(new Intent(this, BindLoginPwdActivity.class));
@@ -61,7 +57,6 @@ public class SplashActivity extends BasePresenterActivity implements CheckTokenC
             }
         }).sendEmptyMessageDelayed(0, 3000);
     }
-
     @Override
     protected void initData() {
 
@@ -100,8 +95,6 @@ public class SplashActivity extends BasePresenterActivity implements CheckTokenC
             ActivityCompat.requestPermissions(this, toApplyList.toArray(tmpList), 123);
         }
     }
-
-
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
