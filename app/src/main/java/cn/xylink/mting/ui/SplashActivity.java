@@ -114,8 +114,15 @@ public class SplashActivity extends BasePresenterActivity implements CheckTokenC
             }
         }
         if (flag) {
-            startActivity(new Intent(SplashActivity.this, GuideActivity.class));
+            if (FileCache.getInstance().isGuideFirst()) {
+                FileCache.getInstance().setHasGuide();
+                startActivity(new Intent(SplashActivity.this, GuideActivity.class));
+            }else{
+                startActivity(new Intent(SplashActivity.this, LoginActivity.class));
+                finish();
+            }
         }
+        L.v("FileCache.getInstance().isGuideFirst()",FileCache.getInstance().isGuideFirst());
         finish();
     }
 
@@ -128,6 +135,7 @@ public class SplashActivity extends BasePresenterActivity implements CheckTokenC
 //        } else {
 //            initPermission();
 //        }
+        L.v("code",response.code);
         switch (response.code)
         {
             case 200:
@@ -135,6 +143,7 @@ public class SplashActivity extends BasePresenterActivity implements CheckTokenC
                 finish();
                 break;
             default:
+                L.v("Build.VERSION.SDK_INT",Build.VERSION.SDK_INT);
                 if (Build.VERSION.SDK_INT < 23) {
                     if (FileCache.getInstance().isGuideFirst()) {
                         FileCache.getInstance().setHasGuide();
@@ -154,8 +163,14 @@ public class SplashActivity extends BasePresenterActivity implements CheckTokenC
     @Override
     public void onCheckTokenError(int code, String errorMsg) {
         L.v("code",code,"errorMsg",errorMsg);
-        startActivity(new Intent(SplashActivity.this, MainActivity.class));
-        finish();
+        if (FileCache.getInstance().isGuideFirst()) {
+            FileCache.getInstance().setHasGuide();
+            startActivity(new Intent(SplashActivity.this, GuideActivity.class));
+            finish();
+        }else{
+            startActivity(new Intent(SplashActivity.this, LoginActivity.class));
+            finish();
+        }
     }
 
     @Override
