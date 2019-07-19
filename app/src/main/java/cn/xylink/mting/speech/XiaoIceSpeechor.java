@@ -249,6 +249,12 @@ public abstract class XiaoIceSpeechor implements Speechor {
         }
     }
 
+    private void clearCachedFragmentsAudio() {
+        for(int index = 0, size = this.textFragments.size(); index < size; ++ index) {
+            this.speechTextFragments.get(index).setFragmentState(SpeechTextFragmentState.TextReady);
+        }
+    }
+
     /*
     media player完成一个媒体切片加载后进行回调调用
      */
@@ -396,6 +402,7 @@ public abstract class XiaoIceSpeechor implements Speechor {
 
         //设定好速度后，用新速度播放该片段
         if (state == SpeechorState.SpeechorStatePlaying) {
+            clearCachedFragmentsAudio();
             seekAndPlay(fragmentIndex);
         }
     }

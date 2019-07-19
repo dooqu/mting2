@@ -3,13 +3,17 @@ package cn.xylink.mting.ui.activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -48,6 +52,7 @@ import cn.xylink.mting.ui.dialog.ArticleDetailSetting;
 import cn.xylink.mting.ui.dialog.ArticleDetailShare;
 import cn.xylink.mting.utils.ContentManager;
 import cn.xylink.mting.widget.ArcProgressBar;
+import cn.xylink.mting.widget.MyScrollView;
 
 /**
  * Created by liuhe. on Date: 2019/7/2
@@ -80,6 +85,14 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
     TextView tvAuthor;
     @BindView(R.id.tv_fav)
     TextView tvFav;
+    @BindView(R.id.sv_content)
+    MyScrollView svContent;
+    @BindView(R.id.ll_title)
+    LinearLayout llTitle;
+    @BindView(R.id.iv_back)
+    ImageView ivBack;
+    @BindView(R.id.tv_fk)
+    TextView tvFk;
     private String aid;
     private String articleUrl;
     private Article mCurrentArticle;
@@ -117,12 +130,32 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
                 llArticleEdit.setVisibility(View.VISIBLE);
                 llSourceDetail.setVisibility(View.GONE);
             }
-            if (mCurrentArticle.getStore()==0){
+            if (mCurrentArticle.getStore() == 0) {
                 tvFav.setText("收藏");
-            }else{
+            } else {
                 tvFav.setText("已收藏");
             }
         }
+        float y = tvContent.getY();
+        svContent.setOnScrollListener(new MyScrollView.OnScrollListener() {
+            @Override
+            public void onScroll(int scrollY) {
+                float alpha = scrollY / y;
+                if (alpha > 1) {
+                    alpha = 1;
+                }
+                if (alpha < 0) {
+                    alpha = 0;
+                }
+                int a = (int) (255 * alpha);
+                llTitle.setBackgroundColor(Color.argb(a, 72, 141, 239));
+                Drawable drawable = ivBack.getDrawable();
+                int fk = (int) (153 + 102 * (alpha));
+                drawable.setTint(Color.rgb(fk, fk, fk));
+                ivBack.setImageDrawable(drawable);
+                tvFk.setTextColor(Color.rgb(fk, fk, fk));
+            }
+        });
     }
 
     @Override
@@ -155,6 +188,16 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
                 service.seek(progress / 100f);
             }
         });
+        proxy = new SpeechServiceProxy(this) {
+            @Override
+            protected void onConnected(boolean connected, SpeechService service) {
+                if (connected) {
+                    ArticleDetailActivity.this.service = service;
+                    initServiceData();
+                }
+            }
+        };
+        proxy.bind();
     }
 
 
@@ -233,6 +276,24 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
                             break;
                         case 4:
                             service.setCountDown(SpeechService.CountDownMode.MinuteCount, 30);
+                            break;
+                    }
+                }
+
+                @Override
+                public void onVoiceType(int type) {
+                    switch (type) {
+                        case 0:
+                            service.setRole(Speechor.SpeechorRole.XiaoMei);
+                            break;
+                        case 1:
+                            service.setRole(Speechor.SpeechorRole.XiaoIce);
+                            break;
+                        case 2:
+                            service.setRole(Speechor.SpeechorRole.XiaoYao);
+                            break;
+                        case 3:
+                            service.setRole(Speechor.SpeechorRole.YaYa);
                             break;
                     }
                 }
@@ -417,16 +478,6 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EventBus.getDefault().register(this);
-        proxy = new SpeechServiceProxy(this) {
-            @Override
-            protected void onConnected(boolean connected, SpeechService service) {
-                if (connected) {
-                    ArticleDetailActivity.this.service = service;
-                    initServiceData();
-                }
-            }
-        };
-        proxy.bind();
     }
 
     @Override
@@ -461,4 +512,5 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
     public void onErrorAddLove(int code, String errorMsg) {
 
     }
+
 }
