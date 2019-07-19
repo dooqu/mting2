@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="week">
+        <item >产品建议</item>
+        <item >语音朗读不正确</item>
+        <item >文章内容不正确</item>
+        <item >用户体验</item>
+        <item >其他</item>
+    </string-array>
+</resources>

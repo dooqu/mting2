@@ -112,7 +112,7 @@ public class ArticleDetailActivity extends BaseActivity {
                 tvAuthor.setVisibility(View.VISIBLE);
                 tvAuthor.setText(mCurrentArticle.getSourceName());
             }
-            if (mCurrentArticle.getInType() == 1) {
+            if (mCurrentArticle.getInType() == 1||TextUtils.isEmpty(mCurrentArticle.getUrl())) {
                 llArticleEdit.setVisibility(View.VISIBLE);
                 llSourceDetail.setVisibility(View.GONE);
             }
@@ -183,7 +183,7 @@ public class ArticleDetailActivity extends BaseActivity {
 
     @OnClick(R.id.tv_fk)
     void onTvfkClick(View v) {
-
+        jumpActivity(FeedBackActivity.class);
     }
 
     @OnClick({R.id.ll_setting, R.id.iv_setting, R.id.tv_setting})
@@ -337,6 +337,10 @@ public class ArticleDetailActivity extends BaseActivity {
             tvContent.setText("");
         } else if (event instanceof SpeechReadyEvent) {
             mCurrentArticle = event.getArticle();
+            if (mCurrentArticle.getInType() == 1||TextUtils.isEmpty(mCurrentArticle.getUrl())) {
+                llArticleEdit.setVisibility(View.VISIBLE);
+                llSourceDetail.setVisibility(View.GONE);
+            }
             isPlaying = 1;
             aid = event.getArticle().getId();
             ivPlayBarBtn.setImageResource(R.mipmap.ico_pause);
