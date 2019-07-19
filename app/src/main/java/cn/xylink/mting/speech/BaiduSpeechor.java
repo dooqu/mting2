@@ -221,21 +221,26 @@ public abstract class BaiduSpeechor implements Speechor {
         String paramSpeed = "5";
         switch (speed) {
             case SPEECH_SPEED_MULTIPLE_1_POINT_5:
-                paramSpeed = "8";
+                paramSpeed = "7";
                 break;
             case SPEECH_SPEED_MULTIPLE_2:
-                paramSpeed = "10";
+                paramSpeed = "12";
                 break;
             case SPEECH_SPEED_MULTIPLE_2_POINT_5:
-                paramSpeed = "12";
+                paramSpeed = "15";
                 break;
             default:
                 paramSpeed = "5";
                 break;
         }
 
-        speechSynthesizer.setParam(SpeechSynthesizer.PARAM_SPEED, paramSpeed);
         this.speed = speed;
+        speechSynthesizer.setParam(SpeechSynthesizer.PARAM_SPEED, paramSpeed);
+
+        if(this.state == SpeechorState.SpeechorStatePlaying) {
+            this.pause();
+            this.seekAndPlay(fragmentIndex);
+        }
     }
 
 

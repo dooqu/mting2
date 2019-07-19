@@ -134,6 +134,13 @@ public class ArticleDataProvider {
                             article.setStore(response.data.getStore());
                             article.setInType(response.data.getInType());
                             article.setUrl(response.data.getUrl());
+                            article.setTitle(response.data.getTitle());
+                            article.setShareUrl(response.data.getShareUrl());
+                            article.setSourceName(response.data.getSourceName());
+                            article.setId(response.data.getId());
+                            article.setSourceLogo(response.data.getSourceLogo());
+                            article.setRead(response.data.getRead());
+                            article.setProgress(response.data.getProgress());
                             callback.invoke(0, article);
                         }
                     }
