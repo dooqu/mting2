@@ -23,6 +23,7 @@ import cn.xylink.mting.base.BaseResponse;
 import cn.xylink.mting.bean.Article;
 import cn.xylink.mting.contract.InputCreateContact;
 import cn.xylink.mting.event.AddArticleHomeEvent;
+import cn.xylink.mting.event.AddUnreadEvent;
 import cn.xylink.mting.event.OneArticleEvent;
 import cn.xylink.mting.model.InputCreateRequest;
 import cn.xylink.mting.presenter.InputCreatePresenter;
@@ -155,7 +156,7 @@ public class AddOneNoteFragment extends BasePresenterFragment implements InputCr
     @Override
     public void onCreateSuccess(BaseResponse<Article> response) {
         L.v("response.msg", response.message);
-//        EventBus.getDefault().post(new AddUnreadEvent());
+        EventBus.getDefault().post(new AddUnreadEvent());
         String json = new Gson().toJson(response.data);
         getActivity().finish();
     }

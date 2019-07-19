@@ -27,6 +27,7 @@ import cn.xylink.mting.contract.AddFeedbackContact;
 import cn.xylink.mting.contract.CheckLinkContact;
 import cn.xylink.mting.contract.LinkCreateContact;
 import cn.xylink.mting.event.AddArticleHomeEvent;
+import cn.xylink.mting.event.AddUnreadEvent;
 import cn.xylink.mting.event.TwoArticleEvent;
 import cn.xylink.mting.model.CheckLinkUrlRequset;
 import cn.xylink.mting.model.LinkCreateRequest;
@@ -208,7 +209,7 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
 //        L.v("title",title);
 //        L.v("describle",describe);
 //        tv_content.setText(title +"\n" + describe);
-//        EventBus.getDefault().post(new AddUnreadEvent());
+        EventBus.getDefault().post(new AddUnreadEvent());
         getActivity().finish();
     }
 
