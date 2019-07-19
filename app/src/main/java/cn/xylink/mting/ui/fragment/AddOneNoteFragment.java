@@ -45,7 +45,7 @@ public class AddOneNoteFragment extends BasePresenterFragment implements InputCr
 
     @Override
     protected int getLayoutViewId() {
-        return  R.layout.fragment_add_aricle_1;
+        return R.layout.fragment_add_aricle_1;
     }
 
     @Override
@@ -64,10 +64,9 @@ public class AddOneNoteFragment extends BasePresenterFragment implements InputCr
 
             @Override
             public void afterTextChanged(Editable s) {
-                if(s.length() > 0)
-                {
+                if (s.length() > 0) {
                     EventBus.getDefault().post(new AddArticleHomeEvent(1));
-                }else {
+                } else {
                     EventBus.getDefault().post(new AddArticleHomeEvent(0));
                 }
             }
@@ -86,44 +85,41 @@ public class AddOneNoteFragment extends BasePresenterFragment implements InputCr
     }
 
 
-
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(OneArticleEvent event) {
 
         String title = etTitle.getText().toString();
         String content = etContent.getText().toString();
-        if(event.type == OneArticleEvent.TYPE_BACK)
-        {
-            L.v("title",content);
+        if (event.type == OneArticleEvent.TYPE_BACK) {
+            L.v("title", content);
             if (TextUtils.isEmpty(content)) {
                 getActivity().finish();
                 return;
             }
         }
-        if(TextUtils.isEmpty(content)) {
-            Toast.makeText(getContext(),"请输入文章正文",Toast.LENGTH_SHORT).show();
+        if (TextUtils.isEmpty(content)) {
+            Toast.makeText(getContext(), "请输入文章正文", Toast.LENGTH_SHORT).show();
             return;
         }
-        L.v("title",title);
+        L.v("title", title);
         if (TextUtils.isEmpty(title)) {
             BreakIterator iterator = BreakIterator.getSentenceInstance();
             iterator.setText(content);
             int start = iterator.first();
-            for (int end = iterator.next(); end != BreakIterator.DONE; start = end,end = iterator.next()) {
-                title = content.substring(start,end);
+            for (int end = iterator.next(); end != BreakIterator.DONE; start = end, end = iterator.next()) {
+                title = content.substring(start, end);
                 L.v(title);
                 break;
             }
-            if(title.length() > 30){
-                title = title.substring(0,30);
+            if (title.length() > 30) {
+                title = title.substring(0, 30);
             }
         }
-        inputCreateRequset(title,etContent.getText().toString());
+        inputCreateRequset(title, etContent.getText().toString());
 
     }
 
-    public void inputCreateRequset(String title,String content)
-    {
+    public void inputCreateRequset(String title, String content) {
         InputCreateRequest requset = new InputCreateRequest();
         requset.setContent(content);
         requset.setTitle(title);
@@ -135,12 +131,11 @@ public class AddOneNoteFragment extends BasePresenterFragment implements InputCr
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        L.v("isVisibleToUser",isVisibleToUser);
-        if(!isVisibleToUser){
+        L.v("isVisibleToUser", isVisibleToUser);
+        if (!isVisibleToUser) {
             EventBus.getDefault().post(new AddArticleHomeEvent(0));
-        }else
-        {
-            if(!TextUtils.isEmpty(etContent.getText())){
+        } else {
+            if (!TextUtils.isEmpty(etContent.getText())) {
 
                 EventBus.getDefault().post(new AddArticleHomeEvent(1));
             }
@@ -159,15 +154,15 @@ public class AddOneNoteFragment extends BasePresenterFragment implements InputCr
 
     @Override
     public void onCreateSuccess(BaseResponse<Article> response) {
-        L.v("response.msg",response.message);
-        Toast.makeText(getContext(),response.message,Toast.LENGTH_SHORT).show();
-      String json =  new Gson().toJson(response.data);
-      getActivity().finish();
+        L.v("response.msg", response.message);
+//        EventBus.getDefault().post(new AddUnreadEvent());
+        String json = new Gson().toJson(response.data);
+        getActivity().finish();
     }
 
     @Override
     public void onCreateError(int code, String errorMsg) {
-        L.v("code",code,"errorMsg",errorMsg);
+        L.v("code", code, "errorMsg", errorMsg);
 
     }
 }

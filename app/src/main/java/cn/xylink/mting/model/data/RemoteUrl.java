@@ -106,4 +106,10 @@ public class RemoteUrl {
         return URL_BASE + "/api/search/v1/article";
     }
 
+    //反馈接口
+    public static String feedbackUrl(){
+        return URL_BASE + "/api/sct/v1/feedback/save";
+    }
+
+
 }

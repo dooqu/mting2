@@ -19,14 +19,16 @@ import cn.xylink.mting.ui.fragment.GuideFragment;
 public class GuideActivity extends BaseActivity {
     private final static int[] TITLE = {R.string.guide_one_title, R.string.guide_two_title, R.string.guide_three_title};
     private final static int[] MSG = {R.string.guide_one_msg, R.string.guide_two_msg, R.string.guide_three_msg};
-    private final static int[] IMAGE = {R.mipmap.ic_launcher, R.mipmap.ic_launcher, R.mipmap.ic_launcher};
+    private final static int[] IMAGE = {R.mipmap.guide_1, R.mipmap.guide_2, R.mipmap.guide_3};
 
     @BindView(R.id.viewpager_guide)
     ViewPager mViewPager;
     @BindView(R.id.iv_guide_indicator)
     ImageView mIndicatorView;
-    @BindView(R.id.tv_guide)
-    TextView mTvGuide;
+    @BindView(R.id.btn_guide)
+    Button mBtnGuide;
+    @BindView(R.id.tv_break)
+    TextView tvBreak;
 
 
     @Override
@@ -65,17 +67,21 @@ public class GuideActivity extends BaseActivity {
         @Override
         public void onPageSelected(int position) {
             if (position == 0) {
-                mIndicatorView.setImageResource(R.drawable.icon_one_indicator);
+                mIndicatorView.setImageResource(R.mipmap.icon_one_indicator);
             } else if (position == 1) {
-                mIndicatorView.setImageResource(R.drawable.icon_two_indicator);
+                mIndicatorView.setImageResource(R.mipmap.icon_two_indicator);
             }
             switch (position) {
                 case 0:
                 case 1:
-                    mTvGuide.setText("跳过");
+                    tvBreak.setVisibility(View.VISIBLE);
+                    mBtnGuide.setVisibility(View.GONE);
+                    mIndicatorView.setVisibility(View.VISIBLE);
                     break;
                 case 2:
-                    mTvGuide.setText("开始使用");
+                    tvBreak.setVisibility(View.GONE);
+                    mBtnGuide.setVisibility(View.VISIBLE);
+                    mIndicatorView.setVisibility(View.GONE);
                     break;
             }
         }
@@ -103,10 +109,11 @@ public class GuideActivity extends BaseActivity {
         }
     }
 
-    @OnClick(R.id.tv_guide)
+    @OnClick({R.id.btn_guide,R.id.tv_break})
     public void onClickView(View view) {
         switch (view.getId()) {
-            case R.id.tv_guide:
+            case R.id.btn_guide:
+            case R.id.tv_break:
                 startActivity(new Intent(GuideActivity.this, LoginActivity.class));
                 finish();
                 break;

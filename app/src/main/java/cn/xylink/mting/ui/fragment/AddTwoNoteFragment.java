@@ -23,12 +23,14 @@ import butterknife.OnClick;
 import cn.xylink.mting.R;
 import cn.xylink.mting.base.BaseResponse;
 import cn.xylink.mting.bean.LinkArticle;
+import cn.xylink.mting.contract.AddFeedbackContact;
 import cn.xylink.mting.contract.CheckLinkContact;
 import cn.xylink.mting.contract.LinkCreateContact;
 import cn.xylink.mting.event.AddArticleHomeEvent;
 import cn.xylink.mting.event.TwoArticleEvent;
 import cn.xylink.mting.model.CheckLinkUrlRequset;
 import cn.xylink.mting.model.LinkCreateRequest;
+import cn.xylink.mting.presenter.AddFeedbackPresenter;
 import cn.xylink.mting.presenter.CheckLinkPresenter;
 import cn.xylink.mting.presenter.LinkCreatePresenter;
 import cn.xylink.mting.ui.activity.HtmlActivity;
@@ -37,7 +39,7 @@ import cn.xylink.mting.ui.dialog.LoadingDialog;
 import cn.xylink.mting.utils.DateUtils;
 import cn.xylink.mting.utils.L;
 
-public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCreateContact.IPushView, CheckLinkContact.ICheckLinkView {
+public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCreateContact.IPushView, CheckLinkContact.ICheckLinkView, AddFeedbackContact.IAddFeedBackView {
 
     @BindView(R.id.et_article_title)
     EditText etLink;
@@ -56,6 +58,8 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
     public int inLink = 2;
     private LinkCreatePresenter linkCreatePresenter;
     private CheckLinkPresenter checkLinkPresenter;
+    private AddFeedbackPresenter addFeedbackPresenter;
+
 
     private String responseUrl;
 
@@ -121,6 +125,9 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
         checkLinkPresenter = (CheckLinkPresenter) createPresenter(CheckLinkPresenter.class);
         checkLinkPresenter.attachView(this);
 
+        addFeedbackPresenter = (AddFeedbackPresenter) createPresenter(AddFeedbackPresenter.class);
+        addFeedbackPresenter.attachView(this);
+
     }
 
     @Override
@@ -134,7 +141,7 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
 
     }
 
-    @OnClick(R.id.tv_preview)
+    @OnClick({R.id.tv_preview,R.id.tv_feedback})
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.tv_preview:
@@ -145,6 +152,12 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
                 }
                 link = link.trim().replaceAll(" ", "");
                 checkLinkUrl(link);
+                break;
+            case R.id.tv_feedback:
+                 LinkCreateRequest request = new LinkCreateRequest();
+                request.setUrl(etLink.getText().toString());
+                request.doSign();
+                addFeedbackPresenter.onFeedBack(request);
                 break;
         }
     }
@@ -195,6 +208,7 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
 //        L.v("title",title);
 //        L.v("describle",describe);
 //        tv_content.setText(title +"\n" + describe);
+//        EventBus.getDefault().post(new AddUnreadEvent());
         getActivity().finish();
     }
 
@@ -271,5 +285,16 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
                 break;
         }
         tvPreview.setText("重新加载");
+    }
+
+    @Override
+    public void onAddFeedBackSuccess(BaseResponse<String> response) {
+        Toast.makeText(this.getContext(),response.message,Toast.LENGTH_SHORT).show();
+
+    }
+
+    @Override
+    public void onBindCheckError(int code, String errorMsg) {
+        Toast.makeText(this.getContext(),errorMsg,Toast.LENGTH_SHORT).show();
     }
 }
