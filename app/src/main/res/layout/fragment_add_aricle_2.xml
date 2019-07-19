@@ -90,7 +90,7 @@
             android:background="@android:color/transparent"
             android:hint="加载失败"
             android:visibility="gone"
-            android:textSize="@dimen/text_23" />
+            android:textSize="@dimen/text_18" />
     </LinearLayout>
     <TextView
         android:id="@+id/tv_content"
