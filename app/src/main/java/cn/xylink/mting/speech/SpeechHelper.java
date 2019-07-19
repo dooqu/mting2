@@ -8,20 +8,25 @@ import java.util.List;
 
 public class SpeechHelper {
 
-    static HashSet<Character> symbols = new HashSet<>();
+    static HashSet<Character> SplitSymbols = new HashSet<>();
+
 
     static {
-        symbols.add('，');
-        symbols.add('。');
-        symbols.add('？');
-        symbols.add('！');
-        symbols.add('；');
-        symbols.add('\n');
-        symbols.add(',');
-        symbols.add(';');
-        symbols.add('!');
-        symbols.add('?');
-        symbols.add('.');
+        SplitSymbols.add('，');
+        SplitSymbols.add('。');
+        SplitSymbols.add('？');
+        SplitSymbols.add('！');
+        SplitSymbols.add('；');
+        SplitSymbols.add('\n');
+        SplitSymbols.add(',');
+        SplitSymbols.add(';');
+        SplitSymbols.add('!');
+        SplitSymbols.add('?');
+        SplitSymbols.add('.');
+    }
+
+    public static boolean isSymbol(char c) {
+        return String.valueOf(c).matches("\\p{P}");
     }
 
 
@@ -44,14 +49,14 @@ public class SpeechHelper {
         else {
 
             for (int index = 0, length = textBody.length(), fragIndex = 0, fragLength = 0; index < length; ++index, ++fragLength) {
-                if (fragLength >= 70) {
+                if (fragLength >= 100) {
                     textFragments.add(textBody.substring(fragIndex, index));
                     fragIndex = index;
                     fragLength = 0;
                     continue;
                 }
                 char c = textBody.charAt(index);
-                if (symbols.contains(c)) {
+                if (SplitSymbols.contains(c)) {
                     if (c == '.'
                             && index - 1 > 0 && index + 1 <= length
                             && Character.isDigit(textBody.charAt(index - 1))
@@ -59,8 +64,9 @@ public class SpeechHelper {
                         continue;
                     }
 
+                    boolean enQuoStart = false;
                     for (int i = index + 1; i < length; i++) {
-                        if (symbols.contains(textBody.charAt(i))) {
+                        if (SplitSymbols.contains(textBody.charAt(i)) || isSymbol(textBody.charAt(i))) {
                             index = i;
                             continue;
                         }
