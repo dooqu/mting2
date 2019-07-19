@@ -45,7 +45,9 @@ import cn.xylink.mting.speech.SpeechServiceProxy;
 import cn.xylink.mting.speech.Speechor;
 import cn.xylink.mting.speech.data.SpeechList;
 import cn.xylink.mting.speech.event.SpeechErrorEvent;
+import cn.xylink.mting.speech.event.SpeechPauseEvent;
 import cn.xylink.mting.speech.event.SpeechProgressEvent;
+import cn.xylink.mting.speech.event.SpeechResumeEvent;
 import cn.xylink.mting.speech.event.SpeechStartEvent;
 import cn.xylink.mting.speech.event.SpeechStopEvent;
 import cn.xylink.mting.ui.adapter.MainFragmentAdapter;
@@ -407,6 +409,18 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
     public void onSpeechStop(SpeechStopEvent event) {
         L.v(event);
         mPlayBtnSRC.setImageDrawable(getResources().getDrawable(R.mipmap.ico_playing));
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onSpeechPause(SpeechPauseEvent event) {
+        L.v(event);
+        mPlayBtnSRC.setImageDrawable(getResources().getDrawable(R.mipmap.ico_playing));
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onSpeechResume(SpeechResumeEvent event) {
+        L.v(event);
+        mPlayBtnSRC.setImageDrawable(getResources().getDrawable(R.mipmap.ico_pause));
     }
 
 

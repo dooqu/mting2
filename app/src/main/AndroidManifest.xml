@@ -51,6 +51,7 @@
 
         <activity
             android:name=".ui.activity.MainActivity"
+            android:windowSoftInputMode="adjustNothing"
             android:screenOrientation="portrait"></activity>
         <activity
             android:name=".ui.activity.SpeechServicActivity"

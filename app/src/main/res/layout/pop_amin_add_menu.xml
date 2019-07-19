@@ -13,6 +13,7 @@
         android:layout_weight="1"
         android:background="@color/transparent"
         android:text="添加"
+        android:textColor="@color/c666666"
         android:gravity="left|center_vertical"
         android:textSize="15sp" />
 
