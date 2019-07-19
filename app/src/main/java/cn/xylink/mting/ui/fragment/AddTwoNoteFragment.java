@@ -115,6 +115,7 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
                     tvPreview.setTextColor(getResources().getColor(R.color.color_blue));
                 }else{
                     tvPreview.setText("立即预览");
+                    tvPreview.setVisibility(View.VISIBLE);
                     tvPreview.setTextColor(getResources().getColor(R.color.color_login_text_gray));
                 }
             }
@@ -290,7 +291,7 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
 
     @Override
     public void onAddFeedBackSuccess(BaseResponse<String> response) {
-        Toast.makeText(this.getContext(),response.message,Toast.LENGTH_SHORT).show();
+        Toast.makeText(this.getContext(),"反馈成功",Toast.LENGTH_SHORT).show();
 
     }
 
