@@ -17,6 +17,7 @@ import cn.xylink.mting.base.BaseActivity;
 import cn.xylink.mting.bean.Article;
 import cn.xylink.mting.bean.UnreadRequest;
 import cn.xylink.mting.contract.UnreadContract;
+import cn.xylink.mting.event.AddUnreadEvent;
 import cn.xylink.mting.event.DeleteArticleSuccessEvent;
 import cn.xylink.mting.presenter.UnreadPresenter;
 import cn.xylink.mting.speech.data.SpeechList;
@@ -126,6 +127,12 @@ public class UnreadFragment extends BaseMainTabFragment implements UnreadAdapter
         L.v(event);
         if (event.getTab_type()==TAB_TYPE.UNREAD)
             mAdapter.refreshData();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onAddUnread(AddUnreadEvent event) {
+        L.v(event);
+        mAdapter.refreshData();
     }
 
     @Override

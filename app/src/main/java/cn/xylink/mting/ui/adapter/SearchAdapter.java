@@ -33,6 +33,11 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ReadedHold
         this.mContext = context;
     }
 
+    public SearchAdapter(Context context, SearchAdapter.OnItemClickListener listener) {
+        this.mContext = context;
+        this.mOnItemClickListener = listener;
+    }
+
     public SearchAdapter(Context context, List<SearchResultInfo> list, SearchAdapter.OnItemClickListener listener) {
         this.mContext = context;
         this.mData = list;
@@ -95,7 +100,5 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ReadedHold
 
     public interface OnItemClickListener {
         void onItemClick(SearchResultInfo article);
-
-        void onItemMoreClick(SearchResultInfo article);
     }
 }
