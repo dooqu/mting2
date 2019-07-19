@@ -169,10 +169,11 @@ public class ArticleDetailActivity extends BaseActivity {
 
     @OnClick(R.id.ll_article_edit)
     void onEditDetail(View v) {
-//        Intent intent = new Intent();
-//        intent.setClass(this, HtmlActivity.class);
-//        intent.putExtra(HtmlActivity.EXTRA_HTML, articleUrl);
-//        startActivity(intent);
+        Bundle bundle = new Bundle();
+        bundle.putString("id", mCurrentArticle.getArticleId());
+        bundle.putString("title", mCurrentArticle.getTitle());
+        bundle.putString("content", mCurrentArticle.getContent());
+        jumpActivity(ArticleDetailEditActivity.class, bundle);
     }
 
     @OnClick(R.id.iv_back)
