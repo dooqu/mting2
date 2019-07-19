@@ -130,7 +130,25 @@ public class ArticleDetailActivity extends BaseActivity {
             textSize = 26;
         }
         tvContent.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSize);
+        skProgress.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                int progress = seekBar.getProgress();
+                service.seek(progress / 100f);
+            }
+        });
     }
+
 
     @Override
     protected void initData() {
@@ -151,10 +169,11 @@ public class ArticleDetailActivity extends BaseActivity {
 
     @OnClick(R.id.ll_article_edit)
     void onEditDetail(View v) {
-//        Intent intent = new Intent();
-//        intent.setClass(this, HtmlActivity.class);
-//        intent.putExtra(HtmlActivity.EXTRA_HTML, articleUrl);
-//        startActivity(intent);
+        Bundle bundle = new Bundle();
+        bundle.putString("id", mCurrentArticle.getArticleId());
+        bundle.putString("title", mCurrentArticle.getTitle());
+        bundle.putString("content", mCurrentArticle.getContent());
+        jumpActivity(ArticleDetailEditActivity.class, bundle);
     }
 
     @OnClick(R.id.iv_back)

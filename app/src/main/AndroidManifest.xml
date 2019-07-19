@@ -119,6 +119,13 @@
             android:name="com.tencent.connect.common.AssistActivity"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="behind" />
+        <activity
+            android:name=".ui.activity.ArticleDetailEditActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".ui.activity.FeedBackActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>
