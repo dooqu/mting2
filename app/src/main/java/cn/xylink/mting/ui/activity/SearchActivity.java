@@ -4,26 +4,43 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.LinearLayout;
 
+import org.greenrobot.eventbus.EventBus;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
 import butterknife.OnEditorAction;
 import cn.xylink.mting.R;
+import cn.xylink.mting.bean.AddUnreadRequest;
+import cn.xylink.mting.bean.Article;
+import cn.xylink.mting.bean.ArticleDetailInfo;
+import cn.xylink.mting.bean.ArticleDetailRequest;
 import cn.xylink.mting.bean.SearchRequeest;
 import cn.xylink.mting.bean.SearchResultInfo;
+import cn.xylink.mting.contract.AddUnreadContract;
+import cn.xylink.mting.contract.ArticleDetailContract;
 import cn.xylink.mting.contract.SearchContract;
+import cn.xylink.mting.event.AddUnreadEvent;
+import cn.xylink.mting.event.NotifyMainPlayEvent;
+import cn.xylink.mting.presenter.AddUnreadPresenter;
+import cn.xylink.mting.presenter.ArticleDetailPresenter;
 import cn.xylink.mting.presenter.SearchPresenter;
+import cn.xylink.mting.speech.data.SpeechList;
 import cn.xylink.mting.ui.adapter.SearchAdapter;
+import cn.xylink.mting.ui.dialog.SearchArticleDetailDialog;
 import cn.xylink.mting.utils.L;
 import cn.xylink.mting.widget.EditTextWidthClear;
 
-public class SearchActivity extends BasePresenterActivity implements SearchContract.ISearchView {
+public class SearchActivity extends BasePresenterActivity implements SearchContract.ISearchView, SearchAdapter.OnItemClickListener
+        , ArticleDetailContract.IArticleDetailView, AddUnreadContract.IAddUnreadView, SearchArticleDetailDialog.OnBottomSelectDialogListener {
 
     @BindView(R.id.et_search)
     EditTextWidthClear mEditView;
@@ -33,6 +50,8 @@ public class SearchActivity extends BasePresenterActivity implements SearchContr
     RecyclerView mRecyclerView;
     private SearchAdapter mAdapter;
     private SearchPresenter mPresenter;
+    private ArticleDetailPresenter mArticleDetailPresenter;
+    private AddUnreadPresenter mAddUnreadPresenter;
 
     @Override
     protected void preView() {
@@ -46,7 +65,7 @@ public class SearchActivity extends BasePresenterActivity implements SearchContr
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(linearLayoutManager);
-        mAdapter = new SearchAdapter(this);
+        mAdapter = new SearchAdapter(this, this);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.addOnScrollListener(scrollListener);
     }
@@ -55,6 +74,10 @@ public class SearchActivity extends BasePresenterActivity implements SearchContr
     protected void initData() {
         mPresenter = (SearchPresenter) createPresenter(SearchPresenter.class);
         mPresenter.attachView(this);
+        mArticleDetailPresenter = (ArticleDetailPresenter) createPresenter(ArticleDetailPresenter.class);
+        mArticleDetailPresenter.attachView(this);
+        mAddUnreadPresenter = (AddUnreadPresenter) createPresenter(AddUnreadPresenter.class);
+        mAddUnreadPresenter.attachView(this);
         mEditView.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -71,14 +94,18 @@ public class SearchActivity extends BasePresenterActivity implements SearchContr
 
     @OnEditorAction(R.id.et_search)
     boolean onEditorAction(KeyEvent key) {
-        SearchRequeest request = new SearchRequeest();
-        request.setQuery(mEditView.getText().toString());
-        request.setPage(1);
-        request.doSign();
-        mPresenter.search(request);
-        mAdapter.clearData();
-        mTotalItemCount = 0;
-        showLoading();
+        if (TextUtils.isEmpty(mEditView.getText().toString())) {
+        } else {
+            SearchRequeest request = new SearchRequeest();
+            request.setQuery(mEditView.getText().toString());
+            request.setPage(1);
+            request.doSign();
+            mPresenter.search(request);
+            mAdapter.clearData();
+            mTotalItemCount = 0;
+            mCurrentPage = 1;
+            showLoading();
+        }
         return true;
     }
 
@@ -147,7 +174,7 @@ public class SearchActivity extends BasePresenterActivity implements SearchContr
             mAdapter.setData(unreadList);
             mEnptyLayout.setVisibility(View.INVISIBLE);
             mRecyclerView.setVisibility(View.VISIBLE);
-        } else if (mAdapter.getItemCount()==0){
+        } else if (mAdapter.getItemCount() == 0) {
             mEnptyLayout.setVisibility(View.VISIBLE);
             mRecyclerView.setVisibility(View.INVISIBLE);
         }
@@ -158,5 +185,73 @@ public class SearchActivity extends BasePresenterActivity implements SearchContr
         hideLoading();
 //        mEnptyLayout.setVisibility(View.VISIBLE);
 //        mRecyclerView.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public void onItemClick(SearchResultInfo article) {
+        ArticleDetailRequest request = new ArticleDetailRequest();
+        request.setArticleId(article.getArticleId());
+        request.doSign();
+        mArticleDetailPresenter.createArticleDetail(request);
+        showLoading();
+    }
+
+    @Override
+    public void onSuccessArticleDetail(ArticleDetailInfo info) {
+        hideLoading();
+        SearchArticleDetailDialog detailDialog = new SearchArticleDetailDialog(this);
+        detailDialog.setListener(this);
+        detailDialog.show(info);
+    }
+
+    @Override
+    public void onErrorArticleDetail(int code, String errorMsg) {
+        hideLoading();
+    }
+
+    @Override
+    public void onSuccessAddUnread(String msg) {
+
+    }
+
+    @Override
+    public void onErrorAddUnread(int code, String errorMsg) {
+
+    }
+
+    @Override
+    public void onAddUnrad(ArticleDetailInfo info) {
+        addUread(info.getArticleId());
+        addSpeechList(info);
+        EventBus.getDefault().post(new AddUnreadEvent());
+    }
+
+    private void addSpeechList(ArticleDetailInfo info) {
+        Article article =new Article();
+        article.setProgress(0);
+        article.setTitle(info.getTitle());
+        article.setArticleId(info.getArticleId());
+        article.setSourceName(info.getSourceName());
+        article.setShareUrl(info.getShareUrl());
+        article.setStore(info.getStore());
+        article.setRead(info.getRead());
+        article.setUpdateAt(info.getUpdateAt());
+        List<Article> list = new ArrayList<>();
+        list.add(article);
+        SpeechList.getInstance().pushFront(list);
+    }
+
+    @Override
+    public void onPlay(ArticleDetailInfo info) {
+        addUread(info.getArticleId());
+        addSpeechList(info);
+        EventBus.getDefault().post(new NotifyMainPlayEvent(info.getArticleId()));
+    }
+
+    private void addUread(String id) {
+        AddUnreadRequest request = new AddUnreadRequest();
+        request.setArticleIds(id);
+        request.doSign();
+        mAddUnreadPresenter.addUnread(request);
     }
 }

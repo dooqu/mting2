@@ -116,7 +116,32 @@ public class ArticleDetailSetting extends ArticleDetailBottomDialog {
                 }
             }
         });
-
+        if (listener != null) {
+            view.findViewById(R.id.bt_type1).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onVoiceType(0);
+                }
+            });
+            view.findViewById(R.id.bt_type2).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onVoiceType(1);
+                }
+            });
+            view.findViewById(R.id.bt_type3).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onVoiceType(2);
+                }
+            });
+            view.findViewById(R.id.bt_type4).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onVoiceType(3);
+                }
+            });
+        }
         view.findViewById(R.id.tv_cancel).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -141,5 +166,7 @@ public class ArticleDetailSetting extends ArticleDetailBottomDialog {
         void onSpeed(int speed);
 
         void onTime(int time);
+
+        void onVoiceType(int type);
     }
 }

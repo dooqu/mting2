@@ -105,6 +105,10 @@ public class RemoteUrl {
     public static String getSearchUrl(){
         return URL_BASE + "/api/search/v1/article";
     }
+    //文章详情
+    public static String getArticDetailUrl(){
+        return URL_BASE + "/api/sct/v2/article/detail";
+    }
 
     //反馈接口
     public static String feedbackUrl(){

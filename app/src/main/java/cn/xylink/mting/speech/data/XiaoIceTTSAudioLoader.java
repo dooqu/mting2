@@ -18,6 +18,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 
+import cn.xylink.mting.speech.Speechor;
 import okhttp3.Call;
 import okhttp3.MediaType;
 
@@ -39,14 +40,32 @@ public class XiaoIceTTSAudioLoader {
         OkGo.getInstance().cancelAll();
     }
 
+    private String getSpeechString(Speechor.SpeechorSpeed speechorSpeed) {
+        switch (speechorSpeed) {
+            case SPEECH_SPEED_NORMAL:
+                return "0";
 
-    public void textToSpeech(String text, LoadResult result) {
+            case SPEECH_SPEED_MULTIPLE_1_POINT_5:
+                return "50";
+
+            case SPEECH_SPEED_MULTIPLE_2:
+                return "100";
+
+            case SPEECH_SPEED_MULTIPLE_2_POINT_5:
+                return "200";
+        }
+
+        return "0";
+    }
+
+
+    public void textToSpeech(String text, Speechor.SpeechorSpeed speechorSpeed, LoadResult result) {
 
         Log.d("xylink", "TTS:" + text);
         String postData = null;
 
         try {
-            postData = createPostString(text);
+            postData = createPostString(text, getSpeechString(speechorSpeed));
         }
         catch (JSONException jsonEx) {
             jsonEx.printStackTrace();
@@ -109,7 +128,7 @@ public class XiaoIceTTSAudioLoader {
     }
 
 
-    private String createPostString(String text) throws JSONException
+    private String createPostString(String text, String speedStr) throws JSONException
     {
         JSONObject itemObject = new JSONObject();
 
@@ -121,7 +140,7 @@ public class XiaoIceTTSAudioLoader {
 
         JSONObject medataObject = new JSONObject();
         medataObject.put("ReadContent", "true");
-        medataObject.put("SpeechRate", "0");
+        medataObject.put("SpeechRate", speedStr);
         contentObject.put("Metadata", medataObject);
 
         itemObject.put("content", contentObject);

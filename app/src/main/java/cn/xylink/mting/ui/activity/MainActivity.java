@@ -37,6 +37,7 @@ import cn.xylink.mting.contract.AddUnreadContract;
 import cn.xylink.mting.contract.DelMainContract;
 import cn.xylink.mting.event.AddStoreSuccessEvent;
 import cn.xylink.mting.event.DeleteArticleSuccessEvent;
+import cn.xylink.mting.event.NotifyMainPlayEvent;
 import cn.xylink.mting.presenter.AddUnreadPresenter;
 import cn.xylink.mting.presenter.DelMainPresenter;
 import cn.xylink.mting.speech.SpeechService;
@@ -44,7 +45,9 @@ import cn.xylink.mting.speech.SpeechServiceProxy;
 import cn.xylink.mting.speech.Speechor;
 import cn.xylink.mting.speech.data.SpeechList;
 import cn.xylink.mting.speech.event.SpeechErrorEvent;
+import cn.xylink.mting.speech.event.SpeechPauseEvent;
 import cn.xylink.mting.speech.event.SpeechProgressEvent;
+import cn.xylink.mting.speech.event.SpeechResumeEvent;
 import cn.xylink.mting.speech.event.SpeechStartEvent;
 import cn.xylink.mting.speech.event.SpeechStopEvent;
 import cn.xylink.mting.ui.adapter.MainFragmentAdapter;
@@ -327,12 +330,12 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
                     mPlayBtnSRC.setImageDrawable(getResources().getDrawable(R.mipmap.ico_pause));
                     break;
                 case SpeechorStatePaused:
-                    if(service.resume())
-                    mPlayBtnSRC.setImageDrawable(getResources().getDrawable(R.mipmap.ico_pause));
+                    if (service.resume())
+                        mPlayBtnSRC.setImageDrawable(getResources().getDrawable(R.mipmap.ico_pause));
                     break;
                 case SpeechorStatePlaying:
                     if (service.pause())
-                    mPlayBtnSRC.setImageDrawable(getResources().getDrawable(R.mipmap.ico_playing));
+                        mPlayBtnSRC.setImageDrawable(getResources().getDrawable(R.mipmap.ico_playing));
                     break;
             }
         }
@@ -408,6 +411,18 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
         mPlayBtnSRC.setImageDrawable(getResources().getDrawable(R.mipmap.ico_playing));
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onSpeechPause(SpeechPauseEvent event) {
+        L.v(event);
+        mPlayBtnSRC.setImageDrawable(getResources().getDrawable(R.mipmap.ico_playing));
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onSpeechResume(SpeechResumeEvent event) {
+        L.v(event);
+        mPlayBtnSRC.setImageDrawable(getResources().getDrawable(R.mipmap.ico_pause));
+    }
+
 
     /*
     播放遇到错误，会调用此事件，比如网络错误等
@@ -419,6 +434,13 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
     public void onSpeechError(SpeechErrorEvent event) {
         L.v(event);
         mPlayBtnSRC.setImageDrawable(getResources().getDrawable(R.mipmap.ico_playing));
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onNotifyPlay(NotifyMainPlayEvent event) {
+        L.v(event);
+        if (service != null)
+            service.play(event.getId());
     }
 
 
