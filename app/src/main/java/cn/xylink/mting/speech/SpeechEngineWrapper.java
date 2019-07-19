@@ -51,6 +51,26 @@ public abstract class SpeechEngineWrapper implements Speechor {
             }
         };
 
+
+        xiaoiceSpeechor = new XiaoIceSpeechor() {
+            @Override
+            public void onStateChanged(SpeechorState speakerState) {
+                SpeechEngineWrapper.this.onStateChanged(speakerState);
+            }
+
+            @Override
+            public void onProgress(List<String> textFragments, int index) {
+                SpeechEngineWrapper.this.onProgress(textFragments, index);
+
+            }
+
+            @Override
+            public void onError(int errorCode, String message) {
+                this.stop();
+                SpeechEngineWrapper.this.onError(errorCode, message);
+            }
+        };
+
         speechor = baiduSpeechor;
     }
 
@@ -112,7 +132,7 @@ public abstract class SpeechEngineWrapper implements Speechor {
     @Override
     public void prepare(String text) {
         baiduSpeechor.prepare(text);
-        //yaoSpeechor.prepare(text);
+        xiaoiceSpeechor.prepare(text);
     }
 
     @Override
@@ -158,13 +178,13 @@ public abstract class SpeechEngineWrapper implements Speechor {
     @Override
     public void reset() {
         baiduSpeechor.reset();
-        //yaoSpeechor.reset();
+            xiaoiceSpeechor.reset();
     }
 
     @Override
     public void release() {
         baiduSpeechor.release();
-        //yaoSpeechor.release();
+        xiaoiceSpeechor.release();
     }
 
     @Override
@@ -181,28 +201,35 @@ public abstract class SpeechEngineWrapper implements Speechor {
                 case XiaoYao:
                     destSpeechor = baiduSpeechor;
                     break;
+                case XiaoIce:
+                    destSpeechor = xiaoiceSpeechor;
+                    break;
                 default:
                     return;
             }
 
             int preIndex = 0;
             SpeechorState preState;
+            SpeechorSpeed preSpeed;
             Speechor preSpeechor = speechor;
 
             synchronized (preSpeechor) {
                 preIndex = preSpeechor.getFragmentIndex();
                 preState = preSpeechor.getState();
+                preSpeed = preSpeechor.getSpeed();
 
                 if (destSpeechor != preSpeechor) {
                     synchronized (destSpeechor) {
                         //通过换解决，停掉发音
-                        if (preState != SpeechorState.SpeechorStateReady) {
-                            preSpeechor.stop();
+                        if (preState == SpeechorState.SpeechorStatePlaying) {
+                            preSpeechor.pause();
                         }
                         //更换主发音引擎
                         speechor = destSpeechor;
                         //在更换后的 speechor上调用setRole;
                         speechor.setRole(role);
+
+                        speechor.setSpeed(preSpeed);
                         //如果原来在播放状态，继续播放
                         if (preState == SpeechorState.SpeechorStatePlaying) {
                             speechor.seek(preIndex);
@@ -222,7 +249,7 @@ public abstract class SpeechEngineWrapper implements Speechor {
     @Override
     public void setSpeed(SpeechorSpeed speed) {
         baiduSpeechor.setSpeed(speed);
-        //yaoSpeechor.setSpeed(speed);
+        xiaoiceSpeechor.setSpeed(speed);
     }
 
     @Override

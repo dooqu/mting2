@@ -15,6 +15,7 @@ import android.content.IntentFilter;
 import android.graphics.BitmapFactory;
 import android.os.Binder;
 import android.os.IBinder;
+import android.util.Log;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -22,7 +23,6 @@ import cn.xylink.mting.R;
 import cn.xylink.mting.bean.Article;
 import cn.xylink.mting.speech.data.ArticleDataProvider;
 import cn.xylink.mting.speech.data.SpeechList;
-import cn.xylink.mting.speech.data.XiaoIceTTSAudioLoader;
 import cn.xylink.mting.speech.event.SpeechArticleStatusSavedOnServerEvent;
 import cn.xylink.mting.speech.event.SpeechEndEvent;
 import cn.xylink.mting.speech.event.SpeechErrorEvent;
@@ -120,6 +120,7 @@ public class SpeechService extends Service {
         super.onCreate();
         initService();
         initReceiver();
+        setRole(Speechor.SpeechorRole.XiaoIce);
     }
 
 
@@ -137,12 +138,14 @@ public class SpeechService extends Service {
         speechor = null;
         articleDataProvider.release();
         articleDataProvider = null;
+
     }
 
 
     private void initService() {
         serviceState = SpeechServiceState.Ready;
         articleDataProvider = new ArticleDataProvider(this);
+
 
         speechor = new SpeechEngineWrapper(this) {
             @Override
@@ -151,6 +154,8 @@ public class SpeechService extends Service {
                     Article currentArticle = SpeechService.this.getSelected();
                     //在每个文章播正常放完成后，注意是正常不受外部操作干扰的读玩， 像playNext()除外，因为他不触发结束的onReady
                     if (speakerState == SpeechorState.SpeechorStateReady) {
+
+                        Log.d("SPEECH", "SpeechService.onStateChanged:Ready");
                         //强制设定progress为1
                         currentArticle.setProgress(1);
                         //调用onSpeechEnd事件
@@ -192,9 +197,6 @@ public class SpeechService extends Service {
             }
         };
 
-        XiaoIceTTSAudioLoader loader = new XiaoIceTTSAudioLoader();
-        loader.textToSpeech("android系统源代码分析", null);
-
     }
 
     private void initReceiver() {
@@ -227,7 +229,7 @@ public class SpeechService extends Service {
 
     private void onSpeechError(int errorCode, String message, Article article) {
         EventBus.getDefault().post(new SpeechErrorEvent(errorCode, message, article));
-        initNotification();
+        //initNotification();
     }
 
     private void onSpeechEnd(Article article, float progress, boolean deleteFromList) {
