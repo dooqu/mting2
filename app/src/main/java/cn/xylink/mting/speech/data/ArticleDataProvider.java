@@ -1,7 +1,5 @@
 package cn.xylink.mting.speech.data;
 
-import java.util.List;
-
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
@@ -89,6 +87,64 @@ public class ArticleDataProvider {
         this.soundEffector = null;
     }
 
+    public void loadArticle(String articleId, ArticleLoaderCallback callback) {
+        ArticleInfoRequest request = new ArticleInfoRequest();
+        request.setArticleId(articleId);
+        request.setToken(ContentManager.getInstance().getLoginToken());
+        request.doSign();
+
+        OkGoUtils.getInstance().postData(
+                new IBaseView() {
+                    @Override
+                    public void showLoading() {
+                    }
+
+                    @Override
+                    public void hideLoading() {
+                    }
+                },
+                "http://test.xylink.cn/api/sct/v2/article/detail",
+                GsonUtil.GsonString(request), ArticleInfoResponse.class,
+                new OkGoUtils.ICallback<ArticleInfoResponse>() {
+                    @Override
+                    public void onStart() {
+                    }
+
+                    @Override
+                    public void onFailure(int code, String errorMsg) {
+                        if (callback != null) {
+                            //article.setContent(errorMsg);
+                            callback.invoke(code, null);
+                        }
+                    }
+
+                    @Override
+                    public void onSuccess(ArticleInfoResponse response) {
+                        if (callback != null) {
+                            Article article = new Article();
+                            article.setArticleId(response.data.getArticleId());
+                            article.setContent(response.data.getContent());
+                            article.setStore(response.data.getStore());
+                            article.setInType(response.data.getInType());
+                            article.setUrl(response.data.getUrl());
+                            article.setTitle(response.data.getTitle());
+                            article.setShareUrl(response.data.getShareUrl());
+                            article.setSourceName(response.data.getSourceName());
+                            article.setId(response.data.getId());
+                            article.setSourceLogo(response.data.getSourceLogo());
+                            article.setRead(response.data.getRead());
+                            article.setProgress(response.data.getProgress());
+                            callback.invoke(0, article);
+                        }
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Log.d("xylink", "onComplete");
+                    }
+                });
+    }
+
 
     public void loadArticleContent(Article article, boolean needSoundPlay, ArticleLoaderCallback callback) {
         final long tickCountAtTime = ++tickcount;
@@ -134,6 +190,13 @@ public class ArticleDataProvider {
                             article.setStore(response.data.getStore());
                             article.setInType(response.data.getInType());
                             article.setUrl(response.data.getUrl());
+                            article.setTitle(response.data.getTitle());
+                            article.setShareUrl(response.data.getShareUrl());
+                            article.setSourceName(response.data.getSourceName());
+                            article.setId(response.data.getId());
+                            article.setSourceLogo(response.data.getSourceLogo());
+                            article.setRead(response.data.getRead());
+                            article.setProgress(response.data.getProgress());
                             callback.invoke(0, article);
                         }
                     }

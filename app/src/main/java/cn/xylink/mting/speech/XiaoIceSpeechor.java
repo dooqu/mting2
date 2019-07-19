@@ -219,6 +219,10 @@ public abstract class XiaoIceSpeechor implements Speechor {
         catch (IOException ex) {
             onError(-1, ex.getMessage());
         }
+        catch (NullPointerException ex) {
+            SpeechTextFragment fragment = speechTextFragments.get(segmentIndex);
+            onError(-100, "播放的Audio为空");
+        }
     }
 
     /*
@@ -250,7 +254,7 @@ public abstract class XiaoIceSpeechor implements Speechor {
     }
 
     private void clearCachedFragmentsAudio() {
-        for(int index = 0, size = this.textFragments.size(); index < size; ++ index) {
+        for (int index = 0, size = this.textFragments.size(); index < size; ++index) {
             this.speechTextFragments.get(index).setFragmentState(SpeechTextFragmentState.TextReady);
         }
     }
@@ -399,10 +403,9 @@ public abstract class XiaoIceSpeechor implements Speechor {
         }
 
         this.speed = speed;
-
+        clearCachedFragmentsAudio();
         //设定好速度后，用新速度播放该片段
         if (state == SpeechorState.SpeechorStatePlaying) {
-            clearCachedFragmentsAudio();
             seekAndPlay(fragmentIndex);
         }
     }
