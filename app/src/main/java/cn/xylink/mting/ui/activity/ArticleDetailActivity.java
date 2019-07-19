@@ -97,6 +97,7 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
     private String articleUrl;
     private Article mCurrentArticle;
     private DelMainPresenter mPresenter;
+    private float mTitleheight;
 
 
     @Override
@@ -136,11 +137,11 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
                 tvFav.setText("已收藏");
             }
         }
-        float y = tvContent.getY();
+        mTitleheight = tvContent.getY();
         svContent.setOnScrollListener(new MyScrollView.OnScrollListener() {
             @Override
             public void onScroll(int scrollY) {
-                float alpha = scrollY / y;
+                float alpha = scrollY / mTitleheight;
                 if (alpha > 1) {
                     alpha = 1;
                 }
@@ -416,6 +417,7 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
             if (mCurrentArticle.getInType() == 1 || TextUtils.isEmpty(mCurrentArticle.getUrl())) {
                 llArticleEdit.setVisibility(View.VISIBLE);
                 llSourceDetail.setVisibility(View.GONE);
+                mTitleheight = tvContent.getY();
             }
             isPlaying = 1;
             aid = event.getArticle().getId();
