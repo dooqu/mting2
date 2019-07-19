@@ -3,12 +3,14 @@ package cn.xylink.mting.ui.fragment;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.View;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -20,6 +22,7 @@ import cn.xylink.mting.contract.UnreadContract;
 import cn.xylink.mting.event.AddUnreadEvent;
 import cn.xylink.mting.event.DeleteArticleSuccessEvent;
 import cn.xylink.mting.presenter.UnreadPresenter;
+import cn.xylink.mting.speech.data.ArticleDataProvider;
 import cn.xylink.mting.speech.data.SpeechList;
 import cn.xylink.mting.speech.event.SpeechErrorEvent;
 import cn.xylink.mting.speech.event.SpeechProgressEvent;
@@ -83,7 +86,7 @@ public class UnreadFragment extends BaseMainTabFragment implements UnreadAdapter
     @Override
     public void onItemMoreClick(Article article) {
         L.v();
-        showBottonDialog(TAB_TYPE.UNREAD,article);
+        showBottonDialog(TAB_TYPE.UNREAD, article);
     }
 
     @Override
@@ -125,7 +128,7 @@ public class UnreadFragment extends BaseMainTabFragment implements UnreadAdapter
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onDelSuccess(DeleteArticleSuccessEvent event) {
         L.v(event);
-        if (event.getTab_type()==TAB_TYPE.UNREAD)
+        if (event.getTab_type() == TAB_TYPE.UNREAD)
             mAdapter.refreshData();
     }
 
@@ -133,6 +136,19 @@ public class UnreadFragment extends BaseMainTabFragment implements UnreadAdapter
     public void onAddUnread(AddUnreadEvent event) {
         L.v(event);
         mAdapter.refreshData();
+        if (!TextUtils.isEmpty(event.getArticleID())) {
+            Article article = new Article();
+            article.setArticleId(event.getArticleID());
+            ArticleDataProvider provider = new ArticleDataProvider(getActivity());
+            provider.loadArticleContent(article, false, (errorCode, article1) -> {
+                if (errorCode == 0) {
+                    List<Article> list = new ArrayList<>();
+                    list.add(article1);
+                    SpeechList.getInstance().pushFront(list);
+                    mAdapter.refreshData();
+                }
+            });
+        }
     }
 
     @Override

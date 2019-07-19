@@ -8,4 +8,13 @@ package cn.xylink.mting.event;
  * -----------------------------------------------------------------
  */
 public class AddUnreadEvent {
+    private String articleID;
+
+    public String getArticleID() {
+        return articleID;
+    }
+
+    public void setArticleID(String articleID) {
+        this.articleID = articleID;
+    }
 }
