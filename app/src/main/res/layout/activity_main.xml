@@ -140,7 +140,7 @@
                     android:id="@+id/iv_play_bar_btn"
                     android:layout_width="20dp"
                     android:layout_gravity="center_vertical"
-                    android:src="@mipmap/icon_my"
+                    android:src="@mipmap/ico_playing"
                     android:layout_height="20dp" />
 
                 <cn.xylink.mting.widget.ArcProgressBar

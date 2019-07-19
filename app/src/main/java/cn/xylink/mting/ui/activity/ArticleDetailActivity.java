@@ -3,14 +3,9 @@ package cn.xylink.mting.ui.activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.text.SpannableString;
-import android.text.Spanned;
-import android.text.TextPaint;
+import android.text.Html;
 import android.text.TextUtils;
-import android.text.style.ClickableSpan;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.ImageView;
@@ -28,10 +23,14 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import cn.xylink.mting.R;
 import cn.xylink.mting.base.BaseActivity;
+import cn.xylink.mting.bean.AddLoveRequest;
 import cn.xylink.mting.bean.Article;
+import cn.xylink.mting.contract.DelMainContract;
+import cn.xylink.mting.event.AddStoreSuccessEvent;
 import cn.xylink.mting.openapi.QQApi;
 import cn.xylink.mting.openapi.WXapi;
-import cn.xylink.mting.openapi.WxUtil;
+import cn.xylink.mting.presenter.DelMainPresenter;
+import cn.xylink.mting.presenter.ReadedPresenter;
 import cn.xylink.mting.speech.SpeechService;
 import cn.xylink.mting.speech.SpeechServiceProxy;
 import cn.xylink.mting.speech.Speechor;
@@ -53,7 +52,7 @@ import cn.xylink.mting.widget.ArcProgressBar;
 /**
  * Created by liuhe. on Date: 2019/7/2
  */
-public class ArticleDetailActivity extends BaseActivity {
+public class ArticleDetailActivity extends BasePresenterActivity implements DelMainContract.IDelMainView {
 
     private int isPlaying = 0;
     private ArticleDetailSetting mArticleDetailSetting;
@@ -79,9 +78,12 @@ public class ArticleDetailActivity extends BaseActivity {
     TextView tvArTitle;
     @BindView(R.id.tv_author)
     TextView tvAuthor;
+    @BindView(R.id.tv_fav)
+    TextView tvFav;
     private String aid;
     private String articleUrl;
     private Article mCurrentArticle;
+    private DelMainPresenter mPresenter;
 
 
     @Override
@@ -111,15 +113,22 @@ public class ArticleDetailActivity extends BaseActivity {
                 tvAuthor.setVisibility(View.VISIBLE);
                 tvAuthor.setText(mCurrentArticle.getSourceName());
             }
-            if (mCurrentArticle.getInType() == 1) {
+            if (mCurrentArticle.getInType() == 1 || TextUtils.isEmpty(mCurrentArticle.getUrl())) {
                 llArticleEdit.setVisibility(View.VISIBLE);
                 llSourceDetail.setVisibility(View.GONE);
+            }
+            if (mCurrentArticle.getStore()==0){
+                tvFav.setText("收藏");
+            }else{
+                tvFav.setText("已收藏");
             }
         }
     }
 
     @Override
     protected void initView() {
+        mPresenter = (DelMainPresenter) createPresenter(DelMainPresenter.class);
+        mPresenter.attachView(this);
         Bundle extras = getIntent().getExtras();
         aid = extras.getString("aid");
         int textSize = 16;
@@ -129,7 +138,25 @@ public class ArticleDetailActivity extends BaseActivity {
             textSize = 26;
         }
         tvContent.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSize);
+        skProgress.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                int progress = seekBar.getProgress();
+                service.seek(progress / 100f);
+            }
+        });
     }
+
 
     @Override
     protected void initData() {
@@ -150,10 +177,11 @@ public class ArticleDetailActivity extends BaseActivity {
 
     @OnClick(R.id.ll_article_edit)
     void onEditDetail(View v) {
-//        Intent intent = new Intent();
-//        intent.setClass(this, HtmlActivity.class);
-//        intent.putExtra(HtmlActivity.EXTRA_HTML, articleUrl);
-//        startActivity(intent);
+        Bundle bundle = new Bundle();
+        bundle.putString("id", mCurrentArticle.getArticleId());
+        bundle.putString("title", mCurrentArticle.getTitle());
+        bundle.putString("content", mCurrentArticle.getContent());
+        jumpActivity(ArticleDetailEditActivity.class, bundle);
     }
 
     @OnClick(R.id.iv_back)
@@ -163,7 +191,7 @@ public class ArticleDetailActivity extends BaseActivity {
 
     @OnClick(R.id.tv_fk)
     void onTvfkClick(View v) {
-
+        jumpActivity(FeedBackActivity.class);
     }
 
     @OnClick({R.id.ll_setting, R.id.iv_setting, R.id.tv_setting})
@@ -293,6 +321,13 @@ public class ArticleDetailActivity extends BaseActivity {
 
     @OnClick(R.id.tv_fav)
     void onFav(View v) {
+        String txt = tvFav.getText().toString();
+        boolean isFav = "收藏".equals(txt);
+        AddLoveRequest request = new AddLoveRequest();
+        request.setArticleId(mCurrentArticle.getArticleId());
+        request.setType(!isFav ? AddLoveRequest.TYPE.STORE.name() : AddLoveRequest.TYPE.CANCLE.name());
+        request.doSign();
+        mPresenter.addLove(request);
     }
 
     @OnClick(R.id.tv_next)
@@ -317,6 +352,10 @@ public class ArticleDetailActivity extends BaseActivity {
             tvContent.setText("");
         } else if (event instanceof SpeechReadyEvent) {
             mCurrentArticle = event.getArticle();
+            if (mCurrentArticle.getInType() == 1 || TextUtils.isEmpty(mCurrentArticle.getUrl())) {
+                llArticleEdit.setVisibility(View.VISIBLE);
+                llSourceDetail.setVisibility(View.GONE);
+            }
             isPlaying = 1;
             aid = event.getArticle().getId();
             ivPlayBarBtn.setImageResource(R.mipmap.ico_pause);
@@ -362,43 +401,15 @@ public class ArticleDetailActivity extends BaseActivity {
         int frameIndex = spe.getFrameIndex();
         List<String> textFragments = spe.getTextFragments();
         tvContent.setText("");
+        String txt = "";
         for (int i = 0; i < textFragments.size(); i++) {
             String s = textFragments.get(i);
-            SpannableString spannableString = new SpannableString(s);
-            ClickableSpan clickableSpan;
             if (i == frameIndex) {
-                clickableSpan = new ClickableSpan() {
-                    @Override
-                    public void onClick(View widget) {
-                    }
-
-                    @Override
-                    public void updateDrawState(TextPaint ds) {
-                        super.updateDrawState(ds);
-                        ds.setColor(Color.parseColor("#488def"));
-                        ds.setUnderlineText(false);
-                        ds.clearShadowLayer();
-                    }
-                };
-            } else {
-                clickableSpan = new ClickableSpan() {
-                    @Override
-                    public void onClick(View widget) {
-                        //Do something.
-                    }
-
-                    @Override
-                    public void updateDrawState(TextPaint ds) {
-                        super.updateDrawState(ds);
-                        ds.setColor(Color.parseColor("#333333"));
-                        ds.setUnderlineText(false);
-                        ds.clearShadowLayer();
-                    }
-                };
+                s = "<font color=\"#488def\">" + s + "</font>";
             }
-            spannableString.setSpan(clickableSpan, 0, s.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-            tvContent.append(spannableString);
+            txt += s;
         }
+        tvContent.setText(Html.fromHtml(txt));
     }
 
 
@@ -425,5 +436,29 @@ public class ArticleDetailActivity extends BaseActivity {
         EventBus.getDefault().unregister(this);
         //断开服务
         proxy.unbind();
+    }
+
+    @Override
+    public void onSuccessDel(String str) {
+    }
+
+    @Override
+    public void onErrorDel(int code, String errorMsg) {
+
+    }
+
+    @Override
+    public void onSuccessAddLove(String str) {
+        if ("收藏".equals(tvFav.getText().toString())) {
+            tvFav.setText("已收藏");
+        } else {
+            tvFav.setText("收藏");
+        }
+        EventBus.getDefault().post(new AddStoreSuccessEvent());
+    }
+
+    @Override
+    public void onErrorAddLove(int code, String errorMsg) {
+
     }
 }
