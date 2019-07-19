@@ -279,6 +279,24 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
                             break;
                     }
                 }
+
+                @Override
+                public void onVoiceType(int type) {
+                    switch (type) {
+                        case 0:
+                            service.setRole(Speechor.SpeechorRole.XiaoMei);
+                            break;
+                        case 1:
+                            service.setRole(Speechor.SpeechorRole.XiaoIce);
+                            break;
+                        case 2:
+                            service.setRole(Speechor.SpeechorRole.XiaoYao);
+                            break;
+                        case 3:
+                            service.setRole(Speechor.SpeechorRole.YaYa);
+                            break;
+                    }
+                }
             });
         }
         mArticleDetailSetting.setSpeed(service.getSpeed());
