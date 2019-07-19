@@ -221,9 +221,10 @@
 
         <TextView
             android:id="@+id/tv_fav"
-            android:layout_width="wrap_content"
+            android:layout_width="50dp"
+            android:gravity="right"
             android:layout_height="wrap_content"
-            android:text="已收藏" />
+            android:text="收藏" />
 
         <RelativeLayout
             android:id="@+id/rl_main_play_bar_play"
