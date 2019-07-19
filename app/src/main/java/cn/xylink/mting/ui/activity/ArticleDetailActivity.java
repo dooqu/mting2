@@ -130,7 +130,25 @@ public class ArticleDetailActivity extends BaseActivity {
             textSize = 26;
         }
         tvContent.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSize);
+        skProgress.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                int progress = seekBar.getProgress();
+                service.seek(progress / 100f);
+            }
+        });
     }
+
 
     @Override
     protected void initData() {
