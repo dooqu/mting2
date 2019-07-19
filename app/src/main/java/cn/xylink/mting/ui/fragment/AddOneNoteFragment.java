@@ -156,8 +156,11 @@ public class AddOneNoteFragment extends BasePresenterFragment implements InputCr
     @Override
     public void onCreateSuccess(BaseResponse<Article> response) {
         L.v("response.msg", response.message);
-        EventBus.getDefault().post(new AddUnreadEvent());
         String json = new Gson().toJson(response.data);
+
+        AddUnreadEvent event = new AddUnreadEvent();
+        event.setArticleID(response.data.getArticleId());
+        EventBus.getDefault().post(event);
         getActivity().finish();
     }
 

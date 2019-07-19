@@ -210,7 +210,9 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
 //        L.v("title",title);
 //        L.v("describle",describe);
 //        tv_content.setText(title +"\n" + describe);
-        EventBus.getDefault().post(new AddUnreadEvent());
+        AddUnreadEvent event = new AddUnreadEvent();
+        event.setArticleID(response.data.getArticleId());
+        EventBus.getDefault().post(event);
         getActivity().finish();
     }
 
