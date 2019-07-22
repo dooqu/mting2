@@ -14,6 +14,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/et_article_title"
         android:hint="文章标题"
+        android:maxLines="2"
         android:textStyle="bold"
         android:layout_marginRight="20dp"
         android:layout_marginLeft="20dp"

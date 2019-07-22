@@ -61,6 +61,7 @@ public class AddArticleActivity extends BasePresenterActivity {
                 pageIndex = tab.getPosition();
                 //tab被选的时候回调
                 vpContent.setCurrentItem(pageIndex, true);
+                hideSoftInput();
             }
 
             @Override
@@ -87,6 +88,8 @@ public class AddArticleActivity extends BasePresenterActivity {
 
         vpContent.setCanScroll(true);
     }
+
+
 
     @Override
     protected void initData() {

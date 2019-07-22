@@ -17,6 +17,7 @@
         android:layout_marginLeft="20dp"
         android:background="@android:color/transparent"
         android:hint="文章地址"
+        android:maxLines="3"
         android:textStyle="bold"
         android:textSize="@dimen/text_18" />
 
