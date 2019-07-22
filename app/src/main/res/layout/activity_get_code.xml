@@ -24,7 +24,6 @@
         android:layout_marginTop="20dp"
         android:inputType="phone"
         android:enabled="false"
-        android:text="136843243242"
         android:gravity="center"
         android:background="@android:color/transparent"
         android:maxLength="13"

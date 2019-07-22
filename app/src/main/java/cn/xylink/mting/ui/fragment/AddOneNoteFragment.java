@@ -2,6 +2,7 @@ package cn.xylink.mting.ui.fragment;
 
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.InputFilter;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
@@ -31,6 +32,7 @@ import cn.xylink.mting.utils.L;
 
 public class AddOneNoteFragment extends BasePresenterFragment implements InputCreateContact.ICreateView {
 
+    private final int ET_TITLE_LENTGH = 30;
     @BindView(R.id.et_article_title)
     EditText etTitle;
     @BindView(R.id.et_article_content)
@@ -54,6 +56,10 @@ public class AddOneNoteFragment extends BasePresenterFragment implements InputCr
         EventBus.getDefault().register(this);
         inputCreatePresenter = (InputCreatePresenter) createPresenter(InputCreatePresenter.class);
         inputCreatePresenter.attachView(this);
+
+        InputFilter[] filters = {new InputFilter.LengthFilter(ET_TITLE_LENTGH)};
+        etTitle.setFilters(filters);
+
         etContent.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {

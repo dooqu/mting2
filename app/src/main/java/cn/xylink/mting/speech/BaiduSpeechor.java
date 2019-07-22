@@ -96,7 +96,7 @@ public abstract class BaiduSpeechor implements Speechor {
                         new Thread(new Runnable() {
                             @Override
                             public void run() {
-                               // System.out.println("onStateChange:" + self);
+                                // System.out.println("onStateChange:" + self);
                                 self.onStateChanged(SpeechorState.SpeechorStateReady);
                             }
                         }).start();
@@ -237,7 +237,7 @@ public abstract class BaiduSpeechor implements Speechor {
         this.speed = speed;
         speechSynthesizer.setParam(SpeechSynthesizer.PARAM_SPEED, paramSpeed);
 
-        if(this.state == SpeechorState.SpeechorStatePlaying) {
+        if (this.state == SpeechorState.SpeechorStatePlaying) {
             this.pause();
             this.seekAndPlay(fragmentIndex);
         }
@@ -299,7 +299,7 @@ public abstract class BaiduSpeechor implements Speechor {
                 return false;
 
             if (state == SpeechorState.SpeechorStatePlaying) {
-                if(speechSynthesizer.pause() == 0) {
+                if (speechSynthesizer.pause() == 0) {
                     this.state = SpeechorState.SpeechorStatePaused;
                     this.onStateChanged(SpeechorState.SpeechorStatePaused);
                     return true;

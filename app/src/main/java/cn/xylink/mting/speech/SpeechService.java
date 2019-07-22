@@ -151,7 +151,7 @@ public class SpeechService extends Service {
             public void onStateChanged(SpeechorState speakerState) {
                 synchronized (SpeechService.this) {
                     Article currentArticle = SpeechService.this.getSelected();
-                    if(currentArticle == null) {
+                    if (currentArticle == null) {
                         return;
                     }
                     //在每个文章播正常放完成后，注意是正常不受外部操作干扰的读玩， 像playNext()除外，因为他不触发结束的onReady
@@ -186,7 +186,7 @@ public class SpeechService extends Service {
             @Override
             public void onProgress(List<String> textFragments, int index) {
                 synchronized (SpeechService.this) {
-                    if(speechList.getCurrent() == null) {
+                    if (speechList.getCurrent() == null) {
                         return;
                     }
                     onSpeechProgress(speechList.getCurrent(), index, textFragments);
@@ -409,6 +409,9 @@ public class SpeechService extends Service {
 
 
     public synchronized Article play(String articleId) {
+        if(articleId == null) {
+            return null;
+        }
         Article previousArt = this.speechList.getCurrent();
         if (previousArt != null && articleId.equals(previousArt.getArticleId()) == false) {
             if (previousArt.getProgress() != 1) {
