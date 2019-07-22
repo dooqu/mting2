@@ -129,35 +129,35 @@ public class SplashActivity extends BasePresenterActivity implements CheckTokenC
     @Override
     public void onCheckTokenSuccess(BaseResponse<UserInfo> response) {
 
-//        if (Build.VERSION.SDK_INT < 23) {
-//            startActivity(new Intent(SplashActivity.this, GuideActivity.class));
-//            finish();
-//        } else {
-//            initPermission();
-//        }
-        L.v("code",response.code);
-        switch (response.code)
-        {
-            case 200:
-                startActivity(new Intent(SplashActivity.this, MainActivity.class));
-                finish();
-                break;
-            default:
-                L.v("Build.VERSION.SDK_INT",Build.VERSION.SDK_INT);
-                if (Build.VERSION.SDK_INT < 23) {
-                    if (FileCache.getInstance().isGuideFirst()) {
-                        FileCache.getInstance().setHasGuide();
-                        startActivity(new Intent(SplashActivity.this, GuideActivity.class));
-                        finish();
-                    }else{
-                        startActivity(new Intent(SplashActivity.this, LoginActivity.class));
-                        finish();
-                    }
-                } else {
-                    initPermission();
-                }
-                break;
+        if (Build.VERSION.SDK_INT < 23) {
+            startActivity(new Intent(SplashActivity.this, GuideActivity.class));
+            finish();
+        } else {
+            initPermission();
         }
+        L.v("code",response.code);
+//        switch (response.code)
+//        {
+//            case 200:
+//                startActivity(new Intent(SplashActivity.this, MainActivity.class));
+//                finish();
+//                break;
+//            default:
+//                L.v("Build.VERSION.SDK_INT",Build.VERSION.SDK_INT);
+//                if (Build.VERSION.SDK_INT < 23) {
+//                    if (FileCache.getInstance().isGuideFirst()) {
+//                        FileCache.getInstance().setHasGuide();
+//                        startActivity(new Intent(SplashActivity.this, GuideActivity.class));
+//                        finish();
+//                    }else{
+//                        startActivity(new Intent(SplashActivity.this, LoginActivity.class));
+//                        finish();
+//                    }
+//                } else {
+//                    initPermission();
+//                }
+//                break;
+//        }
     }
 
     @Override

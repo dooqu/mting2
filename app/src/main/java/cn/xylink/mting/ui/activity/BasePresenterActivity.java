@@ -42,10 +42,16 @@ public abstract class BasePresenterActivity<T extends BasePresenter> extends Bas
 
     @Override
     public void showLoading() {
-        if (mLoading == null)
-            mLoading = new LoadingDialog(this);
-        if (!mLoading.isShowing())
-            mLoading.show();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (mLoading == null)
+                    mLoading = new LoadingDialog(BasePresenterActivity.this);
+                if (!mLoading.isShowing())
+                    mLoading.show();
+            }
+        });
+
     }
 
     @Override
