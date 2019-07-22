@@ -66,17 +66,19 @@ public class UnreadFragment extends BaseMainTabFragment implements UnreadAdapter
 
     @Override
     protected void initData() {
-        UnreadRequest request = new UnreadRequest();
+        if (SpeechList.getInstance().getArticleList() == null || SpeechList.getInstance().getArticleList().size() <1) {
+            UnreadRequest request = new UnreadRequest();
 //        request.setUpdateAt(0l);
-        request.setEvent(UnreadRequest.ENENT_TYPE.refresh.name());
-        request.doSign();
-        mPresenter.createUnread(request);
+            request.setEvent(UnreadRequest.ENENT_TYPE.refresh.name());
+            request.doSign();
+            mPresenter.createUnread(request);
+        }
     }
 
 
     @Override
     public void onItemClick(Article article) {
-        mControllerListener.onPlay(article.getArticleId());
+//        mControllerListener.onPlay(article.getArticleId());
         Bundle bundle = new Bundle();
         bundle.putString("aid", article.getArticleId());
         ((BaseActivity) getActivity()).jumpActivity(ArticleDetailActivity.class, bundle);

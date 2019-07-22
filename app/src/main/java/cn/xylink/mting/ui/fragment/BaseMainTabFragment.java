@@ -70,7 +70,7 @@ public abstract class BaseMainTabFragment extends BasePresenterFragment implemen
     }
 
     public void backTop() {
-        if (mRecyclerView != null) {
+        if (mRecyclerView != null && mRecyclerView.getChildAt(0) != null) {
             int firstItem = mRecyclerView.getChildLayoutPosition(mRecyclerView.getChildAt(0)) + 1;
             int heiht = mRecyclerView.getChildAt(0).getHeight();
             int sy = -firstItem * heiht * 2;
