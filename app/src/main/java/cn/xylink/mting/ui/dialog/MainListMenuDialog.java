@@ -45,7 +45,7 @@ public class MainListMenuDialog extends BaseDimDialog {
         mTabType = tabType;
         mArticle = article;
         if (mArticle.getStore()==1)
-            mLoveTextView.setCompoundDrawablesWithIntrinsicBounds(null,mContext.getResources().getDrawable(R.mipmap.back),null,null);
+            mLoveTextView.setCompoundDrawablesWithIntrinsicBounds(null,mContext.getResources().getDrawable(R.mipmap.icon_f_loved),null,null);
     }
 
     @Override

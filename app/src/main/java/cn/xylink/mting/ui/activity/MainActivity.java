@@ -28,6 +28,7 @@ import java.util.Queue;
 import butterknife.BindView;
 import butterknife.OnClick;
 import cn.xylink.mting.R;
+import cn.xylink.mting.base.BaseActivity;
 import cn.xylink.mting.bean.AddLoveRequest;
 import cn.xylink.mting.bean.AddUnreadRequest;
 import cn.xylink.mting.bean.Article;
@@ -278,7 +279,8 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
 
 
     @OnClick({R.id.iv_main_title_my, R.id.iv_main_title_search, R.id.iv_main_title_add
-            , R.id.tv_main_tabar_readed, R.id.tv_main_tabar_unread, R.id.tv_main_tabar_love, R.id.rl_main_play_bar_play, R.id.rl_main_title_layout})
+            , R.id.tv_main_tabar_readed, R.id.tv_main_tabar_unread, R.id.tv_main_tabar_love, R.id.rl_main_play_bar_play, R.id.rl_main_title_layout
+            , R.id.tv_play_bar_title})
     void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_main_title_my:
@@ -302,11 +304,27 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
                 break;
             case R.id.rl_main_play_bar_play:
                 L.v("============================");
-                playCtrl();
+                if (SpeechList.getInstance().getArticleList() != null && SpeechList.getInstance().getArticleList().size() > 0)
+                    playCtrl();
                 break;
             case R.id.rl_main_title_layout:
                 L.v("============================");
                 mTabAdapter.getItem(mCurrentTabIndex.index).backTop();
+                break;
+            case R.id.tv_play_bar_title:
+                String articleId = "";
+                List<Article> list = SpeechList.getInstance().getArticleList();
+                Article art = SpeechList.getInstance().getCurrent();
+                if (art == null)
+                    art = list != null && list.size() > 0 ? list.get(0) : null;
+                if (art != null) {
+                    articleId = art.getArticleId();
+                }
+                if (!TextUtils.isEmpty(articleId)) {
+                    Bundle bundle = new Bundle();
+                    bundle.putString("aid", articleId);
+                    this.jumpActivity(ArticleDetailActivity.class, bundle);
+                }
                 break;
         }
     }
@@ -401,6 +419,17 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
         mProgress.setProgress((int) (progress * 100));
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onDelSuccess(DeleteArticleSuccessEvent event) {
+        L.v(event);
+        if (event.getTab_type() == BaseMainTabFragment.TAB_TYPE.UNREAD) {
+            if (SpeechList.getInstance().getArticleList() == null || SpeechList.getInstance().getArticleList().size() < 1) {
+                mPlayBarTitle.setText("还没有文章，快去添加吧~");
+            }
+        }
+
+    }
+
 
     /*
     播放器无内容可播放后，会调用此事件
@@ -409,6 +438,9 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
     public void onSpeechStop(SpeechStopEvent event) {
         L.v(event);
         mPlayBtnSRC.setImageDrawable(getResources().getDrawable(R.mipmap.ico_playing));
+        if (event.getStopReason() == SpeechStopEvent.StopReason.ListIsNull) {
+            mPlayBarTitle.setText("还没有文章，快去添加吧~");
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

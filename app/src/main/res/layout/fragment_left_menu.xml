@@ -3,21 +3,120 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
+    android:id="@+id/ll_left_menu_layout"
     android:orientation="vertical">
 
     <ImageView
+        android:id="@+id/iv_left_menu_head"
         android:layout_width="56dp"
         android:layout_height="56dp"
         android:layout_gravity="center_horizontal"
-        android:src="@mipmap/icon_f_wxp"
-        android:layout_marginTop="24dp" />
+        android:layout_marginTop="24dp"
+        android:src="@mipmap/icon_head_default" />
 
-<TextView
-    android:layout_width="wrap_content"
-    android:layout_gravity="center_horizontal"
-    android:text="你是零零"
-    android:gravity="center"
-    android:layout_marginTop="12dp"
-    android:drawableRight="@mipmap/icon_f_love"
-    android:layout_height="wrap_content" />
+    <TextView
+        android:id="@+id/tv_left_menu_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="12dp"
+        android:drawableRight="@mipmap/icon_my_man"
+        android:drawablePadding="8dp"
+        android:gravity="center"
+        android:textColor="@color/c333333"
+        android:textSize="16sp" />
+
+    <RelativeLayout
+        android:id="@+id/rl_left_menu_share"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="35dp"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text="分享「轩辕听」" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:src="@mipmap/icon_my_share" />
+    </RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/rl_left_menu_feedback"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text="建议与反馈" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:src="@mipmap/icon_my_feedback" />
+    </RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/rl_left_menu_fun"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text="玩转「轩辕听」" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:src="@mipmap/icon_my_fun" />
+    </RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/rl_left_menu_about"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text="关于" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:src="@mipmap/icon_my_about" />
+    </RelativeLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+    <TextView
+        android:id="@+id/tv_left_menu_out"
+        android:layout_width="match_parent"
+        android:gravity="center"
+        android:text="退出登录"
+        android:textColor="@color/c999999"
+        android:textSize="14sp"
+        android:padding="22dp"
+        android:layout_height="wrap_content" />
 </LinearLayout>

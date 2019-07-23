@@ -64,7 +64,7 @@ public class ArrangeAdapter extends RecyclerView.Adapter<ArrangeAdapter.ReadedHo
             if (mOnItemClickListener != null)
                 mOnItemClickListener.checkChanged(mSelectCount, mUnPlayedTotal > 0 ? mUnPlayedCount == mUnPlayedTotal : false);
         }
-        mData.get(0).setProgress(0.5f);
+//        mData.get(0).setProgress(0.5f);
         mUnPlayedTotal = 0;
         for (Article article : mData) {
             if (article.getProgress() < 1.0f)
@@ -154,6 +154,24 @@ public class ArrangeAdapter extends RecyclerView.Adapter<ArrangeAdapter.ReadedHo
             buffer.append(article.getArticleId()+",");
         }
         return buffer.toString();
+    }
+
+    public List<String> getSelectItemArticleIDArray(){
+        List<String> list = new ArrayList<>();
+        for (Article article:mData){
+            if (article.isChecked())
+                list.add(article.getArticleId());
+        }
+        return list;
+    }
+
+    public List<Article> getSelectItemArticleArray(){
+        List<Article> list = new ArrayList<>();
+        for (Article article:mData){
+            if (article.isChecked())
+                list.add(article);
+        }
+        return list;
     }
 
     public String getSelectItemID(){

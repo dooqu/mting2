@@ -1,8 +1,19 @@
 package cn.xylink.mting.ui.fragment;
 
+import android.content.Intent;
+import android.text.TextUtils;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
+import butterknife.BindView;
+import butterknife.OnClick;
 import cn.xylink.mting.R;
+import cn.xylink.mting.bean.UserInfo;
+import cn.xylink.mting.ui.activity.LoginActivity;
+import cn.xylink.mting.utils.ContentManager;
+import cn.xylink.mting.utils.ImageUtils;
 
 /*
  *左侧菜单
@@ -13,6 +24,21 @@ import cn.xylink.mting.R;
  */
 public class LeftMenuFragment extends BasePresenterFragment {
 
+    @BindView(R.id.iv_left_menu_head)
+    ImageView mHeadImageView;
+    @BindView(R.id.tv_left_menu_title)
+    TextView mTitleView;
+    @BindView(R.id.tv_left_menu_out)
+    TextView mLogoutView;
+    @BindView(R.id.rl_left_menu_feedback)
+    RelativeLayout mFeedBackLayout;
+    @BindView(R.id.rl_left_menu_share)
+    RelativeLayout mShareLayout;
+    @BindView(R.id.rl_left_menu_fun)
+    RelativeLayout mFunLayout;
+    @BindView(R.id.rl_left_menu_about)
+    RelativeLayout mAboutLayout;
+
     @Override
     protected int getLayoutViewId() {
         return R.layout.fragment_left_menu;
@@ -20,7 +46,19 @@ public class LeftMenuFragment extends BasePresenterFragment {
 
     @Override
     protected void initView(View view) {
-
+        UserInfo info = ContentManager.getInstance().getUserInfo();
+        if (info != null) {
+            if (!TextUtils.isEmpty(info.getHeadImg()))
+                ImageUtils.get().load(mHeadImageView, R.mipmap.icon_head_default, R.mipmap.icon_head_default, 90, info.getHeadImg());
+            if (!TextUtils.isEmpty(info.getNickName()))
+                mTitleView.setText(info.getNickName());
+            if (info.getSex() == 0)
+                mTitleView.setCompoundDrawablesWithIntrinsicBounds(null, null, getActivity().getResources().getDrawable(R.mipmap.icon_my_women),
+                        null);
+            if (info.getSex() == 2)
+                mTitleView.setCompoundDrawablesWithIntrinsicBounds(null, null, null,
+                        null);
+        }
     }
 
     @Override
@@ -36,5 +74,29 @@ public class LeftMenuFragment extends BasePresenterFragment {
     @Override
     public void hideLoading() {
 
+    }
+
+    @OnClick({R.id.rl_left_menu_about, R.id.rl_left_menu_feedback, R.id.rl_left_menu_fun, R.id.rl_left_menu_share, R.id.tv_left_menu_out,
+            R.id.tv_left_menu_title, R.id.iv_left_menu_head, R.id.ll_left_menu_layout})
+    void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.iv_left_menu_head: //头像
+                break;
+            case R.id.tv_left_menu_title://姓名
+                break;
+            case R.id.rl_left_menu_share://分享
+                break;
+            case R.id.rl_left_menu_feedback://反馈
+                break;
+            case R.id.rl_left_menu_fun://玩转
+                break;
+            case R.id.rl_left_menu_about://关于
+                break;
+            case R.id.tv_left_menu_out://退出
+                ContentManager.getInstance().setUserInfo(null);
+                ContentManager.getInstance().setLoginToken("");
+                startActivity(new Intent(getActivity(), LoginActivity.class));
+                break;
+        }
     }
 }

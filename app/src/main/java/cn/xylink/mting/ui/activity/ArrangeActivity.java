@@ -8,6 +8,8 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.List;
 
 import butterknife.BindView;
@@ -21,12 +23,17 @@ import cn.xylink.mting.bean.UnreadRequest;
 import cn.xylink.mting.contract.AddUnreadContract;
 import cn.xylink.mting.contract.DelMainContract;
 import cn.xylink.mting.contract.UnreadContract;
+import cn.xylink.mting.event.AddUnreadEvent;
+import cn.xylink.mting.event.DeleteArticleSuccessEvent;
 import cn.xylink.mting.presenter.AddUnreadPresenter;
 import cn.xylink.mting.presenter.CollectPresenter;
 import cn.xylink.mting.presenter.DelMainPresenter;
 import cn.xylink.mting.presenter.ReadedPresenter;
 import cn.xylink.mting.presenter.UnreadPresenter;
+import cn.xylink.mting.speech.SpeechService;
+import cn.xylink.mting.speech.SpeechServiceProxy;
 import cn.xylink.mting.ui.adapter.ArrangeAdapter;
+import cn.xylink.mting.ui.fragment.BaseMainTabFragment;
 import cn.xylink.mting.utils.L;
 import cn.xylink.mting.utils.T;
 import cn.xylink.mting.widget.SpaceItemDecoration;
@@ -56,6 +63,8 @@ public class ArrangeActivity extends BasePresenterActivity implements AddUnreadC
     private UnreadPresenter mUnreadPresenter;
     private ReadedPresenter mReadedPresenter;
     private CollectPresenter mCollectPresenter;
+    private SpeechServiceProxy proxy;
+    private SpeechService service;
 
 
     @Override
@@ -102,6 +111,16 @@ public class ArrangeActivity extends BasePresenterActivity implements AddUnreadC
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.addOnScrollListener(scrollListener);
         getInitData();
+
+        proxy = new SpeechServiceProxy(this) {
+            @Override
+            protected void onConnected(boolean connected, SpeechService service) {
+                if (connected) {
+                    ArrangeActivity.this.service = service;
+                }
+            }
+        };
+        proxy.bind();
     }
 
     private void getInitData() {
@@ -141,7 +160,7 @@ public class ArrangeActivity extends BasePresenterActivity implements AddUnreadC
         }
     }
 
-    private void delSelectData(){
+    private void delSelectData() {
         switch (mTabType) {
             case 0:
                 DelUnreadRequest request = new DelUnreadRequest();
@@ -159,14 +178,14 @@ public class ArrangeActivity extends BasePresenterActivity implements AddUnreadC
                 DelReadedRequest Request = new DelReadedRequest();
                 Request.setIds(mAdapter.getSelectItemID());
                 Request.doSign();
-                mDelMainPresenter.delReaded(Request);
+                mDelMainPresenter.delConllect(Request);
                 break;
         }
         showLoading();
     }
 
-    private void addToUnread(){
-        AddUnreadRequest request =new AddUnreadRequest();
+    private void addToUnread() {
+        AddUnreadRequest request = new AddUnreadRequest();
         request.setArticleIds(mAdapter.getSelectItemArticleID());
         request.doSign();
         mAddUnreadPresenter.addUnread(request);
@@ -213,27 +232,37 @@ public class ArrangeActivity extends BasePresenterActivity implements AddUnreadC
     @Override
     public void onSuccessAddUnread(String msg) {
         hideLoading();
-        T.s(this,"添加成功");
+        T.s(this, "添加成功");
+        service.addFirst(mAdapter.getSelectItemArticleArray());
+        EventBus.getDefault().post(new AddUnreadEvent());
         this.finish();
+
     }
 
     @Override
     public void onErrorAddUnread(int code, String errorMsg) {
         hideLoading();
-        T.s(this,"添加失败");
+        T.s(this, "添加失败");
     }
 
     @Override
     public void onSuccessDel(String str) {
         hideLoading();
-        T.s(this,"删除成功");
+        T.s(this, "删除成功");
+        service.removeFromSpeechList(mAdapter.getSelectItemArticleIDArray());
+        if (mTabType == BaseMainTabFragment.TAB_TYPE.UNREAD.ordinal())
+            EventBus.getDefault().post(new DeleteArticleSuccessEvent(BaseMainTabFragment.TAB_TYPE.UNREAD));
+        if (mTabType == BaseMainTabFragment.TAB_TYPE.READED.ordinal())
+            EventBus.getDefault().post(new DeleteArticleSuccessEvent(BaseMainTabFragment.TAB_TYPE.READED));
+        if (mTabType == BaseMainTabFragment.TAB_TYPE.COLLECT.ordinal())
+            EventBus.getDefault().post(new DeleteArticleSuccessEvent(BaseMainTabFragment.TAB_TYPE.COLLECT));
         this.finish();
     }
 
     @Override
     public void onErrorDel(int code, String errorMsg) {
         hideLoading();
-        T.s(this,"删除失败");
+        T.s(this, "删除失败");
     }
 
     @Override
@@ -278,11 +307,12 @@ public class ArrangeActivity extends BasePresenterActivity implements AddUnreadC
         super.onDestroy();
         if (mRecyclerView != null)
             mRecyclerView.removeOnScrollListener(scrollListener);
+        proxy.unbind();
     }
 
     @Override
     public void onSuccessUnread(List<Article> unreadList) {
-        if (unreadList != null) {
+        if (unreadList != null & unreadList.size() > 0) {
             L.v(unreadList.size());
             mAdapter.setData(unreadList);
         }
@@ -294,22 +324,22 @@ public class ArrangeActivity extends BasePresenterActivity implements AddUnreadC
     }
 
     @Override
-    public void checkChanged(int selectCount,boolean isSelectAllUnplay) {
+    public void checkChanged(int selectCount, boolean isSelectAllUnplay) {
         mUnreadCheckBox.setChecked(isSelectAllUnplay);
         if (selectCount > 0) {
-            mTitleView.setText(mTitleView.getText().toString().substring(0,2) + "(已选" + selectCount + ")");
-            if (selectCount==mAdapter.getItemCount()){
+            mTitleView.setText(mTitleView.getText().toString().substring(0, 2) + "(已选" + selectCount + ")");
+            if (selectCount == mAdapter.getItemCount()) {
                 mAllCheckBox.setChecked(true);
                 mUnreadCheckBox.setChecked(true);
-            }else {
+            } else {
                 mAllCheckBox.setChecked(false);
             }
             mAddUnreadView.setTextColor(getResources().getColor(R.color.c488def));
             mDelView.setTextColor(getResources().getColor(R.color.c488def));
-        }else {
+        } else {
             mAllCheckBox.setChecked(false);
             mUnreadCheckBox.setChecked(false);
-            mTitleView.setText(mTitleView.getText().toString().substring(0,2));
+            mTitleView.setText(mTitleView.getText().toString().substring(0, 2));
             mAddUnreadView.setTextColor(getResources().getColor(R.color.cbbbbbb));
             mDelView.setTextColor(getResources().getColor(R.color.cbbbbbb));
         }
