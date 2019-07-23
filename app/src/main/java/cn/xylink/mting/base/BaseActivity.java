@@ -20,6 +20,8 @@ import android.widget.Toast;
 import java.io.File;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import butterknife.ButterKnife;
 import cn.xylink.mting.MTing;
@@ -32,6 +34,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     private static final int GET_UNKNOWN_APP_SOURCES = 101;
     protected Intent mUpdateIntent;
     protected Context context;
+    protected Timer upgradeTimer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +49,10 @@ public abstract class BaseActivity extends AppCompatActivity {
         initData();
         initView();
         initTitleBar();
+
+        if(enableVersionUpgrade() == true) {
+            checkOnlineUpgrade();
+        }
     }
 
 
@@ -53,6 +60,10 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if(upgradeTimer != null) {
+            upgradeTimer.cancel();
+            upgradeTimer = null;
+        }
     }
 
     /**
@@ -253,4 +264,20 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
 
+    protected boolean enableVersionUpgrade() {
+        return false;
+    }
+
+
+    protected void checkOnlineUpgrade()
+    {
+        upgradeTimer = new Timer();
+        upgradeTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+
+
+            }
+        }, 5000, 60 * 1000);
+    }
 }

@@ -144,7 +144,7 @@ public class SpeechService extends Service {
     private void initService() {
         serviceState = SpeechServiceState.Ready;
         articleDataProvider = new ArticleDataProvider(this);
-
+        notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
         speechor = new SpeechEngineWrapper(this) {
             @Override
@@ -604,7 +604,7 @@ public class SpeechService extends Service {
                 return;
             }
 
-            notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
             Notification.Builder builder = new Notification.Builder(this)
                     .setSmallIcon(R.mipmap.ic_launcher)
                     .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.notification_album))

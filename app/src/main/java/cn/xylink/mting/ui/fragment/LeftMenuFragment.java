@@ -11,6 +11,7 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import cn.xylink.mting.R;
 import cn.xylink.mting.bean.UserInfo;
+import cn.xylink.mting.ui.activity.AboutVersion;
 import cn.xylink.mting.ui.activity.LoginActivity;
 import cn.xylink.mting.utils.ContentManager;
 import cn.xylink.mting.utils.ImageUtils;
@@ -91,6 +92,7 @@ public class LeftMenuFragment extends BasePresenterFragment {
             case R.id.rl_left_menu_fun://玩转
                 break;
             case R.id.rl_left_menu_about://关于
+                startActivity(new Intent(getActivity(), AboutVersion.class));
                 break;
             case R.id.tv_left_menu_out://退出
                 ContentManager.getInstance().setUserInfo(null);
