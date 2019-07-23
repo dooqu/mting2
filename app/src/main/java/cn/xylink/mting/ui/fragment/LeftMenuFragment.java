@@ -12,6 +12,7 @@ import butterknife.OnClick;
 import cn.xylink.mting.R;
 import cn.xylink.mting.bean.UserInfo;
 import cn.xylink.mting.ui.activity.LoginActivity;
+import cn.xylink.mting.ui.activity.PersonalInfoActivity;
 import cn.xylink.mting.utils.ContentManager;
 import cn.xylink.mting.utils.ImageUtils;
 
@@ -46,6 +47,10 @@ public class LeftMenuFragment extends BasePresenterFragment {
 
     @Override
     protected void initView(View view) {
+    }
+
+    public void setUserInfo()
+    {
         UserInfo info = ContentManager.getInstance().getUserInfo();
         if (info != null) {
             if (!TextUtils.isEmpty(info.getHeadImg()))
@@ -62,9 +67,16 @@ public class LeftMenuFragment extends BasePresenterFragment {
     }
 
     @Override
-    protected void initData() {
-
+    public void onResume() {
+        super.onResume();
+        setUserInfo();
     }
+
+    @Override
+    protected void initData() {
+    }
+
+
 
     @Override
     public void showLoading() {
@@ -81,8 +93,9 @@ public class LeftMenuFragment extends BasePresenterFragment {
     void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_left_menu_head: //头像
-                break;
             case R.id.tv_left_menu_title://姓名
+                Intent intent = new Intent(this.getActivity(), PersonalInfoActivity.class);
+                startActivity(intent);
                 break;
             case R.id.rl_left_menu_share://分享
                 break;
@@ -99,4 +112,6 @@ public class LeftMenuFragment extends BasePresenterFragment {
                 break;
         }
     }
+
+
 }

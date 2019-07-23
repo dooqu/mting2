@@ -144,7 +144,6 @@ public class OkGoUtils<T> {
                              }
                          }
                 );
-
     }
 
     public void getData(final IBaseView view, String url, Type type, final ICallback<T> callback) {

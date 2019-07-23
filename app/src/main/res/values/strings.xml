@@ -15,4 +15,7 @@
     <string name="please_enter_phone">请输入手机号码</string>
 
     <string name="update_msg_hint">此文章已于%s添加到待读列表中,是否需要更新？</string>
+    <string name="please_choose">请选择</string>
+    <string name="take_pic">拍照</string>
+    <string name="select_album">从相册选择</string>
 </resources>

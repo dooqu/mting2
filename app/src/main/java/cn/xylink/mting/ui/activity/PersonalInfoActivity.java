@@ -1,5 +1,6 @@
 package cn.xylink.mting.ui.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -10,10 +11,15 @@ import android.support.v4.app.ActivityCompat;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.jph.takephoto.app.TakePhoto;
 import com.jph.takephoto.app.TakePhotoImpl;
@@ -61,6 +67,8 @@ public class PersonalInfoActivity extends BasePresenterActivity implements TakeP
     EditText tvNickName;
     @BindView(R.id.tv_sex)
     TextView tvSex;
+    @BindView(R.id.iv_arrow_2)
+    ImageView ivArrow3;
 
     private TakePhoto takePhoto;
 
@@ -72,11 +80,12 @@ public class PersonalInfoActivity extends BasePresenterActivity implements TakeP
 
     UserInfo user;
 
+    private InputMethodManager im;
+
     public TakePhoto getTakePhoto() {
         if (takePhoto == null) {
             takePhoto = (TakePhoto) TakePhotoInvocationHandler.of(this).bind(new TakePhotoImpl(this, this));
         }
-//        takePhoto.onEnableCompress(new CompressConfig.Builder().setMaxSize(500 * 1024).create(), true);
         return takePhoto;
     }
 
@@ -93,9 +102,41 @@ public class PersonalInfoActivity extends BasePresenterActivity implements TakeP
         setContentView(R.layout.activity_personal_info);
     }
 
+
+    public void setUserInfo()
+    {
+        UserInfo info = ContentManager.getInstance().getUserInfo();
+        if (info != null) {
+            if (!TextUtils.isEmpty(info.getHeadImg()))
+                ImageUtils.get().load(ivhead, R.mipmap.icon_head_default, R.mipmap.icon_head_default, 90, info.getHeadImg());
+            if (!TextUtils.isEmpty(info.getNickName()))
+                tvNickName.setText(info.getNickName());
+            if (info.getSex() == 0)
+                tvSex.setText("男");
+            else if (info.getSex() == 2)
+               tvSex.setText("女");
+            else
+                tvSex.setText(R.string.please_choose);
+        }
+    }
+
     @Override
     protected void initView() {
         tvTitle.setText("个人信息");
+        tvNickName.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction())
+                {
+                    case MotionEvent.ACTION_DOWN:
+                        ivArrow3.setVisibility(View.GONE);
+                        tvNickName.setFocusable(true);
+                        break;
+                }
+                return false;
+            }
+        });
+
         tvNickName.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -112,6 +153,7 @@ public class PersonalInfoActivity extends BasePresenterActivity implements TakeP
 
             }
         });
+        setUserInfo();
     }
 
     @Override

@@ -115,5 +115,10 @@ public class RemoteUrl {
         return URL_BASE + "/api/sct/v1/feedback/save";
     }
 
+    //上传头像
+    public static String upLoadHeadImg(){
+        return URL_BASE + "/api/user/v1/upload/head";
+    }
+
 
 }
