@@ -16,6 +16,7 @@ import cn.xylink.mting.ui.activity.LoginActivity;
 import cn.xylink.mting.ui.activity.PersonalInfoActivity;
 import cn.xylink.mting.utils.ContentManager;
 import cn.xylink.mting.utils.ImageUtils;
+import cn.xylink.mting.utils.L;
 
 /*
  *左侧菜单
@@ -53,6 +54,7 @@ public class LeftMenuFragment extends BasePresenterFragment {
     public void setUserInfo()
     {
         UserInfo info = ContentManager.getInstance().getUserInfo();
+        L.v(info);
         if (info != null) {
             if (!TextUtils.isEmpty(info.getHeadImg()))
                 ImageUtils.get().load(mHeadImageView, R.mipmap.icon_head_default, R.mipmap.icon_head_default, 90, info.getHeadImg());
@@ -61,8 +63,8 @@ public class LeftMenuFragment extends BasePresenterFragment {
             if (info.getSex() == 0)
                 mTitleView.setCompoundDrawablesWithIntrinsicBounds(null, null, getActivity().getResources().getDrawable(R.mipmap.icon_my_women),
                         null);
-            if (info.getSex() == 2)
-                mTitleView.setCompoundDrawablesWithIntrinsicBounds(null, null, null,
+            if (info.getSex() == 1)
+                mTitleView.setCompoundDrawablesWithIntrinsicBounds(null, null, getActivity().getResources().getDrawable(R.mipmap.icon_my_man),
                         null);
         }
     }

@@ -82,8 +82,6 @@ public class PersonalInfoActivity extends BasePresenterActivity implements TakeP
 
     private String headImgUrl;
 
-    UserInfo user;
-
     private int sex;
 
     private InputMethodManager im;
@@ -114,6 +112,7 @@ public class PersonalInfoActivity extends BasePresenterActivity implements TakeP
     public void setUserInfo()
     {
         UserInfo info = ContentManager.getInstance().getUserInfo();
+        L.v(info);
         if (info != null) {
             if (!TextUtils.isEmpty(info.getHeadImg()))
                 ImageUtils.get().load(ivhead, R.mipmap.icon_head_default, R.mipmap.icon_head_default, 90, info.getHeadImg());
@@ -121,7 +120,7 @@ public class PersonalInfoActivity extends BasePresenterActivity implements TakeP
                 tvNickName.setText(info.getNickName());
             if (info.getSex() == 0)
                 tvSex.setText("男");
-            else if (info.getSex() == 2)
+            else if (info.getSex() == 1)
                tvSex.setText("女");
             else
                 tvSex.setText(R.string.please_choose);
@@ -373,20 +372,20 @@ public class PersonalInfoActivity extends BasePresenterActivity implements TakeP
         picFile = null;
         takePhoto.onPickFromGallery();
     }
-
     @Override
     public void onUpdateUserSuccess(BaseResponse<UserInfo> response) {
         L.v(response.data);
+        UserInfo userInfo = ContentManager.getInstance().getUserInfo();
         switch (sex){
             case 0:
                 tvSex.setText(R.string.sex_man);
-                ContentManager.getInstance().getUserInfo().setSex(sex);
                 break;
             case 1:
                 tvSex.setText(R.string.sex_woman);
-                ContentManager.getInstance().getUserInfo().setSex(sex);
                 break;
         }
+        userInfo.setSex(sex);
+        ContentManager.getInstance().setUserInfo(userInfo);
     }
 
     @Override
