@@ -19,5 +19,5 @@
     <string name="take_pic">拍照</string>
     <string name="select_album">从相册选择</string>
     <string name="sex_woman">女</string>
-    <string name="sex_man">女</string>
+    <string name="sex_man">男</string>
 </resources>
