@@ -11,9 +11,12 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import cn.xylink.mting.R;
 import cn.xylink.mting.bean.UserInfo;
+import cn.xylink.mting.ui.activity.AboutVersion;
 import cn.xylink.mting.ui.activity.LoginActivity;
+import cn.xylink.mting.ui.activity.PersonalInfoActivity;
 import cn.xylink.mting.utils.ContentManager;
 import cn.xylink.mting.utils.ImageUtils;
+import cn.xylink.mting.utils.L;
 
 /*
  *左侧菜单
@@ -46,7 +49,12 @@ public class LeftMenuFragment extends BasePresenterFragment {
 
     @Override
     protected void initView(View view) {
+    }
+
+    public void setUserInfo()
+    {
         UserInfo info = ContentManager.getInstance().getUserInfo();
+        L.v(info);
         if (info != null) {
             if (!TextUtils.isEmpty(info.getHeadImg()))
                 ImageUtils.get().load(mHeadImageView, R.mipmap.icon_head_default, R.mipmap.icon_head_default, 90, info.getHeadImg());
@@ -55,16 +63,23 @@ public class LeftMenuFragment extends BasePresenterFragment {
             if (info.getSex() == 0)
                 mTitleView.setCompoundDrawablesWithIntrinsicBounds(null, null, getActivity().getResources().getDrawable(R.mipmap.icon_my_women),
                         null);
-            if (info.getSex() == 2)
-                mTitleView.setCompoundDrawablesWithIntrinsicBounds(null, null, null,
+            if (info.getSex() == 1)
+                mTitleView.setCompoundDrawablesWithIntrinsicBounds(null, null, getActivity().getResources().getDrawable(R.mipmap.icon_my_man),
                         null);
         }
     }
 
     @Override
-    protected void initData() {
-
+    public void onResume() {
+        super.onResume();
+        setUserInfo();
     }
+
+    @Override
+    protected void initData() {
+    }
+
+
 
     @Override
     public void showLoading() {
@@ -81,8 +96,9 @@ public class LeftMenuFragment extends BasePresenterFragment {
     void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_left_menu_head: //头像
-                break;
             case R.id.tv_left_menu_title://姓名
+                Intent intent = new Intent(this.getActivity(), PersonalInfoActivity.class);
+                startActivity(intent);
                 break;
             case R.id.rl_left_menu_share://分享
                 break;
@@ -91,6 +107,7 @@ public class LeftMenuFragment extends BasePresenterFragment {
             case R.id.rl_left_menu_fun://玩转
                 break;
             case R.id.rl_left_menu_about://关于
+                startActivity(new Intent(getActivity(), AboutVersion.class));
                 break;
             case R.id.tv_left_menu_out://退出
                 ContentManager.getInstance().setUserInfo(null);
@@ -101,4 +118,6 @@ public class LeftMenuFragment extends BasePresenterFragment {
                 break;
         }
     }
+
+
 }

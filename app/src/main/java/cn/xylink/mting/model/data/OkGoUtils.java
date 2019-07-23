@@ -42,9 +42,14 @@ public class OkGoUtils<T> {
                              @Override
                              protected void onFailure(int errorCode, String errorMsg) {
                                  if (view != null) {
-                                     callback.onFailure(errorCode+10000, errorMsg);
-//                                     if (errorCode==-1)
-//                                         cn.peng10.utils.T.showCustomToast("网络连接失败！");
+                                     callback.onFailure(errorCode + 10000, errorMsg);
+
+                                     callback.onComplete();
+                                     if (errorCode==-1)
+                                        cn.xylink.mting.utils.T.showCustomToast("网络连接失败！");
+                                     else if(errorCode == 9999)
+                                         cn.xylink.mting.utils.T.showCustomToast("网络连接失败！");
+
                                  }
                              }
 
@@ -59,7 +64,8 @@ public class OkGoUtils<T> {
                 );
 
     }
-    public void postParamsData(String url, Map<String,String> postData, Type type, final ICallback<T> callback) {
+
+    public void postParamsData(String url, Map<String, String> postData, Type type, final ICallback<T> callback) {
         OkGo.<T>post(url)
                 .params(postData)
                 .execute(new JsonBeanCallback<T>(type) {
@@ -67,25 +73,28 @@ public class OkGoUtils<T> {
                              @Override
                              protected void onStart() {
                                  super.onStart();
-                                     callback.onStart();
+                                 callback.onStart();
                              }
 
                              @Override
                              protected void onSuccess(T data) {
-                                     callback.onSuccess(data);
+                                 callback.onSuccess(data);
                              }
 
                              @Override
                              protected void onFailure(int errorCode, String errorMsg) {
-                                     callback.onFailure(errorCode+10000, errorMsg);
-//                                     if (errorCode==-1)
-//                                         cn.peng10.utils.T.showCustomToast("网络连接失败！");
+                                 callback.onFailure(errorCode + 10000, errorMsg);
+                                 callback.onComplete();
+                                     if (errorCode==-1)
+                                        cn.xylink.mting.utils.T.showCustomToast("网络连接失败！");
+                                     else if(errorCode == 9999)
+                                         cn.xylink.mting.utils.T.showCustomToast("网络连接失败！");
                              }
 
                              @Override
                              protected void onComplete() {
                                  super.onComplete();
-                                     callback.onComplete();
+                                 callback.onComplete();
                              }
                          }
                 );
@@ -117,9 +126,12 @@ public class OkGoUtils<T> {
                              @Override
                              protected void onFailure(int errorCode, String errorMsg) {
                                  if (view != null) {
-                                     callback.onFailure(errorCode+10000, errorMsg);
-//                                     if (errorCode==-1)
-//                                         cn.peng10.utils.T.showCustomToast("网络连接失败！");
+                                     callback.onFailure(errorCode + 10000, errorMsg);
+                                     callback.onComplete();
+                                   if (errorCode==-1)
+                                        cn.xylink.mting.utils.T.showCustomToast("网络连接失败！");
+                                     else if(errorCode == 9999)
+                                         cn.xylink.mting.utils.T.showCustomToast("网络连接失败！");
                                  }
                              }
 
@@ -132,7 +144,6 @@ public class OkGoUtils<T> {
                              }
                          }
                 );
-
     }
 
     public void getData(final IBaseView view, String url, Type type, final ICallback<T> callback) {
@@ -158,9 +169,12 @@ public class OkGoUtils<T> {
                              @Override
                              protected void onFailure(int errorCode, String errorMsg) {
                                  if (view != null) {
-                                     callback.onFailure(errorCode+10000, errorMsg);
-//                                     if (errorCode==-1)
-//                                         cn.peng10.utils.T.showCustomToast("网络连接失败！");
+                                     callback.onFailure(errorCode + 10000, errorMsg);
+                                     callback.onComplete();
+                                     if (errorCode==-1)
+                                         cn.xylink.mting.utils.T.showCustomToast("网络连接失败！");
+                                     else if(errorCode == 9999)
+                                         cn.xylink.mting.utils.T.showCustomToast("网络连接失败！");
                                  }
                              }
 

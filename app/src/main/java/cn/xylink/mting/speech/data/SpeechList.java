@@ -213,7 +213,7 @@ public class SpeechList {
                 Article currArt = iteratorArt.next();
                 if (currArt.getArticleId().equals(currIdToDelete)) {
                     iteratorArt.remove();
-                    if (currArt.getArticleId().equals(current.getArticleId())) {
+                    if (current != null && currArt.getArticleId().equals(current.getArticleId())) {
                         selectArticleIsDeleted = true;
                     }
                     break;

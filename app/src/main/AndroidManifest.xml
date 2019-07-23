@@ -38,6 +38,7 @@
             android:name=".ui.SplashActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait"
+            android:launchMode="singleTop"
             android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -126,6 +127,19 @@
         <activity
             android:name=".ui.activity.FeedBackActivity"
             android:screenOrientation="portrait" />
+
+
+        <activity android:name=".ui.activity.AboutVersion" android:screenOrientation="portrait"></activity>
+
+        <activity
+            android:name=".ui.activity.PersonalInfoActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name="com.yalantis.ucrop.UCropActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+
     </application>
 
 </manifest>

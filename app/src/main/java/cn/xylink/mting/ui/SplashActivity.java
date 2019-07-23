@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.text.TextUtils;
 
 import java.util.ArrayList;
 
@@ -25,6 +26,7 @@ import cn.xylink.mting.ui.activity.GuideActivity;
 import cn.xylink.mting.ui.activity.LoginActivity;
 import cn.xylink.mting.ui.activity.MainActivity;
 import cn.xylink.mting.ui.activity.user.BindLoginPwdActivity;
+import cn.xylink.mting.utils.ContentManager;
 import cn.xylink.mting.utils.L;
 
 public class SplashActivity extends BasePresenterActivity implements CheckTokenContact.ICheckTokenView {
@@ -168,8 +170,13 @@ public class SplashActivity extends BasePresenterActivity implements CheckTokenC
             startActivity(new Intent(SplashActivity.this, GuideActivity.class));
             finish();
         }else{
-            startActivity(new Intent(SplashActivity.this, LoginActivity.class));
-            finish();
+            if(TextUtils.isEmpty(ContentManager.getInstance().getLoginToken())) {
+                startActivity(new Intent(SplashActivity.this, LoginActivity.class));
+                finish();
+            }else{
+                startActivity(new Intent(SplashActivity.this, MainActivity.class));
+                finish();
+            }
         }
     }
 
