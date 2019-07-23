@@ -6,7 +6,8 @@ android {
         applicationId "cn.xylink.mting"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 1
+        //versionCode改为年份两位，月份两位，日两位，次数1位
+        versionCode 1907191
         versionName "1.0"
     }
     signingConfigs {
