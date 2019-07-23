@@ -119,12 +119,13 @@ public class SearchActivity extends BasePresenterActivity implements SearchContr
         mPresenter.search(request);
     }
 
-    @OnClick({R.id.tv_search_cancel, R.id.fl_contact})
+    @OnClick({R.id.tv_search_cancel, R.id.fl_contact,R.id.rv_search})
     void onClick(View view) {
         switch (view.getId()) {
             case R.id.tv_search_cancel:
                 this.finish();
                 break;
+            case R.id.rv_search:
             case R.id.fl_contact:
                 InputMethodManager imm = (InputMethodManager) SearchActivity.this.getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(mEditView.getWindowToken(), 0);

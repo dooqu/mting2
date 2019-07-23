@@ -7,10 +7,13 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import org.greenrobot.eventbus.EventBus;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import cn.xylink.mting.R;
 import cn.xylink.mting.bean.UserInfo;
+import cn.xylink.mting.event.CloseLeftMenuEvent;
 import cn.xylink.mting.ui.activity.AboutVersion;
 import cn.xylink.mting.ui.activity.LoginActivity;
 import cn.xylink.mting.ui.activity.PersonalInfoActivity;
@@ -111,9 +114,12 @@ public class LeftMenuFragment extends BasePresenterFragment {
             case R.id.tv_left_menu_out://退出
                 ContentManager.getInstance().setUserInfo(null);
                 ContentManager.getInstance().setLoginToken("");
-                startActivity(new Intent(getActivity(), LoginActivity.class));
+                Intent intents = new Intent(getActivity(), LoginActivity.class);
+                intents.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intents);
                 break;
         }
+        EventBus.getDefault().post(new CloseLeftMenuEvent());
     }
 
 
