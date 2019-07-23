@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.view.Gravity;
 import android.view.View;
+import android.view.Window;
 import android.widget.TextView;
 
 import butterknife.BindView;
@@ -36,6 +38,8 @@ public class ShareAppDialog extends BaseDimDialog {
 
     public ShareAppDialog(Context context) {
         super(context);
+        Window window = this.getWindow();
+        window.setWindowAnimations(R.style.share_animation);
     }
 
     @Override
