@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MTing</string>
+    <string name="app_name">轩辕听</string>
 
     <string name="guide_one_title">深度好文太多，没时间看</string>
     <string name="guide_one_msg">边开车，边听文章，充分利用时间</string>
@@ -15,4 +15,7 @@
     <string name="please_enter_phone">请输入手机号码</string>
 
     <string name="update_msg_hint">此文章已于%s添加到待读列表中,是否需要更新？</string>
+    <string name="please_choose">请选择</string>
+    <string name="take_pic">拍照</string>
+    <string name="select_album">从相册选择</string>
 </resources>

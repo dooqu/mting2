@@ -3,19 +3,14 @@ package cn.xylink.mting.ui.activity;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.view.ViewPager;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -26,6 +21,7 @@ import cn.xylink.mting.event.TwoArticleEvent;
 import cn.xylink.mting.ui.adapter.FragmentAdapter;
 import cn.xylink.mting.ui.fragment.AddOneNoteFragment;
 import cn.xylink.mting.ui.fragment.AddTwoNoteFragment;
+import cn.xylink.mting.utils.ContentManager;
 import cn.xylink.mting.utils.L;
 import cn.xylink.mting.widget.CustomViewPager;
 
@@ -46,6 +42,7 @@ public class AddArticleActivity extends BasePresenterActivity {
     {
         fm = getSupportFragmentManager();
     }
+
     @Override
     protected void preView() {
         setContentView(R.layout.activity_add_aricle);
@@ -53,6 +50,7 @@ public class AddArticleActivity extends BasePresenterActivity {
 
     @Override
     protected void initView() {
+
         tvTitle.setText("添加文章");
         tvRight.setText("保存");
         tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {

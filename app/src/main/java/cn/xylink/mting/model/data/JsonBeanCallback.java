@@ -21,8 +21,8 @@ public class JsonBeanCallback<T> extends AbsCallback<T> {
 
     @Override
     public void onStart(Request<T, ? extends Request> request) {
-        super.onStart(request);
         onStart();
+        super.onStart(request);
     }
 
     @Override
