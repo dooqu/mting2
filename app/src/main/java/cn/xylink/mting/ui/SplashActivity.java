@@ -138,6 +138,7 @@ public class SplashActivity extends BasePresenterActivity implements CheckTokenC
 //            initPermission();
 //        }
         L.v("code",response.code);
+
         switch (response.code)
         {
             case 200:

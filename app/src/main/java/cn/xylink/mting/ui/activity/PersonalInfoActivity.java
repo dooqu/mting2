@@ -1,6 +1,5 @@
 package cn.xylink.mting.ui.activity;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -8,18 +7,14 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
-import android.text.Editable;
 import android.text.TextUtils;
-import android.text.TextWatcher;
-import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.jph.takephoto.app.TakePhoto;
 import com.jph.takephoto.app.TakePhotoImpl;
@@ -32,20 +27,15 @@ import com.jph.takephoto.permission.TakePhotoInvocationHandler;
 import com.yalantis.ucrop.UCrop;
 import com.yalantis.ucrop.UCropActivity;
 
-import org.apaches.commons.codec.digest.Md5Crypt;
-
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import butterknife.BindView;
 import butterknife.OnClick;
 import cn.xylink.mting.R;
 import cn.xylink.mting.base.BaseRequest;
 import cn.xylink.mting.base.BaseResponse;
-import cn.xylink.mting.bean.UploadHeadImgInfo;
 import cn.xylink.mting.bean.UserInfo;
 import cn.xylink.mting.contract.UpdateUserInfoContact;
 import cn.xylink.mting.contract.UploadHeadImgContact;
@@ -66,12 +56,17 @@ public class PersonalInfoActivity extends BasePresenterActivity implements TakeP
     TextView tvTitle;
     @BindView(R.id.iv_my_head)
     ImageView ivhead;
-    @BindView(R.id.tv_nickName)
-    EditText tvNickName;
+    @BindView(R.id.et_nickName)
+    EditText etNickName;
+    @BindView(R.id.tv_nick_name)
+    TextView tvNickName;
     @BindView(R.id.tv_sex)
     TextView tvSex;
     @BindView(R.id.iv_arrow_2)
     ImageView ivArrow3;
+
+    @BindView(R.id.ll_root)
+    LinearLayout ll_root;
 
     private TakePhoto takePhoto;
 
@@ -82,7 +77,7 @@ public class PersonalInfoActivity extends BasePresenterActivity implements TakeP
 
     private String headImgUrl;
 
-    private int sex;
+    private int sex = -1;
 
     private InputMethodManager im;
 
@@ -116,8 +111,10 @@ public class PersonalInfoActivity extends BasePresenterActivity implements TakeP
         if (info != null) {
             if (!TextUtils.isEmpty(info.getHeadImg()))
                 ImageUtils.get().load(ivhead, R.mipmap.icon_head_default, R.mipmap.icon_head_default, 90, info.getHeadImg());
-            if (!TextUtils.isEmpty(info.getNickName()))
+            if (!TextUtils.isEmpty(info.getNickName())) {
                 tvNickName.setText(info.getNickName());
+                etNickName.setText(info.getNickName());
+            }
             if (info.getSex() == 0)
                 tvSex.setText("男");
             else if (info.getSex() == 1)
@@ -130,37 +127,32 @@ public class PersonalInfoActivity extends BasePresenterActivity implements TakeP
     @Override
     protected void initView() {
         tvTitle.setText("个人信息");
-        tvNickName.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction())
-                {
-                    case MotionEvent.ACTION_DOWN:
-                        ivArrow3.setVisibility(View.GONE);
-                        tvNickName.setFocusable(true);
-                        break;
-                }
-                return false;
-            }
-        });
-
-        tvNickName.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
         setUserInfo();
+        viewTreeObserver();
+    }
+
+    private void viewTreeObserver() {
+        final float screenHeight = getResources().getDisplayMetrics().heightPixels / 3;
+        ll_root.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                if (oldBottom != 0 && bottom != 0
+                        && (bottom - oldBottom > screenHeight)) {
+                    ivArrow3.setVisibility(View.VISIBLE);
+                    tvNickName.setVisibility(View.VISIBLE);
+                    etNickName.setVisibility(View.GONE);
+
+                    if(!TextUtils.isEmpty(etNickName.getText())){
+                        tvNickName.setText(etNickName.getText());
+                        UpdateUserRequset requset = new UpdateUserRequset();
+                        requset.setSex(ContentManager.getInstance().getUserInfo().getSex());
+                        requset.setNickName(etNickName.getText().toString());
+                        updateUser(requset);
+                    }
+                }
+            }
+        });
+
     }
 
     @Override
@@ -189,7 +181,7 @@ public class PersonalInfoActivity extends BasePresenterActivity implements TakeP
             R.id.tv_sex,
             R.id.iv_arrow_2,
             R.id.iv_arrow_3,
-            R.id.tv_nickName
+            R.id.tv_nick_name
     })
     public void onClick(View v) {
         switch (v.getId()) {
@@ -205,7 +197,12 @@ public class PersonalInfoActivity extends BasePresenterActivity implements TakeP
                 showSexSelectDialog();
                 break;
             case R.id.iv_arrow_3:
-            case R.id.tv_nickName:
+            case R.id.tv_nick_name:
+                tvNickName.setVisibility(View.GONE);
+                etNickName.setVisibility(View.VISIBLE);
+                ivArrow3.setVisibility(View.GONE);
+                etNickName.setSelection(etNickName.getText().length());
+                showSoftInput(etNickName);
                 break;
 
         }
@@ -379,12 +376,16 @@ public class PersonalInfoActivity extends BasePresenterActivity implements TakeP
         switch (sex){
             case 0:
                 tvSex.setText(R.string.sex_man);
+                userInfo.setSex(sex);
                 break;
             case 1:
                 tvSex.setText(R.string.sex_woman);
+                userInfo.setSex(sex);
                 break;
         }
-        userInfo.setSex(sex);
+        if(!TextUtils.isEmpty(etNickName.getText())) {
+            userInfo.setNickName(etNickName.getText().toString());
+        }
         ContentManager.getInstance().setUserInfo(userInfo);
     }
 

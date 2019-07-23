@@ -11,6 +11,7 @@ import cn.xylink.mting.model.CheckTokenRequest;
 import cn.xylink.mting.model.data.Const;
 import cn.xylink.mting.model.data.OkGoUtils;
 import cn.xylink.mting.model.data.RemoteUrl;
+import cn.xylink.mting.utils.ContentManager;
 import cn.xylink.mting.utils.FileUtil;
 import cn.xylink.mting.utils.L;
 
@@ -32,9 +33,12 @@ public class CheckTokenPresenter extends BasePresenter<CheckTokenContact.ICheckT
                 BaseResponse<UserInfo> baseResponse = (BaseResponse<UserInfo>) data;
                 int code = baseResponse.code;
                 L.v("coce", code);
-                mView.onCheckTokenSuccess(baseResponse);
-                String userInfoData = new Gson().toJson(baseResponse.data);
-                FileUtil.writeFile(MTing.getInstance(), Const.FileName.USER_INFO_LOGIN, userInfoData);
+                if(code == 200) {
+                    mView.onCheckTokenSuccess(baseResponse);
+                    String userInfoData = new Gson().toJson(baseResponse.data);
+                    FileUtil.writeFile(MTing.getInstance(), Const.FileName.USER_INFO_LOGIN, userInfoData);
+                    ContentManager.getInstance().setUserInfo(baseResponse.data);
+                }
             }
 
             @Override

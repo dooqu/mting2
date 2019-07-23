@@ -61,10 +61,9 @@ public class LeftMenuFragment extends BasePresenterFragment {
             if (!TextUtils.isEmpty(info.getNickName()))
                 mTitleView.setText(info.getNickName());
             if (info.getSex() == 0)
+                mTitleView.setCompoundDrawablesWithIntrinsicBounds(null, null, getActivity().getResources().getDrawable(R.mipmap.icon_my_man),null);
+            else if (info.getSex() == 1)
                 mTitleView.setCompoundDrawablesWithIntrinsicBounds(null, null, getActivity().getResources().getDrawable(R.mipmap.icon_my_women),
-                        null);
-            if (info.getSex() == 1)
-                mTitleView.setCompoundDrawablesWithIntrinsicBounds(null, null, getActivity().getResources().getDrawable(R.mipmap.icon_my_man),
                         null);
         }
     }
