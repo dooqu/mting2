@@ -33,6 +33,13 @@ public class BottomSelectDialog extends BaseDimDialog {
         this.mListener = listener;
     }
 
+    public void setData(String first,int resId1, String second,int resId2, OnBottomSelectDialogListener listener) {
+        mFirstButton.setText(first);
+        mSecondButton.setText(second);
+        mFirstButton.setCompoundDrawablesWithIntrinsicBounds(0,0,resId1,0);
+        mSecondButton.setCompoundDrawablesWithIntrinsicBounds(0,0,resId2,0);
+        this.mListener = listener;
+    }
     public void setData(String first, String second,int joinLimit, OnBottomSelectDialogListener listener) {
         mFirstButton.setText(first);
         mSecondButton.setText(second);

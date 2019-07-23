@@ -119,6 +119,10 @@ public class RemoteUrl {
     public static String upLoadHeadImg(){
         return URL_BASE + "/api/user/v1/upload/head";
     }
+    //更新用户
+    public static String updateUserUrl(){
+        return URL_BASE + "/api/user/v2/user/update";
+    }
 
 
 }

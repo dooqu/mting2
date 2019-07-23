@@ -9,29 +9,38 @@
         android:layout_height="0dp"
         android:layout_weight="1" />
 
-    <Button
-        android:id="@+id/btn_bottom_select_first"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="wrap_content"
         android:background="@color/white"
-        android:gravity="center"
-        android:textColor="@color/color_333333"
-        android:textSize="@dimen/text_18" />
-
+        android:gravity="center_horizontal"
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/btn_bottom_select_first"
+            android:layout_width="wrap_content"
+            android:layout_height="56dp"
+            android:background="@android:color/transparent"
+            android:textColor="@color/color_333333"
+            android:textSize="@dimen/text_18" />
+    </LinearLayout>
     <View
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:background="@color/white" />
-
-    <Button
-        android:id="@+id/btn_bottom_select_second"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="wrap_content"
         android:background="@color/white"
-        android:gravity="center"
-        android:textColor="@color/color_333333"
-        android:textSize="@dimen/text_18" />
-
+        android:gravity="center_horizontal"
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/btn_bottom_select_second"
+            android:layout_width="wrap_content"
+            android:layout_height="56dp"
+            android:background="@android:color/transparent"
+            android:textColor="@color/color_333333"
+            android:textSize="@dimen/text_18" />
+    </LinearLayout>
     <View
         android:layout_width="match_parent"
         android:layout_height="0dp"

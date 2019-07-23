@@ -47,16 +47,19 @@ import cn.xylink.mting.base.BaseRequest;
 import cn.xylink.mting.base.BaseResponse;
 import cn.xylink.mting.bean.UploadHeadImgInfo;
 import cn.xylink.mting.bean.UserInfo;
+import cn.xylink.mting.contract.UpdateUserInfoContact;
 import cn.xylink.mting.contract.UploadHeadImgContact;
+import cn.xylink.mting.model.UpdateUserRequset;
 import cn.xylink.mting.model.UploadHeadImgRequest;
 import cn.xylink.mting.presenter.UploadHeadImgPresenter;
+import cn.xylink.mting.presenter.UploadUserInfoPresenter;
 import cn.xylink.mting.ui.dialog.BottomSelectDialog;
 import cn.xylink.mting.utils.ContentManager;
 import cn.xylink.mting.utils.ImageUtils;
 import cn.xylink.mting.utils.L;
 import cn.xylink.mting.utils.MD5;
 
-public class PersonalInfoActivity extends BasePresenterActivity implements TakePhoto.TakeResultListener, InvokeListener, UploadHeadImgContact.IUploadHeadImgView,BottomSelectDialog.OnBottomSelectDialogListener {
+public class PersonalInfoActivity extends BasePresenterActivity implements TakePhoto.TakeResultListener, InvokeListener, UploadHeadImgContact.IUploadHeadImgView,BottomSelectDialog.OnBottomSelectDialogListener, UpdateUserInfoContact.IUpdateUserView {
 
 
     @BindView(R.id.tv_include_title)
@@ -75,12 +78,17 @@ public class PersonalInfoActivity extends BasePresenterActivity implements TakeP
     private InvokeParam invokeParam;
 
     private UploadHeadImgPresenter headImgPresenter;
+    private UploadUserInfoPresenter userInfoPresenter;
 
     private String headImgUrl;
 
     UserInfo user;
 
+    private int sex;
+
     private InputMethodManager im;
+
+
 
     public TakePhoto getTakePhoto() {
         if (takePhoto == null) {
@@ -161,6 +169,9 @@ public class PersonalInfoActivity extends BasePresenterActivity implements TakeP
         headImgPresenter = (UploadHeadImgPresenter) createPresenter(UploadHeadImgPresenter.class);
         headImgPresenter.attachView(this);
 
+        userInfoPresenter = (UploadUserInfoPresenter) createPresenter(UploadUserInfoPresenter.class);
+        userInfoPresenter.attachView(this);
+
         UserInfo user = ContentManager.getInstance().getUserInfo();
         if (!TextUtils.isEmpty(user.getHeadImg()))
             ImageUtils.get().loadCircle(ivhead, headImgUrl);
@@ -192,6 +203,7 @@ public class PersonalInfoActivity extends BasePresenterActivity implements TakeP
                 break;
             case R.id.iv_arrow_2:
             case R.id.tv_sex:
+                showSexSelectDialog();
                 break;
             case R.id.iv_arrow_3:
             case R.id.tv_nickName:
@@ -204,6 +216,39 @@ public class PersonalInfoActivity extends BasePresenterActivity implements TakeP
         BottomSelectDialog dialog = new BottomSelectDialog(this);
         dialog.setData(getResources().getString(R.string.take_pic), getResources().getString(R.string.select_album), this);
         dialog.show();
+    }
+
+    private void showSexSelectDialog() {
+        BottomSelectDialog dialog = new BottomSelectDialog(this);
+        dialog.setData("男", R.mipmap.sex_0, "女", R.mipmap.sex_1, new BottomSelectDialog.OnBottomSelectDialogListener() {
+            @Override
+            public void onFirstClick() {
+                sex = 0;
+                dialog.dismiss();
+                UpdateUserRequset requset = new UpdateUserRequset();
+                requset.setNickName(ContentManager.getInstance().getUserInfo().getNickName());
+                requset.setSex(sex);
+                updateUser(requset);
+            }
+
+            @Override
+            public void onSecondClick() {
+                sex = 1;
+                dialog.dismiss();
+                UpdateUserRequset requset = new UpdateUserRequset();
+                requset.setNickName(ContentManager.getInstance().getUserInfo().getNickName());
+                requset.setSex(sex);
+
+                updateUser(requset);
+            }
+        });
+        dialog.show();
+    }
+
+    public void updateUser(UpdateUserRequset requset)
+    {
+        requset.doSign();
+        userInfoPresenter.onUpdateUser(requset);
     }
 
 
@@ -227,7 +272,6 @@ public class PersonalInfoActivity extends BasePresenterActivity implements TakeP
         uCrop.start(this);
     }
 
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         getTakePhoto().onActivityResult(requestCode, resultCode, data);
@@ -240,7 +284,6 @@ public class PersonalInfoActivity extends BasePresenterActivity implements TakeP
             final Throwable cropError = UCrop.getError(data);
         }
     }
-
 
     private void doUploadImg(File file) {
         Map<String, String> data = new HashMap<>();
@@ -262,10 +305,7 @@ public class PersonalInfoActivity extends BasePresenterActivity implements TakeP
         } else {
             path = result.getImage().getOriginalPath();
         }
-        L.v("===============TResult=" + path);
         if (!TextUtils.isEmpty(path)) {
-//            ImageUtils.get().loadCircle(mHeadImg, path);
-//            uploadHeadImg(path);
             cropPic(path);
         }
     }
@@ -325,19 +365,32 @@ public class PersonalInfoActivity extends BasePresenterActivity implements TakeP
     public void onFirstClick() {
         picFile = new File(this.getExternalCacheDir(), System.currentTimeMillis() + ".png");
         Uri uri = Uri.fromFile(picFile);
-//                CropOptions cropOptions = new CropOptions.Builder().setOutputX(224).setOutputX(224).setWithOwnCrop(true).create();
-//                takePhoto.onPickFromCaptureWithCrop(uri, cropOptions);
         takePhoto.onPickFromCapture(uri);
     }
 
     @Override
     public void onSecondClick() {
-//                File file = new File(getActivity().getExternalCacheDir(), System.currentTimeMillis() + ".png");
-//                Uri uri = Uri.fromFile(file);
-//                CropOptions cropOptions = new CropOptions.Builder().setOutputX(224).setOutputX(224).setWithOwnCrop(true).create();
-//                takePhoto.onPickFromGalleryWithCrop(uri, cropOptions);
         picFile = null;
         takePhoto.onPickFromGallery();
     }
 
+    @Override
+    public void onUpdateUserSuccess(BaseResponse<UserInfo> response) {
+        L.v(response.data);
+        switch (sex){
+            case 0:
+                tvSex.setText(R.string.sex_man);
+                ContentManager.getInstance().getUserInfo().setSex(sex);
+                break;
+            case 1:
+                tvSex.setText(R.string.sex_woman);
+                ContentManager.getInstance().getUserInfo().setSex(sex);
+                break;
+        }
+    }
+
+    @Override
+    public void onUpdateUserError(int code, String errorMsg) {
+        L.v(code,errorMsg);
+    }
 }
