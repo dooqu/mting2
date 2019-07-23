@@ -38,6 +38,7 @@
             android:name=".ui.SplashActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait"
+            android:launchMode="singleTop"
             android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
