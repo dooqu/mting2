@@ -8,4 +8,13 @@ package cn.xylink.mting.event;
  * -----------------------------------------------------------------
  */
 public class CloseLeftMenuEvent {
+    private boolean isShare =false;
+
+    public boolean isShare() {
+        return isShare;
+    }
+
+    public void setShare(boolean share) {
+        isShare = share;
+    }
 }

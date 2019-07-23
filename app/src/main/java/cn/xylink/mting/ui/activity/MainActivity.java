@@ -54,6 +54,7 @@ import cn.xylink.mting.speech.event.SpeechStartEvent;
 import cn.xylink.mting.speech.event.SpeechStopEvent;
 import cn.xylink.mting.ui.adapter.MainFragmentAdapter;
 import cn.xylink.mting.ui.dialog.MainAddMenuPop;
+import cn.xylink.mting.ui.dialog.ShareAppDialog;
 import cn.xylink.mting.ui.fragment.BaseMainTabFragment;
 import cn.xylink.mting.utils.L;
 import cn.xylink.mting.utils.T;
@@ -481,6 +482,10 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
         L.v(event);
         if (mDrawerLayout!=null)
             mDrawerLayout.closeDrawers();
+        if (event.isShare()){
+            ShareAppDialog dialog = new ShareAppDialog(this);
+            dialog.show();
+        }
     }
 
 

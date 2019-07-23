@@ -124,5 +124,10 @@ public class RemoteUrl {
         return URL_BASE + "/api/user/v2/user/update";
     }
 
+    //获取分享链接
+    public static String getShareUrl(){
+        return URL_BASE + "/html/download/xylinkting.html";
+    }
+
 
 }
