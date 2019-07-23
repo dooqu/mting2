@@ -2,6 +2,7 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:orientation="vertical"
+    android:id="@+id/ll_root"
     android:layout_height="match_parent">
 
     <include layout="@layout/title_include"/>
@@ -40,7 +41,7 @@
             android:layout_alignParentRight="true"
             android:id="@+id/iv_arrow_1"/>
     </RelativeLayout>
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
@@ -53,34 +54,47 @@
             android:textSize="16sp"
             android:textColor="@color/color_333333"/>
 
+
+        <FrameLayout
+            android:id="@+id/fl_et_nick_name"
+            android:layout_width="100dp"
+            android:layout_weight="1.0"
+            android:layout_toLeftOf="@+id/iv_arrow_2"
+            android:layout_gravity="right"
+
+            android:layout_height="wrap_content">
+        <EditText
+            android:background="@android:color/transparent"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/et_nickName"
+            android:maxLength="15"
+            android:maxLines="1"
+            android:layout_gravity="right"
+            android:imeOptions="actionSearch"
+            android:gravity="right"
+            android:textSize="@dimen/text_16"
+            android:visibility="gone"
+          />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="right"
+                android:layout_gravity="right"
+                android:textSize="@dimen/text_16"
+                android:id="@+id/tv_nick_name"/>
+        </FrameLayout>
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@mipmap/arrow"
-            android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
+            android:layout_gravity="center_vertical"
             android:layout_alignParentRight="true"
             android:id="@+id/iv_arrow_2"/>
 
-        <EditText
-            android:background="@android:color/transparent"
-            android:focusable="false"
-            android:focusableInTouchMode="true"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:id="@+id/tv_nickName"
-            android:layout_weight="1.0"
-            android:maxLength="15"
-            android:layout_toLeftOf="@+id/iv_arrow_2"
-            android:maxLines="1"
-            android:imeOptions="actionSearch"
-            android:gravity="right"
-            android:textSize="@dimen/text_16"
-            android:text="rewrewr"
-          />
 
-
-    </RelativeLayout>
+    </LinearLayout>
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_marginStart="32dp"
