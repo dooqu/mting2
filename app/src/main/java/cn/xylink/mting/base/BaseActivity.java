@@ -23,6 +23,7 @@ import java.util.Map;
 
 import butterknife.ButterKnife;
 import cn.xylink.mting.MTing;
+import cn.xylink.mting.utils.L;
 import cn.xylink.mting.utils.T;
 
 public abstract class BaseActivity extends AppCompatActivity {
@@ -46,6 +47,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         initData();
         initView();
         initTitleBar();
+        L.v(this.getLocalClassName());
     }
 
 

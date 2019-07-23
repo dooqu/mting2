@@ -95,7 +95,9 @@ public class LeftMenuFragment extends BasePresenterFragment {
             case R.id.tv_left_menu_out://退出
                 ContentManager.getInstance().setUserInfo(null);
                 ContentManager.getInstance().setLoginToken("");
-                startActivity(new Intent(getActivity(), LoginActivity.class));
+                Intent intent = new Intent(getActivity(), LoginActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
                 break;
         }
     }
