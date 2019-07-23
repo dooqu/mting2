@@ -5,6 +5,7 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.view.View;
+import android.view.Window;
 import android.widget.TextView;
 
 import butterknife.BindView;
@@ -31,6 +32,8 @@ public class MainListMenuDialog extends BaseDimDialog {
 
     public MainListMenuDialog(Context context) {
         super(context);
+        Window window = this.getWindow();
+        window.setWindowAnimations(R.style.share_animation);
     }
 
     public void setListener(OnBottomSelectDialogListener listener) {

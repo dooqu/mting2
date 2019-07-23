@@ -54,8 +54,7 @@ public class LeftMenuFragment extends BasePresenterFragment {
     protected void initView(View view) {
     }
 
-    public void setUserInfo()
-    {
+    public void setUserInfo() {
         UserInfo info = ContentManager.getInstance().getUserInfo();
         L.v(info);
         if (info != null) {
@@ -82,7 +81,6 @@ public class LeftMenuFragment extends BasePresenterFragment {
     }
 
 
-
     @Override
     public void showLoading() {
 
@@ -96,6 +94,7 @@ public class LeftMenuFragment extends BasePresenterFragment {
     @OnClick({R.id.rl_left_menu_about, R.id.rl_left_menu_feedback, R.id.rl_left_menu_fun, R.id.rl_left_menu_share, R.id.tv_left_menu_out,
             R.id.tv_left_menu_title, R.id.iv_left_menu_head, R.id.ll_left_menu_layout})
     void onClick(View view) {
+        CloseLeftMenuEvent event = new CloseLeftMenuEvent();
         switch (view.getId()) {
             case R.id.iv_left_menu_head: //头像
             case R.id.tv_left_menu_title://姓名
@@ -103,6 +102,7 @@ public class LeftMenuFragment extends BasePresenterFragment {
                 startActivity(intent);
                 break;
             case R.id.rl_left_menu_share://分享
+                event.setShare(true);
                 break;
             case R.id.rl_left_menu_feedback://反馈
                 break;
@@ -119,7 +119,7 @@ public class LeftMenuFragment extends BasePresenterFragment {
                 startActivity(intents);
                 break;
         }
-        EventBus.getDefault().post(new CloseLeftMenuEvent());
+        EventBus.getDefault().post(event);
     }
 
 
