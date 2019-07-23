@@ -37,6 +37,7 @@ import cn.xylink.mting.bean.DelUnreadRequest;
 import cn.xylink.mting.contract.AddUnreadContract;
 import cn.xylink.mting.contract.DelMainContract;
 import cn.xylink.mting.event.AddStoreSuccessEvent;
+import cn.xylink.mting.event.CloseLeftMenuEvent;
 import cn.xylink.mting.event.DeleteArticleSuccessEvent;
 import cn.xylink.mting.event.NotifyMainPlayEvent;
 import cn.xylink.mting.presenter.AddUnreadPresenter;
@@ -473,6 +474,13 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
         L.v(event);
         if (service != null)
             service.play(event.getId());
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onCloseLeftMenu(CloseLeftMenuEvent event) {
+        L.v(event);
+        if (mDrawerLayout!=null)
+            mDrawerLayout.closeDrawers();
     }
 
 

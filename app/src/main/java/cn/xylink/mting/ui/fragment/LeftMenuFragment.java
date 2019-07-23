@@ -7,10 +7,13 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import org.greenrobot.eventbus.EventBus;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import cn.xylink.mting.R;
 import cn.xylink.mting.bean.UserInfo;
+import cn.xylink.mting.event.CloseLeftMenuEvent;
 import cn.xylink.mting.ui.activity.AboutVersion;
 import cn.xylink.mting.ui.activity.LoginActivity;
 import cn.xylink.mting.ui.activity.PersonalInfoActivity;
@@ -117,6 +120,7 @@ public class LeftMenuFragment extends BasePresenterFragment {
                 startActivity(intents);
                 break;
         }
+        EventBus.getDefault().post(new CloseLeftMenuEvent());
     }
 
 
