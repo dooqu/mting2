@@ -67,4 +67,6 @@ public abstract class BasePresenterActivity<T extends BasePresenter> extends Bas
     public void toastShort(String msg) {
         cn.xylink.mting.utils.T.showCustomToast(msg);
     }
+
+
 }

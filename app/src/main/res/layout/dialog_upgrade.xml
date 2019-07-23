@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentTop="true"
+            android:scaleType="centerCrop"
+            android:src="@mipmap/dialog_upgrade"
+            android:id="@+id/bannerImg"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="轩辕听V1.0"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:layout_marginTop="20dp"
+            android:id="@+id/upgrade_name"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="2019-08-08"
+            android:textSize="16sp"
+            android:textColor="@color/color_login_text_gray"
+            android:layout_centerHorizontal="true"
+            android:id="@+id/upgrade_time_text"
+            android:layout_below="@+id/upgrade_name"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/bannerImg"
+            android:singleLine="false"
+            android:minLines="3"
+            android:maxLines="5"
+            android:textSize="17sp"
+            android:scrollbars="horizontal"
+            android:lineHeight="22dp"
+            android:text="这里的是正文\n222222222222\n3333333333\n444444444444\n55555555555555\n66666666666"
+            android:layout_marginHorizontal="25dp"
+            android:layout_marginTop="35dp"
+            android:layout_marginBottom="20dp"
+            android:id="@+id/upgrade_content_text"/>
+        
+        
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="@color/color_c9c9c9"
+            android:layout_below="@+id/upgrade_content_text"
+            android:id="@+id/upgrade_hr"></View>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal"
+            android:layout_below="@+id/upgrade_hr">
+
+            <TextView
+                android:layout_width="0px"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="取消"
+                android:gravity="center"
+                android:layout_gravity="center"/>
+
+            <TextView
+                android:layout_width="0px"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:text="立即下载"/>
+
+        </LinearLayout>
+    </RelativeLayout>
+
+</LinearLayout>
