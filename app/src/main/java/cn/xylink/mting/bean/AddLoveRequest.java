@@ -14,7 +14,7 @@ public class AddLoveRequest extends BaseRequest {
     private String type;//cancel：取消收藏，store：收藏
 
     public enum TYPE{
-        CANCLE,
+        CANCEL,
         STORE;
     }
 

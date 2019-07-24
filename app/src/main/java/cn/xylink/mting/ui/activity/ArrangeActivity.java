@@ -266,7 +266,7 @@ public class ArrangeActivity extends BasePresenterActivity implements AddUnreadC
     }
 
     @Override
-    public void onSuccessAddLove(String str) {
+    public void onSuccessAddLove(String str,Article article) {
 
     }
 
