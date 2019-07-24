@@ -38,6 +38,8 @@ public class CheckTokenPresenter extends BasePresenter<CheckTokenContact.ICheckT
                     String userInfoData = new Gson().toJson(baseResponse.data);
                     FileUtil.writeFile(MTing.getInstance(), Const.FileName.USER_INFO_LOGIN, userInfoData);
                     ContentManager.getInstance().setUserInfo(baseResponse.data);
+                }else {
+                    mView.onCheckTokenError(code,baseResponse.message);
                 }
                 else
                 {

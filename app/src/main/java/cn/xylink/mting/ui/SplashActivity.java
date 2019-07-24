@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
+import android.os.SystemClock;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
@@ -25,7 +26,6 @@ import cn.xylink.mting.ui.activity.BindingPhoneQQWxActivity;
 import cn.xylink.mting.ui.activity.GuideActivity;
 import cn.xylink.mting.ui.activity.LoginActivity;
 import cn.xylink.mting.ui.activity.MainActivity;
-import cn.xylink.mting.ui.activity.user.BindLoginPwdActivity;
 import cn.xylink.mting.utils.ContentManager;
 import cn.xylink.mting.utils.L;
 
@@ -33,6 +33,10 @@ public class SplashActivity extends BasePresenterActivity implements CheckTokenC
 
 
     private CheckTokenPresenter tokenPresenter;
+
+    private final int SPLASH_TIME = 3000;
+    private long startTime;
+    private long endTime;
     @Override
     protected void preView() {
         setContentView(R.layout.activity_splash);
@@ -40,28 +44,9 @@ public class SplashActivity extends BasePresenterActivity implements CheckTokenC
 
     @Override
     protected void initView() {
-        if(false)
-        {
-            startActivity(new Intent(this, BindingPhoneQQWxActivity.class));
-            return;
-        }
-
-        SharedPreferences sharedPreferences = this.getSharedPreferences("share", MODE_PRIVATE);
-        boolean isFirstRun = sharedPreferences.getBoolean("isFirstRun", true);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-
-        //闪屏页显示3秒才跳转
-        new Handler(new Handler.Callback() {
-            @Override
-            public boolean handleMessage(Message msg) {
-                CheckTokenRequest requset = new CheckTokenRequest();
-                requset.doSign();
-                tokenPresenter.onCheckToken(requset);
-
-                return false;
-            }
-        }).sendEmptyMessageDelayed(0, 3000);
+        initPermission();
     }
+
     @Override
     protected void initData() {
 
@@ -92,7 +77,7 @@ public class SplashActivity extends BasePresenterActivity implements CheckTokenC
         for (String perm : permissions) {
             if (PackageManager.PERMISSION_GRANTED != ContextCompat.checkSelfPermission(this, perm)) {
                 toApplyList.add(perm);
-//进入到这里代表没有权限.
+                //进入到这里代表没有权限.
             }
         }
         String tmpList[] = new String[toApplyList.size()];
@@ -116,69 +101,123 @@ public class SplashActivity extends BasePresenterActivity implements CheckTokenC
             }
         }
         if (flag) {
-            if (FileCache.getInstance().isGuideFirst()) {
-                FileCache.getInstance().setHasGuide();
-                startActivity(new Intent(SplashActivity.this, GuideActivity.class));
-            }else{
-                startActivity(new Intent(SplashActivity.this, LoginActivity.class));
-                finish();
-            }
+            startTime = SystemClock.elapsedRealtime();
+            CheckTokenRequest requset = new CheckTokenRequest();
+            requset.doSign();
+            tokenPresenter.onCheckToken(requset);
         }
-        L.v("FileCache.getInstance().isGuideFirst()",FileCache.getInstance().isGuideFirst());
-        finish();
     }
 
     @Override
     public void onCheckTokenSuccess(BaseResponse<UserInfo> response) {
-
+            endTime = SystemClock.elapsedRealtime();
 //        if (Build.VERSION.SDK_INT < 23) {
 //            startActivity(new Intent(SplashActivity.this, GuideActivity.class));
 //            finish();
 //        } else {
 //            initPermission();
 //        }
-        L.v("code",response.code);
+        L.v("code", response.code);
+        Message msg = mHandler.obtainMessage();
+        msg.obj = response.code;
+        msg.what = SUCCESS;
+        long takeTime = endTime - startTime;
+        L.v("(takeTime < SPLASH_TIME",(takeTime < SPLASH_TIME));
+        if(takeTime < SPLASH_TIME){
+            takeTime = (SPLASH_TIME - takeTime);
+            L.v("takeTime",takeTime);
+            mHandler.sendMessageDelayed(msg,takeTime);
+        }else{
+            mHandler.sendMessage(msg);
+        }
+    }
 
-        switch (response.code)
-        {
-            case 200:
-                startActivity(new Intent(SplashActivity.this, MainActivity.class));
-                finish();
-                break;
-            default:
-                L.v("Build.VERSION.SDK_INT",Build.VERSION.SDK_INT);
-                if (Build.VERSION.SDK_INT < 23) {
+
+
+
+    @Override
+    public void onCheckTokenError(int code, String errorMsg) {
+        L.v("code", code, "errorMsg", errorMsg);
+        endTime = SystemClock.elapsedRealtime();
+        Message msg = mHandler.obtainMessage();
+        msg.obj = code;
+        msg.what = ERROR;
+
+        long takeTime = endTime - startTime;
+        L.v("(takeTime < SPLASH_TIME",(takeTime < SPLASH_TIME));
+        if(takeTime < SPLASH_TIME){
+            takeTime = (SPLASH_TIME - takeTime);
+            L.v("takeTime",takeTime);
+            mHandler.sendMessageDelayed(msg,takeTime);
+        }else{
+            mHandler.sendMessage(msg);
+        }
+    }
+
+    private final static int SUCCESS = 1;
+    private final static int ERROR = 2;
+
+    Handler mHandler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message msg) {
+            final int code = (int) msg.obj;
+            switch (msg.what)
+            {
+                case SUCCESS:
+                    switch (code) {
+                        case 200:
+                            startActivity(new Intent(SplashActivity.this, MainActivity.class));
+                            finish();
+                            break;
+                        default:
+                            L.v("Build.VERSION.SDK_INT", Build.VERSION.SDK_INT);
+                            if (Build.VERSION.SDK_INT < 23) {
+                                if (FileCache.getInstance().isGuideFirst()) {
+                                    FileCache.getInstance().setHasGuide();
+                                    startActivity(new Intent(SplashActivity.this, GuideActivity.class));
+                                    finish();
+                                } else {
+                                    startActivity(new Intent(SplashActivity.this, LoginActivity.class));
+                                    finish();
+                                }
+                            } else {
+                                initPermission();
+                            }
+                            break;
+                    }
+                    break;
+                case ERROR:
                     if (FileCache.getInstance().isGuideFirst()) {
                         FileCache.getInstance().setHasGuide();
                         startActivity(new Intent(SplashActivity.this, GuideActivity.class));
                         finish();
-                    }else{
-                        startActivity(new Intent(SplashActivity.this, LoginActivity.class));
-                        finish();
+                    } else {
+                        if (TextUtils.isEmpty(ContentManager.getInstance().getLoginToken())) {
+                            startActivity(new Intent(SplashActivity.this, LoginActivity.class));
+                            finish();
+                        } else {
+                            startActivity(new Intent(SplashActivity.this, MainActivity.class));
+                            finish();
+                        }
                     }
-                } else {
-                    initPermission();
-                }
-                break;
+                    break;
+            }
+            return false;
         }
+    });
+
+
+    public void startActivity()
+    {
+
     }
 
+
     @Override
-    public void onCheckTokenError(int code, String errorMsg) {
-        L.v("code",code,"errorMsg",errorMsg);
-        if (FileCache.getInstance().isGuideFirst()) {
-            FileCache.getInstance().setHasGuide();
-            startActivity(new Intent(SplashActivity.this, GuideActivity.class));
-            finish();
-        }else{
-            if(TextUtils.isEmpty(ContentManager.getInstance().getLoginToken())) {
-                startActivity(new Intent(SplashActivity.this, LoginActivity.class));
-                finish();
-            }else{
-                startActivity(new Intent(SplashActivity.this, MainActivity.class));
-                finish();
-            }
-        }
+    protected void onDestroy() {
+        super.onDestroy();
+        mHandler.removeCallbacksAndMessages(null);
+        mHandler = null;
     }
 
     @Override

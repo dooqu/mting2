@@ -169,12 +169,12 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
     }
 
     @Override
-    public void onLove(String id, int store) {
+    public void onLove(Article article) {
         AddLoveRequest request = new AddLoveRequest();
-        request.setArticleId(id);
-        request.setType(store == 0 ? AddLoveRequest.TYPE.STORE.name() : AddLoveRequest.TYPE.CANCLE.name());
+        request.setArticleId(article.getArticleId());
+        request.setType(article.getStore() == 0 ? AddLoveRequest.TYPE.STORE.name().toLowerCase() : AddLoveRequest.TYPE.CANCEL.name().toLowerCase());
         request.doSign();
-        mPresenter.addLove(request);
+        mPresenter.addLove(request, article);
     }
 
     private Queue<BaseMainTabFragment.TAB_TYPE> mMessageQueue = new LinkedList<>();
@@ -233,9 +233,12 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
     }
 
     @Override
-    public void onSuccessAddLove(String str) {
-        T.s(this, str);
-        EventBus.getDefault().post(new AddStoreSuccessEvent());
+    public void onSuccessAddLove(String str, Article article) {
+        T.s(this, "收藏成功");
+        if (article != null) {
+            article.setStore(article.getStore() == 0 ? 1 : 0);
+        }
+        EventBus.getDefault().post(new AddStoreSuccessEvent(article));
     }
 
     @Override
@@ -480,9 +483,9 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onCloseLeftMenu(CloseLeftMenuEvent event) {
         L.v(event);
-        if (mDrawerLayout!=null)
+        if (mDrawerLayout != null)
             mDrawerLayout.closeDrawers();
-        if (event.isShare()){
+        if (event.isShare()) {
             ShareAppDialog dialog = new ShareAppDialog(this);
             dialog.show();
         }
