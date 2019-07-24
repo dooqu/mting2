@@ -387,7 +387,7 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
         boolean isFav = "收藏".equals(txt);
         AddLoveRequest request = new AddLoveRequest();
         request.setArticleId(mCurrentArticle.getArticleId());
-        request.setType(!isFav ? AddLoveRequest.TYPE.STORE.name() : AddLoveRequest.TYPE.CANCLE.name());
+        request.setType(!isFav ? AddLoveRequest.TYPE.STORE.name() : AddLoveRequest.TYPE.CANCEL.name());
         request.doSign();
         mPresenter.addLove(request);
     }
@@ -501,7 +501,7 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
     }
 
     @Override
-    public void onSuccessAddLove(String str) {
+    public void onSuccessAddLove(String str, Article article) {
         if ("收藏".equals(tvFav.getText().toString())) {
             tvFav.setText("已收藏");
         } else {

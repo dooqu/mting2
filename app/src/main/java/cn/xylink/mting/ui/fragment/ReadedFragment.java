@@ -18,6 +18,7 @@ import cn.xylink.mting.base.BaseActivity;
 import cn.xylink.mting.bean.Article;
 import cn.xylink.mting.bean.UnreadRequest;
 import cn.xylink.mting.contract.UnreadContract;
+import cn.xylink.mting.event.AddStoreSuccessEvent;
 import cn.xylink.mting.event.DeleteArticleSuccessEvent;
 import cn.xylink.mting.presenter.ReadedPresenter;
 import cn.xylink.mting.speech.data.SpeechList;
@@ -163,6 +164,19 @@ public class ReadedFragment extends BaseMainTabFragment implements UnreadAdapter
         if (event.isSuccessed()) {
             mAdapter.clearData();
             getInitData();
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onAddStoreSuccess(AddStoreSuccessEvent event) {
+        L.v(event);
+        if (mAdapter != null && mAdapter.getArticleList() != null && mAdapter.getArticleList().size() > 0 && event.getArticle() != null) {
+            for (int i = 0; i < mAdapter.getArticleList().size(); i++) {
+                if (event.getArticle().getArticleId().equals(mAdapter.getArticleList().get(i).getArticleId())){
+                    mAdapter.getArticleList().get(i).setStore(event.getArticle().getStore());
+                    mAdapter.notifyItemChanged(i);
+                }
+            }
         }
     }
 

@@ -40,7 +40,7 @@ public abstract class BaseMainTabFragment extends BasePresenterFragment implemen
 
         void onDataSuccess();
 
-        void onLove(String id, int store);
+        void onLove(Article article);
 
         void onDel(TAB_TYPE tabType, String id);
     }
@@ -64,9 +64,9 @@ public abstract class BaseMainTabFragment extends BasePresenterFragment implemen
     }
 
     @Override
-    public void onItemLove(String id, int store) {
+    public void onItemLove(Article article) {
         if (mControllerListener != null)
-            mControllerListener.onLove(id, store);
+            mControllerListener.onLove(article);
     }
 
     public void backTop() {

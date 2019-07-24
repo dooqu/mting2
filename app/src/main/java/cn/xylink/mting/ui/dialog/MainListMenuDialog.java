@@ -89,7 +89,7 @@ public class MainListMenuDialog extends BaseDimDialog {
                 break;
             case R.id.tv_dialog_main_list_menu_love:
                 if (mArticle != null)
-                    mListener.onItemLove(mArticle.getArticleId(), mArticle.getStore());
+                    mListener.onItemLove(mArticle);
                 break;
             case R.id.tv_dialog_main_list_menu_del:
                 if (mArticle != null)
@@ -103,7 +103,7 @@ public class MainListMenuDialog extends BaseDimDialog {
     public interface OnBottomSelectDialogListener {
         void onItemDel(BaseMainTabFragment.TAB_TYPE tabType, String id);
 
-        void onItemLove(String id, int store);
+        void onItemLove(Article article);
     }
 
 }
