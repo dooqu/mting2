@@ -33,8 +33,8 @@ public class ShareAppDialog extends BaseDimDialog {
     @BindView(R.id.tv_dialog_main_list_menu_del)
     TextView mDelTextView;
     private String url = RemoteUrl.getShareUrl();
-    private String title = "";
-    private String content = "";
+    private String title = "轩辕听";
+    private String content = "随时随地，听你想听";
 
     public ShareAppDialog(Context context) {
         super(context);
