@@ -161,8 +161,25 @@ public class CollectFragment extends BaseMainTabFragment implements UnreadAdapte
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onAddStoreSuccess(AddStoreSuccessEvent event) {
         L.v(event);
-        mAdapter.clearData();
-        getInitData();
+//        mAdapter.clearData();
+//        getInitData();
+        if (mAdapter != null && mAdapter.getArticleList() != null && mAdapter.getArticleList().size() > 0 && event.getArticle() != null) {
+            boolean isRemove = false;
+            for (int i = 0; i < mAdapter.getArticleList().size(); i++) {
+                if (event.getArticle().getArticleId().equals(mAdapter.getArticleList().get(i).getArticleId())){
+                    mAdapter.getArticleList().remove(i);
+                    mAdapter.notifyItemRemoved(i);
+                    isRemove = true;
+                }
+            }
+            if (!isRemove) {
+                mAdapter.getArticleList().set(0, event.getArticle());
+                mAdapter.notifyItemInserted(0);
+            }
+        }else {
+            mAdapter.clearData();
+            getInitData();
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
