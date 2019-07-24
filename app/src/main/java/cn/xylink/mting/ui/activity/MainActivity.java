@@ -504,6 +504,10 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
         }
     }
 
+    @Override
+    protected boolean enableVersionUpgrade() {
+        return true;
+    }
 
     @Override
     protected void onDestroy() {
