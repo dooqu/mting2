@@ -33,12 +33,11 @@ public class CheckTokenPresenter extends BasePresenter<CheckTokenContact.ICheckT
                 BaseResponse<UserInfo> baseResponse = (BaseResponse<UserInfo>) data;
                 int code = baseResponse.code;
                 L.v("coce", code);
-                if(code == 200) {
-                    mView.onCheckTokenSuccess(baseResponse);
-                    String userInfoData = new Gson().toJson(baseResponse.data);
-                    FileUtil.writeFile(MTing.getInstance(), Const.FileName.USER_INFO_LOGIN, userInfoData);
+                mView.onCheckTokenSuccess(baseResponse);
+                String userInfoData = new Gson().toJson(baseResponse.data);
+                FileUtil.writeFile(MTing.getInstance(), Const.FileName.USER_INFO_LOGIN, userInfoData);
+                if (baseResponse.data != null)
                     ContentManager.getInstance().setUserInfo(baseResponse.data);
-                }
             }
 
             @Override
