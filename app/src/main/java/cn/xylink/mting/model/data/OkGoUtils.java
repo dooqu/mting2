@@ -23,7 +23,6 @@ public class OkGoUtils<T> {
                 .upJson(postData)
                 .tag(view)
                 .execute(new JsonBeanCallback<T>(type) {
-
                              @Override
                              protected void onStart() {
                                  super.onStart();
