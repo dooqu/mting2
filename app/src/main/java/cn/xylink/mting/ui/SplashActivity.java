@@ -25,7 +25,6 @@ import cn.xylink.mting.ui.activity.BindingPhoneQQWxActivity;
 import cn.xylink.mting.ui.activity.GuideActivity;
 import cn.xylink.mting.ui.activity.LoginActivity;
 import cn.xylink.mting.ui.activity.MainActivity;
-import cn.xylink.mting.ui.activity.user.BindLoginPwdActivity;
 import cn.xylink.mting.utils.ContentManager;
 import cn.xylink.mting.utils.L;
 
