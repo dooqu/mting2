@@ -164,6 +164,7 @@ public class SplashActivity extends BasePresenterActivity implements CheckTokenC
     @Override
     public void onCheckTokenError(int code, String errorMsg) {
         L.v("code", code, "errorMsg", errorMsg);
+        endTime = SystemClock.elapsedRealtime();
         Message msg = mHandler.obtainMessage();
         msg.obj = code;
         msg.what = ERROR;
@@ -230,6 +231,12 @@ public class SplashActivity extends BasePresenterActivity implements CheckTokenC
             return false;
         }
     });
+
+
+    public void startActivity()
+    {
+
+    }
 
 
     @Override
