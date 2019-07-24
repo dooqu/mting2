@@ -13,6 +13,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -83,6 +84,8 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
     RelativeLayout mPlayBtn;
     @BindView(R.id.iv_play_bar_btn)
     ImageView mPlayBtnSRC;
+    @BindView(R.id.pb_main_play_progress)
+    ProgressBar mLoadingProgress;
     private TAB_ENUM mCurrentTabIndex = TAB_ENUM.TAB_UNREAD;
     public SpeechServiceProxy proxy;
     private SpeechService service;
@@ -409,7 +412,9 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
     public void onSpeechStart(SpeechStartEvent event) {
         L.v(event.getArticle());
         setPlayBarState();
-        mPlayBtnSRC.setImageDrawable(getResources().getDrawable(R.mipmap.ico_pause));
+//        mPlayBtnSRC.setImageDrawable(getResources().getDrawable(R.mipmap.ico_pause));
+        mLoadingProgress.setVisibility(View.VISIBLE);
+        mProgress.setVisibility(View.INVISIBLE);
     }
 
 
@@ -422,6 +427,10 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
         L.v(event.getArticle());
         float progress = (float) event.getFrameIndex() / (float) event.getTextFragments().size();
         mProgress.setProgress((int) (progress * 100));
+
+        mPlayBtnSRC.setImageDrawable(getResources().getDrawable(R.mipmap.ico_pause));
+        mLoadingProgress.setVisibility(View.INVISIBLE);
+        mProgress.setVisibility(View.VISIBLE);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -446,12 +455,16 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
         if (event.getStopReason() == SpeechStopEvent.StopReason.ListIsNull) {
             mPlayBarTitle.setText("还没有文章，快去添加吧~");
         }
+        mLoadingProgress.setVisibility(View.INVISIBLE);
+        mProgress.setVisibility(View.VISIBLE);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSpeechPause(SpeechPauseEvent event) {
         L.v(event);
         mPlayBtnSRC.setImageDrawable(getResources().getDrawable(R.mipmap.ico_playing));
+        mLoadingProgress.setVisibility(View.INVISIBLE);
+        mProgress.setVisibility(View.VISIBLE);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
