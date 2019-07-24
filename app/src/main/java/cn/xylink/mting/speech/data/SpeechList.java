@@ -98,8 +98,7 @@ public class SpeechList {
     }
 
 
-    private boolean pushFront(Article article)
-    {
+    private boolean pushFront(Article article) {
         boolean isArticleSelected = false;
         //新建迭代器
         ListIterator<Article> it = internalList.listIterator();
@@ -125,8 +124,7 @@ public class SpeechList {
 
 
     public synchronized void pushFront(List<Article> list) {
-        for(int i = 0, j = list.size(); i < j; i++)
-        {
+        for (int i = 0, j = list.size(); i < j; i++) {
             pushFront(list.get(i));
         }
     }
@@ -242,7 +240,6 @@ public class SpeechList {
     public synchronized void appendArticles(List<Article> list) {
         internalList.addAll(list);
     }
-
 
 
     public synchronized int size() {

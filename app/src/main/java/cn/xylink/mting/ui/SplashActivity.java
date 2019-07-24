@@ -44,28 +44,7 @@ public class SplashActivity extends BasePresenterActivity implements CheckTokenC
 
     @Override
     protected void initView() {
-        if (false) {
-            startActivity(new Intent(this, BindingPhoneQQWxActivity.class));
-            return;
-        }
-
-        SharedPreferences sharedPreferences = this.getSharedPreferences("share", MODE_PRIVATE);
-        boolean isFirstRun = sharedPreferences.getBoolean("isFirstRun", true);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-
-        startTime = SystemClock.elapsedRealtime();
-        //闪屏页显示3秒才跳转
-//        new Handler(new Handler.Callback() {
-//            @Override
-//            public boolean handleMessage(Message msg) {
-
-        CheckTokenRequest requset = new CheckTokenRequest();
-        requset.doSign();
-        tokenPresenter.onCheckToken(requset);
-
-//                return false;
-//            }
-//        }).sendEmptyMessageDelayed(0, 3000);
+        initPermission();
     }
 
     @Override
@@ -98,7 +77,7 @@ public class SplashActivity extends BasePresenterActivity implements CheckTokenC
         for (String perm : permissions) {
             if (PackageManager.PERMISSION_GRANTED != ContextCompat.checkSelfPermission(this, perm)) {
                 toApplyList.add(perm);
-//进入到这里代表没有权限.
+                //进入到这里代表没有权限.
             }
         }
         String tmpList[] = new String[toApplyList.size()];
@@ -122,16 +101,11 @@ public class SplashActivity extends BasePresenterActivity implements CheckTokenC
             }
         }
         if (flag) {
-            if (FileCache.getInstance().isGuideFirst()) {
-                FileCache.getInstance().setHasGuide();
-                startActivity(new Intent(SplashActivity.this, GuideActivity.class));
-            } else {
-                startActivity(new Intent(SplashActivity.this, LoginActivity.class));
-                finish();
-            }
+            startTime = SystemClock.elapsedRealtime();
+            CheckTokenRequest requset = new CheckTokenRequest();
+            requset.doSign();
+            tokenPresenter.onCheckToken(requset);
         }
-        L.v("FileCache.getInstance().isGuideFirst()", FileCache.getInstance().isGuideFirst());
-        finish();
     }
 
     @Override

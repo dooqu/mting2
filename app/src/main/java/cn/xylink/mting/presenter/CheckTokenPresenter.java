@@ -41,6 +41,10 @@ public class CheckTokenPresenter extends BasePresenter<CheckTokenContact.ICheckT
                 }else {
                     mView.onCheckTokenError(code,baseResponse.message);
                 }
+                else
+                {
+                    mView.onCheckTokenError(code, baseResponse.message);
+                }
             }
 
             @Override

@@ -132,12 +132,12 @@ public class SpeechService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+
+        Log.d("SPEECH", "SpeechService.onDestroy");
         unregisterReceiver(receiver);
         speechor.reset();
         speechor.release();
-        speechor = null;
         articleDataProvider.release();
-        articleDataProvider = null;
     }
 
 
