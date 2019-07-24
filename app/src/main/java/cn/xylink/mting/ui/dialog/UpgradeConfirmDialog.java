@@ -19,8 +19,11 @@ import android.widget.TextView;
 
 import java.io.File;
 import java.math.BigInteger;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Calendar;
+import java.util.Date;
 
 import cn.xylink.mting.MTing;
 import cn.xylink.mting.R;
@@ -50,14 +53,11 @@ public class UpgradeConfirmDialog extends Dialog {
                             installIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             installIntent.setDataAndType(fileUri, "application/vnd.android.package-archive");
                             context.startActivity(installIntent);
-
-                            downloadFiles.remove(BigInteger.valueOf(downloadTaskId));
                             MTing.CurrentUpgradeDownloadId = 0;
                         }
                         break;
 
                     case DownloadManager.STATUS_FAILED:
-                        downloadFiles.remove(BigInteger.valueOf(downloadTaskId));
                         MTing.CurrentUpgradeDownloadId = 0;
                         break;
                 }
@@ -131,6 +131,7 @@ public class UpgradeConfirmDialog extends Dialog {
     protected TextView upgradeContent;
     protected View cancelButton;
     protected View confirmButton;
+    protected View dialog_upgrade_close;
 
     public UpgradeConfirmDialog(Context context, UpgradeInfo upgradeInfo) {
         super(context, R.style.upgrade_dialog);
@@ -163,15 +164,21 @@ public class UpgradeConfirmDialog extends Dialog {
         upgradeContent = (TextView) findViewById(R.id.upgrade_content_text);
         cancelButton = findViewById(R.id.upgrade_button_cancel);
         confirmButton = findViewById(R.id.upgrade_button_confirm);
+        dialog_upgrade_close = findViewById(R.id.dialog_upgrade_close);
 
         if (this.upgradeInfo != null) {
-            upgradeName.setText("轩辕听 V" + upgradeInfo.getAppVersionName());
+            upgradeName.setText("轩辕听 v" + upgradeInfo.getAppVersionName());
             upgradeContent.setText(upgradeInfo.getAppContent());
+
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            upgradeTime.setText(dateFormat.format(new Date(upgradeInfo.getCreateDate())));
         }
 
         if (upgradeInfo != null && upgradeInfo.getNeedUpdate() == 0) {
             cancelButton.setVisibility(View.GONE);
         }
+
+
 
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -191,6 +198,13 @@ public class UpgradeConfirmDialog extends Dialog {
                 if (listener != null) {
                     listener.callback(id, upgradeInfo);
                 }
+            }
+        });
+
+        dialog_upgrade_close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismiss();
             }
         });
     }

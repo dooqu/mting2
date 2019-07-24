@@ -18,6 +18,17 @@
             android:scaleType="centerCrop"
             android:src="@mipmap/dialog_upgrade" />
 
+        <ImageView
+            android:id="@+id/dialog_upgrade_close"
+            android:layout_width="50dp"
+            android:layout_height="35dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="0dp"
+            android:scaleType="centerInside"
+            android:src="@mipmap/dialog_upgrade_close" />
+
         <TextView
             android:id="@+id/upgrade_name"
             android:layout_width="wrap_content"
@@ -25,7 +36,7 @@
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="20dp"
-            android:text="轩辕听V1.0"
+            android:text="轩辕听 v1.0"
             android:textColor="@color/white"
             android:textSize="20sp" />
 
@@ -37,7 +48,7 @@
             android:layout_centerHorizontal="true"
             android:text="2019-08-08"
             android:textColor="#9ec6fe"
-            android:textSize="16sp" />
+            android:textSize="12sp" />
 
         <TextView
             android:id="@+id/upgrade_content_text"
@@ -47,14 +58,13 @@
             android:layout_marginHorizontal="25dp"
             android:layout_marginTop="35dp"
             android:layout_marginBottom="20dp"
-            android:lineHeight="22dp"
+            android:lineHeight="20dp"
             android:maxLines="5"
             android:minLines="3"
             android:scrollbars="horizontal"
             android:singleLine="false"
-            android:text="这里的是正文\n222222222222\n3333333333\n444444444444\n55555555555555\n66666666666"
-            android:textSize="17sp" />
-
+            android:text="这里的是正文"
+            android:textSize="16sp" />
 
         <View
             android:id="@+id/upgrade_hr"

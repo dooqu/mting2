@@ -8,10 +8,6 @@ import android.os.Looper;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import org.w3c.dom.Text;
-
-import java.math.BigInteger;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -33,10 +29,10 @@ public class AboutVersion extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about_version);
         txtCurrentVersion = (TextView) findViewById(R.id.txtCurrentVersion);
-        txtCurrentVersion.setText(PackageUtils.getAppVersionName(this));
+        txtCurrentVersion.setText("v" + PackageUtils.getAppVersionName(this));
         versionName = (TextView) findViewById(R.id.versionName);
         versionName.setOnClickListener(this::checkNewVersion);
-        backIcon = (ImageView)findViewById(R.id.about_version_back);
+        backIcon = (ImageView) findViewById(R.id.about_version_back);
         backIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -102,7 +98,6 @@ public class AboutVersion extends Activity {
                             versionName.setText("准备下载中");
                             break;
                         case DownloadManager.STATUS_FAILED:
-                            UpgradeConfirmDialog.downloadFiles.remove(BigInteger.valueOf(downloadId));
                             MTing.CurrentUpgradeDownloadId = 0;
                             versionName.setText("下载失败");
                             break;
@@ -113,7 +108,7 @@ public class AboutVersion extends Activity {
                             break;
 
                         case DownloadManager.STATUS_RUNNING:
-                            versionName.setText("正在下载:" + (status[0] * 100 / status[1]) + "%");
+                            versionName.setText("正在下载安装包: " + (status[0] * 100 / status[1]) + "%");
                             break;
                     }
                 });

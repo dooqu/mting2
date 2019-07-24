@@ -11,6 +11,7 @@ public class UpgradeInfo {
     String channel;
     String fileMd5;
     int needUpdate;
+    long createDate;
 
 
     public String getId() {
@@ -93,5 +94,13 @@ public class UpgradeInfo {
 
     public void setFileMd5(String fileMd5) {
         this.fileMd5 = fileMd5;
+    }
+
+    public long getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(long createDate) {
+        this.createDate = createDate;
     }
 }

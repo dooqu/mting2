@@ -9,6 +9,8 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.FileProvider;
@@ -25,11 +27,12 @@ import java.util.TimerTask;
 
 import butterknife.ButterKnife;
 import cn.xylink.mting.MTing;
+import cn.xylink.mting.ui.dialog.UpgradeConfirmDialog;
 import cn.xylink.mting.utils.L;
+import cn.xylink.mting.utils.PackageUtils;
 import cn.xylink.mting.utils.T;
 
 public abstract class BaseActivity extends AppCompatActivity {
-
 
     private static final int INSTALL_PACKAGES_REQUESTCODE = 100;
     private static final int GET_UNKNOWN_APP_SOURCES = 101;
@@ -271,13 +274,13 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     protected void checkOnlineUpgrade()
     {
-        upgradeTimer = new Timer();
-        upgradeTimer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-
-
+        Handler handler = new Handler(Looper.getMainLooper());
+        handler.postDelayed(()->{
+            int currentVersionCode = Integer.parseInt(PackageUtils.getAppVersionCode(this));
+            if (MTing.CurrentUpgradeInfo != null && MTing.CurrentUpgradeInfo.getAppVersionCode() > currentVersionCode) {
+                UpgradeConfirmDialog upgradeConfirmDialog = new UpgradeConfirmDialog(this, MTing.CurrentUpgradeInfo);
+                upgradeConfirmDialog.show();
             }
-        }, 5000, 60 * 1000);
+        }, 3000);
     }
 }
