@@ -217,6 +217,7 @@ public abstract class XiaoIceSpeechor implements Speechor {
             mediaPlayer.prepareAsync();
         }
         catch (IOException ex) {
+            Log.d("SPEECH", "playSegment error:" + ex.toString());
             onError(-1, ex.getMessage());
         }
         catch (NullPointerException ex) {

@@ -274,9 +274,12 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     protected void checkOnlineUpgrade()
     {
+        int currentVersionCode = Integer.parseInt(PackageUtils.getAppVersionCode(this));
+        if(MTing.CurrentUpgradeInfo == null || MTing.CurrentUpgradeInfo.getAppVersionCode() <= currentVersionCode) {
+            return;
+        }
         Handler handler = new Handler(Looper.getMainLooper());
         handler.postDelayed(()->{
-            int currentVersionCode = Integer.parseInt(PackageUtils.getAppVersionCode(this));
             if (MTing.CurrentUpgradeInfo != null && MTing.CurrentUpgradeInfo.getAppVersionCode() > currentVersionCode) {
                 UpgradeConfirmDialog upgradeConfirmDialog = new UpgradeConfirmDialog(this, MTing.CurrentUpgradeInfo);
                 upgradeConfirmDialog.show();
