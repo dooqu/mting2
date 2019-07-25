@@ -31,7 +31,6 @@ import cn.xylink.mting.utils.L;
 
 public class SplashActivity extends BasePresenterActivity implements CheckTokenContact.ICheckTokenView {
 
-
     private CheckTokenPresenter tokenPresenter;
 
     private final int SPLASH_TIME = 3000;

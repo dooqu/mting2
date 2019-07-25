@@ -5,6 +5,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -13,6 +14,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
@@ -142,6 +144,7 @@ public class SpeechService extends Service {
 
 
     private void initService() {
+
         serviceState = SpeechServiceState.Ready;
         articleDataProvider = new ArticleDataProvider(this);
         notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
@@ -410,7 +413,7 @@ public class SpeechService extends Service {
 
 
     public synchronized Article play(String articleId) {
-        if(articleId == null) {
+        if (articleId == null) {
             return null;
         }
         Article previousArt = this.speechList.getCurrent();
@@ -605,8 +608,23 @@ public class SpeechService extends Service {
                 return;
             }
 
+            String CHANNEL_ONE_ID = "cn.xylink.mting";
+            String CHANNEL_ONE_NAME = "Channel One";
+            NotificationChannel notificationChannel = null;
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                notificationChannel = new NotificationChannel(CHANNEL_ONE_ID,
+                        CHANNEL_ONE_NAME, NotificationManager.IMPORTANCE_HIGH);
+                notificationChannel.enableLights(true);
+                notificationChannel.setLightColor(Color.RED);
+                notificationChannel.setShowBadge(true);
+                notificationChannel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
+                NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                manager.createNotificationChannel(notificationChannel);
+            }
+
 
             Notification.Builder builder = new Notification.Builder(this)
+                    .setChannelId(CHANNEL_ONE_ID)
                     .setSmallIcon(R.mipmap.ic_launcher)
                     .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.notification_album))
                     .setTicker(currentArticle.getTitle())
@@ -674,7 +692,12 @@ public class SpeechService extends Service {
             mediaStyle.setShowActionsInCompactView(1, 2);
             builder.setStyle(mediaStyle);
 
-            notificationManager.notify(7, builder.build());
+            Notification notification =  builder.build();
+
+
+            //notificationManager.notify(7, notification);
+
+            this.startForeground(android.os.Process.myPid(), notification);
         }
     }
 
