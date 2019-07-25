@@ -109,13 +109,11 @@ public class LoginPwdActivity extends BasePresenterActivity implements LoginCont
 
         switch (v.getId())
         {
-
             case R.id.tv_forget_pwd:{
                 Intent mIntent = new Intent(this, GetCodeActivity.class);
                 mIntent.putExtra(EXTRA_PHONE, phone);
                 mIntent.putExtra(EXTRA_SOURCE,"forgot");
                 startActivity(mIntent);
-
                 break;
             }
             case R.id.btn_left:
@@ -184,4 +182,5 @@ public class LoginPwdActivity extends BasePresenterActivity implements LoginCont
     public void onLoginError(int code, String errorMsg) {
         Toast.makeText(this,errorMsg,Toast.LENGTH_SHORT).show();
     }
+
 }

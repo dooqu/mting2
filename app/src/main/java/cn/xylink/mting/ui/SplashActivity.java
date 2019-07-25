@@ -2,7 +2,6 @@ package cn.xylink.mting.ui;
 
 import android.Manifest;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Handler;
@@ -22,7 +21,6 @@ import cn.xylink.mting.model.CheckTokenRequest;
 import cn.xylink.mting.model.data.FileCache;
 import cn.xylink.mting.presenter.CheckTokenPresenter;
 import cn.xylink.mting.ui.activity.BasePresenterActivity;
-import cn.xylink.mting.ui.activity.BindingPhoneQQWxActivity;
 import cn.xylink.mting.ui.activity.GuideActivity;
 import cn.xylink.mting.ui.activity.LoginActivity;
 import cn.xylink.mting.ui.activity.MainActivity;
@@ -30,7 +28,6 @@ import cn.xylink.mting.utils.ContentManager;
 import cn.xylink.mting.utils.L;
 
 public class SplashActivity extends BasePresenterActivity implements CheckTokenContact.ICheckTokenView {
-
 
     private CheckTokenPresenter tokenPresenter;
 
@@ -49,17 +46,13 @@ public class SplashActivity extends BasePresenterActivity implements CheckTokenC
 
     @Override
     protected void initData() {
-
         tokenPresenter = (CheckTokenPresenter) createPresenter(CheckTokenPresenter.class);
         tokenPresenter.attachView(this);
-
     }
 
     @Override
     protected void initTitleBar() {
-
     }
-
     private void initPermission() {
 
         ArrayList<String> toApplyList = new ArrayList<String>();
@@ -68,11 +61,9 @@ public class SplashActivity extends BasePresenterActivity implements CheckTokenC
                 Manifest.permission.ACCESS_NETWORK_STATE,
                 Manifest.permission.MODIFY_AUDIO_SETTINGS,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_SETTINGS,
                 Manifest.permission.READ_PHONE_STATE,
                 Manifest.permission.ACCESS_WIFI_STATE,
                 Manifest.permission.CHANGE_WIFI_STATE,
-                Manifest.permission.ACCESS_NOTIFICATION_POLICY
         };
         for (String perm : permissions) {
             if (PackageManager.PERMISSION_GRANTED != ContextCompat.checkSelfPermission(this, perm)) {
@@ -83,6 +74,11 @@ public class SplashActivity extends BasePresenterActivity implements CheckTokenC
         String tmpList[] = new String[toApplyList.size()];
         if (!toApplyList.isEmpty()) {
             ActivityCompat.requestPermissions(this, toApplyList.toArray(tmpList), 123);
+        }else{
+            startTime = SystemClock.elapsedRealtime();
+            CheckTokenRequest requset = new CheckTokenRequest();
+            requset.doSign();
+            tokenPresenter.onCheckToken(requset);
         }
     }
 
@@ -115,7 +111,8 @@ public class SplashActivity extends BasePresenterActivity implements CheckTokenC
 //            startActivity(new Intent(SplashActivity.this, GuideActivity.class));
 //            finish();
 //        } else {
-//            initPermission();
+//            startActivity(new Intent(SplashActivity.this, LoginActivity.class));
+//            finish();
 //        }
         L.v("code", response.code);
         Message msg = mHandler.obtainMessage();
@@ -131,9 +128,6 @@ public class SplashActivity extends BasePresenterActivity implements CheckTokenC
             mHandler.sendMessage(msg);
         }
     }
-
-
-
 
     @Override
     public void onCheckTokenError(int code, String errorMsg) {

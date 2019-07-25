@@ -13,6 +13,7 @@ import cn.xylink.mting.contract.IBaseView;
 import cn.xylink.mting.presenter.BasePresenter;
 import cn.xylink.mting.ui.dialog.CopyAddDialog;
 import cn.xylink.mting.ui.dialog.LoadingDialog;
+import cn.xylink.mting.utils.L;
 
 
 public abstract class BasePresenterActivity<T extends BasePresenter> extends BaseActivity implements IBaseView<T> {
@@ -81,6 +82,7 @@ public abstract class BasePresenterActivity<T extends BasePresenter> extends Bas
                 || this.getComponentName().getClassName().equals(SearchActivity.class.getName())
                 || this.getComponentName().getClassName().equals(ArticleDetailActivity.class.getName())) {
             CharSequence copy = getCopy(this);
+            L.v(!TextUtils.isEmpty(copy),copy.toString().startsWith("http://"),copy.toString().startsWith("https://"));
             if (!TextUtils.isEmpty(copy) && (copy.toString().startsWith("http://") || copy.toString().startsWith("https://"))) {
                 for (String s : tCopy)
                     if (s.equals(copy.toString()))
