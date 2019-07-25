@@ -9,8 +9,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v4.content.FileProvider;
 import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
@@ -28,6 +30,7 @@ import java.util.Date;
 import cn.xylink.mting.MTing;
 import cn.xylink.mting.R;
 import cn.xylink.mting.bean.UpgradeInfo;
+import cn.xylink.mting.utils.PackageUtils;
 
 
 import static android.content.Context.DOWNLOAD_SERVICE;
@@ -47,13 +50,29 @@ public class UpgradeConfirmDialog extends Dialog {
                 switch (result) {
                     case DownloadManager.STATUS_SUCCESSFUL:
                         if (downloadFiles.containsKey(BigInteger.valueOf(downloadTaskId))) {
+
                             File apkFile = new File(downloadFiles.get(BigInteger.valueOf(downloadTaskId)));
                             Uri fileUri = Uri.fromFile(apkFile);
                             Intent installIntent = new Intent(Intent.ACTION_VIEW);
-                            installIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            if (false || Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                installIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                                installIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                //fileUri = FileProvider.getUriForFile(context, context.getPackageName() + ".fileprovider", apkFile);
+                            }
+                            else {
+                                installIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                fileUri = Uri.fromFile(apkFile);
+                            }
+
                             installIntent.setDataAndType(fileUri, "application/vnd.android.package-archive");
-                            context.startActivity(installIntent);
                             MTing.CurrentUpgradeDownloadId = 0;
+
+                            try {
+                                context.startActivity(installIntent);
+                            }
+                            catch (Exception ex) {
+                                ex.printStackTrace();
+                            }
                         }
                         break;
 
@@ -80,7 +99,6 @@ public class UpgradeConfirmDialog extends Dialog {
             Cursor cursor = null;
             try {
                 cursor = mDownloadManager.query(query);
-
                 if (cursor != null && cursor.moveToFirst()) {
                     bytesAndStatus[0] = cursor.getInt(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR));
                     bytesAndStatus[1] = cursor.getInt(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_TOTAL_SIZE_BYTES));
@@ -177,8 +195,6 @@ public class UpgradeConfirmDialog extends Dialog {
         if (upgradeInfo != null && upgradeInfo.getNeedUpdate() == 0) {
             cancelButton.setVisibility(View.GONE);
         }
-
-
 
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -12,6 +12,7 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"/>
     <uses-permission
         android:name="android.permission.WRITE_APN_SETTINGS"
         tools:ignore="ProtectedPermissions" />
@@ -150,7 +151,17 @@
                 <action android:name="android.intent.action.DOWNLOAD_COMPLETE"></action>
             </intent-filter>
         </receiver>
-
+        <!--
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="#{applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_path" />
+        </provider>
+        -->
     </application>
 
 </manifest>
