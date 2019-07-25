@@ -106,11 +106,22 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
     }
 
     private void initServiceData() {
-        if (aid != null) {
+        mCurrentArticle = service.getSelected();
+        if (service.getState() == Speechor.SpeechorState.SpeechorStatePlaying && aid.equals(mCurrentArticle.getArticleId())) {
+            if (mCurrentArticle != null && (mCurrentArticle.getInType() == 1 || TextUtils.isEmpty(mCurrentArticle.getUrl()))) {
+                llArticleEdit.setVisibility(View.VISIBLE);
+                llSourceDetail.setVisibility(View.GONE);
+                mTitleheight = tvContent.getY();
+                aid = mCurrentArticle.getId();
+                tvContent.setText(mCurrentArticle.getContent());
+
+            }
+            isPlaying = 1;
+            ivPlayBarBtn.setImageResource(R.mipmap.ico_pause);
+        } else if (aid != null) {
             isPlaying = 1;
             service.play(aid);
         }
-        mCurrentArticle = service.getSelected();
         if (mCurrentArticle != null) {
             articleUrl = mCurrentArticle.getUrl();
             tvContent.setText(mCurrentArticle.getContent());
