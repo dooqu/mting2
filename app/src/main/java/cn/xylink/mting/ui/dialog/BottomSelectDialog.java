@@ -1,6 +1,7 @@
 package cn.xylink.mting.ui.dialog;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.widget.Button;
 
@@ -36,7 +37,13 @@ public class BottomSelectDialog extends BaseDimDialog {
     public void setData(String first,int resId1, String second,int resId2, OnBottomSelectDialogListener listener) {
         mFirstButton.setText(first);
         mSecondButton.setText(second);
-        mFirstButton.setCompoundDrawablesWithIntrinsicBounds(0,0,resId1,0);
+//        mFirstButton.setCompoundDrawablesWithIntrinsicBounds(0,0,resId1,0);
+//        Drawable drawable = getContext().getDrawable(
+//                resId1);
+//        // / 这一步必须要做,否则不会显示.
+//        drawable.setBounds(0, 0, drawable.getMinimumWidth(),
+//                drawable.getMinimumHeight());
+//        mFirstButton.setCompoundDrawables(null, null, drawable, null);
         mSecondButton.setCompoundDrawablesWithIntrinsicBounds(0,0,resId2,0);
         this.mListener = listener;
     }
