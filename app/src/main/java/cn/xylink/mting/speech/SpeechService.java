@@ -100,6 +100,8 @@ public class SpeechService extends Service {
 
     BroadcastReceiver receiver;
 
+    boolean isForegroundService;
+
 
     static int executeCode = 0;
 
@@ -145,6 +147,7 @@ public class SpeechService extends Service {
 
     private void initService() {
 
+        isForegroundService = false;
         serviceState = SpeechServiceState.Ready;
         articleDataProvider = new ArticleDataProvider(this);
         notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
@@ -608,23 +611,7 @@ public class SpeechService extends Service {
                 return;
             }
 
-            String CHANNEL_ONE_ID = "cn.xylink.mting";
-            String CHANNEL_ONE_NAME = "Channel One";
-            NotificationChannel notificationChannel = null;
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-                notificationChannel = new NotificationChannel(CHANNEL_ONE_ID,
-                        CHANNEL_ONE_NAME, NotificationManager.IMPORTANCE_HIGH);
-                notificationChannel.enableLights(true);
-                notificationChannel.setLightColor(Color.RED);
-                notificationChannel.setShowBadge(true);
-                notificationChannel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
-                NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-                manager.createNotificationChannel(notificationChannel);
-            }
-
-
             Notification.Builder builder = new Notification.Builder(this)
-                    .setChannelId(CHANNEL_ONE_ID)
                     .setSmallIcon(R.mipmap.ic_launcher)
                     .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.notification_album))
                     .setTicker(currentArticle.getTitle())
@@ -634,6 +621,23 @@ public class SpeechService extends Service {
                     .setAutoCancel(true)
                     .setShowWhen(false);
 
+
+            //>= android 8.0 设定foregroundService的前提是notification要创建channel，并关掉channel的sound
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                String channelId = "cn.xylink.mting";
+                String channelName = "SPEECH_SERVICE_NAME";
+                NotificationChannel notificationChannel = null;
+                notificationChannel = new NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_HIGH);
+                notificationChannel.enableLights(true);
+                notificationChannel.setLightColor(Color.RED);
+                notificationChannel.setShowBadge(true);
+                notificationChannel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
+                notificationChannel.setSound(null, null);
+                NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                manager.createNotificationChannel(notificationChannel);
+                //设定builder的channelid
+                builder.setChannelId(channelId);
+            }
 
             Intent playIntent = new Intent("play");
             Intent resumeIntent = new Intent("resume");
@@ -692,12 +696,14 @@ public class SpeechService extends Service {
             mediaStyle.setShowActionsInCompactView(1, 2);
             builder.setStyle(mediaStyle);
 
-            Notification notification =  builder.build();
-
-
-            //notificationManager.notify(7, notification);
-
-            this.startForeground(android.os.Process.myPid(), notification);
+            Notification notification = builder.build();
+            if (isForegroundService == false) {
+                this.startForeground(android.os.Process.myPid(), notification);
+                isForegroundService = true;
+            }
+            else {
+                notificationManager.notify("speech_service", 7, notification);
+            }
         }
     }
 
