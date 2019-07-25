@@ -34,6 +34,7 @@ import cn.xylink.mting.speech.event.SpeechReadyEvent;
 import cn.xylink.mting.speech.event.SpeechResumeEvent;
 import cn.xylink.mting.speech.event.SpeechStartEvent;
 import cn.xylink.mting.speech.event.SpeechStopEvent;
+import cn.xylink.mting.ui.activity.MainActivity;
 
 
 public class SpeechService extends Service {
@@ -614,14 +615,18 @@ public class SpeechService extends Service {
     private void initNotification() {
 
         synchronized (this) {
-            //Intent intent = new Intent(this, MainActivity.class);
-            //PendingIntent pendingIntent = PendingIntent.getActivity(this, 1, intent, 0);
+
             Article currentArticle = this.speechList.getCurrent();
             if (currentArticle == null) {
                 return;
             }
 
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            PendingIntent pendingIntent = PendingIntent.getActivity(this, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
             Notification.Builder builder = new Notification.Builder(this)
+                    .setContentIntent(pendingIntent)
                     .setSmallIcon(R.mipmap.ic_launcher)
                     .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.notification_album))
                     .setTicker(currentArticle.getTitle())
