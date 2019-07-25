@@ -34,6 +34,7 @@ public class SplashActivity extends BasePresenterActivity implements CheckTokenC
     private final int SPLASH_TIME = 3000;
     private long startTime;
     private long endTime;
+
     @Override
     protected void preView() {
         setContentView(R.layout.activity_splash);
@@ -53,6 +54,7 @@ public class SplashActivity extends BasePresenterActivity implements CheckTokenC
     @Override
     protected void initTitleBar() {
     }
+
     private void initPermission() {
 
         ArrayList<String> toApplyList = new ArrayList<String>();
@@ -74,7 +76,7 @@ public class SplashActivity extends BasePresenterActivity implements CheckTokenC
         String tmpList[] = new String[toApplyList.size()];
         if (!toApplyList.isEmpty()) {
             ActivityCompat.requestPermissions(this, toApplyList.toArray(tmpList), 123);
-        }else{
+        } else {
             startTime = SystemClock.elapsedRealtime();
             CheckTokenRequest requset = new CheckTokenRequest();
             requset.doSign();
@@ -106,7 +108,7 @@ public class SplashActivity extends BasePresenterActivity implements CheckTokenC
 
     @Override
     public void onCheckTokenSuccess(BaseResponse<UserInfo> response) {
-            endTime = SystemClock.elapsedRealtime();
+        endTime = SystemClock.elapsedRealtime();
 //        if (Build.VERSION.SDK_INT < 23) {
 //            startActivity(new Intent(SplashActivity.this, GuideActivity.class));
 //            finish();
@@ -119,12 +121,12 @@ public class SplashActivity extends BasePresenterActivity implements CheckTokenC
         msg.obj = response.code;
         msg.what = SUCCESS;
         long takeTime = endTime - startTime;
-        L.v("(takeTime < SPLASH_TIME",(takeTime < SPLASH_TIME));
-        if(takeTime < SPLASH_TIME){
+        L.v("(takeTime < SPLASH_TIME", (takeTime < SPLASH_TIME));
+        if (takeTime < SPLASH_TIME) {
             takeTime = (SPLASH_TIME - takeTime);
-            L.v("takeTime",takeTime);
-            mHandler.sendMessageDelayed(msg,takeTime);
-        }else{
+            L.v("takeTime", takeTime);
+            mHandler.sendMessageDelayed(msg, takeTime);
+        } else {
             mHandler.sendMessage(msg);
         }
     }
@@ -138,12 +140,12 @@ public class SplashActivity extends BasePresenterActivity implements CheckTokenC
         msg.what = ERROR;
 
         long takeTime = endTime - startTime;
-        L.v("(takeTime < SPLASH_TIME",(takeTime < SPLASH_TIME));
-        if(takeTime < SPLASH_TIME){
+        L.v("(takeTime < SPLASH_TIME", (takeTime < SPLASH_TIME));
+        if (takeTime < SPLASH_TIME) {
             takeTime = (SPLASH_TIME - takeTime);
-            L.v("takeTime",takeTime);
-            mHandler.sendMessageDelayed(msg,takeTime);
-        }else{
+            L.v("takeTime", takeTime);
+            mHandler.sendMessageDelayed(msg, takeTime);
+        } else {
             mHandler.sendMessage(msg);
         }
     }
@@ -155,45 +157,36 @@ public class SplashActivity extends BasePresenterActivity implements CheckTokenC
         @Override
         public boolean handleMessage(Message msg) {
             final int code = (int) msg.obj;
-            switch (msg.what)
-            {
+            switch (msg.what) {
                 case SUCCESS:
                     switch (code) {
                         case 200:
                             startActivity(new Intent(SplashActivity.this, MainActivity.class));
                             finish();
                             break;
-                        default:
-                            L.v("Build.VERSION.SDK_INT", Build.VERSION.SDK_INT);
-                            if (Build.VERSION.SDK_INT < 23) {
-                                if (FileCache.getInstance().isGuideFirst()) {
-                                    FileCache.getInstance().setHasGuide();
-                                    startActivity(new Intent(SplashActivity.this, GuideActivity.class));
-                                    finish();
-                                } else {
-                                    startActivity(new Intent(SplashActivity.this, LoginActivity.class));
-                                    finish();
-                                }
-                            } else {
-                                initPermission();
-                            }
-                            break;
                     }
                     break;
                 case ERROR:
-                    if (FileCache.getInstance().isGuideFirst()) {
-                        FileCache.getInstance().setHasGuide();
-                        startActivity(new Intent(SplashActivity.this, GuideActivity.class));
-                        finish();
-                    } else {
-                        if (TextUtils.isEmpty(ContentManager.getInstance().getLoginToken())) {
-                            startActivity(new Intent(SplashActivity.this, LoginActivity.class));
+                    if (code != -999) {
+                        if (FileCache.getInstance().isGuideFirst()) {
+                            FileCache.getInstance().setHasGuide();
+                            startActivity(new Intent(SplashActivity.this, GuideActivity.class));
                             finish();
                         } else {
-                            startActivity(new Intent(SplashActivity.this, MainActivity.class));
-                            finish();
+                            if (TextUtils.isEmpty(ContentManager.getInstance().getLoginToken())) {
+                                startActivity(new Intent(SplashActivity.this, LoginActivity.class));
+                                finish();
+                            } else {
+                                startActivity(new Intent(SplashActivity.this, MainActivity.class));
+                                finish();
+                            }
                         }
+                    }else
+                    {
+                        startActivity(new Intent(SplashActivity.this, LoginActivity.class));
+                        finish();
                     }
+
                     break;
             }
             return false;
@@ -201,8 +194,9 @@ public class SplashActivity extends BasePresenterActivity implements CheckTokenC
     });
 
 
-    public void startActivity()
-    {
+
+
+    public void startGuide() {
 
     }
 

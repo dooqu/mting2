@@ -181,6 +181,7 @@ public class LoginPwdActivity extends BasePresenterActivity implements LoginCont
     @Override
     public void onLoginError(int code, String errorMsg) {
         Toast.makeText(this,errorMsg,Toast.LENGTH_SHORT).show();
+
     }
 
 }
