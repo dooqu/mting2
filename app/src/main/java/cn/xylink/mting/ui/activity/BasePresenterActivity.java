@@ -82,7 +82,6 @@ public abstract class BasePresenterActivity<T extends BasePresenter> extends Bas
                 || this.getComponentName().getClassName().equals(SearchActivity.class.getName())
                 || this.getComponentName().getClassName().equals(ArticleDetailActivity.class.getName())) {
             CharSequence copy = getCopy(this);
-            L.v(!TextUtils.isEmpty(copy),copy.toString().startsWith("http://"),copy.toString().startsWith("https://"));
             if (!TextUtils.isEmpty(copy) && (copy.toString().startsWith("http://") || copy.toString().startsWith("https://"))) {
                 for (String s : tCopy)
                     if (s.equals(copy.toString()))
