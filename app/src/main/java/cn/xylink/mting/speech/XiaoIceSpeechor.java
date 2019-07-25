@@ -25,6 +25,7 @@ public abstract class XiaoIceSpeechor implements Speechor {
         String fragmentText;
         String audioUrl;
         SpeechTextFragmentState fragmentState;
+        int retryCount = 0;
 
         public SpeechTextFragment() {
             this.fragmentState = SpeechTextFragmentState.TextReady;
@@ -162,7 +163,7 @@ public abstract class XiaoIceSpeechor implements Speechor {
                 case Error:
                     if (isSegumentCurrentToPlay == true) {
                         this.state = SpeechorState.SpeechorStateReady;
-                        this.onError(-100, "加载错误");
+                        this.onError(-100, "分片加载错误");
                     }
                     return;
 
@@ -172,14 +173,13 @@ public abstract class XiaoIceSpeechor implements Speechor {
                     }
 
                     XiaoIceTTSAudioLoader loader = new XiaoIceTTSAudioLoader();
-                    loader.textToSpeech(fragment.getFragmentText(), speed, new LoaderResult(fragment) {
+                    LoaderResult loaderCallback = new LoaderResult(fragment) {
                         @Override
                         public void invoke(int errorCode, String message, String audioUrl) {
                             synchronized (XiaoIceSpeechor.this) {
                                 if (errorCode == 0) {
                                     this.fragment.setFragmentState(SpeechTextFragmentState.AudioReady);
                                     this.fragment.setAudioUrl(audioUrl);
-
                                     if (this.fragment == XiaoIceSpeechor.this.speechTextFragments.get(fragmentIndex)) {
                                         if (state == SpeechorState.SpeechorStateLoadding) {
                                             //定性
@@ -190,12 +190,22 @@ public abstract class XiaoIceSpeechor implements Speechor {
                                     }
                                 }
                                 else {
-                                    this.fragment.setFragmentState(SpeechTextFragmentState.Error);
-                                    this.fragment.setFragmentText(message);
+                                    if (++this.fragment.retryCount > 3) {
+                                        this.fragment.setFragmentState(SpeechTextFragmentState.Error);
+                                        this.fragment.setFragmentText(message);
+                                        if (this.fragment == XiaoIceSpeechor.this.speechTextFragments.get(frameIndex)) {
+                                            state = SpeechorState.SpeechorStateReady;
+                                            onError(errorCode, "分片加载错误");
+                                        }
+                                    }
+                                    else {
+                                        loader.textToSpeech(fragment.getFragmentText(), speed, this);
+                                    }
                                 }
                             } // end synchornized
                         } // end invoke
-                    });
+                    };
+                    loader.textToSpeech(fragment.getFragmentText(), speed, loaderCallback);
                     fragment.setFragmentState(SpeechTextFragmentState.AudioLoadding);
                     break;
 
@@ -369,6 +379,7 @@ public abstract class XiaoIceSpeechor implements Speechor {
             mediaPlayer.stop();
         }
         mediaPlayer.release();
+        isReleased = true;
     }
 
     @Override
@@ -407,6 +418,7 @@ public abstract class XiaoIceSpeechor implements Speechor {
         clearCachedFragmentsAudio();
         //设定好速度后，用新速度播放该片段
         if (state == SpeechorState.SpeechorStatePlaying) {
+            pause();
             seekAndPlay(fragmentIndex);
         }
     }
