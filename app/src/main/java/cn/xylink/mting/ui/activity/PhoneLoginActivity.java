@@ -1,10 +1,14 @@
 package cn.xylink.mting.ui.activity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -51,6 +55,8 @@ public class PhoneLoginActivity extends BasePresenterActivity implements GetCode
 
     }
 
+
+
     @Override
     public void showLoading() {
         super.showLoading();
@@ -86,6 +92,12 @@ public class PhoneLoginActivity extends BasePresenterActivity implements GetCode
                     mBtnNext.setBackground(getResources().getDrawable(R.drawable.bg_phone_default_btn));
                     ivDelEt.setVisibility(View.GONE);
                 }
+            }
+        });
+        etPhone.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return false;
             }
         });
     }
