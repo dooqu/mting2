@@ -1,14 +1,17 @@
 package cn.xylink.mting.ui;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.os.Build;
+import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
+import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 
 import java.util.ArrayList;
@@ -103,8 +106,11 @@ public class SplashActivity extends BasePresenterActivity implements CheckTokenC
             CheckTokenRequest requset = new CheckTokenRequest();
             requset.doSign();
             tokenPresenter.onCheckToken(requset);
+        }else{
+            finish();
         }
     }
+
 
     @Override
     public void onCheckTokenSuccess(BaseResponse<UserInfo> response) {
