@@ -10,7 +10,6 @@ public class SpeechHelper {
 
     static HashSet<Character> SplitSymbols = new HashSet<>();
 
-
     static {
         SplitSymbols.add('，');
         SplitSymbols.add('。');

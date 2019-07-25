@@ -5,6 +5,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -13,6 +14,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
@@ -32,6 +34,7 @@ import cn.xylink.mting.speech.event.SpeechReadyEvent;
 import cn.xylink.mting.speech.event.SpeechResumeEvent;
 import cn.xylink.mting.speech.event.SpeechStartEvent;
 import cn.xylink.mting.speech.event.SpeechStopEvent;
+import cn.xylink.mting.ui.activity.MainActivity;
 
 
 public class SpeechService extends Service {
@@ -98,8 +101,11 @@ public class SpeechService extends Service {
 
     BroadcastReceiver receiver;
 
+    boolean isForegroundService;
 
     static int executeCode = 0;
+
+    boolean isReleased;
 
 
     public class SpeechBinder extends Binder {
@@ -126,22 +132,28 @@ public class SpeechService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        return super.onStartCommand(intent, flags, startId);
+        return START_STICKY;
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-
         Log.d("SPEECH", "SpeechService.onDestroy");
+        isReleased = true;
         unregisterReceiver(receiver);
         speechor.reset();
         speechor.release();
         articleDataProvider.release();
+        this.stopForeground(true);
+        if (countdownTimer != null) {
+            countdownTimer.cancel();
+        }
     }
 
 
     private void initService() {
+        isForegroundService = false;
+        isReleased = false;
         serviceState = SpeechServiceState.Ready;
         articleDataProvider = new ArticleDataProvider(this);
         notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
@@ -150,6 +162,9 @@ public class SpeechService extends Service {
             @Override
             public void onStateChanged(SpeechorState speakerState) {
                 synchronized (SpeechService.this) {
+                    if (isReleased) {
+                        return;
+                    }
                     Article currentArticle = SpeechService.this.getSelected();
                     if (currentArticle == null) {
                         return;
@@ -228,7 +243,9 @@ public class SpeechService extends Service {
 
     private void onSpeechProgress(Article article, int fragmentIndex, List<String> fragments) {
         article.setProgress((float) fragmentIndex / (float) fragments.size());
+        //if(fragmentIndex == 0) {
         initNotification();
+        // }
         EventBus.getDefault().post(new SpeechProgressEvent(fragmentIndex, fragments, article));
     }
 
@@ -410,7 +427,7 @@ public class SpeechService extends Service {
 
 
     public synchronized Article play(String articleId) {
-        if(articleId == null) {
+        if (articleId == null) {
             return null;
         }
         Article previousArt = this.speechList.getCurrent();
@@ -470,7 +487,7 @@ public class SpeechService extends Service {
 
             synchronized (this) {
                 //如果回来之后，状态已经不是Loadding，说明在加载期间，有了其他操作
-                if (serviceState != SpeechServiceState.Loadding || articleUpdated != this.speechList.getCurrent()) {
+                if (isReleased || serviceState != SpeechServiceState.Loadding || articleUpdated != this.speechList.getCurrent()) {
                     return;
                 }
                 //网络加载动作结束后，走到这里， 要判定下errorCode
@@ -598,15 +615,18 @@ public class SpeechService extends Service {
     private void initNotification() {
 
         synchronized (this) {
-            //Intent intent = new Intent(this, MainActivity.class);
-            //PendingIntent pendingIntent = PendingIntent.getActivity(this, 1, intent, 0);
+
             Article currentArticle = this.speechList.getCurrent();
             if (currentArticle == null) {
                 return;
             }
 
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            PendingIntent pendingIntent = PendingIntent.getActivity(this, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
             Notification.Builder builder = new Notification.Builder(this)
+                    .setContentIntent(pendingIntent)
                     .setSmallIcon(R.mipmap.ic_launcher)
                     .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.notification_album))
                     .setTicker(currentArticle.getTitle())
@@ -616,6 +636,22 @@ public class SpeechService extends Service {
                     .setAutoCancel(true)
                     .setShowWhen(false);
 
+            //>= android 8.0 设定foregroundService的前提是notification要创建channel，并关掉channel的sound
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                String channelId = "cn.xylink.mting";
+                String channelName = "SPEECH_SERVICE_NAME";
+                NotificationChannel notificationChannel = null;
+                notificationChannel = new NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_HIGH);
+                notificationChannel.enableLights(true);
+                notificationChannel.setLightColor(Color.RED);
+                notificationChannel.setShowBadge(true);
+                notificationChannel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
+                notificationChannel.setSound(null, null);
+                NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                manager.createNotificationChannel(notificationChannel);
+                //设定builder的channelid
+                builder.setChannelId(channelId);
+            }
 
             Intent playIntent = new Intent("play");
             Intent resumeIntent = new Intent("resume");
@@ -674,7 +710,8 @@ public class SpeechService extends Service {
             mediaStyle.setShowActionsInCompactView(1, 2);
             builder.setStyle(mediaStyle);
 
-            notificationManager.notify(7, builder.build());
+            Notification notification = builder.build();
+            this.startForeground(android.os.Process.myPid(), notification);
         }
     }
 

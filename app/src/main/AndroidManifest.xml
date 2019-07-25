@@ -4,7 +4,9 @@
     package="cn.xylink.mting">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
@@ -52,6 +54,7 @@
         <activity
             android:name=".ui.activity.MainActivity"
             android:windowSoftInputMode="adjustNothing"
+            android:launchMode="singleTop"
             android:screenOrientation="portrait"></activity>
         <activity
             android:name=".ui.activity.SpeechServicActivity"

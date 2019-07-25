@@ -1,6 +1,8 @@
 package cn.xylink.mting.ui.activity;
 
 import android.graphics.Color;
+import android.os.Bundle;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import butterknife.BindView;
@@ -12,6 +14,14 @@ public class ArticleDetailEditActivity extends BasePresenterActivity {
     TextView tvInclude;
     @BindView(R.id.tv_right)
     TextView tvRight;
+    @BindView(R.id.et_article_title)
+    EditText etArticleTitle;
+    @BindView(R.id.et_article_content)
+    EditText etArticleContent;
+
+    private String id;
+    private String title;
+    private String content;
 
     @Override
     protected void preView() {
@@ -25,7 +35,12 @@ public class ArticleDetailEditActivity extends BasePresenterActivity {
 
     @Override
     protected void initData() {
-
+        Bundle extras = getIntent().getExtras();
+        id = extras.getString("id");
+        title = extras.getString("title");
+        content = extras.getString("content");
+        etArticleTitle.setText(title);
+        etArticleContent.setText(content);
     }
 
     @Override

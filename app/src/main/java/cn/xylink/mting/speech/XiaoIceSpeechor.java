@@ -369,6 +369,7 @@ public abstract class XiaoIceSpeechor implements Speechor {
             mediaPlayer.stop();
         }
         mediaPlayer.release();
+        isReleased = true;
     }
 
     @Override
