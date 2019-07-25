@@ -10,17 +10,28 @@ import com.lzy.okgo.OkGo;
 import com.lzy.okgo.https.HttpsUtils;
 import com.lzy.okgo.interceptor.HttpLoggingInterceptor;
 
+import org.apaches.commons.codec.binary.Base64;
+
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 import cn.xylink.mting.bean.Article;
+import cn.xylink.mting.bean.UpgradeInfo;
+import cn.xylink.mting.contract.IBaseView;
+import cn.xylink.mting.model.UpgradeRequest;
+import cn.xylink.mting.model.UpgradeResponse;
+import cn.xylink.mting.model.data.Const;
+import cn.xylink.mting.model.data.OkGoUtils;
 import cn.xylink.mting.openapi.QQApi;
 import cn.xylink.mting.openapi.WXapi;
 import cn.xylink.mting.speech.SpeechService;
 import cn.xylink.mting.speech.data.SpeechList;
 import cn.xylink.mting.utils.ContentManager;
+import cn.xylink.mting.utils.EncryptionUtil;
+import cn.xylink.mting.utils.GsonUtil;
 import cn.xylink.mting.utils.ImageUtils;
+import cn.xylink.mting.utils.PackageUtils;
 import okhttp3.OkHttpClient;
 
 public class MTing extends Application {
@@ -34,6 +45,9 @@ public class MTing extends Application {
     {
         return activityManager;
     }
+
+    public static UpgradeInfo CurrentUpgradeInfo;
+    public static long CurrentUpgradeDownloadId;
 
 
     @Override
@@ -51,20 +65,14 @@ public class MTing extends Application {
         initOkHttp();
         ImageUtils.init(this);
 
-//        List<Article> list = new ArrayList<>();
-//
-//        for (int i = 0; i < 6; i++) {
-//            Article article = new Article();
-//            article.setArticleId(String.valueOf(i));
-//            article.setTitle("习总书记讲话" + i);
-//            article.setTextBody("习近平强调，当前国际形势正在发生巨大变化");
-//
-//            list.add(article);
-//        }
-//
-//        SpeechList.getInstance().appendArticles(list);
-
         startService(new Intent(this, SpeechService.class));
+
+        try {
+            checkOnlineUpgrade();
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     private void initOkHttp() {
@@ -82,6 +90,59 @@ public class MTing extends Application {
         builder.hostnameVerifier(HttpsUtils.UnSafeHostnameVerifier);
         OkGo.getInstance().init(this)
                 .setOkHttpClient(builder.build());
+
+
+
+    }
+
+
+    private void checkOnlineUpgrade() throws Exception{
+        UpgradeRequest request = new UpgradeRequest();
+        request.setAppPackage(PackageUtils.getAppPackage(this));
+        request.setAppVersion(PackageUtils.getAppVersionName(this));
+        request.setVersionId(PackageUtils.getAppVersionCode(this));
+        request.setChannel(new Base64().encodeToString(EncryptionUtil.encrypt("_91", EncryptionUtil.getPublicKey(Const.publicKey))));
+        request.setDeviceId("001001");
+        request.doSign();
+
+        OkGoUtils.getInstance().postData(
+                new IBaseView() {
+                    @Override
+                    public void showLoading() {
+                    }
+
+                    @Override
+                    public void hideLoading() {
+                    }
+                },
+                "http://test.xylink.cn/api/v2/version/check",
+                GsonUtil.GsonString(request), UpgradeResponse.class,
+                new OkGoUtils.ICallback<UpgradeResponse>() {
+                    @Override
+                    public void onStart() {
+                    }
+
+                    @Override
+                    public void onFailure(int code, String errorMsg) {
+
+                        Log.d("SPEECH", "onFailure:" + errorMsg);
+                        CurrentUpgradeInfo = null;
+                    }
+
+                    @Override
+                    public void onSuccess(UpgradeResponse response) {
+                        Log.d("SPEECH", "onSuccess:" + response.getCode() + "," + response.getMessage());
+                        Log.d("SPEECH", "upgrade.onSuccess");
+                        if ( (response.getCode() ==  200 || response.getCode() == 201) && response.getData() != null) {
+                            CurrentUpgradeInfo = response.getData();
+                        }
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Log.d("xylink", "onComplete");
+                    }
+                });
     }
 
     public static MTing getInstance() {

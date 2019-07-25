@@ -9,6 +9,9 @@ public class UpgradeInfo {
     String appContent;
     String appName;
     String channel;
+    String fileMd5;
+    int needUpdate;
+    long createDate;
 
 
     public String getId() {
@@ -74,5 +77,30 @@ public class UpgradeInfo {
 
     public void setChannel(String channel) {
         this.channel = channel;
+    }
+
+
+    public int getNeedUpdate() {
+        return needUpdate;
+    }
+
+    public void setNeedUpdate(int needUpdate) {
+        this.needUpdate = needUpdate;
+    }
+
+    public String getFileMd5() {
+        return fileMd5;
+    }
+
+    public void setFileMd5(String fileMd5) {
+        this.fileMd5 = fileMd5;
+    }
+
+    public long getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(long createDate) {
+        this.createDate = createDate;
     }
 }

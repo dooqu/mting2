@@ -2,87 +2,96 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    
+
     <RelativeLayout
+        android:id="@+id/banner"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_alignParentTop="true"
-        android:id="@+id/banner">
+        android:layout_height="45dp"
+        android:layout_alignParentTop="true">
+
         <ImageView
-            android:layout_width="26dp"
-            android:layout_height="26dp"
-            android:src="@mipmap/back"
+            android:layout_width="52dp"
+            android:layout_height="22dp"
+            android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="15dp"
-            android:layout_alignParentLeft="true"/>
+            android:layout_marginLeft="0dp"
+            android:src="@mipmap/back"
+            android:id="@+id/about_version_back"/>
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="关于轩辕听"
-            android:textSize="20sp"
             android:layout_centerInParent="true"
-            android:layout_centerHorizontal="true"/>
+            android:layout_centerHorizontal="true"
+            android:text="关于轩辕听"
+            android:textSize="19sp"
+            android:textColor="#333333"/>
     </RelativeLayout>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1px"
-        android:minHeight="1px"
-        android:layout_marginTop="51dp"
-        android:background="#c0c0c0"></View>
+        android:layout_marginTop="46dp"
+        android:background="#c0c0c0"
+        android:minHeight="1px"></View>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
+        android:layout_marginTop="70dp"
         android:orientation="vertical"
-        android:paddingRight="20dp"
         android:paddingLeft="20dp"
-        android:layout_marginTop="90dp">
+        android:paddingRight="20dp">
 
         <View
             android:layout_width="120dp"
             android:layout_height="120dp"
-            android:background="@mipmap/notification_album"
             android:layout_gravity="center"
+            android:background="@mipmap/notification_album"
             android:backgroundTintMode="src_over"></View>
 
         <TextView
+            android:id="@+id/txtCurrentVersion"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
             android:layout_gravity="center_horizontal"
-            android:textFontWeight="bold"
-            android:text="V1.0.0"/>
+            android:text="V1.0.0"
+            android:textColor="#333333"
+            android:textSize="19sp" />
 
         <View
             android:layout_width="match_parent"
             android:layout_height="1px"
-            android:minHeight="1px"
-            android:layout_marginTop="40dp"
-            android:background="@color/black_overlay"
-            android:layout_marginBottom="20dp"></View>
+            android:layout_marginTop="30dp"
+            android:layout_marginBottom="2dp"
+            android:background="#c0c0c0"
+            android:minHeight="1px"></View>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:orientation="horizontal">
 
             <TextView
                 android:layout_width="0px"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
+                android:gravity="center"
                 android:text="版本更新"
-                android:textSize="14sp"/>
+                android:textColor="#666666"
+                android:textSize="16sp" />
 
             <TextView
+                android:id="@+id/versionName"
                 android:layout_width="0px"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="3"
-                android:gravity="end"
+                android:gravity="center_vertical|end"
+                android:textColor="#666666"
                 android:text="恭喜您，已经是最新版本"
-                android:id="@+id/versionName"/>
+                android:textSize="16sp" />
         </LinearLayout>
     </LinearLayout>
 

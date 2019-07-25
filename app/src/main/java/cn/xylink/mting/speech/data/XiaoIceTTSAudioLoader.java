@@ -111,6 +111,7 @@ public class XiaoIceTTSAudioLoader {
                             });
                         }
                         catch (JSONException jsonError) {
+                            Log.d("SPEECH", "testToSpeechError:" + jsonError.toString());
                             if(result != null) {
                                 result.invoke(-100, jsonError.getMessage(), null);
                             }

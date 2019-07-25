@@ -64,6 +64,7 @@ public class ArticleDataProvider {
                     Thread.sleep(1500);
                 }
                 catch (InterruptedException ex) {
+                    ex.printStackTrace();
                 }
 
                 handler.post(new Runnable() {
