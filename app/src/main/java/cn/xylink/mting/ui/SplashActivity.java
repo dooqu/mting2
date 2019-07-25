@@ -109,26 +109,26 @@ public class SplashActivity extends BasePresenterActivity implements CheckTokenC
     @Override
     public void onCheckTokenSuccess(BaseResponse<UserInfo> response) {
         endTime = SystemClock.elapsedRealtime();
-//        if (Build.VERSION.SDK_INT < 23) {
-//            startActivity(new Intent(SplashActivity.this, GuideActivity.class));
-//            finish();
-//        } else {
-//            startActivity(new Intent(SplashActivity.this, LoginActivity.class));
-//            finish();
-//        }
-        L.v("code", response.code);
-        Message msg = mHandler.obtainMessage();
-        msg.obj = response.code;
-        msg.what = SUCCESS;
-        long takeTime = endTime - startTime;
-        L.v("(takeTime < SPLASH_TIME", (takeTime < SPLASH_TIME));
-        if (takeTime < SPLASH_TIME) {
-            takeTime = (SPLASH_TIME - takeTime);
-            L.v("takeTime", takeTime);
-            mHandler.sendMessageDelayed(msg, takeTime);
+        if (Build.VERSION.SDK_INT < 23) {
+            startActivity(new Intent(SplashActivity.this, GuideActivity.class));
+            finish();
         } else {
-            mHandler.sendMessage(msg);
+            startActivity(new Intent(SplashActivity.this, LoginActivity.class));
+            finish();
         }
+        L.v("code", response.code);
+//        Message msg = mHandler.obtainMessage();
+//        msg.obj = response.code;
+//        msg.what = SUCCESS;
+//        long takeTime = endTime - startTime;
+//        L.v("(takeTime < SPLASH_TIME", (takeTime < SPLASH_TIME));
+//        if (takeTime < SPLASH_TIME) {
+//            takeTime = (SPLASH_TIME - takeTime);
+//            L.v("takeTime", takeTime);
+//            mHandler.sendMessageDelayed(msg, takeTime);
+//        } else {
+//            mHandler.sendMessage(msg);
+//        }
     }
 
     @Override
