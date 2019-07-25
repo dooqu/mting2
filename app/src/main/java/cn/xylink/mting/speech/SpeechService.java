@@ -102,8 +102,9 @@ public class SpeechService extends Service {
 
     boolean isForegroundService;
 
-
     static int executeCode = 0;
+
+    boolean isReleased;
 
 
     public class SpeechBinder extends Binder {
@@ -130,24 +131,28 @@ public class SpeechService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        return super.onStartCommand(intent, flags, startId);
+        return START_STICKY;
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-
         Log.d("SPEECH", "SpeechService.onDestroy");
+        isReleased = true;
         unregisterReceiver(receiver);
         speechor.reset();
         speechor.release();
         articleDataProvider.release();
+        this.stopForeground(true);
+        if (countdownTimer != null) {
+            countdownTimer.cancel();
+        }
     }
 
 
     private void initService() {
-
         isForegroundService = false;
+        isReleased = false;
         serviceState = SpeechServiceState.Ready;
         articleDataProvider = new ArticleDataProvider(this);
         notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
@@ -156,6 +161,9 @@ public class SpeechService extends Service {
             @Override
             public void onStateChanged(SpeechorState speakerState) {
                 synchronized (SpeechService.this) {
+                    if (isReleased) {
+                        return;
+                    }
                     Article currentArticle = SpeechService.this.getSelected();
                     if (currentArticle == null) {
                         return;
@@ -234,7 +242,9 @@ public class SpeechService extends Service {
 
     private void onSpeechProgress(Article article, int fragmentIndex, List<String> fragments) {
         article.setProgress((float) fragmentIndex / (float) fragments.size());
+        //if(fragmentIndex == 0) {
         initNotification();
+        // }
         EventBus.getDefault().post(new SpeechProgressEvent(fragmentIndex, fragments, article));
     }
 
@@ -476,7 +486,7 @@ public class SpeechService extends Service {
 
             synchronized (this) {
                 //如果回来之后，状态已经不是Loadding，说明在加载期间，有了其他操作
-                if (serviceState != SpeechServiceState.Loadding || articleUpdated != this.speechList.getCurrent()) {
+                if (isReleased || serviceState != SpeechServiceState.Loadding || articleUpdated != this.speechList.getCurrent()) {
                     return;
                 }
                 //网络加载动作结束后，走到这里， 要判定下errorCode
@@ -621,7 +631,6 @@ public class SpeechService extends Service {
                     .setAutoCancel(true)
                     .setShowWhen(false);
 
-
             //>= android 8.0 设定foregroundService的前提是notification要创建channel，并关掉channel的sound
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
                 String channelId = "cn.xylink.mting";
@@ -697,13 +706,7 @@ public class SpeechService extends Service {
             builder.setStyle(mediaStyle);
 
             Notification notification = builder.build();
-            if (isForegroundService == false) {
-                this.startForeground(android.os.Process.myPid(), notification);
-                isForegroundService = true;
-            }
-            else {
-                notificationManager.notify("speech_service", 7, notification);
-            }
+            this.startForeground(android.os.Process.myPid(), notification);
         }
     }
 
