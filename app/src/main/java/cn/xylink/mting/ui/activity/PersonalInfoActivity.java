@@ -1,5 +1,6 @@
 package cn.xylink.mting.ui.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -45,12 +46,13 @@ import cn.xylink.mting.model.UploadHeadImgRequest;
 import cn.xylink.mting.presenter.UploadHeadImgPresenter;
 import cn.xylink.mting.presenter.UploadUserInfoPresenter;
 import cn.xylink.mting.ui.dialog.BottomSelectDialog;
+import cn.xylink.mting.ui.dialog.BottomSelectSexDialog;
 import cn.xylink.mting.utils.ContentManager;
 import cn.xylink.mting.utils.ImageUtils;
 import cn.xylink.mting.utils.L;
 import cn.xylink.mting.utils.MD5;
 
-public class PersonalInfoActivity extends BasePresenterActivity implements TakePhoto.TakeResultListener, InvokeListener, UploadHeadImgContact.IUploadHeadImgView,BottomSelectDialog.OnBottomSelectDialogListener, UpdateUserInfoContact.IUpdateUserView {
+public class PersonalInfoActivity extends BasePresenterActivity implements TakePhoto.TakeResultListener, InvokeListener, UploadHeadImgContact.IUploadHeadImgView, BottomSelectDialog.OnBottomSelectDialogListener, UpdateUserInfoContact.IUpdateUserView {
 
 
     @BindView(R.id.tv_include_title)
@@ -81,7 +83,7 @@ public class PersonalInfoActivity extends BasePresenterActivity implements TakeP
     private int sex = -1;
 
     private InputMethodManager im;
-
+    private String oldNiceName;
 
 
     public TakePhoto getTakePhoto() {
@@ -105,8 +107,7 @@ public class PersonalInfoActivity extends BasePresenterActivity implements TakeP
     }
 
 
-    public void setUserInfo()
-    {
+    public void setUserInfo() {
         UserInfo info = ContentManager.getInstance().getUserInfo();
         L.v(info);
         if (info != null) {
@@ -115,11 +116,12 @@ public class PersonalInfoActivity extends BasePresenterActivity implements TakeP
             if (!TextUtils.isEmpty(info.getNickName())) {
                 tvNickName.setText(info.getNickName());
                 etNickName.setText(info.getNickName());
+                oldNiceName = info.getNickName();
             }
             if (info.getSex() == 0)
                 tvSex.setText("男");
             else if (info.getSex() == 1)
-               tvSex.setText("女");
+                tvSex.setText("女");
             else
                 tvSex.setText(R.string.please_choose);
         }
@@ -143,8 +145,9 @@ public class PersonalInfoActivity extends BasePresenterActivity implements TakeP
                     tvNickName.setVisibility(View.VISIBLE);
                     etNickName.setVisibility(View.GONE);
 
-                    if(!TextUtils.isEmpty(etNickName.getText())){
+                    if (!TextUtils.isEmpty(etNickName.getText()) && !oldNiceName.equals(etNickName.getText().toString())) {
                         tvNickName.setText(etNickName.getText());
+                        oldNiceName = etNickName.getText().toString();
                         UpdateUserRequset requset = new UpdateUserRequset();
                         requset.setSex(ContentManager.getInstance().getUserInfo().getSex());
                         requset.setNickName(etNickName.getText().toString());
@@ -167,13 +170,20 @@ public class PersonalInfoActivity extends BasePresenterActivity implements TakeP
         UserInfo user = ContentManager.getInstance().getUserInfo();
         if (!TextUtils.isEmpty(user.getHeadImg()))
             ImageUtils.get().loadCircle(ivhead, headImgUrl);
-        if(!TextUtils.isEmpty(user.getNickName()))
+        if (!TextUtils.isEmpty(user.getNickName()))
             tvNickName.setText(user.getNickName());
     }
 
     @Override
     protected void initTitleBar() {
 
+    }
+
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        hideSoftInput(etNickName);
     }
 
     @OnClick({R.id.btn_left,
@@ -187,6 +197,7 @@ public class PersonalInfoActivity extends BasePresenterActivity implements TakeP
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_left:
+                hideSoftInput(etNickName);
                 finish();
                 break;
             case R.id.iv_arrow_1:
@@ -203,21 +214,38 @@ public class PersonalInfoActivity extends BasePresenterActivity implements TakeP
                 etNickName.setVisibility(View.VISIBLE);
                 ivArrow3.setVisibility(View.GONE);
                 etNickName.setSelection(etNickName.getText().length());
+                etNickName.findFocus();
+                etNickName.setFocusable(true);
+                etNickName.setFocusableInTouchMode(true);
+                etNickName.requestFocus();
                 showSoftInput(etNickName);
                 break;
 
         }
     }
 
+
+    public void hideSoftInput(View view) {
+        try {
+            InputMethodManager imm = (InputMethodManager) getApplicationContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
     private void showPicSelectDialog() {
+        hideSoftInput(etNickName);
         BottomSelectDialog dialog = new BottomSelectDialog(this);
         dialog.setData(getResources().getString(R.string.take_pic), getResources().getString(R.string.select_album), this);
         dialog.show();
     }
 
     private void showSexSelectDialog() {
-        BottomSelectDialog dialog = new BottomSelectDialog(this);
-        dialog.setData("男", R.mipmap.sex_0, "女", R.mipmap.sex_1, new BottomSelectDialog.OnBottomSelectDialogListener() {
+        hideSoftInput(etNickName);
+        BottomSelectSexDialog dialog = new BottomSelectSexDialog(this);
+        dialog.setData("男", "女", new BottomSelectSexDialog.OnBottomSelectDialogListener() {
             @Override
             public void onFirstClick() {
                 sex = 0;
@@ -242,8 +270,7 @@ public class PersonalInfoActivity extends BasePresenterActivity implements TakeP
         dialog.show();
     }
 
-    public void updateUser(UpdateUserRequset requset)
-    {
+    public void updateUser(UpdateUserRequset requset) {
         requset.doSign();
         userInfoPresenter.onUpdateUser(requset);
     }
@@ -288,7 +315,7 @@ public class PersonalInfoActivity extends BasePresenterActivity implements TakeP
         data.put("token", request.token);
         data.put("timestamp", request.timestamp + "");
         String sign = MD5.md5crypt(BaseRequest.desKey + request.token + request.timestamp);
-        data.put("sign",sign);
+        data.put("sign", sign);
         headImgPresenter.uploadHeadImg(data, file);
     }
 
@@ -370,11 +397,12 @@ public class PersonalInfoActivity extends BasePresenterActivity implements TakeP
         picFile = null;
         takePhoto.onPickFromGallery();
     }
+
     @Override
     public void onUpdateUserSuccess(BaseResponse<UserInfo> response) {
         L.v(response.data);
         UserInfo userInfo = ContentManager.getInstance().getUserInfo();
-        switch (sex){
+        switch (sex) {
             case 0:
                 tvSex.setText(R.string.sex_man);
                 userInfo.setSex(sex);
@@ -384,7 +412,7 @@ public class PersonalInfoActivity extends BasePresenterActivity implements TakeP
                 userInfo.setSex(sex);
                 break;
         }
-        if(!TextUtils.isEmpty(etNickName.getText())) {
+        if (!TextUtils.isEmpty(etNickName.getText())) {
             userInfo.setNickName(etNickName.getText().toString());
         }
         ContentManager.getInstance().setUserInfo(userInfo);
@@ -392,6 +420,6 @@ public class PersonalInfoActivity extends BasePresenterActivity implements TakeP
 
     @Override
     public void onUpdateUserError(int code, String errorMsg) {
-        L.v(code,errorMsg);
+        L.v(code, errorMsg);
     }
 }
