@@ -2,13 +2,17 @@ package cn.xylink.mting.ui.activity;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 import cn.xylink.mting.R;
+import cn.xylink.mting.contract.EditArticleContact;
+import cn.xylink.mting.presenter.EditArticlePresenter;
 
-public class ArticleDetailEditActivity extends BasePresenterActivity {
+public class ArticleDetailEditActivity extends BasePresenterActivity implements EditArticleContact.ICreateView {
 
     @BindView(R.id.tv_include_title)
     TextView tvInclude;
@@ -22,6 +26,7 @@ public class ArticleDetailEditActivity extends BasePresenterActivity {
     private String id;
     private String title;
     private String content;
+    private EditArticlePresenter mEditArticlePresenter;
 
     @Override
     protected void preView() {
@@ -30,7 +35,8 @@ public class ArticleDetailEditActivity extends BasePresenterActivity {
 
     @Override
     protected void initView() {
-
+        mEditArticlePresenter = (EditArticlePresenter) createPresenter(EditArticlePresenter.class);
+        mEditArticlePresenter.attachView(this);
     }
 
     @Override
@@ -48,5 +54,21 @@ public class ArticleDetailEditActivity extends BasePresenterActivity {
         tvInclude.setText("编辑文章");
         tvRight.setText("保存");
         tvRight.setTextColor(Color.parseColor("#488def"));
+    }
+
+    @OnClick(R.id.tv_right)
+    void onSave(View v) {
+        mEditArticlePresenter.onEditNote(id, etArticleTitle.getText().toString(), etArticleContent.getText().toString());
+    }
+
+    @Override
+    public void onSaveSuccess() {
+        finish();
+        toastShort("保存成功");
+    }
+
+    @Override
+    public void onSaveError() {
+        toastShort("保存失败");
     }
 }
