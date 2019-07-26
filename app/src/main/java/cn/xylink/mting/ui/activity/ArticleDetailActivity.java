@@ -440,19 +440,16 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
             SpeechProgressEvent spe = (SpeechProgressEvent) event;
             showContent(spe);
             float progress = (float) spe.getFrameIndex() / (float) spe.getTextFragments().size();
-            apbMain.setProgress((int) (progress * 100));
-            skProgress.setProgress((int) (progress * 100));
+            setArticleProgress(progress, 100);
         } else if (event instanceof SpeechEndEvent) {
             isPlaying = 0;
             float progress = 1;
-            apbMain.setProgress((int) (progress * 100));
-            skProgress.setProgress((int) (progress * 100));
+            setArticleProgress(progress, 100);
         } else if (event instanceof SpeechErrorEvent) {
             isPlaying = 0;
             ivPlayBarBtn.setImageResource(R.mipmap.ico_playing);
             float progress = 0;
-            apbMain.setProgress((int) (progress * 100));
-            skProgress.setProgress((int) (progress * 100));
+            setArticleProgress(progress, 100);
         } else if (event instanceof SpeechPauseEvent) {
             isPlaying = -1;
             ivPlayBarBtn.setImageResource(R.mipmap.ico_playing);
@@ -463,14 +460,19 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
         }
     }
 
+    private void setArticleProgress(float progress, int base) {
+        apbMain.setProgress((int) (progress * base));
+        skProgress.setProgress((int) (progress * base));
+        svContent.scrollTo(0, (int) (svContent.getPivotY() * progress));
+    }
+
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSpeechStop(SpeechStopEvent event) {
         isPlaying = 0;
         ivPlayBarBtn.setImageResource(R.mipmap.ico_playing);
         float progress = 0;
-        apbMain.setProgress((int) (progress * 100));
-        skProgress.setProgress((int) (progress * 100));
+        setArticleProgress(progress, 100);
     }
 
     private void showContent(SpeechProgressEvent spe) {
