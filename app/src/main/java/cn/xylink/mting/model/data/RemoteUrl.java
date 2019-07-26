@@ -83,51 +83,60 @@ public class RemoteUrl {
     public static String bindThirdPlatformUrl() {
         return URL_BASE + "/api/user/v2/third_platform/bind";
     }
+
     //手动创建文章接口
-    public static String inputCreateUrl(){
+    public static String inputCreateUrl() {
         return URL_BASE + "/api/sct/v1/article/input_create";
     }
+
     //链接创建文章接口
-    public static String linkCreateUrl(){
+    public static String linkCreateUrl() {
         return URL_BASE + "/api/sct/v2/article/push";
     }
+
     //检查链接文章接口
-    public static String checkLinkUrl(){
+    public static String checkLinkUrl() {
         return URL_BASE + "/api/sct/v1/article/check";
     }
 
     //加入待读
-    public static String addUnreadUrl(){
+    public static String addUnreadUrl() {
         return URL_BASE + "/api/sct/v1/article/unread/add";
     }
 
     //加入待读
-    public static String getSearchUrl(){
+    public static String getSearchUrl() {
         return URL_BASE + "/api/search/v1/article";
     }
+
     //文章详情
-    public static String getArticDetailUrl(){
+    public static String getArticDetailUrl() {
         return URL_BASE + "/api/sct/v2/article/detail";
     }
 
     //反馈接口
-    public static String feedbackUrl(){
+    public static String feedbackUrl() {
         return URL_BASE + "/api/sct/v1/feedback/save";
     }
 
     //上传头像
-    public static String upLoadHeadImg(){
+    public static String upLoadHeadImg() {
         return URL_BASE + "/api/user/v1/upload/head";
     }
+
     //更新用户
-    public static String updateUserUrl(){
+    public static String updateUserUrl() {
         return URL_BASE + "/api/user/v2/user/update";
     }
 
     //获取分享链接
-    public static String getShareUrl(){
+    public static String getShareUrl() {
         return URL_BASE + "/html/download/xylinkting.html";
     }
 
+    //文章编辑
+    public static String getEditArticle() {
+        return URL_BASE + "/api/sct/v1/article/edit";
+    }
 
 }

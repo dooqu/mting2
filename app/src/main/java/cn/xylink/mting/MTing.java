@@ -26,7 +26,9 @@ import cn.xylink.mting.model.data.OkGoUtils;
 import cn.xylink.mting.openapi.QQApi;
 import cn.xylink.mting.openapi.WXapi;
 import cn.xylink.mting.speech.SpeechService;
+import cn.xylink.mting.speech.Speechor;
 import cn.xylink.mting.speech.data.SpeechList;
+import cn.xylink.mting.speech.data.XiaoIceTTSAudioLoader;
 import cn.xylink.mting.utils.ContentManager;
 import cn.xylink.mting.utils.EncryptionUtil;
 import cn.xylink.mting.utils.GsonUtil;
@@ -41,8 +43,7 @@ public class MTing extends Application {
 
     public static ActivityManager activityManager = null;
 
-    public  static ActivityManager getActivityManager()
-    {
+    public static ActivityManager getActivityManager() {
         return activityManager;
     }
 
@@ -59,7 +60,8 @@ public class MTing extends Application {
         WXapi.init(this);
         try {
             QQApi.init(this);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             Log.e("Application", "qq未安装");
         }
         initOkHttp();
@@ -91,18 +93,16 @@ public class MTing extends Application {
         OkGo.getInstance().init(this)
                 .setOkHttpClient(builder.build());
 
-
-
     }
 
 
-    private void checkOnlineUpgrade() throws Exception{
+    private void checkOnlineUpgrade() throws Exception {
         UpgradeRequest request = new UpgradeRequest();
         request.setAppPackage(PackageUtils.getAppPackage(this));
         request.setAppVersion(PackageUtils.getAppVersionName(this));
         request.setVersionId(PackageUtils.getAppVersionCode(this));
         request.setChannel(new Base64().encodeToString(EncryptionUtil.encrypt("_91", EncryptionUtil.getPublicKey(Const.publicKey))));
-        request.setDeviceId("001001");
+        request.setDeviceId(PackageUtils.getWifiMac(this));
         request.doSign();
 
         OkGoUtils.getInstance().postData(
@@ -133,7 +133,7 @@ public class MTing extends Application {
                     public void onSuccess(UpgradeResponse response) {
                         Log.d("SPEECH", "onSuccess:" + response.getCode() + "," + response.getMessage());
                         Log.d("SPEECH", "upgrade.onSuccess");
-                        if ( (response.getCode() ==  200 || response.getCode() == 201) && response.getData() != null) {
+                        if ((response.getCode() == 200 || response.getCode() == 201) && response.getData() != null) {
                             CurrentUpgradeInfo = response.getData();
                         }
                     }
@@ -154,5 +154,4 @@ public class MTing extends Application {
     public void onTerminate() {
         super.onTerminate();
     }
-
 }

@@ -38,7 +38,7 @@ import cn.xylink.mting.ui.activity.MainActivity;
 
 
 public class SpeechService extends Service {
-    static String TAG = "xylink";
+    static String TAG = "SPEECH";
 
     /*SpeechService的状态描述类型*/
     public enum SpeechServiceState {
@@ -137,17 +137,17 @@ public class SpeechService extends Service {
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
         Log.d("SPEECH", "SpeechService.onDestroy");
+        super.onDestroy();
         isReleased = true;
         unregisterReceiver(receiver);
         speechor.reset();
         speechor.release();
         articleDataProvider.release();
-        this.stopForeground(true);
         if (countdownTimer != null) {
             countdownTimer.cancel();
         }
+        this.stopForeground(true);
     }
 
 
