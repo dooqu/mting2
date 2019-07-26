@@ -62,7 +62,7 @@ import cn.xylink.mting.utils.T;
 import cn.xylink.mting.widget.ArcProgressBar;
 
 public class MainActivity extends BasePresenterActivity implements BaseMainTabFragment.OnControllerListener, MainAddMenuPop.OnMainAddMenuListener
-        , DelMainContract.IDelMainView, AddUnreadContract.IAddUnreadView {
+        , DelMainContract.IDelMainView, AddUnreadContract.IAddUnreadView, ViewPager.OnPageChangeListener {
 
     @BindView(R.id.tv_main_tabar_unread)
     TextView mUnreadTextView;
@@ -106,8 +106,8 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
 
     @Override
     protected void initView() {
-        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-        mDrawerLayout.setFocusableInTouchMode(false);
+//        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+//        mDrawerLayout.setFocusableInTouchMode(false);
         mPresenter = (DelMainPresenter) createPresenter(DelMainPresenter.class);
         mPresenter.attachView(this);
         mAddUreadPresenter = (AddUnreadPresenter) createPresenter(AddUnreadPresenter.class);
@@ -122,6 +122,7 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
         mTabAdapter = new MainFragmentAdapter(getSupportFragmentManager());
         mViewPager.setAdapter(mTabAdapter);
         mViewPager.setOffscreenPageLimit(TAB_ENUM.values().length);
+        mViewPager.addOnPageChangeListener(this);
         EventBus.getDefault().register(this);
         proxy = new SpeechServiceProxy(this) {
             @Override
@@ -259,6 +260,31 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
 
     }
 
+    @Override
+    public void onPageScrolled(int i, float v, int i1) {
+
+    }
+
+    @Override
+    public void onPageSelected(int i) {
+        switch (i) {
+            case 0:
+                doAnim(mCurrentTabIndex, TAB_ENUM.TAB_UNREAD,false);
+                break;
+            case 1:
+                doAnim(mCurrentTabIndex, TAB_ENUM.TAB_READED,false);
+                break;
+            case 2:
+                doAnim(mCurrentTabIndex, TAB_ENUM.TAB_LOVE,false);
+                break;
+        }
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int i) {
+
+    }
+
     public enum TAB_ENUM {
         TAB_UNREAD(0, null),
         TAB_READED(1, null),
@@ -302,13 +328,13 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
                 pop.showAsRight(mAddImageView);
                 break;
             case R.id.tv_main_tabar_unread:
-                doAnim(mCurrentTabIndex, TAB_ENUM.TAB_UNREAD);
+                doAnim(mCurrentTabIndex, TAB_ENUM.TAB_UNREAD,true);
                 break;
             case R.id.tv_main_tabar_readed:
-                doAnim(mCurrentTabIndex, TAB_ENUM.TAB_READED);
+                doAnim(mCurrentTabIndex, TAB_ENUM.TAB_READED,true);
                 break;
             case R.id.tv_main_tabar_love:
-                doAnim(mCurrentTabIndex, TAB_ENUM.TAB_LOVE);
+                doAnim(mCurrentTabIndex, TAB_ENUM.TAB_LOVE,true);
                 break;
             case R.id.rl_main_play_bar_play:
                 L.v("============================");
@@ -367,9 +393,10 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
         }
     }
 
-    private void doAnim(TAB_ENUM currentTab, TAB_ENUM goTab) {
+    private void doAnim(TAB_ENUM currentTab, TAB_ENUM goTab, boolean isGoPage) {
         if (currentTab != goTab) {
-            mViewPager.setCurrentItem(goTab.getIndex(), false);
+            if (isGoPage)
+                mViewPager.setCurrentItem(goTab.getIndex(), false);
             mCurrentTabIndex = goTab;
             ObjectAnimator ccAnimator = ObjectAnimator.ofInt(currentTab.getView(), "textColor", 0xff333333, 0xff999999);
             ccAnimator.setEvaluator(new ArgbEvaluator());
