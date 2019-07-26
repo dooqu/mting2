@@ -86,6 +86,33 @@ public class SpeechHelper {
         }
     }
 
+
+    public static List<String> prepareTextFragments(String textBody, int singleFragmentMaxSize, boolean tryAloneFragment) {
+        List<String> fragments = prepareTextFragments(textBody, tryAloneFragment);
+        if(tryAloneFragment) {
+            return fragments;
+        }
+        List<String> fragmentsGenerated = new ArrayList<>();
+        int newFragmentSizeTotal = 0;
+        StringBuilder newFragmentText = new StringBuilder();
+        for(int index = 0, size = fragments.size(); index < size; ++index) {
+            int currFragSize = fragments.get(index).length();
+            //如果当前的fragment 加不上去， 加上就超标， 同时， 当前不是空串;那就先把之前的加上去
+            if(newFragmentSizeTotal + currFragSize >= singleFragmentMaxSize && newFragmentSizeTotal != 0) {
+                fragmentsGenerated.add(newFragmentText.toString());
+                newFragmentText.delete(0, newFragmentText.length());
+                newFragmentSizeTotal = 0;
+            }
+            newFragmentSizeTotal += currFragSize;
+            newFragmentText.append(fragments.get(index));
+
+            if(index == (size - 1)) {
+                fragmentsGenerated.add(newFragmentText.toString());
+            }
+        }
+        return fragmentsGenerated;
+    }
+
     public int seekFragmentIndex(float seekPercentage, List<String> fragments) {
         if (fragments == null || fragments.size() == 0) {
             return -1;

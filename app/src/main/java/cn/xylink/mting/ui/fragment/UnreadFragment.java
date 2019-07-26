@@ -1,6 +1,7 @@
 package cn.xylink.mting.ui.fragment;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -67,15 +68,24 @@ public class UnreadFragment extends BaseMainTabFragment implements UnreadAdapter
 
     @Override
     protected void initData() {
+        L.v();
         if (SpeechList.getInstance().getArticleList() == null || SpeechList.getInstance().getArticleList().size() < 1) {
             UnreadRequest request = new UnreadRequest();
 //        request.setUpdateAt(0l);
             request.setEvent(UnreadRequest.ENENT_TYPE.refresh.name());
             request.doSign();
             mPresenter.createUnread(request);
+        }else {
+            if (mControllerListener!=null)
+            mControllerListener.onDataSuccess();
         }
     }
 
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);L.v();
+    }
 
     @Override
     public void onItemClick(Article article) {

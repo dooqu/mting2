@@ -4,6 +4,8 @@ import android.animation.AnimatorSet;
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
 import android.content.Intent;
+import android.graphics.drawable.Animatable;
+import android.graphics.drawable.Drawable;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.os.Bundle;
@@ -29,7 +31,6 @@ import java.util.Queue;
 import butterknife.BindView;
 import butterknife.OnClick;
 import cn.xylink.mting.R;
-import cn.xylink.mting.base.BaseActivity;
 import cn.xylink.mting.bean.AddLoveRequest;
 import cn.xylink.mting.bean.AddUnreadRequest;
 import cn.xylink.mting.bean.Article;
@@ -92,10 +93,12 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
     private MainFragmentAdapter mTabAdapter;
     private DelMainPresenter mPresenter;
     private AddUnreadPresenter mAddUreadPresenter;
+    private Drawable mPauseDrawable;
+    private Drawable mPlayDrawable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+        super.onCreate(savedInstanceState);L.v();
 //        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
     }
 
@@ -112,6 +115,8 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
         mPresenter.attachView(this);
         mAddUreadPresenter = (AddUnreadPresenter) createPresenter(AddUnreadPresenter.class);
         mAddUreadPresenter.attachView(this);
+        mPauseDrawable = this.getDrawable(R.drawable.nsvg_pause);
+        mPlayDrawable = this.getDrawable(R.drawable.nsvg_play);
     }
 
     @Override
@@ -147,7 +152,7 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
             float progress = art.getProgress();
             mProgress.setProgress((int) (progress * 100));
         }
-        mPlayBarTitle.setText(TextUtils.isEmpty(playTitle) ? "" : playTitle);
+        mPlayBarTitle.setText(TextUtils.isEmpty(playTitle) ? "还没有文章，快去添加吧~" : playTitle);
 
     }
 
@@ -169,6 +174,7 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
 
     @Override
     public void onDataSuccess() {
+        L.v();
         setPlayBarState();
     }
 
@@ -269,13 +275,13 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
     public void onPageSelected(int i) {
         switch (i) {
             case 0:
-                doAnim(mCurrentTabIndex, TAB_ENUM.TAB_UNREAD,false);
+                doAnim(mCurrentTabIndex, TAB_ENUM.TAB_UNREAD, false);
                 break;
             case 1:
-                doAnim(mCurrentTabIndex, TAB_ENUM.TAB_READED,false);
+                doAnim(mCurrentTabIndex, TAB_ENUM.TAB_READED, false);
                 break;
             case 2:
-                doAnim(mCurrentTabIndex, TAB_ENUM.TAB_LOVE,false);
+                doAnim(mCurrentTabIndex, TAB_ENUM.TAB_LOVE, false);
                 break;
         }
     }
@@ -328,13 +334,13 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
                 pop.showAsRight(mAddImageView);
                 break;
             case R.id.tv_main_tabar_unread:
-                doAnim(mCurrentTabIndex, TAB_ENUM.TAB_UNREAD,true);
+                doAnim(mCurrentTabIndex, TAB_ENUM.TAB_UNREAD, true);
                 break;
             case R.id.tv_main_tabar_readed:
-                doAnim(mCurrentTabIndex, TAB_ENUM.TAB_READED,true);
+                doAnim(mCurrentTabIndex, TAB_ENUM.TAB_READED, true);
                 break;
             case R.id.tv_main_tabar_love:
-                doAnim(mCurrentTabIndex, TAB_ENUM.TAB_LOVE,true);
+                doAnim(mCurrentTabIndex, TAB_ENUM.TAB_LOVE, true);
                 break;
             case R.id.rl_main_play_bar_play:
                 L.v("============================");
@@ -379,15 +385,27 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
                     }
                     if (!TextUtils.isEmpty(aid))
                         service.play(aid);
-                    mPlayBtnSRC.setImageDrawable(getResources().getDrawable(R.mipmap.ico_pause));
+//                    mPlayBtnSRC.setImageDrawable(getResources().getDrawable(R.mipmap.ico_pause));
+                    if (mPlayBtnSRC.getDrawable() != mPlayDrawable) {
+                        mPlayBtnSRC.setImageDrawable(mPlayDrawable);
+                        ((Animatable) mPlayDrawable).start();
+                    }
                     break;
                 case SpeechorStatePaused:
                     if (service.resume())
-                        mPlayBtnSRC.setImageDrawable(getResources().getDrawable(R.mipmap.ico_pause));
+//                        mPlayBtnSRC.setImageDrawable(getResources().getDrawable(R.mipmap.ico_pause));
+                    if (mPlayBtnSRC.getDrawable() != mPlayDrawable) {
+                        mPlayBtnSRC.setImageDrawable(mPlayDrawable);
+                        ((Animatable) mPlayDrawable).start();
+                    }
                     break;
                 case SpeechorStatePlaying:
                     if (service.pause())
-                        mPlayBtnSRC.setImageDrawable(getResources().getDrawable(R.mipmap.ico_playing));
+//                        mPlayBtnSRC.setImageDrawable(getResources().getDrawable(R.mipmap.ico_playing));
+                    if (mPlayBtnSRC.getDrawable() != mPauseDrawable) {
+                        mPlayBtnSRC.setImageDrawable(mPauseDrawable);
+                        ((Animatable) mPauseDrawable).start();
+                    }
                     break;
             }
         }
@@ -455,7 +473,11 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
         float progress = (float) event.getFrameIndex() / (float) event.getTextFragments().size();
         mProgress.setProgress((int) (progress * 100));
 
-        mPlayBtnSRC.setImageDrawable(getResources().getDrawable(R.mipmap.ico_pause));
+//        mPlayBtnSRC.setImageDrawable(getResources().getDrawable(R.mipmap.ico_pause));
+        if (mPlayBtnSRC.getDrawable() != mPlayDrawable) {
+            mPlayBtnSRC.setImageDrawable(mPlayDrawable);
+            ((Animatable) mPlayDrawable).start();
+        }
         mLoadingProgress.setVisibility(View.INVISIBLE);
         mProgress.setVisibility(View.VISIBLE);
     }
@@ -478,7 +500,11 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSpeechStop(SpeechStopEvent event) {
         L.v(event);
-        mPlayBtnSRC.setImageDrawable(getResources().getDrawable(R.mipmap.ico_playing));
+//        mPlayBtnSRC.setImageDrawable(getResources().getDrawable(R.mipmap.ico_playing));
+        if (mPlayBtnSRC.getDrawable() != mPauseDrawable) {
+            mPlayBtnSRC.setImageDrawable(mPauseDrawable);
+            ((Animatable) mPauseDrawable).start();
+        }
         if (event.getStopReason() == SpeechStopEvent.StopReason.ListIsNull) {
             mPlayBarTitle.setText("还没有文章，快去添加吧~");
         }
@@ -489,7 +515,11 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSpeechPause(SpeechPauseEvent event) {
         L.v(event);
-        mPlayBtnSRC.setImageDrawable(getResources().getDrawable(R.mipmap.ico_playing));
+//        mPlayBtnSRC.setImageDrawable(getResources().getDrawable(R.mipmap.ico_playing));
+        if (mPlayBtnSRC.getDrawable() != mPauseDrawable) {
+            mPlayBtnSRC.setImageDrawable(mPauseDrawable);
+            ((Animatable) mPauseDrawable).start();
+        }
         mLoadingProgress.setVisibility(View.INVISIBLE);
         mProgress.setVisibility(View.VISIBLE);
     }
@@ -497,7 +527,11 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSpeechResume(SpeechResumeEvent event) {
         L.v(event);
-        mPlayBtnSRC.setImageDrawable(getResources().getDrawable(R.mipmap.ico_pause));
+//        mPlayBtnSRC.setImageDrawable(getResources().getDrawable(R.mipmap.ico_pause));
+        if (mPlayBtnSRC.getDrawable() != mPlayDrawable) {
+            mPlayBtnSRC.setImageDrawable(mPlayDrawable);
+            ((Animatable) mPlayDrawable).start();
+        }
     }
 
 
@@ -510,7 +544,11 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSpeechError(SpeechErrorEvent event) {
         L.v(event);
-        mPlayBtnSRC.setImageDrawable(getResources().getDrawable(R.mipmap.ico_playing));
+//        mPlayBtnSRC.setImageDrawable(getResources().getDrawable(R.mipmap.ico_playing));
+        if (mPlayBtnSRC.getDrawable() != mPauseDrawable) {
+            mPlayBtnSRC.setImageDrawable(mPauseDrawable);
+            ((Animatable) mPauseDrawable).start();
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -529,6 +567,9 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
             ShareAppDialog dialog = new ShareAppDialog(this);
             dialog.show();
         }
+        if (event.isStopSer()&&service!=null){
+            service.clearSpeechList();
+        }
     }
 
     @Override
@@ -539,6 +580,7 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        L.v();
         EventBus.getDefault().unregister(this);
         proxy.unbind();
     }

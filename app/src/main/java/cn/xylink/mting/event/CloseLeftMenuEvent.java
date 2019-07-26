@@ -9,6 +9,7 @@ package cn.xylink.mting.event;
  */
 public class CloseLeftMenuEvent {
     private boolean isShare =false;
+    private boolean isStopSer = false;
 
     public boolean isShare() {
         return isShare;
@@ -16,5 +17,13 @@ public class CloseLeftMenuEvent {
 
     public void setShare(boolean share) {
         isShare = share;
+    }
+
+    public boolean isStopSer() {
+        return isStopSer;
+    }
+
+    public void setStopSer(boolean stopSer) {
+        isStopSer = stopSer;
     }
 }

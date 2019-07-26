@@ -137,11 +137,11 @@
 
                 <ImageView
                     android:id="@+id/iv_play_bar_btn"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
+                    android:layout_width="33dp"
+                    android:layout_height="33dp"
                     android:layout_centerInParent="true"
                     android:layout_gravity="center_vertical"
-                    android:src="@mipmap/ico_playing" />
+                    android:src="@drawable/nsvg_play" />
 
                 <cn.xylink.mting.widget.ArcProgressBar
                     android:id="@+id/apb_main_play_progress"
