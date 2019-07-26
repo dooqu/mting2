@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.RadioGroup;
 import android.widget.Switch;
+import android.widget.TextView;
 
 import cn.xylink.mting.R;
 import cn.xylink.mting.speech.SpeechService;
@@ -45,13 +46,32 @@ public class ArticleDetailSetting extends ArticleDetailBottomDialog {
         }
         RadioGroup rgCountDown = view.findViewById(R.id.rg_count_down);
         Switch swCount = view.findViewById(R.id.sw_count);
-        if (countDownMode == SpeechService.CountDownMode.None) {
+        TextView tvTimer = view.findViewById(R.id.tv_timer);
+        if (countDownMode == null || countDownMode == SpeechService.CountDownMode.None) {
             swCount.setChecked(false);
+            rgCountDown.check(-1);
+            tvTimer.setVisibility(View.INVISIBLE);
         } else if (countDownMode == SpeechService.CountDownMode.NumberCount) {
-            rgCountDown.check(R.id.rb_current);
-        } else {
-            rgCountDown.check(R.id.rb_current);
             swCount.setChecked(true);
+            rgCountDown.check(R.id.rb_current);
+            tvTimer.setText("读完本篇后关闭");
+            tvTimer.setVisibility(View.VISIBLE);
+        } else {
+            int rgTime = ContentManager.getInstance().getRgTime();
+            swCount.setChecked(true);
+            tvTimer.setText(countDownValue+"分钟后关闭");
+            tvTimer.setVisibility(View.VISIBLE);
+            switch (rgTime) {
+                case 2:
+                    rgCountDown.check(R.id.rb_time10);
+                    break;
+                case 3:
+                    rgCountDown.check(R.id.rb_time20);
+                    break;
+                case 4:
+                    rgCountDown.check(R.id.rb_time30);
+                    break;
+            }
         }
         rgCountDown.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
