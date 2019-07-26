@@ -31,7 +31,6 @@ import java.util.Queue;
 import butterknife.BindView;
 import butterknife.OnClick;
 import cn.xylink.mting.R;
-import cn.xylink.mting.base.BaseActivity;
 import cn.xylink.mting.bean.AddLoveRequest;
 import cn.xylink.mting.bean.AddUnreadRequest;
 import cn.xylink.mting.bean.Article;
@@ -99,7 +98,7 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+        super.onCreate(savedInstanceState);L.v();
 //        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
     }
 
@@ -153,7 +152,7 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
             float progress = art.getProgress();
             mProgress.setProgress((int) (progress * 100));
         }
-        mPlayBarTitle.setText(TextUtils.isEmpty(playTitle) ? "" : playTitle);
+        mPlayBarTitle.setText(TextUtils.isEmpty(playTitle) ? "还没有文章，快去添加吧~" : playTitle);
 
     }
 
@@ -175,6 +174,7 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
 
     @Override
     public void onDataSuccess() {
+        L.v();
         setPlayBarState();
     }
 
@@ -567,6 +567,9 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
             ShareAppDialog dialog = new ShareAppDialog(this);
             dialog.show();
         }
+        if (event.isStopSer()&&service!=null){
+            service.clearSpeechList();
+        }
     }
 
     @Override
@@ -577,6 +580,7 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        L.v();
         EventBus.getDefault().unregister(this);
         proxy.unbind();
     }
