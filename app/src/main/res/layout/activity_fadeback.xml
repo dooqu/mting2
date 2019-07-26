@@ -23,6 +23,7 @@
         <Spinner
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:id="@+id/sn_type"
             android:layout_marginLeft="16dp"
             android:entries="@array/week"
             android:background="@drawable/spinner_background" />
@@ -35,6 +36,7 @@
         android:layout_marginTop="32dp"
         android:background="@drawable/bg_fadeback_button"
         android:gravity="top"
+        android:id="@+id/et_content"
         android:lineSpacingMultiplier="1.7"
         android:padding="16dp"
         android:layout_marginLeft="16dp"

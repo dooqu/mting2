@@ -8,12 +8,10 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -26,7 +24,6 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
 import cn.xylink.mting.R;
-import cn.xylink.mting.base.BaseActivity;
 import cn.xylink.mting.bean.AddLoveRequest;
 import cn.xylink.mting.bean.Article;
 import cn.xylink.mting.contract.DelMainContract;
@@ -34,7 +31,6 @@ import cn.xylink.mting.event.AddStoreSuccessEvent;
 import cn.xylink.mting.openapi.QQApi;
 import cn.xylink.mting.openapi.WXapi;
 import cn.xylink.mting.presenter.DelMainPresenter;
-import cn.xylink.mting.presenter.ReadedPresenter;
 import cn.xylink.mting.speech.SpeechService;
 import cn.xylink.mting.speech.SpeechServiceProxy;
 import cn.xylink.mting.speech.Speechor;
@@ -106,6 +102,7 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
     }
 
     private void initServiceData() {
+        getWindow().setStatusBarColor(Color.argb(0, 72, 141, 239));
         mCurrentArticle = service.getSelected();
         if (service.getState() == Speechor.SpeechorState.SpeechorStatePlaying && aid.equals(mCurrentArticle.getArticleId())) {
             if (mCurrentArticle != null && (mCurrentArticle.getInType() == 1 || TextUtils.isEmpty(mCurrentArticle.getUrl()))) {
@@ -161,6 +158,7 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
                 }
                 int a = (int) (255 * alpha);
                 llTitle.setBackgroundColor(Color.argb(a, 72, 141, 239));
+                getWindow().setStatusBarColor(Color.argb(a, 72, 141, 239));
                 Drawable drawable = ivBack.getDrawable();
                 int fk = (int) (153 + 102 * (alpha));
                 drawable.setTint(Color.rgb(fk, fk, fk));
@@ -438,19 +436,16 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
             SpeechProgressEvent spe = (SpeechProgressEvent) event;
             showContent(spe);
             float progress = (float) spe.getFrameIndex() / (float) spe.getTextFragments().size();
-            apbMain.setProgress((int) (progress * 100));
-            skProgress.setProgress((int) (progress * 100));
+            setArticleProgress(progress, 100, spe);
         } else if (event instanceof SpeechEndEvent) {
             isPlaying = 0;
             float progress = 1;
-            apbMain.setProgress((int) (progress * 100));
-            skProgress.setProgress((int) (progress * 100));
+            setArticleProgress(progress, 100, null);
         } else if (event instanceof SpeechErrorEvent) {
             isPlaying = 0;
             ivPlayBarBtn.setImageResource(R.mipmap.ico_playing);
             float progress = 0;
-            apbMain.setProgress((int) (progress * 100));
-            skProgress.setProgress((int) (progress * 100));
+            setArticleProgress(progress, 100, null);
         } else if (event instanceof SpeechPauseEvent) {
             isPlaying = -1;
             ivPlayBarBtn.setImageResource(R.mipmap.ico_playing);
@@ -461,14 +456,32 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
         }
     }
 
+    private void setArticleProgress(float progress, int base, SpeechProgressEvent spe) {
+        apbMain.setProgress((int) (progress * base));
+        skProgress.setProgress((int) (progress * base));
+        if (spe != null) {
+            List<String> textFragments = spe.getTextFragments();
+            String read = "";
+            String unread = "";
+            for (int i = 0; i < textFragments.size(); i++) {
+                if (i <= spe.getFrameIndex()) {
+                    read += textFragments.get(i);
+                } else {
+                    unread += textFragments.get(i);
+                }
+            }
+            float v = read.length() * 1f / (read.length() + unread.length());
+            svContent.scrollTo(0, (int) (svContent.getHeight() * v));
+        }
+    }
+
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSpeechStop(SpeechStopEvent event) {
         isPlaying = 0;
         ivPlayBarBtn.setImageResource(R.mipmap.ico_playing);
         float progress = 0;
-        apbMain.setProgress((int) (progress * 100));
-        skProgress.setProgress((int) (progress * 100));
+        setArticleProgress(progress, 100, null);
     }
 
     private void showContent(SpeechProgressEvent spe) {

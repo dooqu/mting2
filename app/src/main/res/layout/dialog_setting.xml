@@ -234,11 +234,13 @@
             android:layout_toRightOf="@id/tv_time_title" />
 
         <TextView
+            android:id="@+id/tv_timer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_marginRight="16dp"
-            android:text="5分钟后关闭"
+            android:text=""
+            android:visibility="invisible"
             android:textColor="#488def" />
 
     </RelativeLayout>
