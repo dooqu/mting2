@@ -77,6 +77,7 @@ public abstract class XiaoIceSpeechor implements Speechor {
     SpeechHelper speechHelper;
     MediaPlayer mediaPlayer;
     static int LOADER_QUEUE_SIZE = 5;
+    XiaoIceTTSAudioLoader ttsAudioLoader;
 
 
     public XiaoIceSpeechor() {
@@ -94,6 +95,9 @@ public abstract class XiaoIceSpeechor implements Speechor {
         mediaPlayer.setOnCompletionListener(this::onMediaFragmentComplete);
         mediaPlayer.setOnErrorListener(this::onMediaFragmentError);
 
+        //init xiaoice tts loader
+        ttsAudioLoader = new XiaoIceTTSAudioLoader();
+
         this.reset();
     }
 
@@ -106,7 +110,7 @@ public abstract class XiaoIceSpeechor implements Speechor {
         if (this.state != SpeechorState.SpeechorStateReady) {
             this.reset();
         }
-        List<String> textFragmentsNew = speechHelper.prepareTextFragments(text, false);
+        List<String> textFragmentsNew = speechHelper.prepareTextFragments(text, 100, false);
         this.textFragments.addAll(textFragmentsNew);
 
         for (int i = 0, size = textFragmentsNew.size(); i < size; i++) {
@@ -172,11 +176,13 @@ public abstract class XiaoIceSpeechor implements Speechor {
                         state = SpeechorState.SpeechorStateLoadding;
                     }
 
-                    XiaoIceTTSAudioLoader loader = new XiaoIceTTSAudioLoader();
                     LoaderResult loaderCallback = new LoaderResult(fragment) {
                         @Override
                         public void invoke(int errorCode, String message, String audioUrl) {
                             synchronized (XiaoIceSpeechor.this) {
+                                if (isReleased == true) {
+                                    return;
+                                }
                                 if (errorCode == 0) {
                                     this.fragment.setFragmentState(SpeechTextFragmentState.AudioReady);
                                     this.fragment.setAudioUrl(audioUrl);
@@ -190,22 +196,29 @@ public abstract class XiaoIceSpeechor implements Speechor {
                                     }
                                 }
                                 else {
-                                    if (++this.fragment.retryCount > 3) {
+                                    //加载失败之后的逻辑分之
+                                    if (++this.fragment.retryCount > Speechor.ERROR_RETRY_COUNT) {
                                         this.fragment.setFragmentState(SpeechTextFragmentState.Error);
                                         this.fragment.setFragmentText(message);
+                                        //如果当前播放的主控正在等待当前分片的加载结果，那么反向主动回应
                                         if (this.fragment == XiaoIceSpeechor.this.speechTextFragments.get(frameIndex)) {
-                                            state = SpeechorState.SpeechorStateReady;
-                                            onError(errorCode, "分片加载错误");
+                                            //用户在重试等待期间，可能改动了播放主控的操作，如果播放还需要继续，那么就显示错误
+                                            if (state == SpeechorState.SpeechorStateLoadding) {
+                                                state = SpeechorState.SpeechorStateReady;
+                                                onError(errorCode, "分片加载错误");
+                                            }
                                         }
                                     }
                                     else {
-                                        loader.textToSpeech(fragment.getFragmentText(), speed, this);
+                                        if (state != SpeechorState.SpeechorStateReady) {
+                                            ttsAudioLoader.textToSpeech(fragment.getFragmentText(), speed, this);
+                                        }
                                     }
                                 }
                             } // end synchornized
                         } // end invoke
                     };
-                    loader.textToSpeech(fragment.getFragmentText(), speed, loaderCallback);
+                    ttsAudioLoader.textToSpeech(fragment.getFragmentText(), speed, loaderCallback);
                     fragment.setFragmentState(SpeechTextFragmentState.AudioLoadding);
                     break;
 
@@ -369,6 +382,7 @@ public abstract class XiaoIceSpeechor implements Speechor {
             return;
         }
 
+        state = SpeechorState.SpeechorStateReady;
         XiaoIceTTSAudioLoader.cancel();
 
         mediaPlayer.setOnErrorListener(null);

@@ -7,8 +7,8 @@ android {
         minSdkVersion 21
         targetSdkVersion 28
         //versionCode改为年份两位，月份两位，日两位，次数1位
-        versionCode 1907160
-        versionName "1.0"
+        versionCode 1907261
+        versionName "2.01"
     }
     signingConfigs {
         release {
@@ -24,6 +24,7 @@ android {
             storePassword 'xylink@20180928'
         }
     }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -31,7 +32,12 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-
+    flavorDimensions "mting"
+    productFlavors {
+        mting {
+            manifestPlaceholders = [TING_CHANNEL_VALUE: "mting"]
+        }
+    }
     compileOptions {
         targetCompatibility 1.8
         sourceCompatibility 1.8

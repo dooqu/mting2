@@ -403,7 +403,9 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
 
     @OnClick(R.id.tv_next)
     void onNext(View v) {
-        service.playNext();
+        if (service.hasNext()) {
+            service.playNext();
+        }
     }
 
     @OnClick({R.id.rl_main_play_bar_play, R.id.iv_play_bar_btn})
