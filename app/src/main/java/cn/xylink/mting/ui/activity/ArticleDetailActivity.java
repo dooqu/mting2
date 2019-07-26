@@ -8,12 +8,10 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -26,7 +24,6 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
 import cn.xylink.mting.R;
-import cn.xylink.mting.base.BaseActivity;
 import cn.xylink.mting.bean.AddLoveRequest;
 import cn.xylink.mting.bean.Article;
 import cn.xylink.mting.contract.DelMainContract;
@@ -34,7 +31,6 @@ import cn.xylink.mting.event.AddStoreSuccessEvent;
 import cn.xylink.mting.openapi.QQApi;
 import cn.xylink.mting.openapi.WXapi;
 import cn.xylink.mting.presenter.DelMainPresenter;
-import cn.xylink.mting.presenter.ReadedPresenter;
 import cn.xylink.mting.speech.SpeechService;
 import cn.xylink.mting.speech.SpeechServiceProxy;
 import cn.xylink.mting.speech.Speechor;
@@ -440,16 +436,16 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
             SpeechProgressEvent spe = (SpeechProgressEvent) event;
             showContent(spe);
             float progress = (float) spe.getFrameIndex() / (float) spe.getTextFragments().size();
-            setArticleProgress(progress, 100);
+            setArticleProgress(progress, 100, spe);
         } else if (event instanceof SpeechEndEvent) {
             isPlaying = 0;
             float progress = 1;
-            setArticleProgress(progress, 100);
+            setArticleProgress(progress, 100, null);
         } else if (event instanceof SpeechErrorEvent) {
             isPlaying = 0;
             ivPlayBarBtn.setImageResource(R.mipmap.ico_playing);
             float progress = 0;
-            setArticleProgress(progress, 100);
+            setArticleProgress(progress, 100, null);
         } else if (event instanceof SpeechPauseEvent) {
             isPlaying = -1;
             ivPlayBarBtn.setImageResource(R.mipmap.ico_playing);
@@ -460,10 +456,23 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
         }
     }
 
-    private void setArticleProgress(float progress, int base) {
+    private void setArticleProgress(float progress, int base, SpeechProgressEvent spe) {
         apbMain.setProgress((int) (progress * base));
         skProgress.setProgress((int) (progress * base));
-        svContent.scrollTo(0, (int) (svContent.getPivotY() * progress));
+        if (spe != null) {
+            List<String> textFragments = spe.getTextFragments();
+            String read = "";
+            String unread = "";
+            for (int i = 0; i < textFragments.size(); i++) {
+                if (i <= spe.getFrameIndex()) {
+                    read += textFragments.get(i);
+                } else {
+                    unread += textFragments.get(i);
+                }
+            }
+            float v = read.length() * 1f / (read.length() + unread.length());
+            svContent.scrollTo(0, (int) (svContent.getHeight() * v));
+        }
     }
 
 
@@ -472,7 +481,7 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
         isPlaying = 0;
         ivPlayBarBtn.setImageResource(R.mipmap.ico_playing);
         float progress = 0;
-        setArticleProgress(progress, 100);
+        setArticleProgress(progress, 100, null);
     }
 
     private void showContent(SpeechProgressEvent spe) {
