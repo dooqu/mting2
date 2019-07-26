@@ -287,7 +287,8 @@ public class PersonalInfoActivity extends BasePresenterActivity implements TakeP
         options.setAllowedGestures(UCropActivity.SCALE, UCropActivity.ROTATE, UCropActivity.ALL);
         options.setHideBottomControls(true);
         options.setToolbarColor(ActivityCompat.getColor(this, R.color.white));
-        options.setStatusBarColor(ActivityCompat.getColor(this, R.color.white));
+        options.setStatusBarColor(ActivityCompat.getColor(this, R.color.black_overlay));
+        options.setToolbarWidgetColor(ActivityCompat.getColor(this, android.R.color.black));
         options.setFreeStyleCropEnabled(false);
         uCrop.withOptions(options);
         uCrop.withAspectRatio(1, 1);
