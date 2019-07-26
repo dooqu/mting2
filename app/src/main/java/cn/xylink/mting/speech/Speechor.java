@@ -3,6 +3,7 @@ package cn.xylink.mting.speech;
 import java.util.List;
 
 public interface Speechor {
+    static int ERROR_RETRY_COUNT = 3;
     @FunctionalInterface
     public static interface StateChangedListener
     {

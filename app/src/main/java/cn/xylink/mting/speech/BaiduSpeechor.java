@@ -117,7 +117,8 @@ public abstract class BaiduSpeechor implements Speechor {
                         return;
                     }
                     int currentFragmentRetryCount = fragmentErrorMap.containsKey(fragmentIndex) ? fragmentErrorMap.get(fragmentIndex) : 0;
-                    if (++currentFragmentRetryCount <= 3) {
+                    //发生错误后，回来要看一下当前的播放状态
+                    if (state == SpeechorState.SpeechorStatePlaying && ++currentFragmentRetryCount <= Speechor.ERROR_RETRY_COUNT) {
                         Log.d("SPEECH", "BaiduSpeechor.onError:" + speechError.description + ", retrycount=" + currentFragmentRetryCount);
                         fragmentErrorMap.put(fragmentIndex, currentFragmentRetryCount);
                         seekAndPlay(fragmentIndex);
@@ -140,7 +141,7 @@ public abstract class BaiduSpeechor implements Speechor {
             if (this.state != SpeechorState.SpeechorStateReady) {
                 this.reset();
             }
-            List<String> textFragmentsNew = speechOperator.prepareTextFragments(text, false);
+            List<String> textFragmentsNew = speechOperator.prepareTextFragments(text, 100, false);
             this.textFragments.addAll(textFragmentsNew);
         }
     }
@@ -255,7 +256,6 @@ public abstract class BaiduSpeechor implements Speechor {
 
         this.speed = speed;
         speechSynthesizer.setParam(SpeechSynthesizer.PARAM_SPEED, paramSpeed);
-
         if (this.state == SpeechorState.SpeechorStatePlaying) {
             this.pause();
             this.seekAndPlay(fragmentIndex);
