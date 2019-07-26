@@ -77,6 +77,7 @@ public abstract class XiaoIceSpeechor implements Speechor {
     SpeechHelper speechHelper;
     MediaPlayer mediaPlayer;
     static int LOADER_QUEUE_SIZE = 5;
+    XiaoIceTTSAudioLoader ttsAudioLoader;
 
 
     public XiaoIceSpeechor() {
@@ -93,6 +94,9 @@ public abstract class XiaoIceSpeechor implements Speechor {
         mediaPlayer.setOnPreparedListener(this::onMediaFragmentPrepared);
         mediaPlayer.setOnCompletionListener(this::onMediaFragmentComplete);
         mediaPlayer.setOnErrorListener(this::onMediaFragmentError);
+
+        //init xiaoice tts loader
+        ttsAudioLoader = new XiaoIceTTSAudioLoader();
 
         this.reset();
     }
@@ -172,7 +176,6 @@ public abstract class XiaoIceSpeechor implements Speechor {
                         state = SpeechorState.SpeechorStateLoadding;
                     }
 
-                    XiaoIceTTSAudioLoader loader = new XiaoIceTTSAudioLoader();
                     LoaderResult loaderCallback = new LoaderResult(fragment) {
                         @Override
                         public void invoke(int errorCode, String message, String audioUrl) {
@@ -190,22 +193,23 @@ public abstract class XiaoIceSpeechor implements Speechor {
                                     }
                                 }
                                 else {
-                                    if (++this.fragment.retryCount > 3) {
+                                    if (++this.fragment.retryCount > 3 || isReleased) {
                                         this.fragment.setFragmentState(SpeechTextFragmentState.Error);
                                         this.fragment.setFragmentText(message);
+                                        //如果当前播放进度正在等当前的分片
                                         if (this.fragment == XiaoIceSpeechor.this.speechTextFragments.get(frameIndex)) {
                                             state = SpeechorState.SpeechorStateReady;
                                             onError(errorCode, "分片加载错误");
                                         }
                                     }
                                     else {
-                                        loader.textToSpeech(fragment.getFragmentText(), speed, this);
+                                        ttsAudioLoader.textToSpeech(fragment.getFragmentText(), speed, this);
                                     }
                                 }
                             } // end synchornized
                         } // end invoke
                     };
-                    loader.textToSpeech(fragment.getFragmentText(), speed, loaderCallback);
+                    ttsAudioLoader.textToSpeech(fragment.getFragmentText(), speed, loaderCallback);
                     fragment.setFragmentState(SpeechTextFragmentState.AudioLoadding);
                     break;
 
