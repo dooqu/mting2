@@ -106,6 +106,7 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
     }
 
     private void initServiceData() {
+        getWindow().setStatusBarColor(Color.argb(0, 72, 141, 239));
         mCurrentArticle = service.getSelected();
         if (service.getState() == Speechor.SpeechorState.SpeechorStatePlaying && aid.equals(mCurrentArticle.getArticleId())) {
             if (mCurrentArticle != null && (mCurrentArticle.getInType() == 1 || TextUtils.isEmpty(mCurrentArticle.getUrl()))) {
@@ -161,6 +162,7 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
                 }
                 int a = (int) (255 * alpha);
                 llTitle.setBackgroundColor(Color.argb(a, 72, 141, 239));
+                getWindow().setStatusBarColor(Color.argb(a, 72, 141, 239));
                 Drawable drawable = ivBack.getDrawable();
                 int fk = (int) (153 + 102 * (alpha));
                 drawable.setTint(Color.rgb(fk, fk, fk));

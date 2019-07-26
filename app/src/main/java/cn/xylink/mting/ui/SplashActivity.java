@@ -199,14 +199,6 @@ public class SplashActivity extends BasePresenterActivity implements CheckTokenC
         }
     });
 
-
-
-
-    public void startGuide() {
-
-    }
-
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
