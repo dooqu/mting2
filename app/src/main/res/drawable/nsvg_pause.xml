@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animated-vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:drawable="@drawable/ic_npause">
+    <target
+        android:name="left"
+        android:animation="@anim/anim_left_to_top"
+        />
+    <target
+        android:animation="@anim/anim_right_to_bottom"
+        android:name="right"/>
+
+    <target
+        android:animation="@anim/anim_v_to_h"
+        android:name="group" />
+</animated-vector>
