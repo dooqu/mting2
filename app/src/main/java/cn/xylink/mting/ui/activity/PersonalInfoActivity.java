@@ -9,13 +9,11 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import com.jph.takephoto.app.TakePhoto;
@@ -53,7 +51,6 @@ import cn.xylink.mting.utils.L;
 import cn.xylink.mting.utils.MD5;
 
 public class PersonalInfoActivity extends BasePresenterActivity implements TakePhoto.TakeResultListener, InvokeListener, UploadHeadImgContact.IUploadHeadImgView, BottomSelectDialog.OnBottomSelectDialogListener, UpdateUserInfoContact.IUpdateUserView {
-
 
     @BindView(R.id.tv_include_title)
     TextView tvTitle;
@@ -223,7 +220,6 @@ public class PersonalInfoActivity extends BasePresenterActivity implements TakeP
         }
     }
 
-
     public void hideSoftInput(View view) {
         try {
             InputMethodManager imm = (InputMethodManager) getApplicationContext().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -232,7 +228,6 @@ public class PersonalInfoActivity extends BasePresenterActivity implements TakeP
             e.printStackTrace();
         }
     }
-
 
     private void showPicSelectDialog() {
         hideSoftInput(etNickName);

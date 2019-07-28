@@ -8,7 +8,7 @@
         android:pivotY="50">
         <path
             android:name="left"
-            android:fillColor="@color/colorPrimary"
+            android:fillColor="@color/c488def"
             android:pathData="
         M 20,20
         L 20,80
@@ -17,7 +17,7 @@
 
         <path
             android:name="right"
-            android:fillColor="@color/colorPrimary"
+            android:fillColor="@color/c488def"
             android:pathData="
         M 80,20
         L 80,80

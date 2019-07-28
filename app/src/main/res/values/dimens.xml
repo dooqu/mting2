@@ -23,4 +23,12 @@
     <dimen name="text_16">16sp</dimen>
     <dimen name="code_line_margin_width">8dp</dimen>
 
+
+    <dimen name="margin500">500dp</dimen>
+
+    <dimen name="margin300">300dp</dimen>
+
+    <dimen name="margin156">156dp</dimen>
+    <dimen name="margin15">15dp</dimen>
+
 </resources>
