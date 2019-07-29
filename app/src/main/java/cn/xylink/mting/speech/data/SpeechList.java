@@ -1,5 +1,6 @@
 package cn.xylink.mting.speech.data;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -97,6 +98,21 @@ public class SpeechList {
         return current;
     }
 
+    private void resetInterator() {
+        if(current == null) {
+            return;
+        }
+
+        playIterator = internalList.listIterator(0);
+        while(playIterator.hasNext()) {
+            Article article = playIterator.next();
+
+            if(current.getArticleId() != null && article.getArticleId() != null && current.getArticleId().equals(article.getArticleId())) {
+                break;
+            }
+        }
+    }
+
 
     private boolean pushFront(Article article) {
         boolean isArticleSelected = false;
@@ -119,13 +135,19 @@ public class SpeechList {
             playIterator = internalList.listIterator(0);
             current = playIterator.next();
         }
+        else {
+            resetInterator();
+        }
+
         return isArticleSelected;
     }
 
 
     public synchronized void pushFront(List<Article> list) {
-        for (int i = 0, j = list.size(); i < j; i++) {
-            pushFront(list.get(i));
+        Iterator<Article> iterator = list.iterator();
+
+        while(iterator.hasNext()) {
+            pushFront(iterator.next());
         }
     }
 
@@ -222,6 +244,9 @@ public class SpeechList {
         if (selectArticleIsDeleted) {
             current = null;
             playIterator = this.internalList.listIterator();
+        }
+        else {
+            resetInterator();
         }
         return selectArticleIsDeleted;
     }
