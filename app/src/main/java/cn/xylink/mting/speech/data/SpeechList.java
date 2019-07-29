@@ -108,8 +108,13 @@ public class SpeechList {
             Article article = playIterator.next();
 
             if(current.getArticleId() != null && article.getArticleId() != null && current.getArticleId().equals(article.getArticleId())) {
-                break;
+                return;
             }
+        }
+
+        if(this.size() > 0) {
+            playIterator = internalList.listIterator(0);
+            playIterator.next();
         }
     }
 
