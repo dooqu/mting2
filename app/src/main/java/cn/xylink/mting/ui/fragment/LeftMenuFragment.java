@@ -59,7 +59,7 @@ public class LeftMenuFragment extends BasePresenterFragment {
         L.v(info);
         if (info != null) {
             if (!TextUtils.isEmpty(info.getHeadImg()))
-                ImageUtils.get().load(mHeadImageView, R.mipmap.icon_head_default, R.mipmap.icon_head_default, 90, info.getHeadImg());
+                ImageUtils.get().loadCircle(mHeadImageView,info.getHeadImg());
             if (!TextUtils.isEmpty(info.getNickName()))
                 mTitleView.setText(info.getNickName());
             if (info.getSex() == 0)
