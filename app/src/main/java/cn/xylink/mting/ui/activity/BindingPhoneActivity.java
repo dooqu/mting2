@@ -208,6 +208,8 @@ public class BindingPhoneActivity extends BasePresenterActivity implements BindC
 
     @Override
     public void onBindCheckError(int code, String errorMsg) {
-
+        if(!TextUtils.isEmpty(errorMsg)) {
+            toastShort(errorMsg);
+        }
     }
 }
