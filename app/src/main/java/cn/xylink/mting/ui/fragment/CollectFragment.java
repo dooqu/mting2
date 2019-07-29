@@ -174,7 +174,7 @@ public class CollectFragment extends BaseMainTabFragment implements UnreadAdapte
             }
             if (!isRemove) {
                 mAdapter.getArticleList().set(0, event.getArticle());
-                mAdapter.notifyItemInserted(0);
+                mAdapter.notifyDataSetChanged();
             }
         }else {
             mAdapter.clearData();

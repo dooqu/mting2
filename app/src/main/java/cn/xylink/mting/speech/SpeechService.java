@@ -555,8 +555,8 @@ public class SpeechService extends Service {
     }
 
 
-    public synchronized void getRole() {
-        speechor.getRole();
+    public synchronized Speechor.SpeechorRole getRole() {
+        return speechor.getRole();
     }
 
 
