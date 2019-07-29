@@ -75,16 +75,17 @@ public class UnreadFragment extends BaseMainTabFragment implements UnreadAdapter
             request.setEvent(UnreadRequest.ENENT_TYPE.refresh.name());
             request.doSign();
             mPresenter.createUnread(request);
-        }else {
-            if (mControllerListener!=null)
-            mControllerListener.onDataSuccess();
+        } else {
+            if (mControllerListener != null)
+                mControllerListener.onDataSuccess();
         }
     }
 
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);L.v();
+        super.onSaveInstanceState(outState);
+        L.v();
     }
 
     @Override
@@ -148,6 +149,8 @@ public class UnreadFragment extends BaseMainTabFragment implements UnreadAdapter
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onAddUnread(AddUnreadEvent event) {
         L.v(event);
+        if (mAdapter.getItemCount() < 1 && mControllerListener != null)
+            mControllerListener.onDataSuccess();
         mAdapter.refreshData();
         if (!TextUtils.isEmpty(event.getArticleID())) {
             Article article = new Article();
@@ -169,7 +172,7 @@ public class UnreadFragment extends BaseMainTabFragment implements UnreadAdapter
         L.v(event);
         if (mAdapter != null && mAdapter.getArticleList() != null && mAdapter.getArticleList().size() > 0 && event.getArticle() != null) {
             for (int i = 0; i < mAdapter.getArticleList().size(); i++) {
-                if (event.getArticle().getArticleId().equals(mAdapter.getArticleList().get(i).getArticleId())){
+                if (event.getArticle().getArticleId().equals(mAdapter.getArticleList().get(i).getArticleId())) {
                     mAdapter.getArticleList().get(i).setStore(event.getArticle().getStore());
                     mAdapter.notifyItemChanged(i);
                 }
