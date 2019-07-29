@@ -190,7 +190,7 @@ public class ReadedFragment extends BaseMainTabFragment implements UnreadAdapter
 
     @Override
     public void onErrorUnread(int code, String errorMsg) {
-
+        mTotalItemCount--;
     }
 
     private int mTotalItemCount = 0;
