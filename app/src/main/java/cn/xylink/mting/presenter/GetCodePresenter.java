@@ -1,5 +1,7 @@
 package cn.xylink.mting.presenter;
 
+import android.text.TextUtils;
+
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 

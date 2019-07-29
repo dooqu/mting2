@@ -3,6 +3,7 @@ package cn.xylink.mting.ui.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.MotionEvent;
 import android.view.View;
@@ -180,7 +181,9 @@ public class PhoneLoginActivity extends BasePresenterActivity implements GetCode
     @Override
     public void onCodeError(int code, String errorMsg) {
         L.v("code",code);
-//        toastShort(errorMsg);
+        if(!TextUtils.isEmpty(errorMsg)) {
+            toastShort(errorMsg);
+        }
 //        switch (code)
 //        {
 //            case -3:
