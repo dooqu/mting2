@@ -18,6 +18,7 @@ public class Article
     int read;
     String id;
     boolean isChecked;
+    String describe;
 
     public String getId() {
         return id;
@@ -171,6 +172,13 @@ public class Article
         this.url = url;
     }
 
+    public String getDescribe() {
+        return describe;
+    }
+
+    public void setDescribe(String describe) {
+        this.describe = describe;
+    }
 
     @Override
     public Article clone() {
@@ -190,6 +198,7 @@ public class Article
         article.setChecked(this.isChecked());
         article.setUrl(this.getUrl());
         article.setInType(this.getInType());
+        article.setDescribe(this.getDescribe());
         return article;
     }
 }
