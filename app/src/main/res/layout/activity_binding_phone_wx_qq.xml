@@ -47,8 +47,8 @@
 
             <ImageView
                 android:id="@+id/iv_qq_wx"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
                 android:scaleType="centerCrop"
                 android:src="@mipmap/img_default" />
 
@@ -76,11 +76,11 @@
 
             <ImageView
                 android:id="@+id/iv_xyl_icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
                 android:background="@android:color/transparent"
                 android:scaleType="centerCrop"
-                android:src="@mipmap/img_default" />
+                android:src="@mipmap/personal_head" />
 
             <TextView
                 android:id="@+id/tv_xyl_name"

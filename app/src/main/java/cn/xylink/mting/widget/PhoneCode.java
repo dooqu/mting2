@@ -98,7 +98,7 @@ public class PhoneCode extends RelativeLayout {
                     if (codes.size() < 4) {
                         codes.add(editable.toString());
                         showCode();
-                        if (listener != null) {
+                        if (listener != null && codes.size() == 4) {
                             listener.onComplete(getPhoneCode());
                             setEnabled(false);
                         }

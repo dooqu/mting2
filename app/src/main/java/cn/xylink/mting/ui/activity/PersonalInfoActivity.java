@@ -165,6 +165,8 @@ public class PersonalInfoActivity extends BasePresenterActivity implements TakeP
         userInfoPresenter.attachView(this);
 
         UserInfo user = ContentManager.getInstance().getUserInfo();
+        if(user == null)
+            return;
         if (!TextUtils.isEmpty(user.getHeadImg()))
             ImageUtils.get().loadCircle(ivhead, headImgUrl);
         if (!TextUtils.isEmpty(user.getNickName()))
