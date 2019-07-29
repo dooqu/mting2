@@ -5,13 +5,15 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1.0"
-        android:gravity="center"
-        android:text="@string/login_lable"
-        android:textSize="30sp" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/login_title"
+            android:layout_marginTop="150dp"
+            android:layout_marginBottom="150dp"
+            android:textSize="30sp" />
+
 
         <Button
             android:id="@+id/tv_phone"
@@ -22,11 +24,12 @@
             android:background="@drawable/bg_login_loginbtn"
             android:text="手机号登录"
             android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
+            android:layout_marginBottom="30dp"
             android:textColor="@android:color/white"
             android:textSize="19sp" />
 
     <RelativeLayout
+
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1">
@@ -71,7 +74,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginBottom="100dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginBottom="50dp"
             android:orientation="horizontal">
 
             <ImageView

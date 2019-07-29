@@ -60,10 +60,7 @@ public class BindingPhoneQQWxActivity extends BasePresenterActivity {
     @Override
     protected void initView() {
         tvTitle.setText("账号绑定");
-
-
-        ImageUtils.get().loadCircle(ivXyl,"");
-
+//        ImageUtils.get().loadCircle(ivXyl,"");
 
     }
 

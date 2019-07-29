@@ -109,7 +109,7 @@ public class PersonalInfoActivity extends BasePresenterActivity implements TakeP
         L.v(info);
         if (info != null) {
             if (!TextUtils.isEmpty(info.getHeadImg()))
-                ImageUtils.get().load(ivhead, R.mipmap.icon_head_default, R.mipmap.icon_head_default, 90, info.getHeadImg());
+                ImageUtils.get().loadCircle(ivhead,info.getHeadImg());
             if (!TextUtils.isEmpty(info.getNickName())) {
                 tvNickName.setText(info.getNickName());
                 etNickName.setText(info.getNickName());
@@ -165,6 +165,8 @@ public class PersonalInfoActivity extends BasePresenterActivity implements TakeP
         userInfoPresenter.attachView(this);
 
         UserInfo user = ContentManager.getInstance().getUserInfo();
+        if(user == null)
+            return;
         if (!TextUtils.isEmpty(user.getHeadImg()))
             ImageUtils.get().loadCircle(ivhead, headImgUrl);
         if (!TextUtils.isEmpty(user.getNickName()))

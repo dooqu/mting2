@@ -173,6 +173,7 @@ public class PhoneLoginActivity extends BasePresenterActivity implements GetCode
     @Override
     public void onCodeError(int code, String errorMsg) {
         L.v("code",code);
+        toastShort(errorMsg);
 //        switch (code)
 //        {
 //            case -3:

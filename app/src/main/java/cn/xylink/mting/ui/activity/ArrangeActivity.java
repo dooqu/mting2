@@ -320,7 +320,7 @@ public class ArrangeActivity extends BasePresenterActivity implements AddUnreadC
 
     @Override
     public void onErrorUnread(int code, String errorMsg) {
-
+        mTotalItemCount--;
     }
 
     @Override

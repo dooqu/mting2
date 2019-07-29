@@ -162,6 +162,7 @@ public class LoginActivity extends BasePresenterActivity implements ThirdLoginCo
 
     @Override
     public void onThirdLoginSuccess(BaseResponse<UserInfo> response) {
+
         final int code = response.code;
         switch (code) {
             case -5: {

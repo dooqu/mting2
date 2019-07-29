@@ -56,15 +56,15 @@ public abstract class BaseActivity extends AppCompatActivity {
         initData();
         initView();
         initTitleBar();
-        if(enableVersionUpgrade() == true) {
+        if (enableVersionUpgrade() == true) {
             checkOnlineUpgrade();
         }
     }
 
 
-    public  boolean isShouldHideInput(View v, MotionEvent event) {
+    public boolean isShouldHideInput(View v, MotionEvent event) {
         if (v != null && (v instanceof EditText)) {
-            int[] leftTop = { 0, 0 };
+            int[] leftTop = {0, 0};
             //获取输入框当前的location位置
             v.getLocationInWindow(leftTop);
             int left = leftTop[0];
@@ -72,8 +72,8 @@ public abstract class BaseActivity extends AppCompatActivity {
             int bottom = top + v.getHeight();
             int right = left + v.getWidth();
             //之前一直不成功的原因是,getX获取的是相对父视图的坐标,getRawX获取的才是相对屏幕原点的坐标！！！
-            L.v("leftTop[]","zz--left:"+left+"--top:"+top+"--bottom:"+bottom+"--right:"+right);
-            L.v("event","zz--getX():"+event.getRawX()+"--getY():"+event.getRawY());
+            L.v("leftTop[]", "zz--left:" + left + "--top:" + top + "--bottom:" + bottom + "--right:" + right);
+            L.v("event", "zz--getX():" + event.getRawX() + "--getY():" + event.getRawY());
             if (event.getRawX() > left && event.getRawX() < right
                     && event.getRawY() > top && event.getRawY() < bottom) {
                 // 点击的是输入框区域，保留点击EditText的事件
@@ -86,18 +86,19 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
 
+
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
-        if(ev.getAction()==MotionEvent.ACTION_DOWN){
-            View v=getCurrentFocus();
-            boolean  hideInputResult =isShouldHideInput(v,ev);
-            L.v("hideInputResult","zzz-->>"+hideInputResult);
-            if(hideInputResult){
+        if (ev.getAction() == MotionEvent.ACTION_DOWN) {
+            View v = getCurrentFocus();
+            boolean hideInputResult = isShouldHideInput(v, ev);
+            L.v("hideInputResult", "zzz-->>" + hideInputResult);
+            if (hideInputResult) {
                 v.clearFocus();
                 InputMethodManager imm = (InputMethodManager) this
                         .getSystemService(Activity.INPUT_METHOD_SERVICE);
-                if(v != null){
-                    if(imm.isActive()){
+                if (v != null) {
+                    if (imm.isActive()) {
                         imm.hideSoftInputFromWindow(v.getApplicationWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
                     }
                 }
@@ -109,7 +110,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(upgradeTimer != null) {
+        if (upgradeTimer != null) {
             upgradeTimer.cancel();
             upgradeTimer = null;
         }
@@ -165,7 +166,6 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
 
-
     /*
      * 描述：跳转Activity不传值，不返回数据
      *
@@ -216,7 +216,6 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
 
-
     public void hideSoftInput() {
         try {
             InputMethodManager imm = (InputMethodManager) getApplicationContext().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -252,7 +251,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     private void installAPK() {
         Intent intent = new Intent(Intent.ACTION_VIEW);
-        Uri uri = getUriFromFile(getBaseContext(),new File(""));
+        Uri uri = getUriFromFile(getBaseContext(), new File(""));
         intent.setDataAndType(uri, "application/vnd.android.package-archive");
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -271,7 +270,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions,  int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
             case INSTALL_PACKAGES_REQUESTCODE:
@@ -318,14 +317,13 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
 
-    protected void checkOnlineUpgrade()
-    {
+    protected void checkOnlineUpgrade() {
         int currentVersionCode = Integer.parseInt(PackageUtils.getAppVersionCode(this));
-        if(MTing.CurrentUpgradeInfo == null || MTing.CurrentUpgradeInfo.getAppVersionCode() <= currentVersionCode) {
+        if (MTing.CurrentUpgradeInfo == null || MTing.CurrentUpgradeInfo.getAppVersionCode() <= currentVersionCode) {
             return;
         }
         Handler handler = new Handler(Looper.getMainLooper());
-        handler.postDelayed(()->{
+        handler.postDelayed(() -> {
             if (MTing.CurrentUpgradeInfo != null && MTing.CurrentUpgradeInfo.getAppVersionCode() > currentVersionCode) {
                 UpgradeConfirmDialog upgradeConfirmDialog = new UpgradeConfirmDialog(this, MTing.CurrentUpgradeInfo);
                 upgradeConfirmDialog.show();

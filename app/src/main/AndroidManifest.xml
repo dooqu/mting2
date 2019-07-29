@@ -65,12 +65,12 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.LoginActivity"
+
             android:screenOrientation="portrait" />
         <activity
             android:name=".wxapi.WXEntryActivity"
             android:exported="true"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+            android:screenOrientation="portrait" />
         <activity
             android:name="com.tencent.tauth.AuthActivity"
             android:launchMode="singleTask"
@@ -88,33 +88,41 @@
 
         <activity
             android:name=".ui.activity.ArticleDetailActivity"
-            android:launchMode="singleInstance"
+            android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/DetailTheme"></activity>
         <activity
             android:name=".ui.activity.PhoneLoginActivity"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.GetCodeActivity"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.SetPhonePwdActivity"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.user.LoginPwdActivity"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.BindingPhoneActivity"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.BindingPhoneQQWxActivity"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.user.BindLoginPwdActivity"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.AddArticleActivity"
             android:screenOrientation="portrait"
+            android:launchMode="singleTask"
             android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
             android:name=".ui.activity.HtmlActivity"
@@ -139,6 +147,7 @@
         <activity
             android:name=".ui.activity.PersonalInfoActivity"
             android:screenOrientation="portrait"
+            android:launchMode="singleTask"
             android:windowSoftInputMode="stateHidden|adjustResize"/>
 
         <activity

@@ -20,6 +20,7 @@ public class ArticleDetailSetting extends ArticleDetailBottomDialog {
     private SettingListener listener;
     private Speechor.SpeechorSpeed speed;
     private SpeechService.CountDownMode countDownMode;
+    private Speechor.SpeechorRole role;
     private int countDownValue;
 
     public ArticleDetailSetting(SettingListener listener) {
@@ -29,6 +30,23 @@ public class ArticleDetailSetting extends ArticleDetailBottomDialog {
     @Override
     public View initView(Context context, Dialog dialog) {
         View view = View.inflate(context, R.layout.dialog_setting, null);
+        closeAll(view);
+        if (role != null) {
+            switch (role) {
+                case XiaoYao:
+                    view.findViewById(R.id.iv_check1).setVisibility(View.VISIBLE);
+                    break;
+                case XiaoIce:
+                    view.findViewById(R.id.iv_check2).setVisibility(View.VISIBLE);
+                    break;
+                case XiaoMei:
+                    view.findViewById(R.id.iv_check3).setVisibility(View.VISIBLE);
+                    break;
+                case YaYa:
+                    view.findViewById(R.id.iv_check4).setVisibility(View.VISIBLE);
+                    break;
+            }
+        }
         RadioGroup rgSpeed = view.findViewById(R.id.rg_speed);
         switch (speed) {
             case SPEECH_SPEED_NORMAL:
@@ -59,7 +77,7 @@ public class ArticleDetailSetting extends ArticleDetailBottomDialog {
         } else {
             int rgTime = ContentManager.getInstance().getRgTime();
             swCount.setChecked(true);
-            tvTimer.setText(countDownValue+"分钟后关闭");
+            tvTimer.setText(countDownValue + "分钟后关闭");
             tvTimer.setVisibility(View.VISIBLE);
             switch (rgTime) {
                 case 2:
@@ -141,24 +159,32 @@ public class ArticleDetailSetting extends ArticleDetailBottomDialog {
                 @Override
                 public void onClick(View v) {
                     listener.onVoiceType(0);
+                    closeAll(view);
+                    view.findViewById(R.id.iv_check1).setVisibility(View.VISIBLE);
                 }
             });
             view.findViewById(R.id.bt_type2).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     listener.onVoiceType(1);
+                    closeAll(view);
+                    view.findViewById(R.id.iv_check2).setVisibility(View.VISIBLE);
                 }
             });
             view.findViewById(R.id.bt_type3).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     listener.onVoiceType(2);
+                    closeAll(view);
+                    view.findViewById(R.id.iv_check3).setVisibility(View.VISIBLE);
                 }
             });
             view.findViewById(R.id.bt_type4).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     listener.onVoiceType(3);
+                    closeAll(view);
+                    view.findViewById(R.id.iv_check4).setVisibility(View.VISIBLE);
                 }
             });
         }
@@ -171,6 +197,17 @@ public class ArticleDetailSetting extends ArticleDetailBottomDialog {
             }
         });
         return view;
+    }
+
+    public void closeAll(View view) {
+        view.findViewById(R.id.iv_check1).setVisibility(View.INVISIBLE);
+        view.findViewById(R.id.iv_check2).setVisibility(View.INVISIBLE);
+        view.findViewById(R.id.iv_check3).setVisibility(View.INVISIBLE);
+        view.findViewById(R.id.iv_check4).setVisibility(View.INVISIBLE);
+    }
+
+    public void setRole(Speechor.SpeechorRole role) {
+        this.role = role;
     }
 
     public void setSpeed(Speechor.SpeechorSpeed speed) {

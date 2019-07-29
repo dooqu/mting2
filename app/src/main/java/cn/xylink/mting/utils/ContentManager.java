@@ -149,9 +149,14 @@ public class ContentManager {
 
     public void setTextSize(int change) {
         MemoryCache.getInstance().setTextSize(change);
+        FileCache.getInstance().setTextSize(change);
     }
 
     public int getTextSize() {
-        return MemoryCache.getInstance().getTextSize();
+        int i = MemoryCache.getInstance().getTextSize();
+        if (i > 0) {
+            return i;
+        }
+        return FileCache.getInstance().getTextSize();
     }
 }

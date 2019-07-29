@@ -200,7 +200,7 @@ public class CollectFragment extends BaseMainTabFragment implements UnreadAdapte
 
     @Override
     public void onErrorUnread(int code, String errorMsg) {
-
+        mTotalItemCount--;
     }
 
     private int mTotalItemCount = 0;
