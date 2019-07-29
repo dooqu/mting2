@@ -273,7 +273,7 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
                 public void onTime(int time) {
                     switch (time) {
                         case 0:
-                            service.setCountDown(SpeechService.CountDownMode.None, 0);
+                            service.cancelCountDown();
                             break;
                         case 1:
                             service.setCountDown(SpeechService.CountDownMode.NumberCount, 1);
@@ -294,13 +294,13 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
                 public void onVoiceType(int type) {
                     switch (type) {
                         case 0:
-                            service.setRole(Speechor.SpeechorRole.XiaoMei);
+                            service.setRole(Speechor.SpeechorRole.XiaoYao);
                             break;
                         case 1:
                             service.setRole(Speechor.SpeechorRole.XiaoIce);
                             break;
                         case 2:
-                            service.setRole(Speechor.SpeechorRole.XiaoYao);
+                            service.setRole(Speechor.SpeechorRole.XiaoMei);
                             break;
                         case 3:
                             service.setRole(Speechor.SpeechorRole.YaYa);
@@ -309,6 +309,7 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
                 }
             });
         }
+        mArticleDetailSetting.setRole(service.getRole());
         mArticleDetailSetting.setSpeed(service.getSpeed());
         mArticleDetailSetting.setCountDown(service.getCountDownMode(), service.getCountDownValue());
         mArticleDetailSetting.showDialog(this);
