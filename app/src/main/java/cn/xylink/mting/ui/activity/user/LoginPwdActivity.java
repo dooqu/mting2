@@ -68,6 +68,7 @@ public class LoginPwdActivity extends BasePresenterActivity implements LoginCont
     @Override
     protected void initView() {
         tvTitle.setText("手机号登录");
+        mBtnNext.setEnabled(false);
         etPwd.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -81,12 +82,12 @@ public class LoginPwdActivity extends BasePresenterActivity implements LoginCont
 
             @Override
             public void afterTextChanged(Editable s) {
-                if(s.length() > 0)
-                {
+                if (s.length() > 0) {
                     mBtnNext.setBackground(getResources().getDrawable(R.drawable.bg_phone_click_btn));
-                }else{
+                    mBtnNext.setEnabled(true);
+                } else {
+                    mBtnNext.setEnabled(false);
                     mBtnNext.setBackground(getResources().getDrawable(R.drawable.bg_phone_default_btn));
-
                 }
             }
         });
@@ -131,12 +132,16 @@ public class LoginPwdActivity extends BasePresenterActivity implements LoginCont
                 isChecked = !isChecked;
                 break;
             case R.id.btn_next:
-                if(etPwd.getText().length() == 0)
+                String pwd = etPwd.getText().toString();
+                if(pwd.length() == 0)
                 {
                     Toast.makeText(this,"密码不能为空",Toast.LENGTH_SHORT).show();
                     return;
+                }else if(pwd.length() < 6)
+                {
+                    toastLong("密码长度小于6位，请重新输入");
+                    return;
                 }
-                String pwd = etPwd.getText().toString();
 
                 LoginRequset requset = new LoginRequset();
                 requset.setDeviceId(TingUtils.getDeviceId(getApplicationContext()));
