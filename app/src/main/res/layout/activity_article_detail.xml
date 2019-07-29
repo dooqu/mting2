@@ -227,6 +227,7 @@
             android:gravity="right"
             android:text="收藏" />
 
+
         <RelativeLayout
             android:id="@+id/rl_main_play_bar_play"
             android:layout_width="55dp"
@@ -237,11 +238,11 @@
 
             <ImageView
                 android:id="@+id/iv_play_bar_btn"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:layout_width="33dp"
+                android:layout_height="33dp"
                 android:layout_centerInParent="true"
                 android:layout_gravity="center_vertical"
-                android:src="@mipmap/ico_playing" />
+                android:src="@drawable/nsvg_play" />
 
             <cn.xylink.mting.widget.ArcProgressBar
                 android:id="@+id/apb_main_play_progress"
@@ -257,7 +258,17 @@
                 app:progressStyle="arc"
                 app:radius="20dp"
                 app:unprogresColor="@color/cbbbbbb" />
+
+            <ProgressBar
+                android:id="@+id/pb_main_play_progress"
+                style="@style/Widget.AppCompat.ProgressBar"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:visibility="invisible"
+                android:layout_centerInParent="true"
+                android:indeterminateTint="@color/cbbbbbb" />
         </RelativeLayout>
+
 
         <TextView
             android:id="@+id/tv_next"

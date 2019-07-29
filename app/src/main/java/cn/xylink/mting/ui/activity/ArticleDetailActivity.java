@@ -4,6 +4,7 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Html;
@@ -94,6 +95,8 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
     private Article mCurrentArticle;
     private DelMainPresenter mPresenter;
     private float mTitleheight;
+    private Drawable mPauseDrawable;
+    private Drawable mPlayDrawable;
 
 
     @Override
@@ -110,11 +113,15 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
                 llSourceDetail.setVisibility(View.GONE);
                 mTitleheight = tvContent.getY();
                 aid = mCurrentArticle.getId();
+            }
+            if (mCurrentArticle != null) {
                 tvContent.setText(mCurrentArticle.getContent());
-
             }
             isPlaying = 1;
-            ivPlayBarBtn.setImageResource(R.mipmap.ico_pause);
+            if (ivPlayBarBtn.getDrawable() != mPauseDrawable) {
+                ivPlayBarBtn.setImageDrawable(mPauseDrawable);
+                ((Animatable) mPauseDrawable).start();
+            }
         } else if (aid != null) {
             isPlaying = 1;
             service.play(aid);
@@ -170,6 +177,8 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
 
     @Override
     protected void initView() {
+        mPauseDrawable = this.getDrawable(R.drawable.nsvg_pause);
+        mPlayDrawable = this.getDrawable(R.drawable.nsvg_play);
         mPresenter = (DelMainPresenter) createPresenter(DelMainPresenter.class);
         mPresenter.attachView(this);
         Bundle extras = getIntent().getExtras();
@@ -181,6 +190,8 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
             textSize = 26;
         }
         tvContent.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSize);
+        tvTitle.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSize);
+        tvAuthor.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSize);
         skProgress.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -433,8 +444,8 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
             }
             isPlaying = 1;
             aid = event.getArticle().getId();
-            ivPlayBarBtn.setImageResource(R.mipmap.ico_pause);
             tvContent.setText(event.getArticle().getContent());
+            setPauseIco();
         } else if (event instanceof SpeechProgressEvent) {
             SpeechProgressEvent spe = (SpeechProgressEvent) event;
             showContent(spe);
@@ -444,37 +455,45 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
             isPlaying = 0;
             float progress = 1;
             setArticleProgress(progress, 100, null);
+            setPlayIco();
         } else if (event instanceof SpeechErrorEvent) {
             isPlaying = 0;
-            ivPlayBarBtn.setImageResource(R.mipmap.ico_playing);
             float progress = 0;
             setArticleProgress(progress, 100, null);
+            setPlayIco();
         } else if (event instanceof SpeechPauseEvent) {
             isPlaying = -1;
-            ivPlayBarBtn.setImageResource(R.mipmap.ico_playing);
+            setPlayIco();
         } else if (event instanceof SpeechResumeEvent) {
             isPlaying = 1;
             aid = event.getArticle().getId();
-            ivPlayBarBtn.setImageResource(R.mipmap.ico_pause);
+            setPauseIco();
+        }
+    }
+
+    private void setPlayIco() {
+        if (ivPlayBarBtn.getDrawable() != mPauseDrawable) {
+            ivPlayBarBtn.setImageDrawable(mPauseDrawable);
+            ((Animatable) mPauseDrawable).start();
+        }
+    }
+
+    private void setPauseIco() {
+        if (ivPlayBarBtn.getDrawable() != mPlayDrawable) {
+            ivPlayBarBtn.setImageDrawable(mPlayDrawable);
+            ((Animatable) mPlayDrawable).start();
         }
     }
 
     private void setArticleProgress(float progress, int base, SpeechProgressEvent spe) {
         apbMain.setProgress((int) (progress * base));
         skProgress.setProgress((int) (progress * base));
-        if (spe != null) {
-            List<String> textFragments = spe.getTextFragments();
-            String read = "";
-            String unread = "";
-            for (int i = 0; i < textFragments.size(); i++) {
-                if (i <= spe.getFrameIndex()) {
-                    read += textFragments.get(i);
-                } else {
-                    unread += textFragments.get(i);
-                }
-            }
-            float v = read.length() * 1f / (read.length() + unread.length());
-            svContent.scrollTo(0, (int) (svContent.getHeight() * v));
+        float height = tvContent.getLineCount() * tvContent.getLineHeight();
+        if (height > tvContent.getMeasuredHeight()) {
+            int y = (int) (height * progress);
+            y = y - 2 * tvContent.getLineHeight();
+            if (y > 0) svContent.setScrollY(y);
+
         }
     }
 
@@ -482,7 +501,10 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSpeechStop(SpeechStopEvent event) {
         isPlaying = 0;
-        ivPlayBarBtn.setImageResource(R.mipmap.ico_playing);
+        if (ivPlayBarBtn.getDrawable() != mPlayDrawable) {
+            ivPlayBarBtn.setImageDrawable(mPlayDrawable);
+            ((Animatable) mPlayDrawable).start();
+        }
         float progress = 0;
         setArticleProgress(progress, 100, null);
     }
@@ -499,6 +521,7 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
             }
             txt += s;
         }
+        txt = txt.replace("\n", "<br>");
         tvContent.setText(Html.fromHtml(txt));
     }
 
