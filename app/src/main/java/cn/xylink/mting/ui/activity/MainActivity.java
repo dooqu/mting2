@@ -246,7 +246,7 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
     @Override
     public void onSuccessAddLove(String str, Article article) {
         if (article != null) {
-            article.setStore(article.getStore() == 0 ? 1 : 0);
+            article.setStore(article.getStore() ^ 1);
             if (article.getStore() ==1){
                 T.s(this, "收藏成功");
             }else {
