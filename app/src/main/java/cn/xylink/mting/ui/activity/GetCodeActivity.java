@@ -1,13 +1,10 @@
 package cn.xylink.mting.ui.activity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.CountDownTimer;
 import android.os.SystemClock;
 import android.text.TextUtils;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,7 +20,7 @@ import cn.xylink.mting.contract.GetCodeContact;
 import cn.xylink.mting.model.CheckPhoneRequest;
 import cn.xylink.mting.model.GetCodeRequest;
 import cn.xylink.mting.model.data.Const;
-import cn.xylink.mting.model.data.ResponseStatus;
+import cn.xylink.mting.model.data.HttpConst;
 import cn.xylink.mting.presenter.CheckPhonePresenter;
 import cn.xylink.mting.presenter.GetCodePresenter;
 import cn.xylink.mting.utils.L;
@@ -203,7 +200,7 @@ public class GetCodeActivity extends BasePresenterActivity implements GetCodeCon
     @Override
     public void onCodeError(int code, String errorMsg) {
         switch (code) {
-            case ResponseStatus.STATUS_910:
+            case HttpConst.STATUS_910:
                 toastShort(errorMsg);
                 break;
         }

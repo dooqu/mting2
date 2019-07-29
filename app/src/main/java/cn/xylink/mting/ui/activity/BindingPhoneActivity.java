@@ -28,6 +28,7 @@ import cn.xylink.mting.presenter.BindCheckPresenter;
 import cn.xylink.mting.presenter.GetCodePresenter;
 import cn.xylink.mting.ui.activity.user.LoginPwdActivity;
 import cn.xylink.mting.utils.L;
+import cn.xylink.mting.utils.PhoneNumberUtils;
 import cn.xylink.mting.utils.TingUtils;
 import cn.xylink.mting.widget.ZpPhoneEditText;
 
@@ -146,14 +147,21 @@ public class BindingPhoneActivity extends BasePresenterActivity implements BindC
                 etPhone.setText("");
                 break;
             case R.id.btn_next:
-                if (etPhone.getText().length() == 0) {
-                    Toast.makeText(this, "手机号不能为空", Toast.LENGTH_SHORT).show();
-                    return;
-                } else if (etPhone.getText().length() < 11) {
-                    Toast.makeText(this, "请输入正确的手机号", Toast.LENGTH_SHORT).show();
+                phone = etPhone.getText().toString();
+                if(phone.length() == 0)
+                {
+                    Toast.makeText(this,"手机号不能为空",Toast.LENGTH_SHORT).show();
                     return;
                 }
-                phone = etPhone.getText().toString();
+//                else if(!PhoneNumberUtils.isMobileNO(phone))
+//                {
+//                    Toast.makeText(this,"请输入正确的手机号",Toast.LENGTH_SHORT).show();
+//                    return;
+//                }
+                else if (phone.length() < 11 ){
+                    Toast.makeText(this,R.string.incomplete_telephone_number,Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 BindCheckRequest requset = new BindCheckRequest();
                 requset.setPhone(phone.replaceAll(" ", ""));
                 requset.setPlatform(platform);

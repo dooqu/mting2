@@ -45,9 +45,9 @@ public class OkGoUtils<T> {
 
                                      callback.onComplete();
                                      if (errorCode==-1)
-                                        cn.xylink.mting.utils.T.showCustomToast("网络连接失败！");
+                                        cn.xylink.mting.utils.T.showCustomToast(HttpConst.NO_NETWORK);
                                      else if(errorCode == 9999)
-                                         cn.xylink.mting.utils.T.showCustomToast("网络连接失败！");
+                                         cn.xylink.mting.utils.T.showCustomToast(HttpConst.NO_NETWORK);
 
                                  }
                              }
@@ -85,9 +85,9 @@ public class OkGoUtils<T> {
                                  callback.onFailure(errorCode + 10000, errorMsg);
                                  callback.onComplete();
                                      if (errorCode==-1)
-                                        cn.xylink.mting.utils.T.showCustomToast("网络连接失败！");
+                                        cn.xylink.mting.utils.T.showCustomToast(HttpConst.NO_NETWORK);
                                      else if(errorCode == 9999)
-                                         cn.xylink.mting.utils.T.showCustomToast("网络连接失败！");
+                                         cn.xylink.mting.utils.T.showCustomToast(HttpConst.NO_NETWORK);
                              }
 
                              @Override
@@ -128,9 +128,9 @@ public class OkGoUtils<T> {
                                      callback.onFailure(errorCode + 10000, errorMsg);
                                      callback.onComplete();
                                    if (errorCode==-1)
-                                        cn.xylink.mting.utils.T.showCustomToast("网络连接失败！");
+                                        cn.xylink.mting.utils.T.showCustomToast(HttpConst.NO_NETWORK);
                                      else if(errorCode == 9999)
-                                         cn.xylink.mting.utils.T.showCustomToast("网络连接失败！");
+                                         cn.xylink.mting.utils.T.showCustomToast(HttpConst.NO_NETWORK);
                                  }
                              }
 
@@ -171,9 +171,9 @@ public class OkGoUtils<T> {
                                      callback.onFailure(errorCode + 10000, errorMsg);
                                      callback.onComplete();
                                      if (errorCode==-1)
-                                         cn.xylink.mting.utils.T.showCustomToast("网络连接失败！");
+                                         cn.xylink.mting.utils.T.showCustomToast(HttpConst.NO_NETWORK);
                                      else if(errorCode == 9999)
-                                         cn.xylink.mting.utils.T.showCustomToast("网络连接失败！");
+                                         cn.xylink.mting.utils.T.showCustomToast(HttpConst.NO_NETWORK);
                                  }
                              }
 
