@@ -32,4 +32,9 @@
     <color name="color_dedede">#dedede</color>
     <color name="color_F7F7F7">#F7F7F7</color>
 
+
+    <color name="font_black2">#50525b</color>
+
+    <color name="hint_gray">#d7d7d7</color>
+
 </resources>

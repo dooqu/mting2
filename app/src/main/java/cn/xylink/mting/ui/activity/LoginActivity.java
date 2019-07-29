@@ -25,6 +25,7 @@ import cn.xylink.mting.event.WXQQDataBean;
 import cn.xylink.mting.openapi.QQApi;
 import cn.xylink.mting.openapi.WXapi;
 import cn.xylink.mting.presenter.ThirdLoginPresenter;
+import cn.xylink.mting.ui.dialog.AgreementDialog;
 import cn.xylink.mting.utils.ContentManager;
 import cn.xylink.mting.utils.L;
 import cn.xylink.mting.utils.SharedPreHelper;
@@ -88,9 +89,19 @@ public class LoginActivity extends BasePresenterActivity implements ThirdLoginCo
         EventBus.getDefault().unregister(this);
     }
 
-    @OnClick({R.id.imv_login_weChat, R.id.imv_login_qq, R.id.tv_phone})
+    @OnClick({R.id.imv_login_weChat, R.id.imv_login_qq, R.id.tv_phone,R.id.tv_user_protocol})
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.tv_user_protocol:
+                AgreementDialog dialog = new AgreementDialog(LoginActivity.this);
+                dialog.show();
+                dialog.setOnConfirmClickListener(new AgreementDialog.OnConfirmClickListener() {
+                    @Override
+                    public void setConfirmClickListener() {
+
+                    }
+                });
+                break;
             case R.id.btn_left:
                 finish();
                 break;
