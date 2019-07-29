@@ -164,6 +164,7 @@ public class AddOneNoteFragment extends BasePresenterFragment implements InputCr
         L.v("response.msg", response.message);
         String json = new Gson().toJson(response.data);
 
+        Toast.makeText(getContext(),"已加入待读",Toast.LENGTH_SHORT).show();
         AddUnreadEvent event = new AddUnreadEvent();
         event.setArticleID(response.data.getArticleId());
         EventBus.getDefault().post(event);
