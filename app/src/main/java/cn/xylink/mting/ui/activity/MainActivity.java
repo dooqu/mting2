@@ -98,7 +98,8 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);L.v();
+        super.onCreate(savedInstanceState);
+        L.v();
 //        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
     }
 
@@ -244,9 +245,13 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
 
     @Override
     public void onSuccessAddLove(String str, Article article) {
-        T.s(this, "收藏成功");
         if (article != null) {
             article.setStore(article.getStore() == 0 ? 1 : 0);
+            if (article.getStore() ==1){
+                T.s(this, "收藏成功");
+            }else {
+                T.s(this, "取消收藏成功");
+            }
         }
         EventBus.getDefault().post(new AddStoreSuccessEvent(article));
     }
@@ -394,18 +399,18 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
                 case SpeechorStatePaused:
                     if (service.resume())
 //                        mPlayBtnSRC.setImageDrawable(getResources().getDrawable(R.mipmap.ico_pause));
-                    if (mPlayBtnSRC.getDrawable() != mPlayDrawable) {
-                        mPlayBtnSRC.setImageDrawable(mPlayDrawable);
-                        ((Animatable) mPlayDrawable).start();
-                    }
+                        if (mPlayBtnSRC.getDrawable() != mPlayDrawable) {
+                            mPlayBtnSRC.setImageDrawable(mPlayDrawable);
+                            ((Animatable) mPlayDrawable).start();
+                        }
                     break;
                 case SpeechorStatePlaying:
                     if (service.pause())
 //                        mPlayBtnSRC.setImageDrawable(getResources().getDrawable(R.mipmap.ico_playing));
-                    if (mPlayBtnSRC.getDrawable() != mPauseDrawable) {
-                        mPlayBtnSRC.setImageDrawable(mPauseDrawable);
-                        ((Animatable) mPauseDrawable).start();
-                    }
+                        if (mPlayBtnSRC.getDrawable() != mPauseDrawable) {
+                            mPlayBtnSRC.setImageDrawable(mPauseDrawable);
+                            ((Animatable) mPauseDrawable).start();
+                        }
                     break;
             }
         }
@@ -567,7 +572,7 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
             ShareAppDialog dialog = new ShareAppDialog(this);
             dialog.show();
         }
-        if (event.isStopSer()&&service!=null){
+        if (event.isStopSer() && service != null) {
             service.clearSpeechList();
         }
     }
