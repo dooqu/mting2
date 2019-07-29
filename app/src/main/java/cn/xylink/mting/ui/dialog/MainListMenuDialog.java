@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.Window;
 import android.widget.TextView;
@@ -47,8 +48,9 @@ public class MainListMenuDialog extends BaseDimDialog {
         super.show();
         mTabType = tabType;
         mArticle = article;
-        if (mArticle.getStore()==1)
-            mLoveTextView.setCompoundDrawablesWithIntrinsicBounds(null,mContext.getResources().getDrawable(R.mipmap.icon_f_loved),null,null);
+
+        if (mArticle != null && mArticle.getStore() == 1)
+            mLoveTextView.setCompoundDrawablesWithIntrinsicBounds(null, mContext.getResources().getDrawable(R.mipmap.icon_f_loved), null, null);
     }
 
     @Override
@@ -64,23 +66,23 @@ public class MainListMenuDialog extends BaseDimDialog {
             case R.id.v_dialog_main_list_menu_out:
                 break;
             case R.id.tv_dialog_main_list_menu_wx:
-                if (mArticle != null)
-                    WXapi.shareWx((Activity) mContext, mArticle.getShareUrl(), null, mArticle.getTitle(), mArticle.getContent());
+                if (mArticle != null && !TextUtils.isEmpty(mArticle.getShareUrl()))
+                    WXapi.shareWx((Activity) mContext, mArticle.getShareUrl(), null, mArticle.getTitle(), TextUtils.isEmpty(mArticle.getDescribe())?"":mArticle.getDescribe());
                 break;
             case R.id.tv_dialog_main_list_menu_wxp:
-                if (mArticle != null)
-                    WXapi.sharePyq((Activity) mContext, mArticle.getShareUrl(), null, mArticle.getTitle(), mArticle.getContent());
+                if (mArticle != null && !TextUtils.isEmpty(mArticle.getShareUrl()))
+                    WXapi.sharePyq((Activity) mContext, mArticle.getShareUrl(), null, mArticle.getTitle(), TextUtils.isEmpty(mArticle.getDescribe())?"":mArticle.getDescribe());
                 break;
             case R.id.tv_dialog_main_list_menu_qq:
-                if (mArticle != null)
-                    QQApi.shareQQ((Activity) mContext, mArticle.getShareUrl(), null, mArticle.getTitle(), mArticle.getContent());
+                if (mArticle != null && !TextUtils.isEmpty(mArticle.getShareUrl()))
+                    QQApi.shareQQ((Activity) mContext, mArticle.getShareUrl(), null, mArticle.getTitle(), TextUtils.isEmpty(mArticle.getDescribe())?"":mArticle.getDescribe());
                 break;
             case R.id.tv_dialog_main_list_menu_quen:
-                if (mArticle != null)
-                    QQApi.shareSpace((Activity) mContext, mArticle.getShareUrl(), null, mArticle.getTitle(), mArticle.getContent());
+                if (mArticle != null && !TextUtils.isEmpty(mArticle.getShareUrl()))
+                    QQApi.shareSpace((Activity) mContext, mArticle.getShareUrl(), null, mArticle.getTitle(), TextUtils.isEmpty(mArticle.getDescribe())?"":mArticle.getDescribe());
                 break;
             case R.id.tv_dialog_main_list_menu_copy:
-                if (mArticle != null) {
+                if (mArticle != null && !TextUtils.isEmpty(mArticle.getShareUrl())) {
                     ClipboardManager cm = (ClipboardManager) mContext.getSystemService(Context.CLIPBOARD_SERVICE);
                     ClipData mClipData = ClipData.newPlainText("Label", mArticle.getShareUrl());
                     cm.setPrimaryClip(mClipData);
