@@ -3,6 +3,7 @@ package cn.xylink.mting.base;
 public class BaseResponse<T> {
     public int code;
     public String message;
+    public int used;
     public T data;
 
     @Override
@@ -36,5 +37,13 @@ public class BaseResponse<T> {
 
     public void setData(T data) {
         this.data = data;
+    }
+
+    public int getUsed() {
+        return used;
+    }
+
+    public void setUsed(int used) {
+        this.used = used;
     }
 }
