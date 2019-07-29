@@ -33,6 +33,7 @@ public class FileCache {
     private static final String HX_PASSWORD = "HX_PASSWORD";
     private static final String KEYBORDHEIGHT = "KEYBORDHEIGHT";
     private static final String HXFIRST = "HXFIRST";
+    private static final String TEXT_SIZE = "TEXT_SIZE";
     private static FileCache sInstance;
     private SharedPreferences mPrefs;
 
@@ -289,7 +290,18 @@ public class FileCache {
         editor.commit();
     }
 
-    public boolean getHxFirst(){
+    public boolean getHxFirst() {
         return mPrefs.getBoolean(HXFIRST, true);
+    }
+
+    public void setTextSize(int change) {
+        Editor editor = mPrefs.edit();
+        editor.putInt(TEXT_SIZE, change);
+        editor.commit();
+    }
+
+
+    public int getTextSize() {
+        return mPrefs.getInt(TEXT_SIZE, 0);
     }
 }

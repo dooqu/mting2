@@ -1,10 +1,15 @@
 package cn.xylink.mting.ui.activity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -47,6 +52,8 @@ public class BindingPhoneActivity extends BasePresenterActivity implements BindC
     private String source;
     private String platform;
 
+    private String pausePhone = "";
+
 
     @Override
     protected void preView() {
@@ -55,6 +62,23 @@ public class BindingPhoneActivity extends BasePresenterActivity implements BindC
         codePresenter.attachView(this);
         MTing.getActivityManager().pushActivity(this);
 
+    }
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        pausePhone = etPhone.getPhoneText();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        L.v(pausePhone);
+        if (!TextUtils.isEmpty(pausePhone)) {
+            etPhone.setText(pausePhone);
+            etPhone.setSelection(etPhone.getText().length());
+        }
     }
 
     @Override
@@ -83,7 +107,6 @@ public class BindingPhoneActivity extends BasePresenterActivity implements BindC
             }
         });
     }
-
 
     @Override
     public void showLoading() {
@@ -141,7 +164,6 @@ public class BindingPhoneActivity extends BasePresenterActivity implements BindC
     }
 
 
-
     @Override
     public void onBindCheckSuccess(BaseResponse<String> response) {
         final int code = response.code;
@@ -152,7 +174,7 @@ public class BindingPhoneActivity extends BasePresenterActivity implements BindC
                 Intent mIntent = new Intent(this, GetCodeActivity.class);
                 mIntent.putExtra(EXTRA_PHONE, phone);
                 mIntent.putExtra(EXTRA_SOURCE, source);
-                mIntent.putExtra(EXTRA_PLATFORM,platform);
+                mIntent.putExtra(EXTRA_PLATFORM, platform);
                 startActivity(mIntent);
                 break;
             }
@@ -161,7 +183,7 @@ public class BindingPhoneActivity extends BasePresenterActivity implements BindC
                 Intent mIntent = new Intent(this, BindingPhoneQQWxActivity.class);
                 mIntent.putExtra(EXTRA_PHONE, phone);
                 mIntent.putExtra(EXTRA_SOURCE, source);
-                mIntent.putExtra(EXTRA_PLATFORM,platform);
+                mIntent.putExtra(EXTRA_PLATFORM, platform);
                 startActivity(mIntent);
 
                 break;

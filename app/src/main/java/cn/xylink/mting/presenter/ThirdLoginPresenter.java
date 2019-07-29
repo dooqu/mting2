@@ -13,6 +13,7 @@ import cn.xylink.mting.model.ThirdLoginRequset;
 import cn.xylink.mting.model.data.Const;
 import cn.xylink.mting.model.data.OkGoUtils;
 import cn.xylink.mting.model.data.RemoteUrl;
+import cn.xylink.mting.utils.ContentManager;
 import cn.xylink.mting.utils.FileUtil;
 import cn.xylink.mting.utils.L;
 
@@ -34,6 +35,11 @@ public class ThirdLoginPresenter extends BasePresenter<ThirdLoginContact.IThirdL
                 BaseResponse<UserInfo> baseResponse = (BaseResponse<UserInfo>) data;
                 int code = baseResponse.code;
                 L.v("baseResponse",baseResponse.toString() );
+                if(code == 200)
+                {
+                    ContentManager.getInstance().setUserInfo(baseResponse.data);
+                }
+
                 mView.onThirdLoginSuccess(baseResponse);
                 String userInfoData = new Gson().toJson(baseResponse.data);
                 FileUtil.writeFile(MTing.getInstance(), Const.FileName.USER_INFO_LOGIN, userInfoData);

@@ -1,9 +1,13 @@
 package cn.xylink.mting.ui.activity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.CountDownTimer;
+import android.os.SystemClock;
 import android.text.TextUtils;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,6 +23,7 @@ import cn.xylink.mting.contract.GetCodeContact;
 import cn.xylink.mting.model.CheckPhoneRequest;
 import cn.xylink.mting.model.GetCodeRequest;
 import cn.xylink.mting.model.data.Const;
+import cn.xylink.mting.model.data.ResponseStatus;
 import cn.xylink.mting.presenter.CheckPhonePresenter;
 import cn.xylink.mting.presenter.GetCodePresenter;
 import cn.xylink.mting.utils.L;
@@ -37,6 +42,8 @@ public class GetCodeActivity extends BasePresenterActivity implements GetCodeCon
     public static final String EXTRA_PHONE = "extra_phone";
     public static final String EXTRA_SOURCE = "extra_source";
     public static final String EXTRA_platform = "extra_platform";
+
+    private static final int ONE_MINUTE = 60 * 1000;
 
     @BindView(R.id.tv_count_down)
     TextView tvCountDown;
@@ -57,6 +64,8 @@ public class GetCodeActivity extends BasePresenterActivity implements GetCodeCon
 
     CountDownTimer timer;
 
+    private int codeLength;
+
     @Override
     protected void preView() {
         setContentView(R.layout.activity_get_code);
@@ -64,8 +73,13 @@ public class GetCodeActivity extends BasePresenterActivity implements GetCodeCon
     }
 
 
-    public void resetDownTimer() {
-        timer = new CountDownTimer(60 * 1000, 1000) {
+    public void resetDownTimer(long minute) {
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
+        }
+
+        timer = new CountDownTimer(minute, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 isFinished = false;
@@ -92,22 +106,25 @@ public class GetCodeActivity extends BasePresenterActivity implements GetCodeCon
     }
 
 
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        timer.cancel();
+        if (timer != null)
+            timer.cancel();
     }
 
     @Override
     protected void initView() {
+
+        L.v("source", source);
         if ("register".equals(source))
-            resetDownTimer();
+            resetDownTimer(ONE_MINUTE);
         pCcode.setOnCompleteListener(new PhoneCode.Listener() {
             @Override
             public void onComplete(String content) {
                 L.v("content", content);
-                if(TextUtils.isEmpty(phone))
+                codeLength = content.length();
+                if (TextUtils.isEmpty(phone))
                     return;
                 CheckPhoneRequest requset = new CheckPhoneRequest();
                 requset.source = "register";
@@ -138,14 +155,15 @@ public class GetCodeActivity extends BasePresenterActivity implements GetCodeCon
         source = getIntent().getStringExtra(EXTRA_SOURCE);
         platform = getIntent().getStringExtra(BindingPhoneActivity.EXTRA_PLATFORM);
 
-        L.v("phone",phone,"ticket",ticket,"codeID",codeID);
+
+        L.v("phone", phone, "ticket", ticket, "codeID", codeID);
         codePresenter = (GetCodePresenter) createPresenter(GetCodePresenter.class);
         codePresenter.attachView(this);
 
         checkPhonePresenter = (CheckPhonePresenter) createPresenter(CheckPhonePresenter.class);
         checkPhonePresenter.attachView(this);
-
-        requsetCode();
+        if (!"register".equals(source))
+            requsetCode();
     }
 
     @Override
@@ -155,24 +173,55 @@ public class GetCodeActivity extends BasePresenterActivity implements GetCodeCon
 
     @Override
     public void onCodeSuccess(BaseResponse<CodeInfo> response) {
-        Toast.makeText(this,response.message,Toast.LENGTH_SHORT).show();
+        L.v(response.code);
+        Toast.makeText(this, response.message, Toast.LENGTH_SHORT).show();
         if (response.data != null) {
             codeID = response.data.getCodeId();
         }
         if (response.code == 200) {
-            resetDownTimer();
+            resetDownTimer(ONE_MINUTE);
             return;
         }
     }
 
+    private static final String PAUSE_TIME = "code_pause_time";
+
     @Override
-    public void onCodeError(int code, String errorMsg) {
+    protected void onPause() {
+        super.onPause();
+        long pauseTime = SystemClock.elapsedRealtime();
+        SharedPreHelper.getInstance(this).put(PAUSE_TIME, pauseTime);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
 
     }
 
 
+    @Override
+    public void onCodeError(int code, String errorMsg) {
+        switch (code) {
+            case ResponseStatus.STATUS_910:
+                toastShort(errorMsg);
+                break;
+        }
+        if (code == -910) {
+//            long resumeTime = SystemClock.elapsedRealtime();
+//            long pauseTime = (long) SharedPreHelper.getInstance(this).getSharedPreference(PAUSE_TIME, 0l);
+//            L.v("resumeTime", resumeTime, "pauseTime", pauseTime);
+//            long endTime = resumeTime - pauseTime;
+//            L.v("endTime", endTime, "ONE_MINUTE", ONE_MINUTE);
+//            if (endTime < ONE_MINUTE) {
+////                resetDownTimer(endTime);
+//            }
+        }
+    }
+
+
     public void requsetCode() {
-        if(TextUtils.isEmpty(phone))
+        if (TextUtils.isEmpty(phone))
             return;
         GetCodeRequest requset = new GetCodeRequest();
         requset.phone = phone.replaceAll(" ", "");
@@ -200,17 +249,16 @@ public class GetCodeActivity extends BasePresenterActivity implements GetCodeCon
         timer.onFinish();
         if (response.data != null) {
             ticket = response.data.getTicket();
-            SharedPreHelper.getInstance(this).put(SharedPreHelper.SharedAttribute.TICKET,ticket);
+            SharedPreHelper.getInstance(this).put(SharedPreHelper.SharedAttribute.TICKET, ticket);
 
             Intent mIntent = new Intent(this, SetPhonePwdActivity.class);
             mIntent.putExtra(EXTRA_TICKET, ticket);
-            mIntent.putExtra(BindingPhoneActivity.EXTRA_PLATFORM,platform);
+            mIntent.putExtra(BindingPhoneActivity.EXTRA_PLATFORM, platform);
             mIntent.putExtra(EXTRA_PHONE, phone.replaceAll(" ", ""));
-            if(source.equals("register")){
-                mIntent.putExtra(SetPhonePwdActivity.EXTRA_TYPE,1);
-            }else if(source.equals("forgot"))
-            {
-                mIntent.putExtra(SetPhonePwdActivity.EXTRA_TYPE,2);
+            if (source.equals("register")) {
+                mIntent.putExtra(SetPhonePwdActivity.EXTRA_TYPE, 1);
+            } else if (source.equals("forgot")) {
+                mIntent.putExtra(SetPhonePwdActivity.EXTRA_TYPE, 2);
             }
             startActivity(mIntent);
 
@@ -219,6 +267,15 @@ public class GetCodeActivity extends BasePresenterActivity implements GetCodeCon
 
     @Override
     public void onCheckPhoneError(int code, String errorMsg) {
-        timer.onFinish();
+        switch (code) {
+            case -3:
+                toastShort("验证码错误");
+                break;
+            default:
+                toastShort(errorMsg);
+                break;
+        }
+        if (timer != null)
+            timer.onFinish();
     }
 }
