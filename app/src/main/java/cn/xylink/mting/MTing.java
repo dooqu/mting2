@@ -101,7 +101,7 @@ public class MTing extends Application {
         request.setAppPackage(PackageUtils.getAppPackage(this));
         request.setAppVersion(PackageUtils.getAppVersionName(this));
         request.setVersionId(PackageUtils.getAppVersionCode(this));
-        request.setChannel(new Base64().encodeToString(EncryptionUtil.encrypt("_91", EncryptionUtil.getPublicKey(Const.publicKey))));
+        request.setChannel(new Base64().encodeToString(EncryptionUtil.encrypt("mting", EncryptionUtil.getPublicKey(Const.publicKey))));
         request.setDeviceId(PackageUtils.getWifiMac(this));
         request.doSign();
 
