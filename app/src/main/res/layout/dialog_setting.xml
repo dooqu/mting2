@@ -39,16 +39,30 @@
             android:gravity="center_horizontal"
             android:orientation="vertical">
 
-            <ImageView
-                android:layout_width="56dp"
-                android:layout_height="56dp"
-                android:src="@mipmap/ic_launcher_round" />
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:layout_gravity="center"
+                    android:src="@mipmap/ico_zixuan" />
+
+                <ImageView
+                    android:id="@+id/iv_check1"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/bg_ico_shape_huan"
+                    android:visibility="invisible" />
+            </FrameLayout>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                android:text="龟哥"
+                android:text="子轩"
                 android:textSize="14sp" />
         </LinearLayout>
 
@@ -64,16 +78,30 @@
             android:gravity="center_horizontal"
             android:orientation="vertical">
 
-            <ImageView
-                android:layout_width="56dp"
-                android:layout_height="56dp"
-                android:src="@mipmap/ic_launcher_round" />
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:layout_gravity="center"
+                    android:src="@mipmap/ico_zimo" />
+
+                <ImageView
+                    android:id="@+id/iv_check2"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/bg_ico_shape_huan"
+                    android:visibility="invisible" />
+            </FrameLayout>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                android:text="小钢"
+                android:text="子墨"
                 android:textSize="14sp" />
         </LinearLayout>
 
@@ -89,16 +117,30 @@
             android:gravity="center_horizontal"
             android:orientation="vertical">
 
-            <ImageView
-                android:layout_width="56dp"
-                android:layout_height="56dp"
-                android:src="@mipmap/ic_launcher_round" />
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:layout_gravity="center"
+                    android:src="@mipmap/ico_jiayi" />
+
+                <ImageView
+                    android:id="@+id/iv_check3"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/bg_ico_shape_huan"
+                    android:visibility="invisible" />
+            </FrameLayout>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                android:text="池水管工"
+                android:text="佳怡"
                 android:textSize="14sp" />
         </LinearLayout>
 
@@ -114,16 +156,30 @@
             android:gravity="center_horizontal"
             android:orientation="vertical">
 
-            <ImageView
-                android:layout_width="56dp"
-                android:layout_height="56dp"
-                android:src="@mipmap/ic_launcher_round" />
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:layout_gravity="center"
+                    android:src="@mipmap/ico_jiaxin" />
+
+                <ImageView
+                    android:id="@+id/iv_check4"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/bg_ico_shape_huan"
+                    android:visibility="invisible" />
+            </FrameLayout>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                android:text="李家教"
+                android:text="佳馨"
                 android:textSize="14sp" />
         </LinearLayout>
     </LinearLayout>
@@ -240,8 +296,8 @@
             android:layout_alignParentRight="true"
             android:layout_marginRight="16dp"
             android:text=""
-            android:visibility="invisible"
-            android:textColor="#488def" />
+            android:textColor="#488def"
+            android:visibility="invisible" />
 
     </RelativeLayout>
 
