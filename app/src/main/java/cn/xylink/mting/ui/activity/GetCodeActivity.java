@@ -266,7 +266,8 @@ public class GetCodeActivity extends BasePresenterActivity implements GetCodeCon
     public void onCheckPhoneError(int code, String errorMsg) {
         switch (code) {
             case -3:
-                toastShort("验证码错误");
+                pCcode.clearText();
+                toastShort("验证码输入错误，请重新输入");
                 break;
             default:
                 toastShort(errorMsg);
