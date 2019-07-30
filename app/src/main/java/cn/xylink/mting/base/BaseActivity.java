@@ -99,7 +99,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                         .getSystemService(Activity.INPUT_METHOD_SERVICE);
                 if (v != null) {
                     if (imm.isActive()) {
-                        imm.hideSoftInputFromWindow(v.getApplicationWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                        imm.hideSoftInputFromWindow(v.getApplicationWindowToken(), 0);
                     }
                 }
             }

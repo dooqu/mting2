@@ -39,7 +39,7 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
             android:adjustViewBounds="true"
-            android:scaleType="centerCrop"
+            android:scaleType="centerInside"
             android:src="@mipmap/arrow" />
     </RelativeLayout>
 
@@ -56,11 +56,9 @@
             android:text="昵称"
             android:textColor="@color/color_333333"
             android:textSize="16sp" />
-
-
         <FrameLayout
             android:id="@+id/fl_et_nick_name"
-            android:layout_width="100dp"
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:layout_gravity="right"
             android:layout_toLeftOf="@+id/iv_arrow_2"
@@ -69,12 +67,11 @@
 
             <EditText
                 android:id="@+id/et_nickName"
-                android:layout_width="100dp"
+                android:layout_width="200dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
                 android:background="@android:color/transparent"
                 android:gravity="right"
-                android:imeOptions="actionSearch"
                 android:maxLength="15"
                 android:maxLines="1"
                 android:textSize="@dimen/text_16"
@@ -96,8 +93,8 @@
             android:layout_alignParentRight="true"
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="10dp"
+            android:scaleType="centerInside"
             android:src="@mipmap/arrow" />
-
 
     </LinearLayout>
 
@@ -130,6 +127,7 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
+            android:scaleType="centerInside"
             android:src="@mipmap/arrow" />
 
     </RelativeLayout>

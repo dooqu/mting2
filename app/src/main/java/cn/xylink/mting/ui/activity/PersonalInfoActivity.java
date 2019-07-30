@@ -1,5 +1,6 @@
 package cn.xylink.mting.ui.activity;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -9,6 +10,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -109,7 +111,7 @@ public class PersonalInfoActivity extends BasePresenterActivity implements TakeP
         L.v(info);
         if (info != null) {
             if (!TextUtils.isEmpty(info.getHeadImg()))
-                ImageUtils.get().loadCircle(ivhead,info.getHeadImg());
+                ImageUtils.get().loadCircle(ivhead, info.getHeadImg());
             if (!TextUtils.isEmpty(info.getNickName())) {
                 tvNickName.setText(info.getNickName());
                 etNickName.setText(info.getNickName());
@@ -138,7 +140,7 @@ public class PersonalInfoActivity extends BasePresenterActivity implements TakeP
             public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
                 if (oldBottom != 0 && bottom != 0
                         && (bottom - oldBottom > screenHeight)) {
-                    ivArrow3.setVisibility(View.VISIBLE);
+//                    ivArrow3.setVisibility(View.VISIBLE);
                     tvNickName.setVisibility(View.VISIBLE);
                     etNickName.setVisibility(View.GONE);
 
@@ -153,7 +155,6 @@ public class PersonalInfoActivity extends BasePresenterActivity implements TakeP
                 }
             }
         });
-
     }
 
     @Override
@@ -165,7 +166,7 @@ public class PersonalInfoActivity extends BasePresenterActivity implements TakeP
         userInfoPresenter.attachView(this);
 
         UserInfo user = ContentManager.getInstance().getUserInfo();
-        if(user == null)
+        if (user == null)
             return;
         if (!TextUtils.isEmpty(user.getHeadImg()))
             ImageUtils.get().loadCircle(ivhead, headImgUrl);
@@ -203,20 +204,20 @@ public class PersonalInfoActivity extends BasePresenterActivity implements TakeP
             case R.id.iv_my_head:
                 showPicSelectDialog();
                 break;
-            case R.id.iv_arrow_2:
+            case R.id.iv_arrow_3:
             case R.id.tv_sex:
                 showSexSelectDialog();
                 break;
-            case R.id.iv_arrow_3:
+            case R.id.iv_arrow_2:
             case R.id.tv_nick_name:
                 tvNickName.setVisibility(View.GONE);
                 etNickName.setVisibility(View.VISIBLE);
                 ivArrow3.setVisibility(View.GONE);
                 etNickName.setSelection(etNickName.getText().length());
-                etNickName.findFocus();
-                etNickName.setFocusable(true);
-                etNickName.setFocusableInTouchMode(true);
-                etNickName.requestFocus();
+//                etNickName.findFocus();
+//                etNickName.setFocusable(true);
+//                etNickName.setFocusableInTouchMode(true);
+//                etNickName.requestFocus();
                 showSoftInput(etNickName);
                 break;
         }
