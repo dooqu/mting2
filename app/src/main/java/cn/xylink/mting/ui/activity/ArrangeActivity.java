@@ -266,7 +266,7 @@ public class ArrangeActivity extends BasePresenterActivity implements AddUnreadC
     }
 
     @Override
-    public void onSuccessAddLove(String str,Article article) {
+    public void onSuccessAddLove(String str, Article article) {
 
     }
 
@@ -311,7 +311,7 @@ public class ArrangeActivity extends BasePresenterActivity implements AddUnreadC
     }
 
     @Override
-    public void onSuccessUnread(List<Article> unreadList) {
+    public void onSuccessUnread(List<Article> unreadList, int used) {
         if (unreadList != null & unreadList.size() > 0) {
             L.v(unreadList.size());
             mAdapter.setData(unreadList);

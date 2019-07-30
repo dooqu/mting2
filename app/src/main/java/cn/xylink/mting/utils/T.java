@@ -56,7 +56,7 @@ public class T {
 
 
     public static void toastCancel() {
-        if(toast!=null){
+        if (toast != null) {
             toast.cancel();
         }
     }
@@ -68,5 +68,39 @@ public class T {
         toast.setGravity(Gravity.CENTER, 0, 0);
         toast.setView(view);
         toast.show();
+    }
+
+    //    根据接口返回code，客户端Toast提示信息：
+//            -1 ：服务器异常，请稍后再试
+//-910 ：验证码获取频繁，请稍后再试
+//-911：当前使用IP地址被禁止使用，请联系客服
+//-912：手机号被禁止使用，请联系客服
+//-999：无提示，直接返回登录页面
+//-1000：服务器异常，请稍后再试
+//-10000：服务器异常，请稍后再试
+//
+//
+//-2....-100：业务逻辑校验错误，客户端逻辑处理
+    public static void showServerErrorToast(int code) {
+            switch (code) {
+            case -1:
+                showCustomToast("服务器异常，请稍后再试");
+                return;
+            case -910:
+                showCustomToast("验证码获取频繁，请稍后再试");
+                return;
+            case -911:
+                showCustomToast("当前使用IP地址被禁止使用，请联系客服");
+                return;
+            case -912:
+                showCustomToast("手机号被禁止使用，请联系客服");
+                return;
+            case -1000:
+                showCustomToast("服务器异常，请稍后再试");
+                return;
+            case -10000:
+                showCustomToast("服务器异常，请稍后再试");
+                return;
+        }
     }
 }

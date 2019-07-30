@@ -14,7 +14,7 @@ import cn.xylink.mting.bean.UnreadRequest;
  */
 public interface UnreadContract {
     interface IUnreadView extends IBaseView {
-        void onSuccessUnread(List<Article> unreadList);
+        void onSuccessUnread(List<Article> unreadList, int used);
 
         void onErrorUnread(int code, String errorMsg);
     }

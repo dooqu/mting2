@@ -1,11 +1,10 @@
 package cn.xylink.mting.ui.fragment;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.LinearLayout;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -45,6 +44,12 @@ import cn.xylink.mting.widget.SpaceItemDecoration;
 public class UnreadFragment extends BaseMainTabFragment implements UnreadAdapter.OnItemClickListener, UnreadContract.IUnreadView {
     private UnreadAdapter mAdapter;
     private UnreadPresenter mPresenter;
+    @BindView(R.id.ll_empty)
+    LinearLayout mEnptyLayout;
+    @BindView(R.id.ll_empty_first)
+    LinearLayout mEnptyFirstLayout;
+    @BindView(R.id.ll_network_error)
+    LinearLayout mNetworkErrorLayout;
 
     @Override
     protected int getLayoutViewId() {
@@ -76,17 +81,12 @@ public class UnreadFragment extends BaseMainTabFragment implements UnreadAdapter
             request.doSign();
             mPresenter.createUnread(request);
         } else {
+            mRecyclerView.setVisibility(View.VISIBLE);
             if (mControllerListener != null)
                 mControllerListener.onDataSuccess();
         }
     }
 
-
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        L.v();
-    }
 
     @Override
     public void onItemClick(Article article) {
@@ -142,8 +142,14 @@ public class UnreadFragment extends BaseMainTabFragment implements UnreadAdapter
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onDelSuccess(DeleteArticleSuccessEvent event) {
         L.v(event);
-        if (event.getTab_type() == TAB_TYPE.UNREAD)
+        if (event.getTab_type() == TAB_TYPE.UNREAD) {
             mAdapter.refreshData();
+            if (mAdapter.getItemCount() < 1) {
+                mEnptyLayout.setVisibility(View.VISIBLE);
+                mRecyclerView.setVisibility(View.GONE);
+                mNetworkErrorLayout.setVisibility(View.GONE);
+            }
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -165,6 +171,9 @@ public class UnreadFragment extends BaseMainTabFragment implements UnreadAdapter
                 }
             });
         }
+        if (mRecyclerView.getVisibility() != View.VISIBLE) {
+            mRecyclerView.setVisibility(View.VISIBLE);
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -181,17 +190,27 @@ public class UnreadFragment extends BaseMainTabFragment implements UnreadAdapter
     }
 
     @Override
-    public void onSuccessUnread(List<Article> unreadList) {
+    public void onSuccessUnread(List<Article> unreadList, int used) {
         if (unreadList != null) {
             SpeechList.getInstance().appendArticles(unreadList);
             mAdapter.refreshData();
             mControllerListener.onDataSuccess();
+            if (unreadList.size() > 0) {
+                mRecyclerView.setVisibility(View.VISIBLE);
+            } else {
+                if (used > 0)
+                    mEnptyLayout.setVisibility(View.VISIBLE);
+                else
+                    mEnptyFirstLayout.setVisibility(View.VISIBLE);
+            }
         }
     }
 
     @Override
     public void onErrorUnread(int code, String errorMsg) {
-
+//        if (code > 9999) {
+            mNetworkErrorLayout.setVisibility(View.VISIBLE);
+//        }
     }
 
     @Override

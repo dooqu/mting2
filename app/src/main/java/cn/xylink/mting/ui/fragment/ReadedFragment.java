@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.LinearLayout;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -13,6 +14,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
 import cn.xylink.mting.R;
 import cn.xylink.mting.base.BaseActivity;
 import cn.xylink.mting.bean.Article;
@@ -45,6 +47,10 @@ public class ReadedFragment extends BaseMainTabFragment implements UnreadAdapter
 
     private ReadedAdapter mAdapter;
     private ReadedPresenter mPresenter;
+    @BindView(R.id.ll_empty)
+    LinearLayout mEnptyLayout;
+    @BindView(R.id.ll_network_error)
+    LinearLayout mNetworkErrorLayout;
 
     @Override
     protected int getLayoutViewId() {
@@ -172,7 +178,7 @@ public class ReadedFragment extends BaseMainTabFragment implements UnreadAdapter
         L.v(event);
         if (mAdapter != null && mAdapter.getArticleList() != null && mAdapter.getArticleList().size() > 0 && event.getArticle() != null) {
             for (int i = 0; i < mAdapter.getArticleList().size(); i++) {
-                if (event.getArticle().getArticleId().equals(mAdapter.getArticleList().get(i).getArticleId())){
+                if (event.getArticle().getArticleId().equals(mAdapter.getArticleList().get(i).getArticleId())) {
                     mAdapter.getArticleList().get(i).setStore(event.getArticle().getStore());
                     mAdapter.notifyItemChanged(i);
                 }
@@ -181,16 +187,29 @@ public class ReadedFragment extends BaseMainTabFragment implements UnreadAdapter
     }
 
     @Override
-    public void onSuccessUnread(List<Article> unreadList) {
+    public void onSuccessUnread(List<Article> unreadList, int used) {
         if (unreadList != null) {
             L.v(unreadList.size());
             mAdapter.setData(unreadList);
+            if (mAdapter.getItemCount() <= 0)
+                if (unreadList.size() > 0) {
+                    mRecyclerView.setVisibility(View.VISIBLE);
+                } else {
+                    mEnptyLayout.setVisibility(View.VISIBLE);
+                    mRecyclerView.setVisibility(View.GONE);
+                    mNetworkErrorLayout.setVisibility(View.GONE);
+                }
         }
     }
 
     @Override
     public void onErrorUnread(int code, String errorMsg) {
         mTotalItemCount--;
+        if (mAdapter.getItemCount() <= 0) {
+            mEnptyLayout.setVisibility(View.GONE);
+            mRecyclerView.setVisibility(View.GONE);
+            mNetworkErrorLayout.setVisibility(View.VISIBLE);
+        }
     }
 
     private int mTotalItemCount = 0;

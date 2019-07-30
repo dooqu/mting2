@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.LinearLayout;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -46,6 +47,10 @@ public class CollectFragment extends BaseMainTabFragment implements UnreadAdapte
 
     private CollectAdapter mAdapter;
     private CollectPresenter mPresenter;
+    @BindView(R.id.ll_empty)
+    LinearLayout mEnptyLayout;
+    @BindView(R.id.ll_network_error)
+    LinearLayout mNetworkErrorLayout;
 
     @Override
     protected int getLayoutViewId() {
@@ -166,7 +171,7 @@ public class CollectFragment extends BaseMainTabFragment implements UnreadAdapte
         if (mAdapter != null && mAdapter.getArticleList() != null && mAdapter.getArticleList().size() > 0 && event.getArticle() != null) {
             boolean isRemove = false;
             for (int i = 0; i < mAdapter.getArticleList().size(); i++) {
-                if (event.getArticle().getArticleId().equals(mAdapter.getArticleList().get(i).getArticleId())){
+                if (event.getArticle().getArticleId().equals(mAdapter.getArticleList().get(i).getArticleId())) {
                     mAdapter.getArticleList().remove(i);
                     mAdapter.notifyItemRemoved(i);
                     isRemove = true;
@@ -176,7 +181,7 @@ public class CollectFragment extends BaseMainTabFragment implements UnreadAdapte
                 mAdapter.getArticleList().set(0, event.getArticle());
                 mAdapter.notifyDataSetChanged();
             }
-        }else {
+        } else {
             mAdapter.clearData();
             getInitData();
         }
@@ -192,15 +197,28 @@ public class CollectFragment extends BaseMainTabFragment implements UnreadAdapte
     }
 
     @Override
-    public void onSuccessUnread(List<Article> unreadList) {
+    public void onSuccessUnread(List<Article> unreadList, int used) {
         if (unreadList != null) {
             mAdapter.setData(unreadList);
+            if (mAdapter.getItemCount() <= 0)
+                if (unreadList.size() > 0) {
+                    mRecyclerView.setVisibility(View.VISIBLE);
+                } else {
+                    mEnptyLayout.setVisibility(View.VISIBLE);
+                    mRecyclerView.setVisibility(View.GONE);
+                    mNetworkErrorLayout.setVisibility(View.GONE);
+                }
         }
     }
 
     @Override
     public void onErrorUnread(int code, String errorMsg) {
         mTotalItemCount--;
+        if (mAdapter.getItemCount() <= 0) {
+            mEnptyLayout.setVisibility(View.GONE);
+            mRecyclerView.setVisibility(View.GONE);
+            mNetworkErrorLayout.setVisibility(View.VISIBLE);
+        }
     }
 
     private int mTotalItemCount = 0;

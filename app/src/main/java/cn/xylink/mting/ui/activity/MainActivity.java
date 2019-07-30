@@ -65,6 +65,7 @@ import cn.xylink.mting.widget.ArcProgressBar;
 public class MainActivity extends BasePresenterActivity implements BaseMainTabFragment.OnControllerListener, MainAddMenuPop.OnMainAddMenuListener
         , DelMainContract.IDelMainView, AddUnreadContract.IAddUnreadView, ViewPager.OnPageChangeListener {
 
+    public static String URL_KEY = "url_key";
     @BindView(R.id.tv_main_tabar_unread)
     TextView mUnreadTextView;
     @BindView(R.id.tv_main_tabar_readed)
@@ -101,6 +102,12 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
         super.onCreate(savedInstanceState);
         L.v();
 //        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        L.v("*^*^*^*^*"+intent.getStringExtra(URL_KEY));
+        super.onNewIntent(intent);
     }
 
     @Override
@@ -234,7 +241,7 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
 
     @Override
     public void onSuccessDel(String str) {
-        T.s(this, "删除成功");
+        T.showCustomToast("删除成功");
         EventBus.getDefault().post(new DeleteArticleSuccessEvent(mMessageQueue.poll()));
     }
 
