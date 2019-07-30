@@ -78,6 +78,10 @@ public abstract class BasePresenterActivity<T extends BasePresenter> extends Bas
     @Override
     protected void onResume() {
         super.onResume();
+        showCopyDialog();
+    }
+
+    private void showCopyDialog() {
         if (this.getComponentName().getClassName().equals(MainActivity.class.getName())
                 || this.getComponentName().getClassName().equals(SearchActivity.class.getName())
                 || this.getComponentName().getClassName().equals(ArticleDetailActivity.class.getName())) {
