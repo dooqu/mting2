@@ -34,12 +34,11 @@
             android:layout_marginEnd="20dp"
             android:background="#ebebeb" />
 
-        <ProgressBar
+        <View
             android:id="@+id/pb_speech_bar"
-            style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:progressDrawable="@drawable/progressbar"
+            android:background="@drawable/gif_loading"
             android:visibility="gone" />
     </FrameLayout>
 
@@ -47,14 +46,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="22dp"
         android:layout_marginRight="20dp">
 
         <TextView
             android:id="@+id/tv_preview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
             android:hint="立即预览"
             android:textColor="@color/color_login_text_gray"
             android:textSize="@dimen/text_18" />
