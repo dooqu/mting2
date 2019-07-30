@@ -85,6 +85,7 @@ public class BindingPhoneActivity extends BasePresenterActivity implements BindC
     @Override
     protected void initView() {
         tvTitle.setText("绑定手机号");
+        mBtnNext.setEnabled(false);
         etPhone.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -100,10 +101,12 @@ public class BindingPhoneActivity extends BasePresenterActivity implements BindC
             public void afterTextChanged(Editable s) {
                 if (s.length() > 0) {
                     ivDelEt.setVisibility(View.VISIBLE);
+                    mBtnNext.setEnabled(true);
                     mBtnNext.setBackground(getResources().getDrawable(R.drawable.bg_phone_click_btn));
                 } else {
                     mBtnNext.setBackground(getResources().getDrawable(R.drawable.bg_phone_default_btn));
                     ivDelEt.setVisibility(View.GONE);
+                    mBtnNext.setEnabled(false);
                 }
             }
         });

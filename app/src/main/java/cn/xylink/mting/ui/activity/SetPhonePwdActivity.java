@@ -82,6 +82,7 @@ public class SetPhonePwdActivity extends BasePresenterActivity implements Regist
     @Override
     protected void initView() {
         tvTitle.setText("设置密码");
+        mBtnNext.setEnabled(false);
         etPwd.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -97,9 +98,10 @@ public class SetPhonePwdActivity extends BasePresenterActivity implements Regist
             public void afterTextChanged(Editable s) {
                 if (s.length() > 0) {
                     mBtnNext.setBackground(getResources().getDrawable(R.drawable.bg_phone_click_btn));
+                    mBtnNext.setEnabled(true);
                 } else {
+                    mBtnNext.setEnabled(false);
                     mBtnNext.setBackground(getResources().getDrawable(R.drawable.bg_phone_default_btn));
-
                 }
             }
         });
@@ -146,14 +148,20 @@ public class SetPhonePwdActivity extends BasePresenterActivity implements Regist
                 isChecked = !isChecked;
                 break;
             case R.id.btn_next:
+                String pwd = etPwd.getText().toString();
                 if (etPwd.getText().length() == 0) {
                     Toast.makeText(this, "密码不能为空", Toast.LENGTH_SHORT).show();
                     return;
-                } else if (etPwd.getText().length() > 16) {
-                    Toast.makeText(this, "长度不超过16位", Toast.LENGTH_SHORT).show();
+                }
+//                else if (etPwd.getText().length() > 20) {
+//                    Toast.makeText(this, "长度不超过20位", Toast.LENGTH_SHORT).show();
+//                    return;
+//                }
+                else if(pwd.length() < 6)
+                {
+                    toastLong("密码长度小于6位，请重新输入");
                     return;
                 }
-                String pwd = etPwd.getText().toString();
                 L.v("pwd", pwd);
                 RegisterRequset requset = new RegisterRequset();
                 requset.setDeviceId(TingUtils.getDeviceId(getApplicationContext()));

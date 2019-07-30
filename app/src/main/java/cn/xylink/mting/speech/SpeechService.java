@@ -627,7 +627,7 @@ public class SpeechService extends Service {
 
             Notification.Builder builder = new Notification.Builder(this)
                     .setContentIntent(pendingIntent)
-                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .setSmallIcon(R.mipmap.icon_little)
                     .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.notification_album))
                     .setTicker(currentArticle.getTitle())
                     .setContentTitle("轩辕听")

@@ -124,7 +124,6 @@ public class MTing extends Application {
 
                     @Override
                     public void onFailure(int code, String errorMsg) {
-
                         Log.d("SPEECH", "onFailure:" + errorMsg);
                         CurrentUpgradeInfo = null;
                     }

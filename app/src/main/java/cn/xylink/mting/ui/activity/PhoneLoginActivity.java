@@ -73,6 +73,7 @@ public class PhoneLoginActivity extends BasePresenterActivity implements GetCode
     @Override
     protected void initView() {
         tvTitle.setText("手机号登录");
+        mBtnNext.setEnabled(false);
         etPhone.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -90,9 +91,11 @@ public class PhoneLoginActivity extends BasePresenterActivity implements GetCode
                 {
                     ivDelEt.setVisibility(View.VISIBLE);
                     mBtnNext.setBackground(getResources().getDrawable(R.drawable.bg_phone_click_btn));
+                    mBtnNext.setEnabled(true);
                 }else{
                     mBtnNext.setBackground(getResources().getDrawable(R.drawable.bg_phone_default_btn));
                     ivDelEt.setVisibility(View.GONE);
+                    mBtnNext.setEnabled(false);
                 }
             }
         });

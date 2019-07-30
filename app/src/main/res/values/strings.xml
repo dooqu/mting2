@@ -130,4 +130,7 @@
 \n3、本协议的任何条款无论因何种原因无效或不具可执行性，其余条款仍有效，对双方具有约束力。
 </string>
 <string name="incomplete_telephone_number">手机号码应该是11位数字</string>
+    <string name="load_on">立即加载</string>
+    <string name="load_stop">停止加载</string>
+    <string name="load_refresh">重新加载</string>
 </resources>
