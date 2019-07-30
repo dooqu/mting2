@@ -9,7 +9,7 @@
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:src="@mipmap/login_title"
+            android:src="@mipmap/logo"
             android:layout_marginTop="150dp"
             android:layout_marginBottom="150dp"
             android:textSize="30sp" />

@@ -13,18 +13,18 @@
         android:id="@+id/et_article_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginRight="20dp"
         android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
         android:background="@android:color/transparent"
         android:hint="文章地址"
         android:maxLines="3"
-        android:textStyle="bold"
-        android:textSize="@dimen/text_18" />
+        android:textSize="@dimen/text_18"
+        android:textStyle="bold" />
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_marginTop="37dp"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="37dp">
 
         <View
             android:id="@+id/v_1"
@@ -32,22 +32,23 @@
             android:layout_height="1dp"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
-            android:background="#ebebeb"  />
+            android:background="#ebebeb" />
+
         <ProgressBar
             android:id="@+id/pb_speech_bar"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:visibility="gone"
-            android:progressDrawable="@drawable/progressbar" />
+            android:progressDrawable="@drawable/progressbar"
+            android:visibility="gone" />
     </FrameLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_marginTop="32dp"
-        android:layout_marginRight="20dp"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
-        android:layout_height="wrap_content">
+        android:layout_marginTop="32dp"
+        android:layout_marginRight="20dp">
 
         <TextView
             android:id="@+id/tv_preview"
@@ -57,6 +58,7 @@
             android:hint="立即预览"
             android:textColor="@color/color_login_text_gray"
             android:textSize="@dimen/text_18" />
+
         <TextView
             android:id="@+id/tv_feedback"
             android:layout_width="wrap_content"
@@ -64,8 +66,8 @@
             android:layout_alignParentRight="true"
             android:background="@android:color/transparent"
             android:hint="反馈错误"
-            android:visibility="gone"
-            android:textSize="@dimen/text_18" />
+            android:textSize="@dimen/text_18"
+            android:visibility="gone" />
 
     </RelativeLayout>
 
@@ -74,15 +76,16 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:visibility="gone"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:visibility="gone">
 
         <ImageView
             android:layout_width="wrap_content"
-            android:scaleType="centerCrop"
+            android:layout_height="wrap_content"
             android:adjustViewBounds="true"
-            android:src="@mipmap/add_article_error"
-            android:layout_height="wrap_content" />
+            android:scaleType="centerCrop"
+            android:src="@mipmap/add_article_error" />
+
         <TextView
             android:id="@+id/tv_loading_error"
             android:layout_width="wrap_content"
@@ -90,17 +93,24 @@
 
             android:background="@android:color/transparent"
             android:hint="加载失败"
-            android:visibility="gone"
-            android:textSize="@dimen/text_18" />
+            android:textSize="@dimen/text_18"
+            android:visibility="gone" />
     </LinearLayout>
-    <TextView
-        android:id="@+id/tv_content"
+
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:textSize="@dimen/text_18"
-        android:lineSpacingExtra="5dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginLeft="20dp"
-        android:textColor="@android:color/black"/>
+        android:paddingTop="20dp"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/tv_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="20dp"
+            android:lineSpacingExtra="5dp"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/text_18" />
+    </ScrollView>
 </LinearLayout>

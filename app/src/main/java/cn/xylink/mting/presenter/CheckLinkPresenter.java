@@ -29,7 +29,7 @@ public class CheckLinkPresenter extends BasePresenter<CheckLinkContact.ICheckLin
         }.getType(), new OkGoUtils.ICallback() {
             @Override
             public void onStart() {
-                mView.showLoading();
+//                mView.showLoading();
             }
 
             @Override
@@ -51,7 +51,7 @@ public class CheckLinkPresenter extends BasePresenter<CheckLinkContact.ICheckLin
 
             @Override
             public void onComplete() {
-                mView.hideLoading();
+//                mView.hideLoading();
             }
         });
     }

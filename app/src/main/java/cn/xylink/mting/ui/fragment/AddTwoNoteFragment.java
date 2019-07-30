@@ -1,5 +1,7 @@
 package cn.xylink.mting.ui.fragment;
 
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -61,8 +63,10 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
     private CheckLinkPresenter checkLinkPresenter;
     private AddFeedbackPresenter addFeedbackPresenter;
 
-
+    private LinkArticle linkArticle;
     private String responseUrl;
+
+    private volatile boolean isStop;
 
     public static AddTwoNoteFragment newInstance(Bundle args) {
         AddTwoNoteFragment fragment = new AddTwoNoteFragment();
@@ -71,19 +75,14 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
     }
 
 
-
-
-
-
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        L.v("isVisibleToUser",isVisibleToUser);
-        if(!isVisibleToUser){
+        L.v("isVisibleToUser", isVisibleToUser);
+        if (!isVisibleToUser) {
             EventBus.getDefault().post(new AddArticleHomeEvent(0));
-        }else
-        {
-            if(!TextUtils.isEmpty(tv_content.getText())){
+        } else {
+            if (!TextUtils.isEmpty(tv_content.getText())) {
 
                 EventBus.getDefault().post(new AddArticleHomeEvent(1));
             }
@@ -104,17 +103,18 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
             }
+
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
             }
+
             @Override
             public void afterTextChanged(Editable s) {
                 L.v("s.length", s.length());
-                if(s.length() > 0)
-                {
+                if (s.length() > 0) {
                     tvPreview.setTextColor(getResources().getColor(R.color.color_blue));
-                }else{
-                    tvPreview.setText("立即预览");
+                } else {
+                    tvPreview.setText(R.string.load_on);
                     tvPreview.setVisibility(View.VISIBLE);
                     tvPreview.setTextColor(getResources().getColor(R.color.color_login_text_gray));
                 }
@@ -143,10 +143,23 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
 
     }
 
-    @OnClick({R.id.tv_preview,R.id.tv_feedback})
+    @OnClick({R.id.tv_preview, R.id.tv_feedback})
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.tv_preview:
+                isStop = !isStop;
+                if(isStop)
+                {
+                    tvPreview.setText(R.string.load_stop);
+                }else{
+                    if(tvPreview.getText().toString().equals(getResources().getString(R.string.load_refresh))){
+                        tvPreview.setText(R.string.load_refresh);
+                    }else {
+                        tvPreview.setText(R.string.load_on);
+                    }
+                }
+                if(!isStop)
+                    return;
                 String link = etLink.getText().toString();
                 if (TextUtils.isEmpty(link)) {
                     Toast.makeText(this.getContext(), "地址不能为空", Toast.LENGTH_SHORT).show();
@@ -156,7 +169,7 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
                 checkLinkUrl(link);
                 break;
             case R.id.tv_feedback:
-                 LinkCreateRequest request = new LinkCreateRequest();
+                LinkCreateRequest request = new LinkCreateRequest();
                 request.setUrl(etLink.getText().toString());
                 request.doSign();
                 addFeedbackPresenter.onFeedBack(request);
@@ -181,6 +194,21 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
         linkCreatePresenter.onPush(request);
     }
 
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        ClipboardManager cmb = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+        if (cmb.getPrimaryClip() != null) {
+            String fristText = cmb.getPrimaryClip().getItemAt(0).getText().toString();
+            L.v("fristText");
+            if (fristText.startsWith("http://") || fristText.startsWith("https://")) {
+//                if (TextUtils.isEmpty(etLink.getText().toString()))
+                etLink.setText(fristText);
+            }
+        }
+    }
+
     /**
      * 保存，更新到待读
      *
@@ -198,20 +226,39 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
             Toast.makeText(this.getContext(), "不能解析空地址", Toast.LENGTH_SHORT).show();
             return;
         }
-        link = link.trim().replaceAll(" ", "");
-        linkPushRequset(link);
+        if (linkArticle.getExistUnread() == 1) {
+            final CheckArticleDialog checkArticleDialog = new CheckArticleDialog(getContext());
+            checkArticleDialog.setCanceledOnTouchOutside(true);
+            checkArticleDialog.setData(linkArticle.getTitle(), new CheckArticleDialog.MessageListener() {
+                @Override
+                public void onUpdate() {
+                    linkPushRequset(responseUrl.trim().replaceAll(" ", ""));
+//                    checkArticleDialog.dismiss();
+                }
+
+                @Override
+                public void onLook() {
+                    Intent mIntent = new Intent(getActivity(), HtmlActivity.class);
+                    mIntent.putExtra(HtmlActivity.EXTRA_HTML, responseUrl);
+                    startActivity(mIntent);
+                }
+            });
+
+            String day = DateUtils.getDateText(new Date(), "yyyy年MM月dd日");
+            String hint = getResources().getString(R.string.update_msg_hint);
+            String msg = String.format(hint, day);
+            checkArticleDialog.setUpdateMsg(msg);
+            checkArticleDialog.show();
+        }
+//
+//        linkPushRequset(link);
     }
 
     @Override
     public void onPushSuccess(BaseResponse<LinkArticle> response) {
         L.v(response.data);
-//        String title = response.data.getTitle();
-//        String describe = response.data.getDescribe();
-//        L.v("title",title);
-//        L.v("describle",describe);
-//        tv_content.setText(title +"\n" + describe);
 
-        Toast.makeText(getContext(),"已加入待读",Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), "已加入待读", Toast.LENGTH_SHORT).show();
         AddUnreadEvent event = new AddUnreadEvent();
         event.setArticleID(response.data.getArticleId());
         EventBus.getDefault().post(event);
@@ -236,41 +283,21 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
     @Override
     public void onCheckLinkSuccess(BaseResponse<LinkArticle> response) {
         L.v(response.data);
-
-        tvPreview.setVisibility(View.INVISIBLE);
+        tvPreview.setText(R.string.load_refresh);
+        if(!isStop)
+            return;
+        int a [] = {};
+        linkArticle = response.data;
+//        tvPreview.setVisibility(View.INVISIBLE);
         String title = response.data.getTitle();
-        String describe = response.data.getDescribe();
+        String describe = response.data.getContent();
         responseUrl = response.data.getUrl();
         L.v("title", title);
         L.v("describle", describe);
         tv_content.setText(title + "\n" + describe);
-        if (response.data.getExistUnread() == 1) {
-            final CheckArticleDialog checkArticleDialog = new CheckArticleDialog(getContext());
-            checkArticleDialog.setCanceledOnTouchOutside(true);
-            checkArticleDialog.setData(title, new CheckArticleDialog.MessageListener() {
-                @Override
-                public void onUpdate() {
-                    linkPushRequset(responseUrl);
-//                    checkArticleDialog.dismiss();
-                }
-                @Override
-                public void onLook() {
-                    Intent mIntent = new Intent(getActivity(), HtmlActivity.class);
-                    mIntent.putExtra(HtmlActivity.EXTRA_HTML, responseUrl);
-                    startActivity(mIntent);
-                }
-            });
 
-            String day = DateUtils.getDateText(new Date(), "yyyy年MM月dd日");
-            String hint = getResources().getString(R.string.update_msg_hint);
-            String msg = String.format(hint, day);
-            checkArticleDialog.setUpdateMsg(msg);
-            checkArticleDialog.show();
-        }
-        if (tvFeedback.getVisibility() == View.VISIBLE)
-            tvFeedback.setVisibility(View.GONE);
-        if(llError.getVisibility() == View.VISIBLE)
-        {
+        tvFeedback.setVisibility(View.VISIBLE);
+        if (llError.getVisibility() == View.VISIBLE) {
             llError.setVisibility(View.GONE);
         }
         if (describe.length() > 0) {
@@ -295,12 +322,12 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
 
     @Override
     public void onAddFeedBackSuccess(BaseResponse<String> response) {
-        Toast.makeText(this.getContext(),"反馈成功",Toast.LENGTH_SHORT).show();
+        Toast.makeText(this.getContext(), "反馈成功", Toast.LENGTH_SHORT).show();
 
     }
 
     @Override
     public void onBindCheckError(int code, String errorMsg) {
-        Toast.makeText(this.getContext(),errorMsg,Toast.LENGTH_SHORT).show();
+        Toast.makeText(this.getContext(), errorMsg, Toast.LENGTH_SHORT).show();
     }
 }
