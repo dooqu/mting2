@@ -12,7 +12,7 @@
         android:layout_height="match_parent"
         android:id="@+id/tv"
         android:adjustViewBounds="true"
-        android:scaleType="centerInside"
+        android:scaleType="fitCenter"
         android:src="@mipmap/loading"
          />
 
