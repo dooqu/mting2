@@ -80,10 +80,10 @@ public class SplashActivity extends BasePresenterActivity implements CheckTokenC
         if (!toApplyList.isEmpty()) {
             ActivityCompat.requestPermissions(this, toApplyList.toArray(tmpList), 123);
         } else {
-            startTime = SystemClock.elapsedRealtime();
-            CheckTokenRequest requset = new CheckTokenRequest();
-            requset.doSign();
-            tokenPresenter.onCheckToken(requset);
+//            startTime = SystemClock.elapsedRealtime();
+//            CheckTokenRequest requset = new CheckTokenRequest();
+//            requset.doSign();
+//            tokenPresenter.onCheckToken(requset);
         }
     }
 

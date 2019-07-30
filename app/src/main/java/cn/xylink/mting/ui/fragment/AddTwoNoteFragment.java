@@ -56,6 +56,10 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
     LinearLayout llError;
     @BindView(R.id.tv_loading_error)
     TextView tvLoadingError;
+    @BindView(R.id.v_1)
+    View v_1;
+    @BindView(R.id.pb_speech_bar)
+    View pb_speech_bar;
 
     //文章类型 1 手动添加， 2 链接添加
     public int inLink = 2;
@@ -150,6 +154,8 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
                 isStop = !isStop;
                 if(isStop)
                 {
+                    pb_speech_bar.setVisibility(View.GONE);
+                    v_1.setVisibility(View.VISIBLE);
                     tvPreview.setText(R.string.load_stop);
                 }else{
                     if(tvPreview.getText().toString().equals(getResources().getString(R.string.load_refresh))){
@@ -166,6 +172,8 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
                     return;
                 }
                 link = link.trim().replaceAll(" ", "");
+                pb_speech_bar.setVisibility(View.VISIBLE);
+                v_1.setVisibility(View.GONE);
                 checkLinkUrl(link);
                 break;
             case R.id.tv_feedback:
@@ -284,6 +292,8 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
     public void onCheckLinkSuccess(BaseResponse<LinkArticle> response) {
         L.v(response.data);
         tvPreview.setText(R.string.load_refresh);
+        pb_speech_bar.setVisibility(View.GONE);
+        v_1.setVisibility(View.VISIBLE);
         if(!isStop)
             return;
         int a [] = {};

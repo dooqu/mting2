@@ -84,7 +84,7 @@ public class AddArticleActivity extends BasePresenterActivity {
 //        tabLayout.setTabsFromPagerAdapter(adapter);
         vpContent.setAdapter(adapter);
 
-        vpContent.setCanScroll(true);
+//        vpContent.setCanScroll(true);
     }
 
 
