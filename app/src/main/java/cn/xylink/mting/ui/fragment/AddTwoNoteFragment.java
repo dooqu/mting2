@@ -94,16 +94,6 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
             if (!TextUtils.isEmpty(tv_content.getText())) {
                 EventBus.getDefault().post(new AddArticleHomeEvent(1));
             }
-            ClipboardManager cmb = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
-            if (cmb.getPrimaryClip() != null) {
-                String fristText = cmb.getPrimaryClip().getItemAt(0).getText().toString();
-                L.v("fristText");
-                if (fristText.startsWith("http://") || fristText.startsWith("https://")) {
-                    etLink.setText(fristText);
-//                    tvPreview.setTextColor(getResources().getColorStateList(R.color.color_blue));
-                    tvPreview.setTextColor(Color.parseColor("#488DEF"));
-                }
-            }
         }
     }
 
@@ -130,8 +120,7 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
             public void afterTextChanged(Editable s) {
                 L.v("s.length", s.length());
                 if (s.length() > 0) {
-                    tvPreview.setTextColor(Color.parseColor("#488DEF"));
-//                    .setTextColor(getResources().getColor(R.color.color_blue));
+                    tvPreview.setTextColor(getResources().getColor(R.color.color_blue));
                 } else {
                     tvPreview.setText(R.string.load_on);
                     tvPreview.setVisibility(View.VISIBLE);
@@ -234,7 +223,15 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
     @Override
     public void onResume() {
         super.onResume();
-
+        ClipboardManager cmb = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+        if (cmb.getPrimaryClip() != null) {
+            String fristText = cmb.getPrimaryClip().getItemAt(0).getText().toString();
+            L.v("fristText");
+            if (fristText.startsWith("http://") || fristText.startsWith("https://")) {
+                etLink.setText(fristText);
+                tvPreview.setTextColor(getResources().getColorStateList(R.color.color_blue));
+            }
+        }
     }
 
     /**

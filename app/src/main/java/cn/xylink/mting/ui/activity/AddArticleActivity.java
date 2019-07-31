@@ -21,7 +21,6 @@ import cn.xylink.mting.event.TwoArticleEvent;
 import cn.xylink.mting.ui.adapter.FragmentAdapter;
 import cn.xylink.mting.ui.fragment.AddOneNoteFragment;
 import cn.xylink.mting.ui.fragment.AddTwoNoteFragment;
-import cn.xylink.mting.utils.ContentManager;
 import cn.xylink.mting.utils.L;
 import cn.xylink.mting.widget.CustomViewPager;
 
@@ -58,7 +57,7 @@ public class AddArticleActivity extends BasePresenterActivity {
             public void onTabSelected(TabLayout.Tab tab) {
                 pageIndex = tab.getPosition();
                 //tab被选的时候回调
-                vpContent.setCurrentItem(pageIndex, true);
+                vpContent.setCurrentItem(pageIndex);
                 hideSoftInput();
             }
 
