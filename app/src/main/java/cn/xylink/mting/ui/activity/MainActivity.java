@@ -414,6 +414,7 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
                         }
                     break;
                 case SpeechorStatePlaying:
+                case SpeechorStateLoadding:
                     if (service.pause())
 //                        mPlayBtnSRC.setImageDrawable(getResources().getDrawable(R.mipmap.ico_playing));
                         if (mPlayBtnSRC.getDrawable() != mPauseDrawable) {
