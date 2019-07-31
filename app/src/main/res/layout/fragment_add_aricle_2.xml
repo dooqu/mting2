@@ -24,7 +24,8 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="37dp">
+        android:layout_marginTop="37dp"
+        >
 
         <View
             android:id="@+id/v_1"
@@ -56,7 +57,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:hint="立即预览"
-            android:textColor="@color/color_login_text_gray"
             android:textSize="@dimen/text_18" />
 
         <TextView

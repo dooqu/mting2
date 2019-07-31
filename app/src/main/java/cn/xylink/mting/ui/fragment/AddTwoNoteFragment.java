@@ -3,6 +3,7 @@ package cn.xylink.mting.ui.fragment;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.drawable.AnimationDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -91,8 +92,17 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
             EventBus.getDefault().post(new AddArticleHomeEvent(0));
         } else {
             if (!TextUtils.isEmpty(tv_content.getText())) {
-
                 EventBus.getDefault().post(new AddArticleHomeEvent(1));
+            }
+            ClipboardManager cmb = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+            if (cmb.getPrimaryClip() != null) {
+                String fristText = cmb.getPrimaryClip().getItemAt(0).getText().toString();
+                L.v("fristText");
+                if (fristText.startsWith("http://") || fristText.startsWith("https://")) {
+                    etLink.setText(fristText);
+//                    tvPreview.setTextColor(getResources().getColorStateList(R.color.color_blue));
+                    tvPreview.setTextColor(Color.parseColor("#488DEF"));
+                }
             }
         }
     }
@@ -120,7 +130,8 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
             public void afterTextChanged(Editable s) {
                 L.v("s.length", s.length());
                 if (s.length() > 0) {
-                    tvPreview.setTextColor(getResources().getColor(R.color.color_blue));
+                    tvPreview.setTextColor(Color.parseColor("#488DEF"));
+//                    .setTextColor(getResources().getColor(R.color.color_blue));
                 } else {
                     tvPreview.setText(R.string.load_on);
                     tvPreview.setVisibility(View.VISIBLE);
@@ -128,22 +139,19 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
                 }
             }
         });
-        tvPreview.setTextColor(getResources().getColorStateList(R.color.color_blue));
-
-
-
-
     }
 
-    public void startAnim()
-    {
+
+
+    public void startAnim() {
         pb_speech_bar.setImageResource(R.drawable.gif_loading);
         animationDrawable = (AnimationDrawable) pb_speech_bar.getDrawable();
         animationDrawable.start();
     }
 
-    public void stopAnim(){
-        animationDrawable.stop();
+    public void stopAnim() {
+        if (animationDrawable != null)
+            animationDrawable.stop();
     }
 
     @Override
@@ -171,20 +179,19 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
         switch (v.getId()) {
             case R.id.tv_preview:
                 isStop = !isStop;
-                if(isStop)
-                {
-                    stopAnim();
+                if (isStop) {
                     pb_speech_bar.setVisibility(View.GONE);
                     v_1.setVisibility(View.VISIBLE);
                     tvPreview.setText(R.string.load_stop);
-                }else{
-                    if(tvPreview.getText().toString().equals(getResources().getString(R.string.load_refresh))){
+                } else {
+                    stopAnim();
+                    if (tvPreview.getText().toString().equals(getResources().getString(R.string.load_refresh))) {
                         tvPreview.setText(R.string.load_refresh);
-                    }else {
+                    } else {
                         tvPreview.setText(R.string.load_on);
                     }
                 }
-                if(!isStop)
+                if (!isStop)
                     return;
                 String link = etLink.getText().toString();
                 if (TextUtils.isEmpty(link)) {
@@ -227,15 +234,7 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
     @Override
     public void onResume() {
         super.onResume();
-        ClipboardManager cmb = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
-        if (cmb.getPrimaryClip() != null) {
-            String fristText = cmb.getPrimaryClip().getItemAt(0).getText().toString();
-            L.v("fristText");
-            if (fristText.startsWith("http://") || fristText.startsWith("https://")) {
-//                if (TextUtils.isEmpty(etLink.getText().toString()))
-                etLink.setText(fristText);
-            }
-        }
+
     }
 
     /**
@@ -316,9 +315,9 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
         stopAnim();
         pb_speech_bar.setVisibility(View.GONE);
         v_1.setVisibility(View.VISIBLE);
-        if(!isStop)
+        if (!isStop)
             return;
-        int a [] = {};
+        int a[] = {};
         linkArticle = response.data;
 //        tvPreview.setVisibility(View.INVISIBLE);
         String title = response.data.getTitle();

@@ -93,14 +93,15 @@ public class LoginActivity extends BasePresenterActivity implements ThirdLoginCo
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.tv_user_protocol:
-                AgreementDialog dialog = new AgreementDialog(LoginActivity.this);
-                dialog.show();
-                dialog.setOnConfirmClickListener(new AgreementDialog.OnConfirmClickListener() {
-                    @Override
-                    public void setConfirmClickListener() {
-
-                    }
-                });
+                startActivity(new Intent(this,UserProtocolActivity.class));
+//                AgreementDialog dialog = new AgreementDialog(LoginActivity.this);
+//                dialog.show();
+//                dialog.setOnConfirmClickListener(new AgreementDialog.OnConfirmClickListener() {
+//                    @Override
+//                    public void setConfirmClickListener() {
+//
+//                    }
+//                });
                 break;
             case R.id.btn_left:
                 finish();

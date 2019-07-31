@@ -34,6 +34,7 @@
             android:gravity="center"
             android:paddingLeft="@dimen/title_tv_padding"
             android:paddingRight="@dimen/title_tv_padding"
+            android:textColor="@color/color_333333"
             android:singleLine="true"
             android:textSize="@dimen/title_size" />
 
