@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animation-list xmlns:android="http://schemas.android.com/apk/res/android"
+    android:oneshot="false">
+
+    <item
+        android:drawable="@mipmap/share_1"
+        android:duration="38" />
+    <item
+        android:drawable="@mipmap/share_2"
+        android:duration="38" />
+    <item
+        android:drawable="@mipmap/share_3"
+        android:duration="38" />
+    <item
+        android:drawable="@mipmap/share_4"
+        android:duration="38" />
+    <item
+        android:drawable="@mipmap/share_5"
+        android:duration="38" />
+    <item
+        android:drawable="@mipmap/share_6"
+        android:duration="38" />
+    <item
+        android:drawable="@mipmap/share_7"
+        android:duration="38" />
+    <item
+        android:drawable="@mipmap/share_8"
+        android:duration="38" />
+    <item
+        android:drawable="@mipmap/share_9"
+        android:duration="38" />
+    <item
+        android:drawable="@mipmap/share_10"
+        android:duration="38" />
+    <item
+        android:drawable="@mipmap/share_11"
+        android:duration="38" />
+    <item
+        android:drawable="@mipmap/share_12"
+        android:duration="38" />
+    <item
+        android:drawable="@mipmap/share_13"
+        android:duration="38" />
+    <item
+        android:drawable="@mipmap/share_14"
+        android:duration="38" />
+    <item
+        android:drawable="@mipmap/share_15"
+        android:duration="38" />
+    <item
+        android:drawable="@mipmap/share_16"
+        android:duration="38" />
+    <item
+        android:drawable="@mipmap/share_17"
+        android:duration="38" />
+    <item
+        android:drawable="@mipmap/share_18"
+        android:duration="38" />
+    <item
+        android:drawable="@mipmap/share_19"
+        android:duration="38" />
+    <item
+        android:drawable="@mipmap/share_20"
+        android:duration="38" />
+    <item
+        android:drawable="@mipmap/share_21"
+        android:duration="38" />
+    <item
+        android:drawable="@mipmap/share_22"
+        android:duration="38" />
+    <item
+        android:drawable="@mipmap/share_23"
+        android:duration="38" />
+    <item
+        android:drawable="@mipmap/share_24"
+        android:duration="38" />
+
+
+
+</animation-list>

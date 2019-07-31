@@ -34,11 +34,13 @@
             android:layout_marginEnd="20dp"
             android:background="#ebebeb" />
 
-        <View
+        <ImageView
             android:id="@+id/pb_speech_bar"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@drawable/gif_loading"
+            android:scaleType="centerCrop"
+            android:adjustViewBounds="true"
+            android:src="@drawable/gif_loading"
             android:visibility="gone" />
     </FrameLayout>
 

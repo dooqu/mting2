@@ -151,6 +151,7 @@ public class BindingPhoneActivity extends BasePresenterActivity implements BindC
                 break;
             case R.id.btn_next:
                 phone = etPhone.getText().toString();
+                phone = phone.replaceAll(" ", "");
                 if(phone.length() == 0)
                 {
                     Toast.makeText(this,"手机号不能为空",Toast.LENGTH_SHORT).show();
@@ -166,7 +167,7 @@ public class BindingPhoneActivity extends BasePresenterActivity implements BindC
                     return;
                 }
                 BindCheckRequest requset = new BindCheckRequest();
-                requset.setPhone(phone.replaceAll(" ", ""));
+                requset.setPhone(phone);
                 requset.setPlatform(platform);
                 requset.doSign();
                 codePresenter.onBindCheck(requset);
