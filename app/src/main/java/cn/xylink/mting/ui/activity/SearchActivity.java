@@ -196,7 +196,6 @@ public class SearchActivity extends BasePresenterActivity implements SearchContr
         request.doSign();
         mArticleDetailPresenter.createArticleDetail(request);
         showLoading();
-        startActivity(new Intent(this,MainActivity.class));
     }
 
     @Override

@@ -26,6 +26,7 @@ public class MemoryCache {
     private int keyBordHeight;
     private int rgTime;
     private int textSize;
+    private List<String> copyArray;
 
     private MemoryCache() {
     }
@@ -122,5 +123,13 @@ public class MemoryCache {
 
     public int getTextSize() {
         return textSize;
+    }
+
+    public List<String> getCopyArray() {
+        return copyArray;
+    }
+
+    public void setCopyArray(List<String> copyArray) {
+        this.copyArray = copyArray;
     }
 }
