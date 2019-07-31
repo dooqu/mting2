@@ -13,6 +13,9 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"/>
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission
         android:name="android.permission.WRITE_APN_SETTINGS"
         tools:ignore="ProtectedPermissions" />
@@ -26,6 +29,24 @@
         android:networkSecurityConfig="@xml/network_security_config"
         android:theme="@style/AppTheme"
         tools:replace="android:appComponentFactory">
+
+        <provider
+            android:name=".utils.DownloadFileProvider"
+            android:authorities="cn.xylink.mting.utils.DownloadFileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_path"/>
+        </provider>
+
+
+        <receiver android:name=".ui.dialog.UpgradeConfirmDialog$UpgradeDownloadCompleteBroadcast">
+            <intent-filter>
+                <action android:name="android.intent.action.DOWNLOAD_COMPLETE"></action>
+            </intent-filter>
+        </receiver>
+
         <activity
             android:name=".ui.activity.SearchActivity"
             android:windowSoftInputMode="adjustNothing" />
@@ -155,26 +176,12 @@
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
 
-        <receiver android:name=".ui.dialog.UpgradeConfirmDialog$UpgradeDownloadCompleteBroadcast">
-            <intent-filter>
-                <action android:name="android.intent.action.DOWNLOAD_COMPLETE"></action>
-            </intent-filter>
-        </receiver>
+
 
         <meta-data
             android:name="TING_CHANNEL"
             android:value="${TING_CHANNEL_VALUE}" />
-        <!--
-        <provider
-            android:name="android.support.v4.content.FileProvider"
-            android:authorities="#{applicationId}.fileprovider"
-            android:exported="false"
-            android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_path" />
-        </provider>
-        -->
+
         <activity
             android:name=".ui.activity.ShareActivity"
             android:launchMode="singleTask">

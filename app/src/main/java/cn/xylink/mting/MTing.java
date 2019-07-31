@@ -27,6 +27,7 @@ import cn.xylink.mting.openapi.QQApi;
 import cn.xylink.mting.openapi.WXapi;
 import cn.xylink.mting.speech.SpeechService;
 import cn.xylink.mting.speech.Speechor;
+import cn.xylink.mting.speech.TTSAudioLoader;
 import cn.xylink.mting.speech.data.SpeechList;
 import cn.xylink.mting.speech.data.XiaoIceTTSAudioLoader;
 import cn.xylink.mting.utils.ContentManager;

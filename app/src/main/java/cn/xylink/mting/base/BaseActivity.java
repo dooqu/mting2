@@ -3,7 +3,9 @@ package cn.xylink.mting.base;
 import android.Manifest;
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
@@ -13,6 +15,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.Settings;
+import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
@@ -30,6 +34,7 @@ import java.util.TimerTask;
 
 import butterknife.ButterKnife;
 import cn.xylink.mting.MTing;
+import cn.xylink.mting.ui.SplashActivity;
 import cn.xylink.mting.ui.dialog.UpgradeConfirmDialog;
 import cn.xylink.mting.utils.L;
 import cn.xylink.mting.utils.PackageUtils;
@@ -235,6 +240,48 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
 
+    private void checkInstall(Uri apkUrl){
+        boolean haveInstallPermission;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            //先获取是否有安装未知来源应用的权限
+            haveInstallPermission = getPackageManager().canRequestPackageInstalls();
+            if (!haveInstallPermission) {//没有权限
+                AlertDialog alertDialog = new AlertDialog.Builder(this)
+                        .setTitle("请开启未知来源权限")
+                        .setMessage("安装应用需要打开安装未知来源应用权限")
+                        .setCancelable(false)
+                        .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                                System.exit(0);
+                            }
+                        })
+                        .setPositiveButton("去设置", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                                toInStallPermissionSettingActivity();
+                            }
+                        }).create();
+
+                alertDialog.show();
+                return;
+            }
+        }
+        //有权限，进行安装操作 安装就不写了
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void toInStallPermissionSettingActivity() {
+        Uri packageURI = Uri.parse("package:" + getPackageName());
+        //注意这个是8.0新API
+        Intent intent = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, packageURI);
+        startActivityForResult(intent, 100);
+    }
+
+
+
     private void installApk() {
         if (Build.VERSION.SDK_INT >= 26) {
             boolean b = getPackageManager().canRequestPackageInstalls();
@@ -267,6 +314,12 @@ public abstract class BaseActivity extends AppCompatActivity {
             imageUri = Uri.fromFile(file);
         }
         return imageUri;
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override

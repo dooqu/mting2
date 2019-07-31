@@ -1,25 +1,35 @@
 package cn.xylink.mting.ui.dialog;
 
+import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.Settings;
+import android.support.annotation.RequiresApi;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.FileProvider;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
@@ -50,20 +60,22 @@ public class UpgradeConfirmDialog extends Dialog {
                 switch (result) {
                     case DownloadManager.STATUS_SUCCESSFUL:
                         if (downloadFiles.containsKey(BigInteger.valueOf(downloadTaskId))) {
-
+                            //ActivityCompatirequestPermissions(context, new String[]{Manifest.permission.REQUEST_INSTALL_PACKAGES}, 100);
+                            changFileMode(downloadFiles.get(BigInteger.valueOf(downloadTaskId)));
                             File apkFile = new File(downloadFiles.get(BigInteger.valueOf(downloadTaskId)));
                             Uri fileUri = Uri.fromFile(apkFile);
                             Intent installIntent = new Intent(Intent.ACTION_VIEW);
                             if (false || Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                                 installIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                                 installIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                fileUri = FileProvider.getUriForFile(context, "cn.xylink.mting.utils.DownloadFileProvider", apkFile);
+                                //installIntent.setClassName("com.android.packageinstaller", "com.android.packageinstaller.PackageInstallerActivity");
                                 //fileUri = FileProvider.getUriForFile(context, context.getPackageName() + ".fileprovider", apkFile);
                             }
                             else {
                                 installIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                 fileUri = Uri.fromFile(apkFile);
                             }
-
                             installIntent.setDataAndType(fileUri, "application/vnd.android.package-archive");
                             MTing.CurrentUpgradeDownloadId = 0;
 
@@ -82,6 +94,21 @@ public class UpgradeConfirmDialog extends Dialog {
                 }
             }
         }
+
+
+        public void changFileMode(String filePath) {
+            String command = "chmod " + "777" + " " + filePath;
+            Runtime runtime = Runtime.getRuntime();
+            try {
+                runtime.exec(command);
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+
+
     }
 
     public static class UpgradeDownloadQuery {
@@ -234,14 +261,26 @@ public class UpgradeConfirmDialog extends Dialog {
             return -1;
         }
 
-        DownloadManager mDownloadManager = (DownloadManager) context.getSystemService(DOWNLOAD_SERVICE);
+
+        final String packageName = "com.android.providers.downloads";
+        int state = context.getPackageManager().getApplicationEnabledSetting(packageName);
+
+        if (state == PackageManager.COMPONENT_ENABLED_STATE_DISABLED || state == PackageManager.COMPONENT_ENABLED_STATE_DISABLED_USER || state == PackageManager.COMPONENT_ENABLED_STATE_DISABLED_UNTIL_USED) {
+            Log.d("SPEECH_", "禁用");
+        }
+
+            DownloadManager mDownloadManager = (DownloadManager) context.getSystemService(DOWNLOAD_SERVICE);
         Uri resource = Uri.parse(this.upgradeInfo.getAppDownloadUrl());
         DownloadManager.Request request = new DownloadManager.Request(resource);
+        request.setMimeType("application/vnd.android.package-archive");
+        request.allowScanningByMediaScanner();
         request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, resource.getLastPathSegment());
         request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_MOBILE | DownloadManager.Request.NETWORK_WIFI);
         request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
         request.setVisibleInDownloadsUi(true);
         request.setTitle("轩辕听正在下载升级:" + upgradeInfo.getAppName());
+        request.setDescription("正在升级");
+
         MTing.CurrentUpgradeDownloadId = mDownloadManager.enqueue(request);
 
         if (MTing.CurrentUpgradeDownloadId > 0) {

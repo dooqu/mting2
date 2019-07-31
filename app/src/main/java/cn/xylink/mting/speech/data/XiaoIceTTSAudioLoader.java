@@ -19,26 +19,18 @@ import org.json.JSONObject;
 
 
 import cn.xylink.mting.speech.Speechor;
+import cn.xylink.mting.speech.TTSAudioLoader;
 import okhttp3.Call;
 import okhttp3.MediaType;
 
 
-public class XiaoIceTTSAudioLoader {
+public class XiaoIceTTSAudioLoader implements TTSAudioLoader {
 
     private final static String URL_PATH = "http://xylink.aic.msxiaobing.com/api/platform/Reply";
     private final static String KEY_SUBSCRIPTION = "bc2c2003ad7342d7afd7d3c48f28abad";
     private final static String MSG_ID = "f5ff4f16fb90d07eb9475b5d9b582967ad09e3a7b875a62a26f02ffec1b37c2dff4ab5684fc620ee";
     private final static String TIMESTAMP = "300";
 
-
-    public interface LoadResult
-    {
-        void invoke(int errorCode, String message, String audioUrl);
-    }
-
-    public static void cancel() {
-        OkGo.getInstance().cancelAll();
-    }
 
     private String getSpeechString(Speechor.SpeechorSpeed speechorSpeed) {
         switch (speechorSpeed) {
@@ -58,7 +50,7 @@ public class XiaoIceTTSAudioLoader {
         return "0";
     }
 
-
+    @Override
     public void textToSpeech(String text, Speechor.SpeechorSpeed speechorSpeed, LoadResult result) {
 
         Log.d("xylink", "TTS:" + text);
@@ -128,6 +120,11 @@ public class XiaoIceTTSAudioLoader {
                 });
     }
 
+    @Override
+    public void cancelAll() {
+        OkGo.getInstance().cancelTag(this);
+    }
+
 
     private String createPostString(String text, String speedStr) throws JSONException
     {
@@ -151,7 +148,7 @@ public class XiaoIceTTSAudioLoader {
     }
 
 
-    public static String SHA512(final String strText) {
+    private static String SHA512(final String strText) {
         return SHA(strText, "SHA-512");
     }
 
@@ -182,5 +179,4 @@ public class XiaoIceTTSAudioLoader {
         }
         return strResult;
     }
-
 }
