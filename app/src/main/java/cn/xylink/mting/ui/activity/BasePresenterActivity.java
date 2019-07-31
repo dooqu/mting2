@@ -1,5 +1,6 @@
 package cn.xylink.mting.ui.activity;
 
+import android.app.AlertDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -8,11 +9,13 @@ import android.text.TextUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.xylink.mting.R;
 import cn.xylink.mting.base.BaseActivity;
 import cn.xylink.mting.contract.IBaseView;
 import cn.xylink.mting.presenter.BasePresenter;
 import cn.xylink.mting.ui.dialog.CopyAddDialog;
 import cn.xylink.mting.ui.dialog.LoadingDialog;
+import cn.xylink.mting.utils.ContentManager;
 import cn.xylink.mting.utils.L;
 
 
@@ -78,7 +81,35 @@ public abstract class BasePresenterActivity<T extends BasePresenter> extends Bas
     @Override
     protected void onResume() {
         super.onResume();
-        showCopyDialog();
+        L.v();
+        if (alertDialog != null && !alertDialog.isShowing())
+            showCopyDialog();
+    }
+
+    private AlertDialog alertDialog;
+
+    protected void showShareResultDialog(int sucess) {
+        if (sucess >= 0) {
+            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+            String msg ;
+            if (sucess==1)
+                msg = "分享成功";
+            else
+                msg = "分享失败";
+            dialog.setMessage(msg).setNeutralButton("取消", (dialog1, which) -> {
+                dialog1.dismiss();
+                this.finish();
+            })
+                    .setPositiveButton("确定", (dialog12, which) -> {
+                        dialog12.dismiss();
+                        showCopyDialog();
+                    });
+//            alertDialog = dialog.create();
+//            alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(getResources().getColor(R.color.c999999));
+//            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.c488def));
+            alertDialog =dialog.show();
+            L.v();
+        }
     }
 
     private void showCopyDialog() {
@@ -87,17 +118,25 @@ public abstract class BasePresenterActivity<T extends BasePresenter> extends Bas
                 || this.getComponentName().getClassName().equals(ArticleDetailActivity.class.getName())) {
             CharSequence copy = getCopy(this);
             if (!TextUtils.isEmpty(copy) && (copy.toString().startsWith("http://") || copy.toString().startsWith("https://"))) {
-                for (String s : tCopy)
-                    if (s.equals(copy.toString()))
-                        return;
+                if (tCopy != null && tCopy.size() > 0)
+                    for (String s : tCopy) {
+                        if (s.equals(copy.toString())) {
+                            return;
+                        }
+                    }
+                if (tCopy==null)
+                    tCopy =new  ArrayList<>();
                 tCopy.add(copy.toString());
+                if (tCopy.size() > 20)
+                    tCopy.remove(0);
+                ContentManager.getInstance().setCopyArray(tCopy);
                 CopyAddDialog dialog = new CopyAddDialog(this, tCopy.get(tCopy.size() - 1));
                 dialog.show();
             }
         }
     }
 
-    private static List<String> tCopy = new ArrayList<>();
+    private List<String> tCopy = ContentManager.getInstance().getCopyArray();
 
     public static CharSequence getCopy(Context context) {
         ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);

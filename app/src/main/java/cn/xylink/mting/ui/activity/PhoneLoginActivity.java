@@ -130,6 +130,7 @@ public class PhoneLoginActivity extends BasePresenterActivity implements GetCode
                 break;
             case R.id.btn_next:
                 phone = etPhone.getText().toString();
+                phone = phone.replaceAll(" ", "");
                 if(phone.length() == 0)
                 {
                     Toast.makeText(this,"手机号不能为空",Toast.LENGTH_SHORT).show();
@@ -146,7 +147,7 @@ public class PhoneLoginActivity extends BasePresenterActivity implements GetCode
                 }
                 GetCodeRequest requset = new GetCodeRequest();
                 requset.setDeviceId(TingUtils.getDeviceId(getApplicationContext()));
-                requset.phone = phone.replaceAll(" ", "");
+                requset.phone = phone;
                 requset.source = "register";
                 requset.doSign();
                 codePresenter.onGetCode(requset);

@@ -6,6 +6,8 @@ import android.text.TextUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import java.util.List;
+
 import cn.xylink.mting.MTing;
 import cn.xylink.mting.base.BaseActivity;
 import cn.xylink.mting.bean.UserInfo;
@@ -158,5 +160,20 @@ public class ContentManager {
             return i;
         }
         return FileCache.getInstance().getTextSize();
+    }
+
+    public void setCopyArray(List<String> stringList){
+        MemoryCache.getInstance().setCopyArray(stringList);
+        FileUtil.writeFile(MTing.getInstance(), Const.FileName.COPY_ARRAY, new Gson().toJson(stringList));
+    }
+
+    public List<String> getCopyArray() {
+        List<String> stringList = MemoryCache.getInstance().getCopyArray();
+        if (stringList == null) {
+            String strings = FileUtil.readFile(MTing.getInstance(), Const.FileName.COPY_ARRAY);
+            stringList = new Gson().fromJson(strings, new TypeToken<List<String>>() {
+            }.getType());
+        }
+        return stringList;
     }
 }

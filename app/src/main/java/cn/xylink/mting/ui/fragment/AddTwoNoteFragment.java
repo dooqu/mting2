@@ -3,6 +3,8 @@ package cn.xylink.mting.ui.fragment;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.AnimationDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
@@ -10,6 +12,7 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -59,7 +62,7 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
     @BindView(R.id.v_1)
     View v_1;
     @BindView(R.id.pb_speech_bar)
-    View pb_speech_bar;
+    ImageView pb_speech_bar;
 
     //文章类型 1 手动添加， 2 链接添加
     public int inLink = 2;
@@ -71,6 +74,8 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
     private String responseUrl;
 
     private volatile boolean isStop;
+
+    AnimationDrawable animationDrawable;
 
     public static AddTwoNoteFragment newInstance(Bundle args) {
         AddTwoNoteFragment fragment = new AddTwoNoteFragment();
@@ -87,7 +92,6 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
             EventBus.getDefault().post(new AddArticleHomeEvent(0));
         } else {
             if (!TextUtils.isEmpty(tv_content.getText())) {
-
                 EventBus.getDefault().post(new AddArticleHomeEvent(1));
             }
         }
@@ -105,7 +109,6 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
         etLink.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
             }
 
             @Override
@@ -124,16 +127,17 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
                 }
             }
         });
-        tvPreview.setTextColor(getResources().getColorStateList(R.color.color_blue));
-        linkCreatePresenter = (LinkCreatePresenter) createPresenter(LinkCreatePresenter.class);
-        linkCreatePresenter.attachView(this);
+    }
 
-        checkLinkPresenter = (CheckLinkPresenter) createPresenter(CheckLinkPresenter.class);
-        checkLinkPresenter.attachView(this);
+    public void startAnim() {
+        pb_speech_bar.setImageResource(R.drawable.gif_loading);
+        animationDrawable = (AnimationDrawable) pb_speech_bar.getDrawable();
+        animationDrawable.start();
+    }
 
-        addFeedbackPresenter = (AddFeedbackPresenter) createPresenter(AddFeedbackPresenter.class);
-        addFeedbackPresenter.attachView(this);
-
+    public void stopAnim() {
+        if (animationDrawable != null)
+            animationDrawable.stop();
     }
 
     @Override
@@ -145,6 +149,15 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
     @Override
     protected void initData() {
 
+        linkCreatePresenter = (LinkCreatePresenter) createPresenter(LinkCreatePresenter.class);
+        linkCreatePresenter.attachView(this);
+
+        checkLinkPresenter = (CheckLinkPresenter) createPresenter(CheckLinkPresenter.class);
+        checkLinkPresenter.attachView(this);
+
+        addFeedbackPresenter = (AddFeedbackPresenter) createPresenter(AddFeedbackPresenter.class);
+        addFeedbackPresenter.attachView(this);
+
     }
 
     @OnClick({R.id.tv_preview, R.id.tv_feedback})
@@ -152,25 +165,26 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
         switch (v.getId()) {
             case R.id.tv_preview:
                 isStop = !isStop;
-                if(isStop)
-                {
+                if (isStop) {
                     pb_speech_bar.setVisibility(View.GONE);
                     v_1.setVisibility(View.VISIBLE);
                     tvPreview.setText(R.string.load_stop);
-                }else{
-                    if(tvPreview.getText().toString().equals(getResources().getString(R.string.load_refresh))){
+                } else {
+                    stopAnim();
+                    if (tvPreview.getText().toString().equals(getResources().getString(R.string.load_refresh))) {
                         tvPreview.setText(R.string.load_refresh);
-                    }else {
+                    } else {
                         tvPreview.setText(R.string.load_on);
                     }
                 }
-                if(!isStop)
+                if (!isStop)
                     return;
                 String link = etLink.getText().toString();
                 if (TextUtils.isEmpty(link)) {
                     Toast.makeText(this.getContext(), "地址不能为空", Toast.LENGTH_SHORT).show();
                     return;
                 }
+                startAnim();
                 link = link.trim().replaceAll(" ", "");
                 pb_speech_bar.setVisibility(View.VISIBLE);
                 v_1.setVisibility(View.GONE);
@@ -211,8 +225,8 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
             String fristText = cmb.getPrimaryClip().getItemAt(0).getText().toString();
             L.v("fristText");
             if (fristText.startsWith("http://") || fristText.startsWith("https://")) {
-//                if (TextUtils.isEmpty(etLink.getText().toString()))
                 etLink.setText(fristText);
+                tvPreview.setTextColor(getResources().getColorStateList(R.color.color_blue));
             }
         }
     }
@@ -292,11 +306,12 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
     public void onCheckLinkSuccess(BaseResponse<LinkArticle> response) {
         L.v(response.data);
         tvPreview.setText(R.string.load_refresh);
+        stopAnim();
         pb_speech_bar.setVisibility(View.GONE);
         v_1.setVisibility(View.VISIBLE);
-        if(!isStop)
+        if (!isStop)
             return;
-        int a [] = {};
+        int a[] = {};
         linkArticle = response.data;
 //        tvPreview.setVisibility(View.INVISIBLE);
         String title = response.data.getTitle();
