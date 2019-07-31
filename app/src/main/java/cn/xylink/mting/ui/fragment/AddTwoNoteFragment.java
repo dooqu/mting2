@@ -109,7 +109,6 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
         etLink.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
             }
 
             @Override
@@ -129,8 +128,6 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
             }
         });
     }
-
-
 
     public void startAnim() {
         pb_speech_bar.setImageResource(R.drawable.gif_loading);
