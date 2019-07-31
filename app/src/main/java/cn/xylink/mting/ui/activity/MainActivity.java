@@ -102,11 +102,13 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
         super.onCreate(savedInstanceState);
         L.v();
 //        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+        showShareResultDialog(getIntent().getIntExtra(URL_KEY, -1));
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
-        L.v("*^*^*^*^*"+intent.getStringExtra(URL_KEY));
+        L.v("*^*^*^*^*" + intent.getIntExtra(URL_KEY, -1));
+        showShareResultDialog(intent.getIntExtra(URL_KEY, -1));
         super.onNewIntent(intent);
     }
 
@@ -254,9 +256,9 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
     public void onSuccessAddLove(String str, Article article) {
         if (article != null) {
             article.setStore(article.getStore() ^ 1);
-            if (article.getStore() ==1){
+            if (article.getStore() == 1) {
                 T.s(this, "收藏成功");
-            }else {
+            } else {
                 T.s(this, "取消收藏成功");
             }
         }
@@ -412,6 +414,7 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
                         }
                     break;
                 case SpeechorStatePlaying:
+                case SpeechorStateLoadding:
                     if (service.pause())
 //                        mPlayBtnSRC.setImageDrawable(getResources().getDrawable(R.mipmap.ico_playing));
                         if (mPlayBtnSRC.getDrawable() != mPauseDrawable) {
