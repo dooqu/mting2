@@ -18,7 +18,7 @@ import cn.xylink.mting.openapi.WXapi;
 import cn.xylink.mting.utils.T;
 
 /*
- *
+ *应用分享
  *
  * -----------------------------------------------------------------
  * 2019/7/23 17:12 : Create ShareAppDialog.java (JoDragon);

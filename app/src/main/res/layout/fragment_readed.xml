@@ -21,7 +21,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="真棒！文章都读完了！快去添加新内容吧"
+            android:text="还没有读过文章"
             android:textColor="@color/cbbbbbb"
             android:textSize="16sp" />
     </LinearLayout>
