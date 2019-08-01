@@ -9,6 +9,9 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.bluetooth.BluetoothA2dp;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -36,13 +39,23 @@ import cn.xylink.mting.speech.event.SpeechStartEvent;
 import cn.xylink.mting.speech.event.SpeechStopEvent;
 import cn.xylink.mting.ui.activity.MainActivity;
 
+/*
+SpeechService 的核心思想也是控制分片播放
+Speechor的核心控制思想也是分片
+两者的分片颗粒不同
+在Speechor中，分片是某一个文章的各个段落
+而在SpeechService中，分片是整个播放列表
 
+两者在内部都有Loadding状态
+对于Speechor，内部的Loadding时刻是在分片和分片之间
+而对于SpeechService，内部的Loadding时刻是在文章和文章之间
+ */
 public class SpeechService extends Service {
-    static String TAG = "SPEECH";
+    static String TAG = "SPEECH_";
 
     /*SpeechService的状态描述类型*/
     public enum SpeechServiceState {
-        /*准备就绪*/
+        /*正文准备就绪准备就绪*/
         Ready,
         /*播放中*/
         Playing,
@@ -55,7 +68,6 @@ public class SpeechService extends Service {
         /*发生错误*/
         Error
     }
-
     /*
     定时器类型，用于service.setCountDown
      */
@@ -98,14 +110,13 @@ public class SpeechService extends Service {
 
     NotificationManager notificationManager;
 
-
-    BroadcastReceiver receiver;
-
     boolean isForegroundService;
 
     static int executeCode = 0;
 
     boolean isReleased;
+
+    boolean isSimulatePaused;
 
 
     public class SpeechBinder extends Binder {
@@ -137,10 +148,11 @@ public class SpeechService extends Service {
 
     @Override
     public void onDestroy() {
-        Log.d("SPEECH", "SpeechService.onDestroy");
+        Log.d(TAG, "SpeechService.onDestroy");
         super.onDestroy();
+        unregisterReceiver(notifReceiver);
+        unregisterReceiver(a2dpReceiver);
         isReleased = true;
-        unregisterReceiver(receiver);
         speechor.reset();
         speechor.release();
         articleDataProvider.release();
@@ -171,8 +183,7 @@ public class SpeechService extends Service {
                     }
                     //在每个文章播正常放完成后，注意是正常不受外部操作干扰的读玩， 像playNext()除外，因为他不触发结束的onReady
                     if (speakerState == SpeechorState.SpeechorStateReady) {
-
-                        Log.d("SPEECH", "SpeechService.onStateChanged:Ready");
+                        Log.d(TAG, "SpeechService.onStateChanged:Ready");
                         //强制设定progress为1
                         currentArticle.setProgress(1);
                         //调用onSpeechEnd事件
@@ -220,15 +231,20 @@ public class SpeechService extends Service {
     }
 
     private void initReceiver() {
-        IntentFilter filter = new IntentFilter();
-        filter.addAction("play");
-        filter.addAction("pause");
-        filter.addAction("next");
-        filter.addAction("resume");
-        filter.addAction("favorite");
-        filter.addAction("unfavorite");
-        receiver = new SpeechActionReceiver();
-        registerReceiver(receiver, filter);
+        IntentFilter notifIntent = new IntentFilter();
+        notifIntent.addAction("play");
+        notifIntent.addAction("pause");
+        notifIntent.addAction("next");
+        notifIntent.addAction("resume");
+        notifIntent.addAction("favorite");
+        notifIntent.addAction("unfavorite");
+        registerReceiver(notifReceiver, notifIntent);
+
+        //注册广播接收者监听状态改变
+        IntentFilter a2dpIntent = new IntentFilter(BluetoothA2dp.ACTION_CONNECTION_STATE_CHANGED);
+        //a2dpIntent.addAction(BluetoothA2dp.ACTION_PLAYING_STATE_CHANGED);
+        registerReceiver(a2dpReceiver, a2dpIntent);
+
     }
 
 
@@ -250,7 +266,7 @@ public class SpeechService extends Service {
     }
 
     private void onSpeechError(int errorCode, String message, Article article) {
-        Log.d("SPEECH", "SpeechService.onSpeechError: errorCode=" + errorCode + ", message=" + message);
+        Log.d(TAG, "SpeechService.onSpeechError: errorCode=" + errorCode + ", message=" + message);
         EventBus.getDefault().post(new SpeechErrorEvent(errorCode, message, article));
         //initNotification();
     }
@@ -342,9 +358,8 @@ public class SpeechService extends Service {
     public synchronized int seek(float percentage) {
         //如果当前播放不存在，那返回错误
         if (speechList.getCurrent() == null) {
-            return -4;
+            return -SpeechError.NOTHING_TO_PLAY;
         }
-
         //当前状态必须是在播放，或者是暂停，否则不支持
         if (serviceState == SpeechServiceState.Playing || serviceState == SpeechServiceState.Paused) {
             int index;
@@ -357,7 +372,7 @@ public class SpeechService extends Service {
             }
             return index;
         }
-        return -5;
+        return -SpeechError.SEEK_NOT_ALLOW;
     }
 
 
@@ -371,16 +386,12 @@ public class SpeechService extends Service {
 
         boolean result = false;
         switch (serviceState) {
-            case Playing:
-                result = this.speechor.pause();
-                if (result) {
-                    this.serviceState = SpeechServiceState.Paused;
-                    initNotification();
-                    onSpeechPause(speechList.getCurrent());
-                }
-                return result;
             case Loadding:
-                this.serviceState = SpeechServiceState.Ready;
+                isSimulatePaused = true;
+                //do not break;
+            case Playing:
+                this.serviceState = SpeechServiceState.Paused;
+                result = this.speechor.pause();
                 initNotification();
                 onSpeechPause(speechList.getCurrent());
                 return true;
@@ -398,22 +409,23 @@ public class SpeechService extends Service {
         }
 
         boolean result = false;
-        switch (serviceState) {
-            case Paused:
+        if(serviceState == SpeechServiceState.Paused) {
+            if(this.isSimulatePaused == true) {
+                playSelected();
+                initNotification();
+                onSpeechResume(speechList.getCurrent());
+                return true;
+            }
+            else {
                 result = this.speechor.resume();
-                if (result) {
-                    this.serviceState = SpeechServiceState.Playing;
+                if(result) {
+                    serviceState = SpeechServiceState.Playing;
                     initNotification();
                     onSpeechResume(speechList.getCurrent());
                 }
-
                 return result;
-            case Ready:
-                this.serviceState = SpeechServiceState.Playing;
-                initNotification();
-                return playSelected();
+            }
         }
-
         return false;
     }
 
@@ -494,7 +506,7 @@ public class SpeechService extends Service {
                 if (errorcode != 0) {
                     //文章正文加载错误
                     this.serviceState = SpeechServiceState.Error;
-                    this.onSpeechError(errorcode, "文章正文加载失败", article);
+                    this.onSpeechError(SpeechError.ARTICLE_LOAD_ERROR, "文章正文加载失败", article);
                     return;
                 }
 
@@ -621,18 +633,27 @@ public class SpeechService extends Service {
                 return;
             }
 
-            Intent intent = new Intent(this, MainActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            PendingIntent pendingIntent = PendingIntent.getActivity(this, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+            Intent intentNotifOpen = new Intent(this, MainActivity.class);
+            intentNotifOpen.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            PendingIntent pendingIntent = PendingIntent.getActivity(this, 1, intentNotifOpen, PendingIntent.FLAG_UPDATE_CURRENT);
+
+            /*
+            Intent intentCancel = new Intent(this, BroadcastReceiver.class);
+            intentCancel.setAction("notification_cancelled");
+            intentCancel.putExtra("type", 3);
+            intentCancel.putExtra("message","message");
+            PendingIntent pendingIntentCancel = PendingIntent.getBroadcast(this,0,
+                    intentCancel,PendingIntent.FLAG_ONE_SHOT);
+            */
 
             Notification.Builder builder = new Notification.Builder(this)
                     .setContentIntent(pendingIntent)
-                    .setSmallIcon(R.mipmap.icon_little)
+                    .setSmallIcon(R.mipmap.icon_notif)
                     .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.notification_album))
                     .setTicker(currentArticle.getTitle())
                     .setContentTitle("轩辕听")
                     .setContentText(currentArticle.getTitle())
-                    .setOngoing(false)
+                    .setOngoing(true)
                     .setAutoCancel(true)
                     .setShowWhen(false);
 
@@ -641,12 +662,13 @@ public class SpeechService extends Service {
                 String channelId = "cn.xylink.mting";
                 String channelName = "SPEECH_SERVICE_NAME";
                 NotificationChannel notificationChannel = null;
-                notificationChannel = new NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_HIGH);
+                notificationChannel = new NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_DEFAULT);
                 notificationChannel.enableLights(true);
                 notificationChannel.setLightColor(Color.RED);
                 notificationChannel.setShowBadge(true);
                 notificationChannel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
                 notificationChannel.setSound(null, null);
+
                 NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
                 manager.createNotificationChannel(notificationChannel);
                 //设定builder的channelid
@@ -715,37 +737,36 @@ public class SpeechService extends Service {
         }
     }
 
-    public class SpeechActionReceiver extends BroadcastReceiver {
-        SpeechService service = SpeechService.this;
+    private BroadcastReceiver notifReceiver = new BroadcastReceiver() {
 
         @Override
         public void onReceive(Context context, Intent intent) {
 
-            synchronized (service) {
+            synchronized (this) {
                 final String action = intent.getAction();
-                Article currentArticle = service.getSelected();
+                Article currentArticle = getSelected();
                 if (currentArticle == null) {
                     return;
                 }
 
                 switch (action) {
                     case "play":
-                        if (service.getSelected() != null) {
-                            service.playSelected();
+                        if (getSelected() != null) {
+                            playSelected();
                         }
                         break;
 
                     case "pause":
-                        service.pause();
+                        pause();
                         break;
 
                     case "resume":
-                        service.resume();
+                        resume();
                         break;
 
                     case "next":
-                        if (service.hasNext()) {
-                            service.playNext();
+                        if (hasNext()) {
+                            playNext();
                         }
                         break;
 
@@ -767,7 +788,29 @@ public class SpeechService extends Service {
                 } // end switch
             } // end sychornized
         } // end onReceive
-    } // end class
+    }; // end class
+
+    private BroadcastReceiver a2dpReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            Log.i(TAG,"onReceive action="+action);
+
+            switch (action) {
+                case BluetoothA2dp.ACTION_CONNECTION_STATE_CHANGED:
+                    int state = intent.getIntExtra(BluetoothA2dp.EXTRA_STATE, BluetoothA2dp.STATE_DISCONNECTED);
+                    Log.d("SPEECH_", "A2DP_Connection_State_Changed:state=" + state);
+                    if(state == BluetoothA2dp.STATE_DISCONNECTED) {
+                        if(serviceState == SpeechServiceState.Playing) {
+                            pause();
+                        }
+                    }
+
+                    break;
+            }
+        }
+    };
+
 }
 
 

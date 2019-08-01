@@ -14,6 +14,7 @@ import static android.media.AudioManager.AUDIOFOCUS_REQUEST_GRANTED;
 Speechor 装饰器
  */
 public abstract class SpeechEngineWrapper implements Speechor {
+    static String TAG = "SPEECH_";
 
     Context context;
     Speechor speechor;
@@ -99,7 +100,7 @@ public abstract class SpeechEngineWrapper implements Speechor {
                         break;
                     case AudioManager.AUDIOFOCUS_GAIN:
                         //别的应用申请焦点之后又释放焦点时，就会触发此回调，恢复播放音乐
-                        Log.d("xylink", "AUDIOFOCUS_GAIN");
+                        Log.d(TAG, "AUDIOFOCUS_GAIN");
                         if (SpeechEngineWrapper.this.getState() == SpeechorState.SpeechorStatePaused
                                 && isPausedByExternal == true) {
                             //这里有个问题， 这期间可能更换了语音包了，导致必须使用seek
@@ -178,7 +179,7 @@ public abstract class SpeechEngineWrapper implements Speechor {
     @Override
     public void reset() {
         baiduSpeechor.reset();
-            xiaoiceSpeechor.reset();
+        xiaoiceSpeechor.reset();
     }
 
     @Override
@@ -188,61 +189,58 @@ public abstract class SpeechEngineWrapper implements Speechor {
     }
 
     @Override
-    public void setRole(SpeechorRole role) {
-        synchronized (this) {
-            if (speechor.getRole() == role)
+    public synchronized void setRole(SpeechorRole role) {
+        if (speechor.getRole() == role)
+            return;
+
+        Speechor destSpeechor = null;
+
+        switch (role) {
+            case XiaoMei:
+            case YaYa:
+            case XiaoYao:
+                destSpeechor = baiduSpeechor;
+                break;
+            case XiaoIce:
+                destSpeechor = xiaoiceSpeechor;
+                break;
+            default:
                 return;
+        }
 
-            Speechor destSpeechor = null;
+        int preIndex = 0;
+        SpeechorState preState;
+        SpeechorSpeed preSpeed;
+        Speechor preSpeechor = speechor;
 
-            switch (role) {
-                case XiaoMei:
-                case YaYa:
-                case XiaoYao:
-                    destSpeechor = baiduSpeechor;
-                    break;
-                case XiaoIce:
-                    destSpeechor = xiaoiceSpeechor;
-                    break;
-                default:
-                    return;
-            }
+        synchronized (preSpeechor) {
+            preIndex = preSpeechor.getFragmentIndex();
+            preState = preSpeechor.getState();
+            preSpeed = preSpeechor.getSpeed();
 
-            int preIndex = 0;
-            SpeechorState preState;
-            SpeechorSpeed preSpeed;
-            Speechor preSpeechor = speechor;
-
-            synchronized (preSpeechor) {
-                preIndex = preSpeechor.getFragmentIndex();
-                preState = preSpeechor.getState();
-                preSpeed = preSpeechor.getSpeed();
-
-                if (destSpeechor != preSpeechor) {
-                    synchronized (destSpeechor) {
-                        //通过换解决，停掉发音
-                        if (preState == SpeechorState.SpeechorStatePlaying) {
-                            preSpeechor.pause();
-                        }
-                        //更换主发音引擎
-                        speechor = destSpeechor;
-                        //在更换后的 speechor上调用setRole;
-                        speechor.setRole(role);
-
-                        speechor.setSpeed(preSpeed);
-                        //如果原来在播放状态，继续播放
-                        if (preState == SpeechorState.SpeechorStatePlaying) {
-                            speechor.seek(preIndex);
-                        }
+            if (destSpeechor != preSpeechor) {
+                synchronized (destSpeechor) {
+                    //通过换解决，停掉发音
+                    if (preState == SpeechorState.SpeechorStatePlaying) {
+                        preSpeechor.pause();
+                    }
+                    //更换主发音引擎
+                    speechor = destSpeechor;
+                    //在更换后的 speechor上调用setRole;
+                    speechor.setRole(role);
+                    //speechor.setSpeed(preSpeed);
+                    //如果原来在播放状态，继续播放
+                    if (preState == SpeechorState.SpeechorStatePlaying) {
+                        speechor.seek(preIndex);
                     }
                 }
-                else {
-                    preSpeechor.setRole(role);
-                    if (preState == SpeechorState.SpeechorStatePlaying) {
-                        preSpeechor.seek(preIndex);
-                    }
-                } // end else
-            } // end sync
+            }
+            else {
+                preSpeechor.setRole(role);
+                if (preState == SpeechorState.SpeechorStatePlaying) {
+                    preSpeechor.seek(preIndex);
+                }
+            } // end else
         } // end sync
     }
 
