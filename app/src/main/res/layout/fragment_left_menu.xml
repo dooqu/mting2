@@ -20,7 +20,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="12dp"
-        android:drawableRight="@mipmap/icon_my_man"
         android:drawablePadding="8dp"
         android:gravity="center"
         android:textColor="@color/c333333"

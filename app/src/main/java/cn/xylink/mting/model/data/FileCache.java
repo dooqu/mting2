@@ -34,6 +34,7 @@ public class FileCache {
     private static final String KEYBORDHEIGHT = "KEYBORDHEIGHT";
     private static final String HXFIRST = "HXFIRST";
     private static final String TEXT_SIZE = "TEXT_SIZE";
+
     private static FileCache sInstance;
     private SharedPreferences mPrefs;
 

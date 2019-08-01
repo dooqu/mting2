@@ -17,7 +17,7 @@ public class UserInfo implements Serializable {
     // 头像缩略图
     private String headThumb;
     // 性别 1 男 0 女
-    private int sex;
+    private int sex = - 1;
     private int status;
     private String regSource;
     private String token;

@@ -50,7 +50,7 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:scaleType="centerCrop"
-                android:src="@mipmap/img_default" />
+                android:src="@mipmap/personal_head"  />
 
             <TextView
                 android:id="@+id/tv_bind_name"
