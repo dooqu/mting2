@@ -56,7 +56,8 @@
             android:id="@+id/tv_preview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="立即预览"
+            android:text="立即预览"
+            android:textColor="@color/color_login_text_gray"
             android:textSize="@dimen/text_18" />
 
         <TextView
@@ -65,7 +66,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:background="@android:color/transparent"
-            android:hint="反馈错误"
+            android:text="反馈错误"
+            android:textColor="@color/color_login_text_gray"
             android:textSize="@dimen/text_18"
             android:visibility="gone" />
 
