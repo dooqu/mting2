@@ -17,6 +17,7 @@ import cn.xylink.mting.event.CloseLeftMenuEvent;
 import cn.xylink.mting.ui.activity.AboutVersion;
 import cn.xylink.mting.ui.activity.LoginActivity;
 import cn.xylink.mting.ui.activity.PersonalInfoActivity;
+import cn.xylink.mting.ui.activity.PlayerlActivity;
 import cn.xylink.mting.utils.ContentManager;
 import cn.xylink.mting.utils.ImageUtils;
 import cn.xylink.mting.utils.L;
@@ -107,6 +108,7 @@ public class LeftMenuFragment extends BasePresenterFragment {
             case R.id.rl_left_menu_feedback://反馈
                 break;
             case R.id.rl_left_menu_fun://玩转
+                startActivity(new Intent(getActivity(), PlayerlActivity.class));
                 break;
             case R.id.rl_left_menu_about://关于
                 startActivity(new Intent(getActivity(), AboutVersion.class));

@@ -25,7 +25,7 @@ public class PlayerlActivity extends BaseActivity {
 
     @Override
     protected void preView() {
-        setContentView(R.layout.activity_user_protocol);
+        setContentView(R.layout.activity_player);
     }
 
     @Override
