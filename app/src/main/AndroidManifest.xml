@@ -153,6 +153,10 @@
             android:name=".ui.activity.UserProtocolActivity"
             android:screenOrientation="portrait"
             android:launchMode="singleTask"/>
+        <activity
+            android:name=".ui.activity.PlayerlActivity"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTask"/>
 
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
