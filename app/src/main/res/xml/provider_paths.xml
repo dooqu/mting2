@@ -4,6 +4,15 @@
         name="external-path"
         path="." />
     <files-path
+        name="files_root"
+        path=""></files-path>
+
+
+    <files-path
         name="files-path"
+        path="files/" />
+
+    <cache-path
+        name="cache-path"
         path="." />
 </paths>

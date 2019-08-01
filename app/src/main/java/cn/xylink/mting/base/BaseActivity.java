@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
+import android.app.DownloadManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -45,7 +46,7 @@ import cn.xylink.mting.utils.T;
 public abstract class BaseActivity extends AppCompatActivity {
 
     private static final int INSTALL_PACKAGES_REQUESTCODE = 100;
-    private static final int GET_UNKNOWN_APP_SOURCES = 101;
+    public static final int GET_UNKNOWN_APP_SOURCES = 106;
     protected Intent mUpdateIntent;
     protected Context context;
     protected Timer upgradeTimer;
@@ -248,47 +249,6 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
 
-    private void checkInstall(Uri apkUrl){
-        boolean haveInstallPermission;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            //先获取是否有安装未知来源应用的权限
-            haveInstallPermission = getPackageManager().canRequestPackageInstalls();
-            if (!haveInstallPermission) {//没有权限
-                AlertDialog alertDialog = new AlertDialog.Builder(this)
-                        .setTitle("请开启未知来源权限")
-                        .setMessage("安装应用需要打开安装未知来源应用权限")
-                        .setCancelable(false)
-                        .setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                                System.exit(0);
-                            }
-                        })
-                        .setPositiveButton("去设置", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                                toInStallPermissionSettingActivity();
-                            }
-                        }).create();
-
-                alertDialog.show();
-                return;
-            }
-        }
-        //有权限，进行安装操作 安装就不写了
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    private void toInStallPermissionSettingActivity() {
-        Uri packageURI = Uri.parse("package:" + getPackageName());
-        //注意这个是8.0新API
-        Intent intent = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, packageURI);
-        startActivityForResult(intent, 100);
-    }
-
-
 
     private void installApk() {
         if (Build.VERSION.SDK_INT >= 26) {
@@ -301,7 +261,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         } else {
             installAPK();
         }
-
     }
 
     private void installAPK() {
@@ -328,6 +287,22 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == GET_UNKNOWN_APP_SOURCES) {
+            if(resultCode == Activity.RESULT_CANCELED) {
+                Log.d("SPEECH_", "授权被取消");
+                if(UpgradeManager.CurrentUpgradeInfo != null && UpgradeManager.CurrentUpgradeInfo.getNeedUpdate() == 0) {
+                    Toast.makeText(this, "当前升级为重要更新，请开启应用重新授权", Toast.LENGTH_SHORT).show();
+                    System.exit(0);
+                    return;
+                }
+            }
+            else if(requestCode == Activity.RESULT_OK) {
+                Log.d("SPEECH_", "授权成功");
+                if(UpgradeManager.DownloadTaskFilePath != null) {
+                    downloadReceiver.installApk(UpgradeManager.DownloadTaskFilePath);
+                }
+            }
+        }
     }
 
     @Override
