@@ -99,8 +99,11 @@ public class LeftMenuFragment extends BasePresenterFragment {
         switch (view.getId()) {
             case R.id.iv_left_menu_head: //头像
             case R.id.tv_left_menu_title://姓名
-                Intent intent = new Intent(this.getActivity(), PersonalInfoActivity.class);
-                startActivity(intent);
+                mHeadImageView.postDelayed(() -> {
+                    Intent intent = new Intent(getActivity(), PersonalInfoActivity.class);
+                    startActivity(intent);
+                },200);
+
                 break;
             case R.id.rl_left_menu_share://分享
                 event.setShare(true);
@@ -108,10 +111,10 @@ public class LeftMenuFragment extends BasePresenterFragment {
             case R.id.rl_left_menu_feedback://反馈
                 break;
             case R.id.rl_left_menu_fun://玩转
-                startActivity(new Intent(getActivity(), PlayerlActivity.class));
+                mHeadImageView.postDelayed(() -> startActivity(new Intent(getActivity(), PlayerlActivity.class)),200);
                 break;
             case R.id.rl_left_menu_about://关于
-                startActivity(new Intent(getActivity(), AboutVersion.class));
+                mHeadImageView.postDelayed(() -> startActivity(new Intent(getActivity(), AboutVersion.class)),200);
                 break;
             case R.id.tv_left_menu_out://退出
                 event.setStopSer(true);
