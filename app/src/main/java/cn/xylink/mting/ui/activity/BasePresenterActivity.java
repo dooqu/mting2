@@ -89,15 +89,24 @@ public abstract class BasePresenterActivity<T extends BasePresenter> extends Bas
 
     private TipDialog alertDialog;
 
-    protected void showShareResultDialog(int sucess) {
+    protected void showShareResultDialog(int sucess, String shareUrl) {
         if (sucess >= 0) {
             String msg;
-            if (sucess == 1)
+            if (sucess == 1) {
                 msg = "分享成功";
-            else
+                if (!TextUtils.isEmpty(shareUrl)){
+                    if (tCopy == null)
+                        tCopy = new ArrayList<>();
+                    tCopy.add(shareUrl);
+                    if (tCopy.size() > 20)
+                        tCopy.remove(0);
+                    ContentManager.getInstance().setCopyArray(tCopy);
+                }
+            } else {
                 msg = "分享失败";
+            }
             alertDialog = new TipDialog(this);
-            alertDialog.setMsg(msg, "取消", "留在轩辕听", new TipDialog.OnTipListener() {
+            alertDialog.setMsg(msg, "返回", "留在轩辕听", new TipDialog.OnTipListener() {
                 @Override
                 public void onLeftClick() {
                     BasePresenterActivity.this.finish();
