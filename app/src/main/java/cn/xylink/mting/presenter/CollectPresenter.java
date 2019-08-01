@@ -32,7 +32,7 @@ public class CollectPresenter extends BasePresenter<UnreadContract.IUnreadView> 
                 BaseResponseArray<Article> baseResponse = (BaseResponseArray<Article>) data;
                 int code = baseResponse.code;
                 if (code == 200) {
-                    mView.onSuccessUnread(baseResponse.list, baseResponse.used);
+                    mView.onSuccessUnread(baseResponse.list, 0);
                 } else {
                     mView.onErrorUnread(code, baseResponse.message);
                 }

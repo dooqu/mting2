@@ -155,6 +155,7 @@ public class UnreadFragment extends BaseMainTabFragment implements UnreadAdapter
             if (mAdapter.getItemCount() < 1) {
                 mEnptyLayout.setVisibility(View.VISIBLE);
                 mRecyclerView.setVisibility(View.GONE);
+                mEnptyFirstLayout.setVisibility(View.GONE);
                 mNetworkErrorLayout.setVisibility(View.GONE);
             }
         }
