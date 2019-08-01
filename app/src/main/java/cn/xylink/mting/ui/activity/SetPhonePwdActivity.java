@@ -193,6 +193,7 @@ public class SetPhonePwdActivity extends BasePresenterActivity implements Regist
             if(TextUtils.isEmpty(platform)) {
                 L.v("token", response.data.getToken());
                 ContentManager.getInstance().setLoginToken(response.data.getToken());
+                ContentManager.getInstance().setUserInfo(response.data);
                 Intent mIntent = new Intent(this, MainActivity.class);
                 startActivity(mIntent);
                 finish();
