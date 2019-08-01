@@ -1,6 +1,7 @@
 package cn.xylink.mting.ui.dialog;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -40,7 +41,7 @@ import cn.xylink.mting.utils.L;
  * -----------------------------------------------------------------
  */
 public class CopyAddDialog extends BaseDimDialog implements CheckLinkContact.ICheckLinkView,
-        ArticleDetailContract.IArticleDetailView , LinkCreateContact.IPushView {
+        ArticleDetailContract.IArticleDetailView, LinkCreateContact.IPushView {
 
     @BindView(R.id.ll_copy_add_layout)
     LinearLayout mRoot;
@@ -156,7 +157,8 @@ public class CopyAddDialog extends BaseDimDialog implements CheckLinkContact.ICh
 
     @Override
     public void onErrorArticleDetail(int code, String errorMsg) {
-
+        mPlayView.setEnabled(true);
+        mAddUnreadView.setEnabled(true);
     }
 
     @Override
@@ -179,7 +181,10 @@ public class CopyAddDialog extends BaseDimDialog implements CheckLinkContact.ICh
     @Override
     public void onCheckLinkError(int code, String errorMsg) {
         mLoadingLayout.setVisibility(View.GONE);
-        mTitleView.setText(errorMsg);
+        if (!TextUtils.isEmpty(errorMsg))
+            mTitleView.setText(errorMsg);
+        mPlayView.setEnabled(true);
+        mAddUnreadView.setEnabled(true);
     }
 
     @Override
@@ -194,6 +199,9 @@ public class CopyAddDialog extends BaseDimDialog implements CheckLinkContact.ICh
     @Override
     public void onPushError(int code, String errorMsg) {
         mLoadingLayout.setVisibility(View.GONE);
-        mTitleView.setText(errorMsg);
+        if (!TextUtils.isEmpty(errorMsg))
+            mTitleView.setText(errorMsg);
+        mPlayView.setEnabled(true);
+        mAddUnreadView.setEnabled(true);
     }
 }
