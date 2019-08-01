@@ -7,8 +7,9 @@ android {
         minSdkVersion 21
         targetSdkVersion 28
         //versionCode改为年份两位，月份两位，日两位，次数1位
-        versionCode 1907200
-        versionName "0.126"
+
+        versionCode 1908011
+        versionName "0.31"
     }
     signingConfigs {
         release {
