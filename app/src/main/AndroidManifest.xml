@@ -37,15 +37,8 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_path"/>
+                android:resource="@xml/provider_paths"/>
         </provider>
-
-
-        <receiver android:name=".ui.dialog.UpgradeConfirmDialog$UpgradeDownloadCompleteBroadcast">
-            <intent-filter>
-                <action android:name="android.intent.action.DOWNLOAD_COMPLETE"></action>
-            </intent-filter>
-        </receiver>
 
         <activity
             android:name=".ui.activity.SearchActivity"

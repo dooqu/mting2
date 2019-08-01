@@ -30,6 +30,7 @@ import cn.xylink.mting.speech.Speechor;
 import cn.xylink.mting.speech.TTSAudioLoader;
 import cn.xylink.mting.speech.data.SpeechList;
 import cn.xylink.mting.speech.data.XiaoIceTTSAudioLoader;
+import cn.xylink.mting.upgrade.UpgradeManager;
 import cn.xylink.mting.utils.ContentManager;
 import cn.xylink.mting.utils.EncryptionUtil;
 import cn.xylink.mting.utils.GsonUtil;
@@ -47,9 +48,6 @@ public class MTing extends Application {
     public static ActivityManager getActivityManager() {
         return activityManager;
     }
-
-    public static UpgradeInfo CurrentUpgradeInfo;
-    public static long CurrentUpgradeDownloadId;
 
 
     @Override
@@ -126,7 +124,7 @@ public class MTing extends Application {
                     @Override
                     public void onFailure(int code, String errorMsg) {
                         Log.d("SPEECH", "onFailure:" + errorMsg);
-                        CurrentUpgradeInfo = null;
+                        UpgradeManager.CurrentUpgradeInfo = null;
                     }
 
                     @Override
@@ -134,7 +132,7 @@ public class MTing extends Application {
                         Log.d("SPEECH", "onSuccess:" + response.getCode() + "," + response.getMessage());
                         Log.d("SPEECH", "upgrade.onSuccess");
                         if ((response.getCode() == 200 || response.getCode() == 201) && response.getData() != null) {
-                            CurrentUpgradeInfo = response.getData();
+                            UpgradeManager.CurrentUpgradeInfo = response.getData();
                         }
                     }
 

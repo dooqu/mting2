@@ -20,6 +20,7 @@ import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -36,6 +37,7 @@ import butterknife.ButterKnife;
 import cn.xylink.mting.MTing;
 import cn.xylink.mting.ui.SplashActivity;
 import cn.xylink.mting.ui.dialog.UpgradeConfirmDialog;
+import cn.xylink.mting.upgrade.UpgradeManager;
 import cn.xylink.mting.utils.L;
 import cn.xylink.mting.utils.PackageUtils;
 import cn.xylink.mting.utils.T;
@@ -47,6 +49,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected Intent mUpdateIntent;
     protected Context context;
     protected Timer upgradeTimer;
+    UpgradeManager.DownloadReceiver downloadReceiver ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +64,9 @@ public abstract class BaseActivity extends AppCompatActivity {
         initData();
         initView();
         initTitleBar();
+
+        downloadReceiver = new UpgradeManager.DownloadReceiver();
+        downloadReceiver.regist(this);
         if (enableVersionUpgrade() == true) {
             checkOnlineUpgrade();
         }
@@ -119,6 +125,8 @@ public abstract class BaseActivity extends AppCompatActivity {
             upgradeTimer.cancel();
             upgradeTimer = null;
         }
+
+        downloadReceiver.regist(null);
     }
 
     /**
@@ -372,13 +380,18 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     protected void checkOnlineUpgrade() {
         int currentVersionCode = Integer.parseInt(PackageUtils.getAppVersionCode(this));
-        if (MTing.CurrentUpgradeInfo == null || MTing.CurrentUpgradeInfo.getAppVersionCode() <= currentVersionCode) {
+        if (UpgradeManager.CurrentUpgradeInfo == null || UpgradeManager.CurrentUpgradeInfo.getAppVersionCode() <= currentVersionCode) {
             return;
         }
         Handler handler = new Handler(Looper.getMainLooper());
         handler.postDelayed(() -> {
-            if (MTing.CurrentUpgradeInfo != null && MTing.CurrentUpgradeInfo.getAppVersionCode() > currentVersionCode) {
-                UpgradeConfirmDialog upgradeConfirmDialog = new UpgradeConfirmDialog(this, MTing.CurrentUpgradeInfo);
+            Log.d("SPEECH_", "isDestroy:" + BaseActivity.this.isDestroyed());
+            Log.d("SPEECH_", "isFinishing:" + BaseActivity.this.isFinishing());
+            if(BaseActivity.this.isFinishing() || BaseActivity.this.isDestroyed()) {
+                return;
+            }
+            if (UpgradeManager.CurrentUpgradeInfo != null && UpgradeManager.CurrentUpgradeInfo.getAppVersionCode() > currentVersionCode) {
+                UpgradeConfirmDialog upgradeConfirmDialog = new UpgradeConfirmDialog(this, UpgradeManager.CurrentUpgradeInfo);
                 upgradeConfirmDialog.show();
             }
         }, 3000);

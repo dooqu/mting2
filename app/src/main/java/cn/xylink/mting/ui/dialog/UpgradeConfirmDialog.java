@@ -40,6 +40,7 @@ import java.util.Date;
 import cn.xylink.mting.MTing;
 import cn.xylink.mting.R;
 import cn.xylink.mting.bean.UpgradeInfo;
+import cn.xylink.mting.upgrade.UpgradeManager;
 import cn.xylink.mting.utils.PackageUtils;
 
 
@@ -49,6 +50,7 @@ public class UpgradeConfirmDialog extends Dialog {
 
     public static Map<BigInteger, String> downloadFiles = new HashMap<>();
 
+    /*
     public static class UpgradeDownloadCompleteBroadcast extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -68,9 +70,10 @@ public class UpgradeConfirmDialog extends Dialog {
                             if (false || Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                                 installIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                                 installIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                fileUri = FileProvider.getUriForFile(context, "cn.xylink.mting.utils.DownloadFileProvider", apkFile);
-                                //installIntent.setClassName("com.android.packageinstaller", "com.android.packageinstaller.PackageInstallerActivity");
-                                //fileUri = FileProvider.getUriForFile(context, context.getPackageName() + ".fileprovider", apkFile);
+
+                                File destFile = new File(context.getFilesDir() + File.pathSeparator + apkFile.getName());
+                                apkFile.renameTo(destFile);
+                                fileUri = FileProvider.getUriForFile(context, "cn.xylink.mting.utils.DownloadFileProvider", destFile);
                             }
                             else {
                                 installIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -106,11 +109,10 @@ public class UpgradeConfirmDialog extends Dialog {
                 e.printStackTrace();
             }
         }
-
-
-
     }
+    */
 
+    /*
     public static class UpgradeDownloadQuery {
         protected long id;
         DownloadManager mDownloadManager;
@@ -162,6 +164,7 @@ public class UpgradeConfirmDialog extends Dialog {
             return bytesAndStatus[2];
         }
     }
+    */
 
     public interface DialogListener {
         void callback(long downloadId, UpgradeInfo upgradeInfo);
@@ -269,6 +272,7 @@ public class UpgradeConfirmDialog extends Dialog {
             Log.d("SPEECH_", "禁用");
         }
 
+        /*
             DownloadManager mDownloadManager = (DownloadManager) context.getSystemService(DOWNLOAD_SERVICE);
         Uri resource = Uri.parse(this.upgradeInfo.getAppDownloadUrl());
         DownloadManager.Request request = new DownloadManager.Request(resource);
@@ -289,5 +293,8 @@ public class UpgradeConfirmDialog extends Dialog {
         }
 
         return MTing.CurrentUpgradeDownloadId;
+        */
+
+        return UpgradeManager.getInstance().startDownload(upgradeInfo);
     }
 }
