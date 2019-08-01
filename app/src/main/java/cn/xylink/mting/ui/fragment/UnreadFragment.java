@@ -1,5 +1,6 @@
 package cn.xylink.mting.ui.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.text.TextUtils;
@@ -14,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 import cn.xylink.mting.R;
 import cn.xylink.mting.base.BaseActivity;
 import cn.xylink.mting.bean.Article;
@@ -30,6 +32,7 @@ import cn.xylink.mting.speech.event.SpeechProgressEvent;
 import cn.xylink.mting.speech.event.SpeechStartEvent;
 import cn.xylink.mting.speech.event.SpeechStopEvent;
 import cn.xylink.mting.ui.activity.ArticleDetailActivity;
+import cn.xylink.mting.ui.activity.PlayerlActivity;
 import cn.xylink.mting.ui.adapter.UnreadAdapter;
 import cn.xylink.mting.utils.L;
 import cn.xylink.mting.widget.SpaceItemDecoration;
@@ -101,6 +104,11 @@ public class UnreadFragment extends BaseMainTabFragment implements UnreadAdapter
     public void onItemMoreClick(Article article) {
         L.v();
         showBottonDialog(TAB_TYPE.UNREAD, article);
+    }
+
+    @OnClick(R.id.ll_empty_first)
+    void onClick(View v) {
+        startActivity(new Intent(getActivity(), PlayerlActivity.class));
     }
 
     @Override
@@ -209,7 +217,7 @@ public class UnreadFragment extends BaseMainTabFragment implements UnreadAdapter
     @Override
     public void onErrorUnread(int code, String errorMsg) {
 //        if (code > 9999) {
-            mNetworkErrorLayout.setVisibility(View.VISIBLE);
+        mNetworkErrorLayout.setVisibility(View.VISIBLE);
 //        }
     }
 

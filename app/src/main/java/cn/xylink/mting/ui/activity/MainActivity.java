@@ -65,7 +65,8 @@ import cn.xylink.mting.widget.ArcProgressBar;
 public class MainActivity extends BasePresenterActivity implements BaseMainTabFragment.OnControllerListener, MainAddMenuPop.OnMainAddMenuListener
         , DelMainContract.IDelMainView, AddUnreadContract.IAddUnreadView, ViewPager.OnPageChangeListener {
 
-    public static String URL_KEY = "url_key";
+    public static String SHARE_URL = "share_url";
+    public static String SHARE_SUCCESS = "share_success";
     @BindView(R.id.tv_main_tabar_unread)
     TextView mUnreadTextView;
     @BindView(R.id.tv_main_tabar_readed)
@@ -102,13 +103,13 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
         super.onCreate(savedInstanceState);
         L.v();
 //        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-        showShareResultDialog(getIntent().getIntExtra(URL_KEY, -1));
+        showShareResultDialog(getIntent().getIntExtra(SHARE_SUCCESS, -1), getIntent().getStringExtra(SHARE_URL));
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
-        L.v("*^*^*^*^*" + intent.getIntExtra(URL_KEY, -1));
-        showShareResultDialog(intent.getIntExtra(URL_KEY, -1));
+        L.v("*^*^*^*^*" + intent.getIntExtra(SHARE_SUCCESS, -1));
+        showShareResultDialog(intent.getIntExtra(SHARE_SUCCESS, -1), getIntent().getStringExtra(SHARE_URL));
         super.onNewIntent(intent);
     }
 
