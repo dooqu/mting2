@@ -23,12 +23,14 @@ import butterknife.OnClick;
 import cn.xylink.mting.MTing;
 import cn.xylink.mting.R;
 import cn.xylink.mting.bean.UserInfo;
+import cn.xylink.mting.model.data.HttpConst;
 import cn.xylink.mting.model.data.OkGoUtils;
 import cn.xylink.mting.openapi.QQApi;
 import cn.xylink.mting.ui.activity.user.BindLoginPwdActivity;
 import cn.xylink.mting.utils.ContentManager;
 import cn.xylink.mting.utils.ImageUtils;
 import cn.xylink.mting.utils.L;
+import cn.xylink.mting.utils.NetworkUtil;
 import cn.xylink.mting.utils.SharedPreHelper;
 import cn.xylink.mting.widget.ZpPhoneEditText;
 
@@ -165,6 +167,12 @@ public class BindingPhoneQQWxActivity extends BasePresenterActivity {
                 finish();
                 break;
             case R.id.btn_binding: {
+                int netWorkStates = NetworkUtil.getNetWorkStates(context);
+                if(netWorkStates == NetworkUtil.TYPE_NONE)
+                {
+                    toastShort(HttpConst.NO_NETWORK);
+                    return;
+                }
                 Intent mIntent = new Intent(this, BindLoginPwdActivity.class);
                 mIntent.putExtra(BindLoginPwdActivity.EXTRA_PHONE, phone);
                 mIntent.putExtra(BindLoginPwdActivity.EXTRA_PLATFORM, platform);

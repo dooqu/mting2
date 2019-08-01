@@ -107,7 +107,7 @@ public class SplashActivity extends BasePresenterActivity implements CheckTokenC
             CheckTokenRequest requset = new CheckTokenRequest();
             requset.doSign();
             tokenPresenter.onCheckToken(requset);
-        }else{
+        } else {
             finish();
         }
     }
@@ -174,12 +174,13 @@ public class SplashActivity extends BasePresenterActivity implements CheckTokenC
                     }
                     break;
                 case ERROR:
-                    if (code != -999) {
-                        if (FileCache.getInstance().isGuideFirst()) {
-                            FileCache.getInstance().setHasGuide();
-                            startActivity(new Intent(SplashActivity.this, GuideActivity.class));
-                            finish();
-                        } else {
+                    L.v("isGuideFirst", FileCache.getInstance().isGuideFirst());
+                    if (FileCache.getInstance().isGuideFirst()) {
+                        FileCache.getInstance().setHasGuide();
+                        startActivity(new Intent(SplashActivity.this, GuideActivity.class));
+                        finish();
+                    } else {
+                        if (code != -999) {
                             if (TextUtils.isEmpty(ContentManager.getInstance().getLoginToken())) {
                                 startActivity(new Intent(SplashActivity.this, LoginActivity.class));
                                 finish();
@@ -187,13 +188,11 @@ public class SplashActivity extends BasePresenterActivity implements CheckTokenC
                                 startActivity(new Intent(SplashActivity.this, MainActivity.class));
                                 finish();
                             }
+                        } else {
+                            startActivity(new Intent(SplashActivity.this, LoginActivity.class));
+                            finish();
                         }
-                    }else
-                    {
-                        startActivity(new Intent(SplashActivity.this, LoginActivity.class));
-                        finish();
                     }
-
                     break;
             }
             return false;
