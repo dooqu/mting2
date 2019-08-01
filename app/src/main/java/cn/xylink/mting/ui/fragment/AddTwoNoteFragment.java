@@ -248,7 +248,7 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
             Toast.makeText(this.getContext(), "不能解析空地址", Toast.LENGTH_SHORT).show();
             return;
         }
-        if (linkArticle.getExistUnread() == 1) {
+        if (linkArticle.getExistUnread() == 1 || linkArticle.getExistUnread() == 2 ) {
             final CheckArticleDialog checkArticleDialog = new CheckArticleDialog(getContext());
             checkArticleDialog.setCanceledOnTouchOutside(true);
             checkArticleDialog.setData(linkArticle.getTitle(), new CheckArticleDialog.MessageListener() {
@@ -271,6 +271,8 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
             String msg = String.format(hint, day);
             checkArticleDialog.setUpdateMsg(msg);
             checkArticleDialog.show();
+        }else{
+            linkPushRequset(responseUrl.trim().replaceAll(" ", ""));
         }
 //
 //        linkPushRequset(link);

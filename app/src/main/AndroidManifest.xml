@@ -96,7 +96,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data android:scheme="tencent101519024" />
+                <data android:scheme="tencent1107912298" />
             </intent-filter>
         </activity>
 
@@ -165,6 +165,10 @@
             android:windowSoftInputMode="stateHidden|adjustResize"/>
         <activity
             android:name=".ui.activity.UserProtocolActivity"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTask"/>
+        <activity
+            android:name=".ui.activity.PlayerlActivity"
             android:screenOrientation="portrait"
             android:launchMode="singleTask"/>
 
