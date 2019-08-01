@@ -342,6 +342,9 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
                 tvFeedback.setVisibility(View.VISIBLE);
                 llError.setVisibility(View.VISIBLE);
                 tvLoadingError.setVisibility(View.VISIBLE);
+                stopAnim();
+                pb_speech_bar.setVisibility(View.GONE);
+                v_1.setVisibility(View.VISIBLE);
                 break;
         }
         tvPreview.setText("重新加载");

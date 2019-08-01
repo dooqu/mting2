@@ -93,6 +93,10 @@ public interface Speechor {
     //event method
     /*
     invoke when speechor's state is changed;
+    Playing
+    Pauseding
+    Loadding
+    三种状态切换
      */
     void onStateChanged(SpeechorState speakerState);
 

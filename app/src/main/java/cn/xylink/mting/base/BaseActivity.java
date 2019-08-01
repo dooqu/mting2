@@ -3,7 +3,10 @@ package cn.xylink.mting.base;
 import android.Manifest;
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.app.AlertDialog;
+import android.app.DownloadManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
@@ -13,9 +16,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.Settings;
+import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -30,7 +36,9 @@ import java.util.TimerTask;
 
 import butterknife.ButterKnife;
 import cn.xylink.mting.MTing;
+import cn.xylink.mting.ui.SplashActivity;
 import cn.xylink.mting.ui.dialog.UpgradeConfirmDialog;
+import cn.xylink.mting.upgrade.UpgradeManager;
 import cn.xylink.mting.utils.L;
 import cn.xylink.mting.utils.PackageUtils;
 import cn.xylink.mting.utils.T;
@@ -38,10 +46,11 @@ import cn.xylink.mting.utils.T;
 public abstract class BaseActivity extends AppCompatActivity {
 
     private static final int INSTALL_PACKAGES_REQUESTCODE = 100;
-    private static final int GET_UNKNOWN_APP_SOURCES = 101;
+    public static final int GET_UNKNOWN_APP_SOURCES = 106;
     protected Intent mUpdateIntent;
     protected Context context;
     protected Timer upgradeTimer;
+    UpgradeManager.DownloadReceiver downloadReceiver ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +65,9 @@ public abstract class BaseActivity extends AppCompatActivity {
         initData();
         initView();
         initTitleBar();
+
+        downloadReceiver = new UpgradeManager.DownloadReceiver();
+        downloadReceiver.regist(this);
         if (enableVersionUpgrade() == true) {
             checkOnlineUpgrade();
         }
@@ -114,6 +126,8 @@ public abstract class BaseActivity extends AppCompatActivity {
             upgradeTimer.cancel();
             upgradeTimer = null;
         }
+
+        downloadReceiver.regist(null);
     }
 
     /**
@@ -235,6 +249,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
 
+
     private void installApk() {
         if (Build.VERSION.SDK_INT >= 26) {
             boolean b = getPackageManager().canRequestPackageInstalls();
@@ -246,7 +261,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         } else {
             installAPK();
         }
-
     }
 
     private void installAPK() {
@@ -267,6 +281,28 @@ public abstract class BaseActivity extends AppCompatActivity {
             imageUri = Uri.fromFile(file);
         }
         return imageUri;
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == GET_UNKNOWN_APP_SOURCES) {
+            if(resultCode == Activity.RESULT_CANCELED) {
+                Log.d("SPEECH_", "授权被取消");
+                if(UpgradeManager.CurrentUpgradeInfo != null && UpgradeManager.CurrentUpgradeInfo.getNeedUpdate() == 0) {
+                    Toast.makeText(this, "当前升级为重要更新，请开启应用重新授权", Toast.LENGTH_SHORT).show();
+                    System.exit(0);
+                    return;
+                }
+            }
+            else if(requestCode == Activity.RESULT_OK) {
+                Log.d("SPEECH_", "授权成功");
+                if(UpgradeManager.DownloadTaskFilePath != null) {
+                    downloadReceiver.installApk(UpgradeManager.DownloadTaskFilePath);
+                }
+            }
+        }
     }
 
     @Override
@@ -319,13 +355,18 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     protected void checkOnlineUpgrade() {
         int currentVersionCode = Integer.parseInt(PackageUtils.getAppVersionCode(this));
-        if (MTing.CurrentUpgradeInfo == null || MTing.CurrentUpgradeInfo.getAppVersionCode() <= currentVersionCode) {
+        if (UpgradeManager.CurrentUpgradeInfo == null || UpgradeManager.CurrentUpgradeInfo.getAppVersionCode() <= currentVersionCode) {
             return;
         }
         Handler handler = new Handler(Looper.getMainLooper());
         handler.postDelayed(() -> {
-            if (MTing.CurrentUpgradeInfo != null && MTing.CurrentUpgradeInfo.getAppVersionCode() > currentVersionCode) {
-                UpgradeConfirmDialog upgradeConfirmDialog = new UpgradeConfirmDialog(this, MTing.CurrentUpgradeInfo);
+            Log.d("SPEECH_", "isDestroy:" + BaseActivity.this.isDestroyed());
+            Log.d("SPEECH_", "isFinishing:" + BaseActivity.this.isFinishing());
+            if(BaseActivity.this.isFinishing() || BaseActivity.this.isDestroyed()) {
+                return;
+            }
+            if (UpgradeManager.CurrentUpgradeInfo != null && UpgradeManager.CurrentUpgradeInfo.getAppVersionCode() > currentVersionCode) {
+                UpgradeConfirmDialog upgradeConfirmDialog = new UpgradeConfirmDialog(this, UpgradeManager.CurrentUpgradeInfo);
                 upgradeConfirmDialog.show();
             }
         }, 3000);

@@ -135,7 +135,6 @@ public class SpeechList {
         }
 
         internalList.addFirst(article);
-
         if (isArticleSelected) {
             playIterator = internalList.listIterator(0);
             current = playIterator.next();
@@ -143,22 +142,19 @@ public class SpeechList {
         else {
             resetInterator();
         }
-
         return isArticleSelected;
     }
 
 
     public synchronized void pushFront(List<Article> list) {
         Iterator<Article> iterator = list.iterator();
-
         while(iterator.hasNext()) {
             pushFront(iterator.next());
         }
     }
 
 
-    public synchronized boolean moveNext() {
-        /*
+    public synchronized boolean moveNext() {        /*
         如果current == null，那么没有基准点，不能向下迭代
          */
         if (current == null) {
