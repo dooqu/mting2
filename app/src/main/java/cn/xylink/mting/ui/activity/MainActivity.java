@@ -102,7 +102,7 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
         super.onCreate(savedInstanceState);
         L.v();
 //        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-        showShareResultDialog(getIntent().getIntExtra(URL_KEY, -1));
+        showShareResultDialog(getIntent().getIntExtra(URL_KEY, 1));
     }
 
     @Override

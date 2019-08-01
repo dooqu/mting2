@@ -16,12 +16,12 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@mipmap/empty" />
+            android:src="@mipmap/empty_store" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="真棒！文章都读完了！快去添加新内容吧"
+            android:text="还没有收藏过文章"
             android:textColor="@color/cbbbbbb"
             android:textSize="16sp" />
     </LinearLayout>

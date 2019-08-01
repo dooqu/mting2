@@ -33,7 +33,7 @@ public class Const {
     public static final String CITY_CODE = "2711";
     public static final String WX_ID = "wx1ff8a65d066b2156";
     public static final String WX_SECRET = "e2f0ded1dbc3a9f586d13a74b55fe6c0";
-    public static final String QQ_ID = "101519024";
+    public static final String QQ_ID = "1107912298";
     public static final String WX_URL_BASE = "https://api.weixin.qq.com/sns/";
     public static final int PAGE_SIZE = 20;
 

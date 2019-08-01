@@ -15,6 +15,7 @@ import cn.xylink.mting.contract.IBaseView;
 import cn.xylink.mting.presenter.BasePresenter;
 import cn.xylink.mting.ui.dialog.CopyAddDialog;
 import cn.xylink.mting.ui.dialog.LoadingDialog;
+import cn.xylink.mting.ui.dialog.TipDialog;
 import cn.xylink.mting.utils.ContentManager;
 import cn.xylink.mting.utils.L;
 
@@ -82,32 +83,32 @@ public abstract class BasePresenterActivity<T extends BasePresenter> extends Bas
     protected void onResume() {
         super.onResume();
         L.v();
-        if (alertDialog != null && !alertDialog.isShowing())
+        if (alertDialog == null || (alertDialog != null && !alertDialog.isShowing()))
             showCopyDialog();
     }
 
-    private AlertDialog alertDialog;
+    private TipDialog alertDialog;
 
     protected void showShareResultDialog(int sucess) {
         if (sucess >= 0) {
-            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-            String msg ;
-            if (sucess==1)
+            String msg;
+            if (sucess == 1)
                 msg = "分享成功";
             else
                 msg = "分享失败";
-            dialog.setMessage(msg).setNeutralButton("取消", (dialog1, which) -> {
-                dialog1.dismiss();
-                this.finish();
-            })
-                    .setPositiveButton("确定", (dialog12, which) -> {
-                        dialog12.dismiss();
-                        showCopyDialog();
-                    });
-//            alertDialog = dialog.create();
-//            alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(getResources().getColor(R.color.c999999));
-//            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.c488def));
-            alertDialog =dialog.show();
+            alertDialog = new TipDialog(this);
+            alertDialog.setMsg(msg, "取消", "留在轩辕听", new TipDialog.OnTipListener() {
+                @Override
+                public void onLeftClick() {
+                    BasePresenterActivity.this.finish();
+                }
+
+                @Override
+                public void onRightClick() {
+                    showCopyDialog();
+                }
+            });
+            alertDialog.show();
             L.v();
         }
     }
@@ -124,8 +125,8 @@ public abstract class BasePresenterActivity<T extends BasePresenter> extends Bas
                             return;
                         }
                     }
-                if (tCopy==null)
-                    tCopy =new  ArrayList<>();
+                if (tCopy == null)
+                    tCopy = new ArrayList<>();
                 tCopy.add(copy.toString());
                 if (tCopy.size() > 20)
                     tCopy.remove(0);
