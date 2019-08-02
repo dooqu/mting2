@@ -248,6 +248,7 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
     public void onSuccessDel(String str) {
         T.showCustomToast("删除成功");
         EventBus.getDefault().post(new DeleteArticleSuccessEvent(mMessageQueue.poll()));
+        setPlayBarState();
     }
 
     @Override

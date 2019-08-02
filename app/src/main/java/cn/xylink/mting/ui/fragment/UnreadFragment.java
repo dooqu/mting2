@@ -164,8 +164,9 @@ public class UnreadFragment extends BaseMainTabFragment implements UnreadAdapter
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onAddUnread(AddUnreadEvent event) {
         L.v(event);
-        if (mAdapter.getItemCount() < 1 && mControllerListener != null)
+        if (SpeechList.getInstance().getCurrent() == null && mControllerListener != null) {
             mControllerListener.onDataSuccess();
+        }
         mAdapter.refreshData();
         if (!TextUtils.isEmpty(event.getArticleID())) {
             Article article = new Article();
