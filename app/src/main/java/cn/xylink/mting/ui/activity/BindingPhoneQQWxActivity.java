@@ -176,6 +176,7 @@ public class BindingPhoneQQWxActivity extends BasePresenterActivity {
                 Intent mIntent = new Intent(this, BindLoginPwdActivity.class);
                 mIntent.putExtra(BindLoginPwdActivity.EXTRA_PHONE, phone);
                 mIntent.putExtra(BindLoginPwdActivity.EXTRA_PLATFORM, platform);
+                mIntent.putExtra(BindingPhoneActivity.EXTRA_SOURCE, source);
                 startActivity(mIntent);
                 break;
             }
