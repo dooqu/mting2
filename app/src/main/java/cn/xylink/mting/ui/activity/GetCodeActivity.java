@@ -81,12 +81,15 @@ public class GetCodeActivity extends BasePresenterActivity implements GetCodeCon
             @Override
             public void onTick(long millisUntilFinished) {
                 isFinished = false;
+                tvCountDown.setTextColor(getResources().getColorStateList(R.color.color_login_text_gray));
                 tvCountDown.setText(millisUntilFinished / 1000 + "秒");
             }
 
             @Override
             public void onFinish() {
                 isFinished = true;
+
+                tvCountDown.setTextColor(getResources().getColorStateList(R.color.color_blue));
                 tvCountDown.setText("重新获取");
             }
         }.start();
@@ -175,10 +178,6 @@ public class GetCodeActivity extends BasePresenterActivity implements GetCodeCon
         Toast.makeText(this, response.message, Toast.LENGTH_SHORT).show();
         if (response.data != null) {
             codeID = response.data.getCodeId();
-        }
-        if (response.code == 200) {
-            resetDownTimer(ONE_MINUTE);
-            return;
         }
     }
 
@@ -278,7 +277,20 @@ public class GetCodeActivity extends BasePresenterActivity implements GetCodeCon
                 toastShort(errorMsg);
                 break;
         }
-        if (timer != null)
+//        if (timer != null)
+//            timer.onFinish();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (timer != null) {
+            timer.cancel();
             timer.onFinish();
+        }
+        if(pCcode != null){
+            pCcode.clearText();
+        }
+
     }
 }

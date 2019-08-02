@@ -242,6 +242,7 @@ public class PersonalInfoActivity extends BasePresenterActivity implements TakeP
     private void showSexSelectDialog() {
         hideSoftInput(etNickName);
         BottomSelectSexDialog dialog = new BottomSelectSexDialog(this);
+        dialog.setCanceledOnTouchOutside(false);
         dialog.setData("男", "女", new BottomSelectSexDialog.OnBottomSelectDialogListener() {
             @Override
             public void onFirstClick() {
