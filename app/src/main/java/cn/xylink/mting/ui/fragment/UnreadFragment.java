@@ -159,6 +159,7 @@ public class UnreadFragment extends BaseMainTabFragment implements UnreadAdapter
                 mEnptyFirstLayout.setVisibility(View.GONE);
                 mNetworkErrorLayout.setVisibility(View.GONE);
             }
+        }else if (event.getTab_type() == TAB_TYPE.COLLECT){
         }
     }
 
