@@ -140,6 +140,12 @@ public class UnreadFragment extends BaseMainTabFragment implements UnreadAdapter
     public void onSpeechStop(SpeechStopEvent event) {
         L.v(event);
         mAdapter.refreshData();
+        if (event.getStopReason() == SpeechStopEvent.StopReason.ListIsNull) {
+            mEnptyLayout.setVisibility(View.VISIBLE);
+            mRecyclerView.setVisibility(View.GONE);
+            mEnptyFirstLayout.setVisibility(View.GONE);
+            mNetworkErrorLayout.setVisibility(View.GONE);
+        }
     }
 
 
