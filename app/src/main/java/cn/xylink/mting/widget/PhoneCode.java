@@ -157,22 +157,22 @@ public class PhoneCode extends RelativeLayout {
         v2.setBackgroundColor(getResources().getColor(color_default));
         v3.setBackgroundColor(getResources().getColor(color_default));
         v4.setBackgroundColor(getResources().getColor(color_default));
-        if (codes.size() == 0) {
-            v1.setBackgroundColor(getResources().getColor(color_focus));
-        }
         if (codes.size() == 1) {
             v1.setBackgroundColor(getResources().getColor(color_focus));
-            v2.setBackgroundColor(getResources().getColor(color_focus));
         }
         if (codes.size() == 2) {
-            v1.setBackgroundColor(getResources().getColor(color_focus));
+//            v1.setBackgroundColor(getResources().getColor(color_focus));
             v2.setBackgroundColor(getResources().getColor(color_focus));
+        }
+        if (codes.size() == 3) {
+//            v1.setBackgroundColor(getResources().getColor(color_focus));
+//            v2.setBackgroundColor(getResources().getColor(color_focus));
             v3.setBackgroundColor(getResources().getColor(color_focus));
         }
-        if (codes.size() >= 3) {
-            v1.setBackgroundColor(getResources().getColor(color_focus));
-            v2.setBackgroundColor(getResources().getColor(color_focus));
-            v3.setBackgroundColor(getResources().getColor(color_focus));
+        if (codes.size() >= 4) {
+//            v1.setBackgroundColor(getResources().getColor(color_focus));
+//            v2.setBackgroundColor(getResources().getColor(color_focus));
+//            v3.setBackgroundColor(getResources().getColor(color_focus));
             v4.setBackgroundColor(getResources().getColor(color_focus));
         }
     }

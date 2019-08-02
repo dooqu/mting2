@@ -3,6 +3,7 @@ package cn.xylink.mting.ui.activity.user;
 import android.content.Intent;
 import android.text.Editable;
 import android.text.InputType;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
@@ -22,12 +23,16 @@ import butterknife.OnClick;
 import cn.xylink.mting.MTing;
 import cn.xylink.mting.R;
 import cn.xylink.mting.base.BaseResponse;
+import cn.xylink.mting.bean.CodeInfo;
 import cn.xylink.mting.bean.UserInfo;
 import cn.xylink.mting.contract.BindThirdPlatformContact;
+import cn.xylink.mting.contract.GetCodeContact;
 import cn.xylink.mting.contract.LoginContact;
+import cn.xylink.mting.model.GetCodeRequest;
 import cn.xylink.mting.model.LoginRequset;
 import cn.xylink.mting.model.ThirdPlatformRequest;
 import cn.xylink.mting.model.data.Const;
+import cn.xylink.mting.presenter.GetCodePresenter;
 import cn.xylink.mting.presenter.LoginPresenter;
 import cn.xylink.mting.presenter.ThirdPlatformPresenter;
 import cn.xylink.mting.ui.activity.BasePresenterActivity;
@@ -41,7 +46,7 @@ import cn.xylink.mting.utils.MD5;
 import cn.xylink.mting.utils.SharedPreHelper;
 import cn.xylink.mting.utils.TingUtils;
 
-public class BindLoginPwdActivity extends BasePresenterActivity implements BindThirdPlatformContact.IThirdPlatformView {
+public class BindLoginPwdActivity extends BasePresenterActivity implements BindThirdPlatformContact.IThirdPlatformView, GetCodeContact.IGetCodeView {
 
     public static final String EXTRA_PHONE = "extra_phone";
     public static final String EXTRA_SOURCE = "extra_source";
@@ -61,6 +66,7 @@ public class BindLoginPwdActivity extends BasePresenterActivity implements BindT
     private String platform;
 
     private ThirdPlatformPresenter thirdPlatformPresenter;
+    private GetCodePresenter codePresenter;
 
     private SharedPreHelper sharedPreHelper;
 
@@ -70,6 +76,9 @@ public class BindLoginPwdActivity extends BasePresenterActivity implements BindT
 
         thirdPlatformPresenter = (ThirdPlatformPresenter) createPresenter(ThirdPlatformPresenter.class);
         thirdPlatformPresenter.attachView(this);
+
+        codePresenter = (GetCodePresenter) createPresenter(GetCodePresenter.class);
+        codePresenter.attachView(this);
 
         sharedPreHelper = SharedPreHelper.getInstance(this);
 
@@ -110,6 +119,16 @@ public class BindLoginPwdActivity extends BasePresenterActivity implements BindT
         platform = getIntent().getStringExtra(EXTRA_PLATFORM);
     }
 
+    public void requsetCode() {
+        if (TextUtils.isEmpty(phone))
+            return;
+        GetCodeRequest requset = new GetCodeRequest();
+        requset.phone = phone.replaceAll(" ", "");
+        requset.source = "bind_phone";
+        requset.doSign();
+        codePresenter.onGetCode(requset);
+    }
+
     @Override
     protected void initTitleBar() {
 
@@ -123,13 +142,7 @@ public class BindLoginPwdActivity extends BasePresenterActivity implements BindT
         switch (v.getId())
         {
             case R.id.tv_forget_pwd:{
-
-                Intent mIntent = new Intent(this, GetCodeActivity.class);
-                mIntent.putExtra(EXTRA_PHONE, phone);
-                mIntent.putExtra(EXTRA_SOURCE,"bind_phone");
-                mIntent.putExtra(EXTRA_PLATFORM,platform);
-                startActivity(mIntent);
-
+                requsetCode();
                 break;
             }
             case R.id.btn_left:
@@ -193,7 +206,7 @@ public class BindLoginPwdActivity extends BasePresenterActivity implements BindT
     @Override
     public void onThirdPlatformSuccess(BaseResponse<UserInfo> response) {
         L.v(response);
-        Toast.makeText(this,response.message,Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this,response.message,Toast.LENGTH_SHORT).show();
         if(response.data != null)
         {
             L.v("message",response.message);
@@ -210,5 +223,25 @@ public class BindLoginPwdActivity extends BasePresenterActivity implements BindT
     @Override
     public void onThirdPlatformError(int code, String errorMsg) {
         Toast.makeText(this,errorMsg,Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onCodeSuccess(BaseResponse<CodeInfo> response) {
+        L.v(response.code);
+        Toast.makeText(this, response.message, Toast.LENGTH_SHORT).show();
+        if (response.data != null) {
+            Intent mIntent = new Intent(this, GetCodeActivity.class);
+            mIntent.putExtra(EXTRA_PHONE, phone);
+            mIntent.putExtra(EXTRA_SOURCE, "bind_phone");
+            mIntent.putExtra(GetCodeActivity.EXTRA_CODE, response.data.getCodeId());
+            startActivity(mIntent);
+        }
+    }
+
+    @Override
+    public void onCodeError(int code, String errorMsg) {
+        if(!TextUtils.isEmpty(errorMsg)) {
+            toastShort(errorMsg);
+        }
     }
 }

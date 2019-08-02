@@ -132,15 +132,18 @@ public class SetPhonePwdActivity extends BasePresenterActivity implements Regist
 
     }
 
-    @OnClick({R.id.btn_next,R.id.pwd_icon})
+    @OnClick({R.id.btn_next, R.id.pwd_icon,R.id.btn_left})
     public void onClick(View v) {
 
         switch (v.getId()) {
+            case R.id.btn_left:
+                finish();
+                break;
             case R.id.pwd_icon:
-                if (isChecked){
+                if (isChecked) {
                     etPwd.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);// 输入为密码且可见
                     pwd_icon.setImageResource(R.mipmap.pwd_show);
-                }else {
+                } else {
                     pwd_icon.setImageResource(R.mipmap.pwd_hide);
                     etPwd.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD | InputType.TYPE_CLASS_TEXT);// 设置文本类密码（默认不可见），这两个属性必须同时设置
                 }
@@ -157,71 +160,28 @@ public class SetPhonePwdActivity extends BasePresenterActivity implements Regist
 //                    Toast.makeText(this, "长度不超过20位", Toast.LENGTH_SHORT).show();
 //                    return;
 //                }
-                else if(pwd.length() < 6)
-                {
+                else if (pwd.length() < 6) {
                     toastLong("密码长度小于6位，请重新输入");
                     return;
                 }
                 L.v("pwd", pwd);
-                RegisterRequset requset = new RegisterRequset();
-                requset.setDeviceId(TingUtils.getDeviceId(getApplicationContext()));
-                requset.setPhone(phone);
-
-                byte[] pwds = null;
-                try {
-                    pwds = EncryptionUtil.encrypt(MD5.md5crypt(pwd), EncryptionUtil.getPublicKey(Const.publicKey));
-                } catch (NoSuchAlgorithmException e) {
-                    e.printStackTrace();
-                } catch (InvalidKeySpecException e) {
-                    e.printStackTrace();
-                } catch (NoSuchProviderException e) {
-                    e.printStackTrace();
+                if (TextUtils.isEmpty(platform)) {
+                    commonRegister(pwd);
+                } else {
+                    thirdPlatformRequest(pwd);
                 }
-                L.v("pwd decode", pwd);
-                requset.setPassword(new Base64().encodeToString(pwds));
-                requset.setTicket(ticket);
-                requset.doSign();
-                registerPresenter.onRegister(requset, type);
                 break;
         }
     }
 
-
-    @Override
-    public void onRegisterSuccess(BaseResponse<UserInfo> response) {
-        if (response.data != null) {
-            if(TextUtils.isEmpty(platform)) {
-                L.v("token", response.data.getToken());
-                ContentManager.getInstance().setLoginToken(response.data.getToken());
-                ContentManager.getInstance().setUserInfo(response.data);
-                Intent mIntent = new Intent(this, MainActivity.class);
-                startActivity(mIntent);
-                finish();
-                MTing.getActivityManager().popAllActivitys();
-            }else{
-                thirdPlatformRequest();
-            }
-        }
-    }
-
-
-    public void thirdPlatformRequest(){
-
-        ThirdPlatformRequest requset = new ThirdPlatformRequest();
-
-        String access_token = (String) sharedPreHelper.getSharedPreference(SharedPreHelper.SharedAttribute.ACCESS_TOKEN,"");
-        String appid = (String) sharedPreHelper.getSharedPreference(SharedPreHelper.SharedAttribute.OPENID,"");
-        String ticket = (String) sharedPreHelper.getSharedPreference(SharedPreHelper.SharedAttribute.TICKET,"");
-
-        requset.setAccess_token(access_token);
-        requset.setOpenid(appid);
-        requset.setTicket(ticket);
-        requset.setPhone(phone.replaceAll(" ",""));
-        requset.setPlatform(platform);
+    public void commonRegister(String pwd) {
+        RegisterRequset requset = new RegisterRequset();
+        requset.setDeviceId(TingUtils.getDeviceId(getApplicationContext()));
+        requset.setPhone(phone);
 
         byte[] pwds = null;
         try {
-            pwds =  EncryptionUtil.encrypt(MD5.md5crypt(etPwd.getText().toString()), EncryptionUtil.getPublicKey(Const.publicKey));
+            pwds = EncryptionUtil.encrypt(MD5.md5crypt(pwd), EncryptionUtil.getPublicKey(Const.publicKey));
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         } catch (InvalidKeySpecException e) {
@@ -229,7 +189,53 @@ public class SetPhonePwdActivity extends BasePresenterActivity implements Regist
         } catch (NoSuchProviderException e) {
             e.printStackTrace();
         }
-        requset.setPassword( new Base64().encodeToString(pwds));
+        L.v("pwd decode", pwd);
+        requset.setPassword(new Base64().encodeToString(pwds));
+        requset.setTicket(ticket);
+        requset.doSign();
+        registerPresenter.onRegister(requset, type);
+    }
+
+
+    @Override
+    public void onRegisterSuccess(BaseResponse<UserInfo> response) {
+        if (response.data != null) {
+            L.v("token", response.data.getToken());
+            ContentManager.getInstance().setLoginToken(response.data.getToken());
+            ContentManager.getInstance().setUserInfo(response.data);
+            Intent mIntent = new Intent(this, MainActivity.class);
+            startActivity(mIntent);
+            finish();
+            MTing.getActivityManager().popAllActivitys();
+        }
+    }
+
+
+    public void thirdPlatformRequest(String pwd) {
+
+        ThirdPlatformRequest requset = new ThirdPlatformRequest();
+
+        String access_token = (String) sharedPreHelper.getSharedPreference(SharedPreHelper.SharedAttribute.ACCESS_TOKEN, "");
+        String appid = (String) sharedPreHelper.getSharedPreference(SharedPreHelper.SharedAttribute.OPENID, "");
+        String ticket = (String) sharedPreHelper.getSharedPreference(SharedPreHelper.SharedAttribute.TICKET, "");
+
+        requset.setAccess_token(access_token);
+        requset.setOpenid(appid);
+        requset.setTicket(ticket);
+        requset.setPhone(phone.replaceAll(" ", ""));
+        requset.setPlatform(platform);
+
+        byte[] pwds = null;
+        try {
+            pwds = EncryptionUtil.encrypt(MD5.md5crypt(pwd), EncryptionUtil.getPublicKey(Const.publicKey));
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (InvalidKeySpecException e) {
+            e.printStackTrace();
+        } catch (NoSuchProviderException e) {
+            e.printStackTrace();
+        }
+        requset.setPassword(new Base64().encodeToString(pwds));
         requset.doSign();
         thirdPlatformPresenter.onThirdPlatform(requset);
     }
@@ -243,10 +249,9 @@ public class SetPhonePwdActivity extends BasePresenterActivity implements Regist
     @Override
     public void onThirdPlatformSuccess(BaseResponse<UserInfo> response) {
         L.v(response);
-        if(response.data != null)
-        {
-            L.v("message",response.message);
-            L.v("token",response.data.getToken());
+        if (response.data != null) {
+            L.v("message", response.message);
+            L.v("token", response.data.getToken());
             ContentManager.getInstance().setLoginToken(response.data.getToken());
             ContentManager.getInstance().setUserInfo(response.data);
             Intent mIntent = new Intent(this, MainActivity.class);
@@ -258,6 +263,6 @@ public class SetPhonePwdActivity extends BasePresenterActivity implements Regist
 
     @Override
     public void onThirdPlatformError(int code, String errorMsg) {
-
+            toastShort(errorMsg);
     }
 }

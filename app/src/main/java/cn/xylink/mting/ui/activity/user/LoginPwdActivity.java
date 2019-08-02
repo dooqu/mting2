@@ -3,6 +3,7 @@ package cn.xylink.mting.ui.activity.user;
 import android.content.Intent;
 import android.text.Editable;
 import android.text.InputType;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
@@ -22,10 +23,14 @@ import butterknife.OnClick;
 import cn.xylink.mting.MTing;
 import cn.xylink.mting.R;
 import cn.xylink.mting.base.BaseResponse;
+import cn.xylink.mting.bean.CodeInfo;
 import cn.xylink.mting.bean.UserInfo;
+import cn.xylink.mting.contract.GetCodeContact;
 import cn.xylink.mting.contract.LoginContact;
+import cn.xylink.mting.model.GetCodeRequest;
 import cn.xylink.mting.model.LoginRequset;
 import cn.xylink.mting.model.data.Const;
+import cn.xylink.mting.presenter.GetCodePresenter;
 import cn.xylink.mting.presenter.LoginPresenter;
 import cn.xylink.mting.ui.activity.BasePresenterActivity;
 import cn.xylink.mting.ui.activity.GetCodeActivity;
@@ -37,7 +42,7 @@ import cn.xylink.mting.utils.L;
 import cn.xylink.mting.utils.MD5;
 import cn.xylink.mting.utils.TingUtils;
 
-public class LoginPwdActivity extends BasePresenterActivity implements LoginContact.ILoginView  {
+public class LoginPwdActivity extends BasePresenterActivity implements LoginContact.ILoginView , GetCodeContact.IGetCodeView {
 
     public static final String EXTRA_PHONE = "extra_phone";
     public static final String EXTRA_SOURCE = "extra_source";
@@ -56,12 +61,18 @@ public class LoginPwdActivity extends BasePresenterActivity implements LoginCont
 
     private LoginPresenter loginPresenter;
 
+    private GetCodePresenter codePresenter;
+
     @Override
     protected void preView() {
         setContentView(R.layout.activity_pwd_login);
 
         loginPresenter = (LoginPresenter) createPresenter(LoginPresenter.class);
         loginPresenter.attachView(this);
+
+        codePresenter = (GetCodePresenter) createPresenter(GetCodePresenter.class);
+        codePresenter.attachView(this);
+
         MTing.getActivityManager().pushActivity(this);
     }
 
@@ -111,10 +122,8 @@ public class LoginPwdActivity extends BasePresenterActivity implements LoginCont
         switch (v.getId())
         {
             case R.id.tv_forget_pwd:{
-                Intent mIntent = new Intent(this, GetCodeActivity.class);
-                mIntent.putExtra(EXTRA_PHONE, phone);
-                mIntent.putExtra(EXTRA_SOURCE,"forgot");
-                startActivity(mIntent);
+                requsetCode();
+
                 break;
             }
             case R.id.btn_left:
@@ -168,6 +177,16 @@ public class LoginPwdActivity extends BasePresenterActivity implements LoginCont
         }
     }
 
+    public void requsetCode() {
+        if (TextUtils.isEmpty(phone))
+            return;
+        GetCodeRequest requset = new GetCodeRequest();
+        requset.phone = phone.replaceAll(" ", "");
+        requset.source = "forgot";
+        requset.doSign();
+        codePresenter.onGetCode(requset);
+    }
+
     @Override
     public void onLoginSuccess(BaseResponse<UserInfo> response) {
         if(response.data != null)
@@ -189,4 +208,23 @@ public class LoginPwdActivity extends BasePresenterActivity implements LoginCont
 
     }
 
+    @Override
+    public void onCodeSuccess(BaseResponse<CodeInfo> response) {
+        L.v(response.code);
+        Toast.makeText(this, response.message, Toast.LENGTH_SHORT).show();
+        if (response.data != null) {
+            Intent mIntent = new Intent(this, GetCodeActivity.class);
+            mIntent.putExtra(EXTRA_PHONE, phone);
+            mIntent.putExtra(EXTRA_SOURCE, "forgot");
+            mIntent.putExtra(GetCodeActivity.EXTRA_CODE, response.data.getCodeId());
+            startActivity(mIntent);
+        }
+    }
+
+    @Override
+    public void onCodeError(int code, String errorMsg) {
+        if(!TextUtils.isEmpty(errorMsg)) {
+            toastShort(errorMsg);
+        }
+    }
 }

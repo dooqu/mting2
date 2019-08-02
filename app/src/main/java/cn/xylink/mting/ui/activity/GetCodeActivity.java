@@ -39,6 +39,7 @@ public class GetCodeActivity extends BasePresenterActivity implements GetCodeCon
     public static final String EXTRA_PHONE = "extra_phone";
     public static final String EXTRA_SOURCE = "extra_source";
     public static final String EXTRA_platform = "extra_platform";
+    public static final String EXTRA_CODE = "extra_code";
 
     private static final int ONE_MINUTE = 60 * 1000;
 
@@ -114,8 +115,8 @@ public class GetCodeActivity extends BasePresenterActivity implements GetCodeCon
     protected void initView() {
 
         L.v("source", source);
-        if ("register".equals(source))
-            resetDownTimer(ONE_MINUTE);
+//        if ("register".equals(source))
+        resetDownTimer(ONE_MINUTE);
         pCcode.setOnCompleteListener(new PhoneCode.Listener() {
             @Override
             public void onComplete(String content) {
@@ -159,8 +160,8 @@ public class GetCodeActivity extends BasePresenterActivity implements GetCodeCon
 
         checkPhonePresenter = (CheckPhonePresenter) createPresenter(CheckPhonePresenter.class);
         checkPhonePresenter.attachView(this);
-        if (!"register".equals(source))
-            requsetCode();
+//        if (!"register".equals(source))
+//            requsetCode();
     }
 
     @Override
@@ -227,7 +228,7 @@ public class GetCodeActivity extends BasePresenterActivity implements GetCodeCon
         codePresenter.onGetCode(requset);
     }
 
-    @OnClick(R.id.tv_count_down)
+    @OnClick({R.id.tv_count_down, R.id.btn_left})
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.tv_count_down:
@@ -236,6 +237,9 @@ public class GetCodeActivity extends BasePresenterActivity implements GetCodeCon
                     requsetCode();
 
                 }
+                break;
+            case R.id.btn_left:
+                finish();
                 break;
         }
     }

@@ -24,6 +24,7 @@ import cn.xylink.mting.contract.BindCheckContact;
 import cn.xylink.mting.contract.GetCodeContact;
 import cn.xylink.mting.model.BindCheckRequest;
 import cn.xylink.mting.model.GetCodeRequest;
+import cn.xylink.mting.model.data.HttpConst;
 import cn.xylink.mting.presenter.BindCheckPresenter;
 import cn.xylink.mting.presenter.GetCodePresenter;
 import cn.xylink.mting.ui.activity.user.LoginPwdActivity;
@@ -32,7 +33,7 @@ import cn.xylink.mting.utils.PhoneNumberUtils;
 import cn.xylink.mting.utils.TingUtils;
 import cn.xylink.mting.widget.ZpPhoneEditText;
 
-public class BindingPhoneActivity extends BasePresenterActivity implements BindCheckContact.IBindCheckView {
+public class BindingPhoneActivity extends BasePresenterActivity implements BindCheckContact.IBindCheckView, GetCodeContact.IGetCodeView {
 
     public static final String EXTRA_PHONE = "extra_phone";
     public static final String EXTRA_SOURCE = "extra_source";
@@ -48,7 +49,9 @@ public class BindingPhoneActivity extends BasePresenterActivity implements BindC
     @BindView(R.id.iv_del_et)
     ImageView ivDelEt;
 
-    private BindCheckPresenter codePresenter;
+    private BindCheckPresenter bindCheckPresenter;
+    private GetCodePresenter codePresenter;
+
     private String phone;
     private String source;
     private String platform;
@@ -59,8 +62,12 @@ public class BindingPhoneActivity extends BasePresenterActivity implements BindC
     @Override
     protected void preView() {
         setContentView(R.layout.activity_binding_phone);
-        codePresenter = (BindCheckPresenter) createPresenter(BindCheckPresenter.class);
+
+        bindCheckPresenter = (BindCheckPresenter) createPresenter(BindCheckPresenter.class);
+        bindCheckPresenter.attachView(this);
+        codePresenter = (GetCodePresenter) createPresenter(GetCodePresenter.class);
         codePresenter.attachView(this);
+
         MTing.getActivityManager().pushActivity(this);
 
     }
@@ -152,9 +159,8 @@ public class BindingPhoneActivity extends BasePresenterActivity implements BindC
             case R.id.btn_next:
                 phone = etPhone.getText().toString();
                 phone = phone.replaceAll(" ", "");
-                if(phone.length() == 0)
-                {
-                    Toast.makeText(this,"手机号不能为空",Toast.LENGTH_SHORT).show();
+                if (phone.length() == 0) {
+                    Toast.makeText(this, "手机号不能为空", Toast.LENGTH_SHORT).show();
                     return;
                 }
 //                else if(!PhoneNumberUtils.isMobileNO(phone))
@@ -162,19 +168,29 @@ public class BindingPhoneActivity extends BasePresenterActivity implements BindC
 //                    Toast.makeText(this,"请输入正确的手机号",Toast.LENGTH_SHORT).show();
 //                    return;
 //                }
-                else if (phone.length() < 11 ){
-                    Toast.makeText(this,R.string.incomplete_telephone_number,Toast.LENGTH_SHORT).show();
+                else if (phone.length() < 11) {
+                    Toast.makeText(this, R.string.incomplete_telephone_number, Toast.LENGTH_SHORT).show();
                     return;
                 }
                 BindCheckRequest requset = new BindCheckRequest();
                 requset.setPhone(phone);
                 requset.setPlatform(platform);
                 requset.doSign();
-                codePresenter.onBindCheck(requset);
+                bindCheckPresenter.onBindCheck(requset);
                 break;
         }
     }
 
+
+    public void requsetCode() {
+        if (TextUtils.isEmpty(phone))
+            return;
+        GetCodeRequest requset = new GetCodeRequest();
+        requset.phone = phone.replaceAll(" ", "");
+        requset.source = source;
+        requset.doSign();
+        codePresenter.onGetCode(requset);
+    }
 
     @Override
     public void onBindCheckSuccess(BaseResponse<String> response) {
@@ -183,11 +199,7 @@ public class BindingPhoneActivity extends BasePresenterActivity implements BindC
         switch (code) {
             //注册验证码
             case 200: {
-                Intent mIntent = new Intent(this, GetCodeActivity.class);
-                mIntent.putExtra(EXTRA_PHONE, phone);
-                mIntent.putExtra(EXTRA_SOURCE, source);
-                mIntent.putExtra(EXTRA_PLATFORM, platform);
-                startActivity(mIntent);
+                requsetCode();
                 break;
             }
             case 201: {
@@ -212,8 +224,42 @@ public class BindingPhoneActivity extends BasePresenterActivity implements BindC
 
     @Override
     public void onBindCheckError(int code, String errorMsg) {
-        if(!TextUtils.isEmpty(errorMsg)) {
+        if (!TextUtils.isEmpty(errorMsg)) {
             toastShort(errorMsg);
+        }
+    }
+
+    private String codeID;
+
+    @Override
+    public void onCodeSuccess(BaseResponse<CodeInfo> response) {
+        L.v(response.code);
+        Toast.makeText(this, response.message, Toast.LENGTH_SHORT).show();
+        if (response.data != null) {
+            Intent mIntent = new Intent(this, GetCodeActivity.class);
+            mIntent.putExtra(EXTRA_PHONE, phone);
+            mIntent.putExtra(EXTRA_SOURCE, source);
+            mIntent.putExtra(EXTRA_PLATFORM, platform);
+            mIntent.putExtra(EXTRA_CODE, response.data.getCodeId());
+            startActivity(mIntent);
+        }
+    }
+    @Override
+    public void onCodeError(int code, String errorMsg) {
+        switch (code) {
+            case HttpConst.STATUS_910:
+                toastShort(errorMsg);
+                break;
+        }
+        if (code == -910) {
+//            long resumeTime = SystemClock.elapsedRealtime();
+//            long pauseTime = (long) SharedPreHelper.getInstance(this).getSharedPreference(PAUSE_TIME, 0l);
+//            L.v("resumeTime", resumeTime, "pauseTime", pauseTime);
+//            long endTime = resumeTime - pauseTime;
+//            L.v("endTime", endTime, "ONE_MINUTE", ONE_MINUTE);
+//            if (endTime < ONE_MINUTE) {
+////                resetDownTimer(endTime);
+//            }
         }
     }
 }
