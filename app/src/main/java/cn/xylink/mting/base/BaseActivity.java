@@ -296,7 +296,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                     return;
                 }
             }
-            else if(requestCode == Activity.RESULT_OK) {
+            else if(resultCode == Activity.RESULT_OK) {
                 Log.d("SPEECH_", "授权成功");
                 if(UpgradeManager.DownloadTaskFilePath != null) {
                     downloadReceiver.installApk(UpgradeManager.DownloadTaskFilePath);
