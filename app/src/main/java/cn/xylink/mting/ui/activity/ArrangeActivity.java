@@ -33,6 +33,7 @@ import cn.xylink.mting.presenter.UnreadPresenter;
 import cn.xylink.mting.speech.SpeechService;
 import cn.xylink.mting.speech.SpeechServiceProxy;
 import cn.xylink.mting.ui.adapter.ArrangeAdapter;
+import cn.xylink.mting.ui.dialog.TipDialog;
 import cn.xylink.mting.ui.fragment.BaseMainTabFragment;
 import cn.xylink.mting.utils.L;
 import cn.xylink.mting.utils.T;
@@ -161,6 +162,23 @@ public class ArrangeActivity extends BasePresenterActivity implements AddUnreadC
     }
 
     private void delSelectData() {
+        TipDialog alertDialog = new TipDialog(this);
+        alertDialog.setMsg("确定删除所选文章吗？", "取消", "确定", new TipDialog.OnTipListener() {
+            @Override
+            public void onLeftClick() {
+
+            }
+
+            @Override
+            public void onRightClick() {
+                doDel();
+            }
+        });
+        alertDialog.show();
+
+    }
+
+    private void doDel() {
         switch (mTabType) {
             case 0:
                 DelUnreadRequest request = new DelUnreadRequest();
@@ -233,8 +251,10 @@ public class ArrangeActivity extends BasePresenterActivity implements AddUnreadC
     public void onSuccessAddUnread(String msg) {
         hideLoading();
         T.s(this, "添加成功");
-        service.addFirst(mAdapter.getSelectItemArticleArray());
-        EventBus.getDefault().post(new AddUnreadEvent());
+        if (service != null) {
+            service.addFirst(mAdapter.getSelectItemArticleArray());
+            EventBus.getDefault().post(new AddUnreadEvent());
+        }
         this.finish();
 
     }
@@ -248,14 +268,16 @@ public class ArrangeActivity extends BasePresenterActivity implements AddUnreadC
     @Override
     public void onSuccessDel(String str) {
         hideLoading();
-        T.s(this, "删除成功");
-        service.removeFromSpeechList(mAdapter.getSelectItemArticleIDArray());
-        if (mTabType == BaseMainTabFragment.TAB_TYPE.UNREAD.ordinal())
-            EventBus.getDefault().post(new DeleteArticleSuccessEvent(BaseMainTabFragment.TAB_TYPE.UNREAD));
-        if (mTabType == BaseMainTabFragment.TAB_TYPE.READED.ordinal())
-            EventBus.getDefault().post(new DeleteArticleSuccessEvent(BaseMainTabFragment.TAB_TYPE.READED));
-        if (mTabType == BaseMainTabFragment.TAB_TYPE.COLLECT.ordinal())
-            EventBus.getDefault().post(new DeleteArticleSuccessEvent(BaseMainTabFragment.TAB_TYPE.COLLECT));
+        if (service != null) {
+            T.s(this, "删除成功");
+            service.removeFromSpeechList(mAdapter.getSelectItemArticleIDArray());
+            if (mTabType == BaseMainTabFragment.TAB_TYPE.UNREAD.ordinal())
+                EventBus.getDefault().post(new DeleteArticleSuccessEvent(BaseMainTabFragment.TAB_TYPE.UNREAD));
+            if (mTabType == BaseMainTabFragment.TAB_TYPE.READED.ordinal())
+                EventBus.getDefault().post(new DeleteArticleSuccessEvent(BaseMainTabFragment.TAB_TYPE.READED));
+            if (mTabType == BaseMainTabFragment.TAB_TYPE.COLLECT.ordinal())
+                EventBus.getDefault().post(new DeleteArticleSuccessEvent(BaseMainTabFragment.TAB_TYPE.COLLECT));
+        }
         this.finish();
     }
 
