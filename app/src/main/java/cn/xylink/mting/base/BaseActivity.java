@@ -295,6 +295,9 @@ public abstract class BaseActivity extends AppCompatActivity {
                     System.exit(0);
                     return;
                 }
+                else {
+                    Toast.makeText(this, "授权被取消，升级安装中断", Toast.LENGTH_SHORT).show();
+                }
             }
             else if(resultCode == Activity.RESULT_OK) {
                 Log.d("SPEECH_", "授权成功");
