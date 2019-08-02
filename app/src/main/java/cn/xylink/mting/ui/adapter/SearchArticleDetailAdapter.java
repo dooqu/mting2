@@ -10,6 +10,9 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.xylink.mting.R;
+import cn.xylink.mting.utils.DensityUtil;
+
 
 /*
  *文章段落adapter
@@ -36,6 +39,10 @@ public class SearchArticleDetailAdapter extends RecyclerView.Adapter<SearchArtic
     @Override
     public SearchArticleDetailHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         TextView textView = new TextView(mContext);
+        textView.setTextColor(mContext.getResources().getColor(R.color.c333333));
+//        textView.setTextSize(mContext.getResources().getDimension(R.dimen.text_16));
+        textView.setTextSize(16);
+        textView.setLineSpacing(0,1.7f);
         return new SearchArticleDetailHolder(textView);
     }
 
