@@ -1,5 +1,7 @@
 package cn.xylink.mting.event;
 
+import java.util.List;
+
 import cn.xylink.mting.ui.fragment.BaseMainTabFragment;
 
 /*
@@ -11,7 +13,7 @@ import cn.xylink.mting.ui.fragment.BaseMainTabFragment;
  */
 public class DeleteArticleSuccessEvent {
     private BaseMainTabFragment.TAB_TYPE tab_type;
-    private String ids;
+    private List<String> ids;
 
     public DeleteArticleSuccessEvent(BaseMainTabFragment.TAB_TYPE tab_type) {
         this.tab_type = tab_type;
@@ -25,15 +27,15 @@ public class DeleteArticleSuccessEvent {
         this.tab_type = tab_type;
     }
 
-    public String getIds() {
+    public List<String> getIds() {
         return ids;
     }
 
-    public void setIds(String ids) {
+    public void setIds(List<String> ids) {
         this.ids = ids;
     }
 
-    public DeleteArticleSuccessEvent(BaseMainTabFragment.TAB_TYPE tab_type, String ids) {
+    public DeleteArticleSuccessEvent(BaseMainTabFragment.TAB_TYPE tab_type, List<String> ids) {
         this.tab_type = tab_type;
         this.ids = ids;
     }
