@@ -68,6 +68,7 @@ public class SpeechService extends Service {
         /*发生错误*/
         Error
     }
+
     /*
     定时器类型，用于service.setCountDown
      */
@@ -292,8 +293,11 @@ public class SpeechService extends Service {
 
 
     private void onSpeechStoped(SpeechStopEvent.StopReason reason) {
-        notificationManager.cancelAll();
         EventBus.getDefault().post(new SpeechStopEvent(reason));
+        //notificationManager.cancelAll();
+        if(reason == SpeechStopEvent.StopReason.ListIsNull) {
+            this.stopForeground(true);
+        }
     }
 
 
@@ -409,8 +413,8 @@ public class SpeechService extends Service {
         }
 
         boolean result = false;
-        if(serviceState == SpeechServiceState.Paused) {
-            if(this.isSimulatePaused == true) {
+        if (serviceState == SpeechServiceState.Paused) {
+            if (this.isSimulatePaused == true) {
                 playSelected();
                 initNotification();
                 onSpeechResume(speechList.getCurrent());
@@ -418,7 +422,7 @@ public class SpeechService extends Service {
             }
             else {
                 result = this.speechor.resume();
-                if(result) {
+                if (result) {
                     serviceState = SpeechServiceState.Playing;
                     initNotification();
                     onSpeechResume(speechList.getCurrent());
@@ -644,17 +648,18 @@ public class SpeechService extends Service {
             intentCancel.putExtra("message","message");
             PendingIntent pendingIntentCancel = PendingIntent.getBroadcast(this,0,
                     intentCancel,PendingIntent.FLAG_ONE_SHOT);
-            */
+                    */
 
             Notification.Builder builder = new Notification.Builder(this)
                     .setContentIntent(pendingIntent)
+                    //.setDeleteIntent(pendingIntentCancel)
                     .setSmallIcon(R.mipmap.icon_notif)
                     .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.notification_album))
                     .setTicker(currentArticle.getTitle())
                     .setContentTitle("轩辕听")
                     .setContentText(currentArticle.getTitle())
                     .setOngoing(true)
-                    .setAutoCancel(true)
+                    .setAutoCancel(false)
                     .setShowWhen(false);
 
             //>= android 8.0 设定foregroundService的前提是notification要创建channel，并关掉channel的sound
@@ -668,7 +673,6 @@ public class SpeechService extends Service {
                 notificationChannel.setShowBadge(true);
                 notificationChannel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
                 notificationChannel.setSound(null, null);
-
                 NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
                 manager.createNotificationChannel(notificationChannel);
                 //设定builder的channelid
@@ -729,7 +733,7 @@ public class SpeechService extends Service {
             }
 
             Notification.MediaStyle mediaStyle = new Notification.MediaStyle();
-            mediaStyle.setShowActionsInCompactView(1, 2);
+            mediaStyle.setShowActionsInCompactView(0, 1, 2);
             builder.setStyle(mediaStyle);
 
             Notification notification = builder.build();
@@ -794,14 +798,14 @@ public class SpeechService extends Service {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-            Log.i(TAG,"onReceive action="+action);
+            Log.i(TAG, "onReceive action=" + action);
 
             switch (action) {
                 case BluetoothA2dp.ACTION_CONNECTION_STATE_CHANGED:
                     int state = intent.getIntExtra(BluetoothA2dp.EXTRA_STATE, BluetoothA2dp.STATE_DISCONNECTED);
                     Log.d("SPEECH_", "A2DP_Connection_State_Changed:state=" + state);
-                    if(state == BluetoothA2dp.STATE_DISCONNECTED) {
-                        if(serviceState == SpeechServiceState.Playing) {
+                    if (state == BluetoothA2dp.STATE_DISCONNECTED) {
+                        if (serviceState == SpeechServiceState.Playing) {
                             pause();
                         }
                     }
