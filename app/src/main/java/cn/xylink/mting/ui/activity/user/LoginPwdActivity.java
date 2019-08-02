@@ -30,6 +30,7 @@ import cn.xylink.mting.contract.LoginContact;
 import cn.xylink.mting.model.GetCodeRequest;
 import cn.xylink.mting.model.LoginRequset;
 import cn.xylink.mting.model.data.Const;
+import cn.xylink.mting.model.data.HttpConst;
 import cn.xylink.mting.presenter.GetCodePresenter;
 import cn.xylink.mting.presenter.LoginPresenter;
 import cn.xylink.mting.ui.activity.BasePresenterActivity;
@@ -40,9 +41,10 @@ import cn.xylink.mting.utils.ContentManager;
 import cn.xylink.mting.utils.EncryptionUtil;
 import cn.xylink.mting.utils.L;
 import cn.xylink.mting.utils.MD5;
+import cn.xylink.mting.utils.NetworkUtil;
 import cn.xylink.mting.utils.TingUtils;
 
-public class LoginPwdActivity extends BasePresenterActivity implements LoginContact.ILoginView , GetCodeContact.IGetCodeView {
+public class LoginPwdActivity extends BasePresenterActivity implements LoginContact.ILoginView, GetCodeContact.IGetCodeView {
 
     public static final String EXTRA_PHONE = "extra_phone";
     public static final String EXTRA_SOURCE = "extra_source";
@@ -116,12 +118,16 @@ public class LoginPwdActivity extends BasePresenterActivity implements LoginCont
 
 
     @OnClick({R.id.btn_next
-    ,R.id.pwd_icon,R.id.btn_left,R.id.tv_forget_pwd})
-    public void onClick(View v){
+            , R.id.pwd_icon, R.id.btn_left, R.id.tv_forget_pwd})
+    public void onClick(View v) {
 
-        switch (v.getId())
-        {
-            case R.id.tv_forget_pwd:{
+        switch (v.getId()) {
+            case R.id.tv_forget_pwd: {
+                int netWorkStates = NetworkUtil.getNetWorkStates(context);
+                if (netWorkStates == NetworkUtil.TYPE_NONE) {
+                    toastShort(HttpConst.NO_NETWORK);
+                    return;
+                }
                 requsetCode();
 
                 break;
@@ -130,10 +136,10 @@ public class LoginPwdActivity extends BasePresenterActivity implements LoginCont
                 finish();
                 break;
             case R.id.pwd_icon:
-                if (isChecked){
+                if (isChecked) {
                     etPwd.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);// 输入为密码且可见
                     pwd_icon.setImageResource(R.mipmap.pwd_show);
-                }else {
+                } else {
                     pwd_icon.setImageResource(R.mipmap.pwd_hide);
                     etPwd.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD | InputType.TYPE_CLASS_TEXT);// 设置文本类密码（默认不可见），这两个属性必须同时设置
                 }
@@ -141,27 +147,30 @@ public class LoginPwdActivity extends BasePresenterActivity implements LoginCont
                 isChecked = !isChecked;
                 break;
             case R.id.btn_next:
-                String pwd = etPwd.getText().toString();
-                if(pwd.length() == 0)
-                {
-                    Toast.makeText(this,"密码不能为空",Toast.LENGTH_SHORT).show();
+                int netWorkStates = NetworkUtil.getNetWorkStates(context);
+                if (netWorkStates == NetworkUtil.TYPE_NONE) {
+                    toastShort(HttpConst.NO_NETWORK);
                     return;
-                }else if(pwd.length() < 6)
-                {
+                }
+                String pwd = etPwd.getText().toString();
+                if (pwd.length() == 0) {
+                    Toast.makeText(this, "密码不能为空", Toast.LENGTH_SHORT).show();
+                    return;
+                } else if (pwd.length() < 6) {
                     toastLong("密码长度小于6位，请重新输入");
                     return;
                 }
 
                 LoginRequset requset = new LoginRequset();
                 requset.setDeviceId(TingUtils.getDeviceId(getApplicationContext()));
-                requset.setPhone(phone.replaceAll(" ",""));
+                requset.setPhone(phone.replaceAll(" ", ""));
 
                 byte[] pwds = null;
                 try {
                     String md5Pwd = MD5.md5crypt(pwd);
                     L.v(md5Pwd);
-                    pwds =  EncryptionUtil.encrypt(md5Pwd, EncryptionUtil.getPublicKey(Const.publicKey));
-                    L.v("pwds.length",pwds.length);
+                    pwds = EncryptionUtil.encrypt(md5Pwd, EncryptionUtil.getPublicKey(Const.publicKey));
+                    L.v("pwds.length", pwds.length);
                 } catch (NoSuchAlgorithmException e) {
                     e.printStackTrace();
                 } catch (InvalidKeySpecException e) {
@@ -169,8 +178,8 @@ public class LoginPwdActivity extends BasePresenterActivity implements LoginCont
                 } catch (NoSuchProviderException e) {
                     e.printStackTrace();
                 }
-                L.v("pwd decode",pwd);
-                requset.setPassword( new Base64().encodeToString(pwds));
+                L.v("pwd decode", pwd);
+                requset.setPassword(new Base64().encodeToString(pwds));
                 requset.doSign();
                 loginPresenter.onLogin(requset);
                 break;
@@ -189,10 +198,9 @@ public class LoginPwdActivity extends BasePresenterActivity implements LoginCont
 
     @Override
     public void onLoginSuccess(BaseResponse<UserInfo> response) {
-        if(response.data != null)
-        {
-            L.v("message",response.message);
-            L.v("token",response.data.getToken());
+        if (response.data != null) {
+            L.v("message", response.message);
+            L.v("token", response.data.getToken());
             ContentManager.getInstance().setLoginToken(response.data.getToken());
             ContentManager.getInstance().setUserInfo(response.data);
             Intent mIntent = new Intent(this, MainActivity.class);
@@ -204,7 +212,7 @@ public class LoginPwdActivity extends BasePresenterActivity implements LoginCont
 
     @Override
     public void onLoginError(int code, String errorMsg) {
-        Toast.makeText(this,errorMsg,Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, errorMsg, Toast.LENGTH_SHORT).show();
 
     }
 
@@ -223,7 +231,7 @@ public class LoginPwdActivity extends BasePresenterActivity implements LoginCont
 
     @Override
     public void onCodeError(int code, String errorMsg) {
-        if(!TextUtils.isEmpty(errorMsg)) {
+        if (!TextUtils.isEmpty(errorMsg)) {
             toastShort(errorMsg);
         }
     }

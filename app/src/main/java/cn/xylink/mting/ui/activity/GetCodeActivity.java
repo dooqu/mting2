@@ -274,6 +274,7 @@ public class GetCodeActivity extends BasePresenterActivity implements GetCodeCon
                 toastShort("验证码输入错误，请重新输入");
                 break;
             default:
+                pCcode.clearText();
                 toastShort(errorMsg);
                 break;
         }

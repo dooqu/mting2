@@ -274,8 +274,6 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
         }else{
             linkPushRequset(responseUrl.trim().replaceAll(" ", ""));
         }
-//
-//        linkPushRequset(link);
     }
 
     @Override
@@ -313,15 +311,13 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
         v_1.setVisibility(View.VISIBLE);
         if (!isStop)
             return;
-        int a[] = {};
         linkArticle = response.data;
-//        tvPreview.setVisibility(View.INVISIBLE);
         String title = response.data.getTitle();
         String describe = response.data.getContent();
         responseUrl = response.data.getUrl();
         L.v("title", title);
         L.v("describle", describe);
-        tv_content.setText(title + "\n" + describe);
+        tv_content.setText(title + "\n\n"+ linkArticle.getSourceName() + "\n\n" + describe);
 
         tvFeedback.setVisibility(View.VISIBLE);
         if (llError.getVisibility() == View.VISIBLE) {
