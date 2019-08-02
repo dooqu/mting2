@@ -33,6 +33,7 @@ import cn.xylink.mting.presenter.UnreadPresenter;
 import cn.xylink.mting.speech.SpeechService;
 import cn.xylink.mting.speech.SpeechServiceProxy;
 import cn.xylink.mting.ui.adapter.ArrangeAdapter;
+import cn.xylink.mting.ui.dialog.TipDialog;
 import cn.xylink.mting.ui.fragment.BaseMainTabFragment;
 import cn.xylink.mting.utils.L;
 import cn.xylink.mting.utils.T;
@@ -161,6 +162,23 @@ public class ArrangeActivity extends BasePresenterActivity implements AddUnreadC
     }
 
     private void delSelectData() {
+        TipDialog alertDialog = new TipDialog(this);
+        alertDialog.setMsg("确定删除所选文章吗？", "取消", "确定", new TipDialog.OnTipListener() {
+            @Override
+            public void onLeftClick() {
+
+            }
+
+            @Override
+            public void onRightClick() {
+                doDel();
+            }
+        });
+        alertDialog.show();
+
+    }
+
+    private void doDel() {
         switch (mTabType) {
             case 0:
                 DelUnreadRequest request = new DelUnreadRequest();
