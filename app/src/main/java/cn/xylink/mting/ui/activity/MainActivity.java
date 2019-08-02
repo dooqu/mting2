@@ -39,6 +39,7 @@ import cn.xylink.mting.bean.DelUnreadRequest;
 import cn.xylink.mting.contract.AddUnreadContract;
 import cn.xylink.mting.contract.DelMainContract;
 import cn.xylink.mting.event.AddStoreSuccessEvent;
+import cn.xylink.mting.event.AddUnreadEvent;
 import cn.xylink.mting.event.CloseLeftMenuEvent;
 import cn.xylink.mting.event.DeleteArticleSuccessEvent;
 import cn.xylink.mting.event.NotifyMainPlayEvent;
@@ -181,6 +182,7 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
         request.setArticleIds(id);
         request.doSign();
         mAddUreadPresenter.addUnread(request);
+        EventBus.getDefault().post(new AddUnreadEvent());
     }
 
     @Override

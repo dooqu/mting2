@@ -181,6 +181,14 @@ public class CollectFragment extends BaseMainTabFragment implements UnreadAdapte
                 mAdapter.getArticleList().add(0, event.getArticle());
                 mAdapter.notifyDataSetChanged();
             }
+            if (mAdapter.getItemCount() > 0) {
+                if (mRecyclerView.getVisibility() != View.VISIBLE)
+                    mRecyclerView.setVisibility(View.VISIBLE);
+            } else {
+                mEnptyLayout.setVisibility(View.VISIBLE);
+                mRecyclerView.setVisibility(View.GONE);
+                mNetworkErrorLayout.setVisibility(View.GONE);
+            }
         } else {
             mAdapter.clearData();
             getInitData();
@@ -199,7 +207,7 @@ public class CollectFragment extends BaseMainTabFragment implements UnreadAdapte
     @Override
     public void onSuccessUnread(List<Article> unreadList, int used) {
         if (unreadList != null) {
-            mAdapter.setData(unreadList);
+
             if (mAdapter.getItemCount() <= 0)
                 if (unreadList.size() > 0) {
                     mRecyclerView.setVisibility(View.VISIBLE);
@@ -208,6 +216,7 @@ public class CollectFragment extends BaseMainTabFragment implements UnreadAdapte
                     mRecyclerView.setVisibility(View.GONE);
                     mNetworkErrorLayout.setVisibility(View.GONE);
                 }
+            mAdapter.setData(unreadList);
         }
     }
 

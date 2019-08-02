@@ -190,7 +190,6 @@ public class ReadedFragment extends BaseMainTabFragment implements UnreadAdapter
     public void onSuccessUnread(List<Article> unreadList, int used) {
         if (unreadList != null) {
             L.v(unreadList.size());
-            mAdapter.setData(unreadList);
             if (mAdapter.getItemCount() <= 0) {
                 if (unreadList.size() > 0) {
                     mRecyclerView.setVisibility(View.VISIBLE);
@@ -200,6 +199,7 @@ public class ReadedFragment extends BaseMainTabFragment implements UnreadAdapter
                     mNetworkErrorLayout.setVisibility(View.GONE);
                 }
             }
+            mAdapter.setData(unreadList);
         }
     }
 

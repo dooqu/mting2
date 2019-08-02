@@ -17,7 +17,7 @@ import cn.xylink.mting.model.data.RemoteUrl;
  * 2019/7/9 19:30 : Create UnreadPresenter.java (JoDragon);
  * -----------------------------------------------------------------
  */
-public class UnreadPresenter extends BasePresenter<UnreadContract.IUnreadView> implements UnreadContract.Presenter{
+public class UnreadPresenter extends BasePresenter<UnreadContract.IUnreadView> implements UnreadContract.Presenter {
     @Override
     public void createUnread(UnreadRequest request) {
         OkGoUtils.getInstance().postData(mView, RemoteUrl.getUnreadUrl(), new Gson().toJson(request), new TypeToken<BaseResponseArray<Article>>() {
@@ -32,7 +32,7 @@ public class UnreadPresenter extends BasePresenter<UnreadContract.IUnreadView> i
                 BaseResponseArray<Article> baseResponse = (BaseResponseArray<Article>) data;
                 int code = baseResponse.code;
                 if (code == 200) {
-                    mView.onSuccessUnread(baseResponse.list ,baseResponse.used);
+                    mView.onSuccessUnread(baseResponse.list, baseResponse.ext != null ? baseResponse.ext.used : 1);
                 } else {
                     mView.onErrorUnread(code, baseResponse.message);
                 }
