@@ -140,9 +140,9 @@ public class PersonalInfoActivity extends BasePresenterActivity implements TakeP
             public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
                 if (oldBottom != 0 && bottom != 0
                         && (bottom - oldBottom > screenHeight)) {
-//                    ivArrow3.setVisibility(View.VISIBLE);
+                    ivArrow3.setVisibility(View.VISIBLE);
                     tvNickName.setVisibility(View.VISIBLE);
-                    etNickName.setVisibility(View.GONE);
+                    etNickName.setVisibility(View.INVISIBLE);
 
                     if (!TextUtils.isEmpty(etNickName.getText()) && !oldNiceName.equals(etNickName.getText().toString())) {
                         tvNickName.setText(etNickName.getText());
@@ -210,9 +210,9 @@ public class PersonalInfoActivity extends BasePresenterActivity implements TakeP
                 break;
             case R.id.iv_arrow_2:
             case R.id.tv_nick_name:
-                tvNickName.setVisibility(View.GONE);
+                tvNickName.setVisibility(View.INVISIBLE);
                 etNickName.setVisibility(View.VISIBLE);
-                ivArrow3.setVisibility(View.GONE);
+                ivArrow3.setVisibility(View.INVISIBLE);
                 etNickName.setSelection(etNickName.getText().length());
 //                etNickName.findFocus();
 //                etNickName.setFocusable(true);

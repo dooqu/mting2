@@ -125,7 +125,11 @@ public class LoginActivity extends BasePresenterActivity implements ThirdLoginCo
                     toastShort(HttpConst.NO_NETWORK);
                     return;
                 }
-                mTencent.login(this, "all", new BaseUiListener());
+                if(mTencent.isQQInstalled(this)){
+                    mTencent.login(this, "all", new BaseUiListener());
+                }else{
+                    toastShort("您还未安装QQ客户端！");
+                }
                 break;
             }
             case R.id.tv_phone:
@@ -217,11 +221,11 @@ class BaseUiListener implements IUiListener {
     public void onComplete(Object response) {
         L.v("nana", "QQ登录成功");
         try {
+            L.v("response",response);
             accessTokenQQ = ((JSONObject) response).getString("access_token");
             openIdQQ = ((JSONObject) response).getString("openid");
             expires_in = ((JSONObject) response).getString("expires_in");
             L.v("nana", "accessTokenQQ: " + accessTokenQQ + "\nopenIdQQ: " + openIdQQ);
-
 
             EventBus.getDefault().post(new WXQQDataBean(accessTokenQQ, openIdQQ, "qq", expires_in));
         } catch (JSONException e) {
