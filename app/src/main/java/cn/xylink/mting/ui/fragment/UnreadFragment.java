@@ -45,6 +45,7 @@ import cn.xylink.mting.widget.SpaceItemDecoration;
  * -----------------------------------------------------------------
  */
 public class UnreadFragment extends BaseMainTabFragment implements UnreadAdapter.OnItemClickListener, UnreadContract.IUnreadView {
+    public static boolean ISINIT = false;
     private UnreadAdapter mAdapter;
     private UnreadPresenter mPresenter;
     @BindView(R.id.ll_empty)
@@ -201,6 +202,7 @@ public class UnreadFragment extends BaseMainTabFragment implements UnreadAdapter
 
     @Override
     public void onSuccessUnread(List<Article> unreadList, int used) {
+        ISINIT = true;
         if (unreadList != null) {
             SpeechList.getInstance().appendArticles(unreadList);
             mAdapter.refreshData();
