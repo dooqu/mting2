@@ -140,6 +140,12 @@ public class UnreadFragment extends BaseMainTabFragment implements UnreadAdapter
     public void onSpeechStop(SpeechStopEvent event) {
         L.v(event);
         mAdapter.refreshData();
+        if (event.getStopReason() == SpeechStopEvent.StopReason.ListIsNull) {
+            mEnptyLayout.setVisibility(View.VISIBLE);
+            mRecyclerView.setVisibility(View.GONE);
+            mEnptyFirstLayout.setVisibility(View.GONE);
+            mNetworkErrorLayout.setVisibility(View.GONE);
+        }
     }
 
 
@@ -158,6 +164,18 @@ public class UnreadFragment extends BaseMainTabFragment implements UnreadAdapter
                 mRecyclerView.setVisibility(View.GONE);
                 mEnptyFirstLayout.setVisibility(View.GONE);
                 mNetworkErrorLayout.setVisibility(View.GONE);
+            }
+        } else if (event.getTab_type() == TAB_TYPE.COLLECT) {
+            List<String> ids = event.getIds();
+            if (ids != null && ids.size() > 0 && mAdapter != null && mAdapter.getArticleList() != null && mAdapter.getArticleList().size() > 0) {
+                for (String id:ids){
+                    for (int i = 0; i < mAdapter.getArticleList().size(); i++) {
+                        if (id.equals(mAdapter.getArticleList().get(i).getArticleId())) {
+                            mAdapter.getArticleList().get(i).setStore(0);
+                            mAdapter.notifyItemChanged(i);
+                        }
+                    }
+                }
             }
         }
     }

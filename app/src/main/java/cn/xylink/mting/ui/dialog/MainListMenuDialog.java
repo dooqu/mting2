@@ -30,6 +30,8 @@ public class MainListMenuDialog extends BaseDimDialog {
     private OnBottomSelectDialogListener mListener;
     @BindView(R.id.tv_dialog_main_list_menu_love)
     TextView mLoveTextView;
+    @BindView(R.id.tv_dialog_main_list_menu_del)
+    TextView mDelTextView;
 
     public MainListMenuDialog(Context context) {
         super(context);
@@ -49,6 +51,8 @@ public class MainListMenuDialog extends BaseDimDialog {
         mTabType = tabType;
         mArticle = article;
 
+        if (tabType == BaseMainTabFragment.TAB_TYPE.COLLECT)
+            mDelTextView.setVisibility(View.INVISIBLE);
         if (mArticle != null && mArticle.getStore() == 1)
             mLoveTextView.setCompoundDrawablesWithIntrinsicBounds(null, mContext.getResources().getDrawable(R.mipmap.icon_f_loved), null, null);
     }

@@ -34,7 +34,7 @@ public class DelMainPresenter extends BasePresenter<DelMainContract.IDelMainView
                 BaseResponse<String> baseResponse = (BaseResponse<String>) data;
                 int code = baseResponse.code;
                 if (code == 200) {
-                    mView.onSuccessDel(baseResponse.message);
+                    mView.onSuccessDel(request.getArticleIds());
                 } else {
                     mView.onErrorDel(code, baseResponse.message);
                 }
@@ -66,7 +66,7 @@ public class DelMainPresenter extends BasePresenter<DelMainContract.IDelMainView
                 BaseResponse<String> baseResponse = (BaseResponse<String>) data;
                 int code = baseResponse.code;
                 if (code == 200) {
-                    mView.onSuccessDel(baseResponse.message);
+                    mView.onSuccessDel(request.getIds());
                 } else {
                     mView.onErrorDel(code, baseResponse.message);
                 }
@@ -98,7 +98,7 @@ public class DelMainPresenter extends BasePresenter<DelMainContract.IDelMainView
                 BaseResponse<String> baseResponse = (BaseResponse<String>) data;
                 int code = baseResponse.code;
                 if (code == 200) {
-                    mView.onSuccessDel(baseResponse.message);
+                    mView.onSuccessDel(request.getIds());
                 } else {
                     mView.onErrorDel(code, baseResponse.message);
                 }

@@ -268,16 +268,15 @@ public class ArrangeActivity extends BasePresenterActivity implements AddUnreadC
     @Override
     public void onSuccessDel(String str) {
         hideLoading();
-        if (service != null) {
-            T.s(this, "删除成功");
-            service.removeFromSpeechList(mAdapter.getSelectItemArticleIDArray());
-            if (mTabType == BaseMainTabFragment.TAB_TYPE.UNREAD.ordinal())
-                EventBus.getDefault().post(new DeleteArticleSuccessEvent(BaseMainTabFragment.TAB_TYPE.UNREAD));
-            if (mTabType == BaseMainTabFragment.TAB_TYPE.READED.ordinal())
-                EventBus.getDefault().post(new DeleteArticleSuccessEvent(BaseMainTabFragment.TAB_TYPE.READED));
-            if (mTabType == BaseMainTabFragment.TAB_TYPE.COLLECT.ordinal())
-                EventBus.getDefault().post(new DeleteArticleSuccessEvent(BaseMainTabFragment.TAB_TYPE.COLLECT));
-        }
+        T.s(this, "删除成功");
+        if (mTabType == BaseMainTabFragment.TAB_TYPE.UNREAD.ordinal()) {
+            if (service != null)
+                service.removeFromSpeechList(mAdapter.getSelectItemArticleIDArray());
+            EventBus.getDefault().post(new DeleteArticleSuccessEvent(BaseMainTabFragment.TAB_TYPE.UNREAD));
+        } else if (mTabType == BaseMainTabFragment.TAB_TYPE.READED.ordinal()) {
+            EventBus.getDefault().post(new DeleteArticleSuccessEvent(BaseMainTabFragment.TAB_TYPE.READED));
+        } else if (mTabType == BaseMainTabFragment.TAB_TYPE.COLLECT.ordinal())
+            EventBus.getDefault().post(new DeleteArticleSuccessEvent(BaseMainTabFragment.TAB_TYPE.COLLECT, mAdapter.getSelectItemArticleIDArray()));
         this.finish();
     }
 

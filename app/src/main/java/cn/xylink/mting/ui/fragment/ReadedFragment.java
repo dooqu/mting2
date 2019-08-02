@@ -161,6 +161,18 @@ public class ReadedFragment extends BaseMainTabFragment implements UnreadAdapter
         if (event.getTab_type() == TAB_TYPE.READED) {
             mAdapter.clearData();
             getInitData();
+        } else if (event.getTab_type() == TAB_TYPE.COLLECT) {
+            List<String> ids = event.getIds();
+            if (ids != null && ids.size() > 0 && mAdapter != null && mAdapter.getArticleList() != null && mAdapter.getArticleList().size() > 0) {
+                for (String id:ids){
+                    for (int i = 0; i < mAdapter.getArticleList().size(); i++) {
+                        if (id.equals(mAdapter.getArticleList().get(i).getArticleId())) {
+                            mAdapter.getArticleList().get(i).setStore(0);
+                            mAdapter.notifyItemChanged(i);
+                        }
+                    }
+                }
+            }
         }
     }
 
