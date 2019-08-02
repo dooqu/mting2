@@ -23,7 +23,7 @@ public class AboutVersion extends BaseActivity {
 
     TextView versionName;
     TextView txtCurrentVersion;
-    ImageView backIcon;
+    View backIcon;
     Timer timer;
 
 
@@ -63,7 +63,7 @@ public class AboutVersion extends BaseActivity {
         txtCurrentVersion.setText("v" + PackageUtils.getAppVersionName(this));
         versionName = (TextView) findViewById(R.id.versionName);
         versionName.setOnClickListener(this::checkNewVersion);
-        backIcon = (ImageView) findViewById(R.id.about_version_back);
+        backIcon = findViewById(R.id.about_version_back);
         backIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
