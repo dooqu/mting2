@@ -11,6 +11,8 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -80,6 +82,7 @@ public class SearchArticleDetailDialog extends Dialog {
         mTitleTextView.setText(info.getTitle());
         mFromTextView.setText(TextUtils.isEmpty(info.getSourceName()) ? "其他" : info.getSourceName());
         mContactTextView.setText(info.getContent());
+        String[] strs = info.getContent().split("\n");
         super.show();
     }
 
