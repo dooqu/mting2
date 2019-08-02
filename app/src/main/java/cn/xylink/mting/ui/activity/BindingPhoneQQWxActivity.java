@@ -181,6 +181,12 @@ public class BindingPhoneQQWxActivity extends BasePresenterActivity {
                 break;
             }
             case R.id.tv_change_phone: {
+                int netWorkStates = NetworkUtil.getNetWorkStates(context);
+                if(netWorkStates == NetworkUtil.TYPE_NONE)
+                {
+                    toastShort(HttpConst.NO_NETWORK);
+                    return;
+                }
                 Intent mIntent = new Intent(this, BindingPhoneActivity.class);
                 mIntent.putExtra(BindingPhoneActivity.EXTRA_PLATFORM, platform);
                 mIntent.putExtra(BindingPhoneActivity.EXTRA_SOURCE, source);

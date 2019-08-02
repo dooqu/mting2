@@ -32,6 +32,7 @@ import cn.xylink.mting.model.GetCodeRequest;
 import cn.xylink.mting.model.LoginRequset;
 import cn.xylink.mting.model.ThirdPlatformRequest;
 import cn.xylink.mting.model.data.Const;
+import cn.xylink.mting.model.data.HttpConst;
 import cn.xylink.mting.presenter.GetCodePresenter;
 import cn.xylink.mting.presenter.LoginPresenter;
 import cn.xylink.mting.presenter.ThirdPlatformPresenter;
@@ -43,6 +44,7 @@ import cn.xylink.mting.utils.ContentManager;
 import cn.xylink.mting.utils.EncryptionUtil;
 import cn.xylink.mting.utils.L;
 import cn.xylink.mting.utils.MD5;
+import cn.xylink.mting.utils.NetworkUtil;
 import cn.xylink.mting.utils.SharedPreHelper;
 import cn.xylink.mting.utils.TingUtils;
 
@@ -142,6 +144,12 @@ public class BindLoginPwdActivity extends BasePresenterActivity implements BindT
         switch (v.getId())
         {
             case R.id.tv_forget_pwd:{
+                int netWorkStates = NetworkUtil.getNetWorkStates(context);
+                if(netWorkStates == NetworkUtil.TYPE_NONE)
+                {
+                    toastShort(HttpConst.NO_NETWORK);
+                    return;
+                }
                 requsetCode();
                 break;
             }
@@ -160,6 +168,12 @@ public class BindLoginPwdActivity extends BasePresenterActivity implements BindT
                 isChecked = !isChecked;
                 break;
             case R.id.btn_next:
+                int netWorkStates = NetworkUtil.getNetWorkStates(context);
+                if(netWorkStates == NetworkUtil.TYPE_NONE)
+                {
+                    toastShort(HttpConst.NO_NETWORK);
+                    return;
+                }
                 String pwd = etPwd.getText().toString();
                 if(pwd.length() == 0)
                 {

@@ -22,12 +22,14 @@ import cn.xylink.mting.common.Const;
 import cn.xylink.mting.contract.ThirdLoginContact;
 import cn.xylink.mting.model.ThirdLoginRequset;
 import cn.xylink.mting.event.WXQQDataBean;
+import cn.xylink.mting.model.data.HttpConst;
 import cn.xylink.mting.openapi.QQApi;
 import cn.xylink.mting.openapi.WXapi;
 import cn.xylink.mting.presenter.ThirdLoginPresenter;
 import cn.xylink.mting.ui.dialog.AgreementDialog;
 import cn.xylink.mting.utils.ContentManager;
 import cn.xylink.mting.utils.L;
+import cn.xylink.mting.utils.NetworkUtil;
 import cn.xylink.mting.utils.SharedPreHelper;
 
 public class LoginActivity extends BasePresenterActivity implements ThirdLoginContact.IThirdLoginView {
@@ -92,31 +94,46 @@ public class LoginActivity extends BasePresenterActivity implements ThirdLoginCo
     @OnClick({R.id.imv_login_weChat, R.id.imv_login_qq, R.id.tv_phone,R.id.tv_user_protocol})
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.tv_user_protocol:
-                startActivity(new Intent(this,UserProtocolActivity.class));
-//                AgreementDialog dialog = new AgreementDialog(LoginActivity.this);
-//                dialog.show();
-//                dialog.setOnConfirmClickListener(new AgreementDialog.OnConfirmClickListener() {
-//                    @Override
-//                    public void setConfirmClickListener() {
-//
-//                    }
-//                });
+            case R.id.tv_user_protocol: {
+                int netWorkStates = NetworkUtil.getNetWorkStates(context);
+                if (netWorkStates == NetworkUtil.TYPE_NONE) {
+                    toastShort(HttpConst.NO_NETWORK);
+                    return;
+                }
+                startActivity(new Intent(this, UserProtocolActivity.class));
                 break;
+            }
             case R.id.btn_left:
                 finish();
                 break;
-            case R.id.imv_login_weChat:
+            case R.id.imv_login_weChat: {
+                int netWorkStates = NetworkUtil.getNetWorkStates(context);
+                if (netWorkStates == NetworkUtil.TYPE_NONE) {
+                    toastShort(HttpConst.NO_NETWORK);
+                    return;
+                }
                 if (WXapi.isInstallWX()) {
                     WXapi.loginWX();
                 } else {
                     toastShort("您还未安装微信客户端！");
                 }
                 break;
-            case R.id.imv_login_qq:
+            }
+            case R.id.imv_login_qq: {
+                int netWorkStates = NetworkUtil.getNetWorkStates(context);
+                if (netWorkStates == NetworkUtil.TYPE_NONE) {
+                    toastShort(HttpConst.NO_NETWORK);
+                    return;
+                }
                 mTencent.login(this, "all", new BaseUiListener());
                 break;
+            }
             case R.id.tv_phone:
+                int netWorkStates = NetworkUtil.getNetWorkStates(context);
+                if (netWorkStates == NetworkUtil.TYPE_NONE) {
+                    toastShort(HttpConst.NO_NETWORK);
+                    return;
+                }
                 startActivity(new Intent(LoginActivity.this, PhoneLoginActivity.class));
                 break;
         }
