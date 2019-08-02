@@ -233,8 +233,10 @@ public class ArrangeActivity extends BasePresenterActivity implements AddUnreadC
     public void onSuccessAddUnread(String msg) {
         hideLoading();
         T.s(this, "添加成功");
-        service.addFirst(mAdapter.getSelectItemArticleArray());
-        EventBus.getDefault().post(new AddUnreadEvent());
+        if (service != null) {
+            service.addFirst(mAdapter.getSelectItemArticleArray());
+            EventBus.getDefault().post(new AddUnreadEvent());
+        }
         this.finish();
 
     }
@@ -248,14 +250,16 @@ public class ArrangeActivity extends BasePresenterActivity implements AddUnreadC
     @Override
     public void onSuccessDel(String str) {
         hideLoading();
-        T.s(this, "删除成功");
-        service.removeFromSpeechList(mAdapter.getSelectItemArticleIDArray());
-        if (mTabType == BaseMainTabFragment.TAB_TYPE.UNREAD.ordinal())
-            EventBus.getDefault().post(new DeleteArticleSuccessEvent(BaseMainTabFragment.TAB_TYPE.UNREAD));
-        if (mTabType == BaseMainTabFragment.TAB_TYPE.READED.ordinal())
-            EventBus.getDefault().post(new DeleteArticleSuccessEvent(BaseMainTabFragment.TAB_TYPE.READED));
-        if (mTabType == BaseMainTabFragment.TAB_TYPE.COLLECT.ordinal())
-            EventBus.getDefault().post(new DeleteArticleSuccessEvent(BaseMainTabFragment.TAB_TYPE.COLLECT));
+        if (service != null) {
+            T.s(this, "删除成功");
+            service.removeFromSpeechList(mAdapter.getSelectItemArticleIDArray());
+            if (mTabType == BaseMainTabFragment.TAB_TYPE.UNREAD.ordinal())
+                EventBus.getDefault().post(new DeleteArticleSuccessEvent(BaseMainTabFragment.TAB_TYPE.UNREAD));
+            if (mTabType == BaseMainTabFragment.TAB_TYPE.READED.ordinal())
+                EventBus.getDefault().post(new DeleteArticleSuccessEvent(BaseMainTabFragment.TAB_TYPE.READED));
+            if (mTabType == BaseMainTabFragment.TAB_TYPE.COLLECT.ordinal())
+                EventBus.getDefault().post(new DeleteArticleSuccessEvent(BaseMainTabFragment.TAB_TYPE.COLLECT));
+        }
         this.finish();
     }
 

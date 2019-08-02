@@ -210,7 +210,8 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
                 List<String> list = new ArrayList<>();
                 list.add(id);
 //                SpeechList.getInstance().removeSome(list);
-                service.removeFromSpeechList(list);
+                if (service != null)
+                    service.removeFromSpeechList(list);
                 DelUnreadRequest request = new DelUnreadRequest();
                 request.setArticleIds(id);
                 request.doSign();
