@@ -498,6 +498,10 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
         L.v(event.getArticle());
         setPlayBarState();
 //        mPlayBtnSRC.setImageDrawable(getResources().getDrawable(R.mipmap.ico_pause));
+        if (mPlayBtnSRC.getDrawable() != mPlayDrawable) {
+            mPlayBtnSRC.setImageDrawable(mPlayDrawable);
+            ((Animatable) mPlayDrawable).start();
+        }
         mLoadingProgress.setVisibility(View.VISIBLE);
         mProgress.setVisibility(View.INVISIBLE);
     }
