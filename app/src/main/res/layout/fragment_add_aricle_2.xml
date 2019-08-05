@@ -7,7 +7,9 @@
     android:focusable="false"
     android:focusableInTouchMode="true"
     android:orientation="vertical">
-
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
     <EditText
 
         android:id="@+id/et_article_title"
@@ -20,6 +22,16 @@
         android:maxLines="3"
         android:textSize="@dimen/text_18"
         android:textStyle="bold" />
+    <ImageView
+        android:id="@+id/iv_del_et"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="10dp"
+        android:layout_centerVertical="true"
+        android:visibility="gone"
+        android:src="@mipmap/del_et"/>
+</RelativeLayout>
 
     <FrameLayout
         android:layout_width="match_parent"

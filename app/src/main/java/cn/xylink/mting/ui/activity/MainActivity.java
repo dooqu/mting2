@@ -146,6 +146,7 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
             protected void onConnected(boolean connected, SpeechService service) {
                 if (connected) {
                     MainActivity.this.service = service;
+                    initPlayState();
                 }
             }
         };
@@ -388,6 +389,25 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
         }
     }
 
+    private void initPlayState() {
+        if (service != null) {
+            Speechor.SpeechorState state = service.getState();
+            switch (state) {
+                case SpeechorStateReady:
+                        mPlayBtnSRC.setImageDrawable(this.getDrawable(R.drawable.nsvg_play));
+                    break;
+                case SpeechorStatePaused:
+                        mPlayBtnSRC.setImageDrawable(this.getDrawable(R.drawable.nsvg_play));
+                    break;
+                case SpeechorStatePlaying:
+                case SpeechorStateLoadding:
+                        mPlayBtnSRC.setImageDrawable(this.getDrawable(R.drawable.nsvg_play));
+                        ((Animatable) mPlayBtnSRC.getDrawable()).start();
+                    break;
+            }
+        }
+    }
+
     //播放按钮逻辑
     private void playCtrl() {
         if (service != null) {
@@ -478,6 +498,10 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
         L.v(event.getArticle());
         setPlayBarState();
 //        mPlayBtnSRC.setImageDrawable(getResources().getDrawable(R.mipmap.ico_pause));
+        if (mPlayBtnSRC.getDrawable() != mPlayDrawable) {
+            mPlayBtnSRC.setImageDrawable(mPlayDrawable);
+            ((Animatable) mPlayDrawable).start();
+        }
         mLoadingProgress.setVisibility(View.VISIBLE);
         mProgress.setVisibility(View.INVISIBLE);
     }
