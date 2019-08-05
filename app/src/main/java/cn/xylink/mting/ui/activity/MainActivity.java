@@ -391,16 +391,16 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
 
     private void initPlayState() {
         if (service != null) {
-            Speechor.SpeechorState state = service.getState();
+            SpeechService.SpeechServiceState state = service.getState();
             switch (state) {
-                case SpeechorStateReady:
+                case Ready:
                         mPlayBtnSRC.setImageDrawable(this.getDrawable(R.drawable.nsvg_play));
                     break;
-                case SpeechorStatePaused:
+                case Paused:
                         mPlayBtnSRC.setImageDrawable(this.getDrawable(R.drawable.nsvg_play));
                     break;
-                case SpeechorStatePlaying:
-                case SpeechorStateLoadding:
+                case Playing:
+                case Loadding:
                         mPlayBtnSRC.setImageDrawable(this.getDrawable(R.drawable.nsvg_play));
                         ((Animatable) mPlayBtnSRC.getDrawable()).start();
                     break;
@@ -411,9 +411,9 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
     //播放按钮逻辑
     private void playCtrl() {
         if (service != null) {
-            Speechor.SpeechorState state = service.getState();
+            SpeechService.SpeechServiceState state = service.getState();
             switch (state) {
-                case SpeechorStateReady:
+                case Ready:
                     String aid = null;
                     Article art = SpeechList.getInstance().getCurrent();
                     if (art == null)
@@ -430,7 +430,7 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
                         ((Animatable) mPlayDrawable).start();
                     }
                     break;
-                case SpeechorStatePaused:
+                case Paused:
                     if (service.resume())
 //                        mPlayBtnSRC.setImageDrawable(getResources().getDrawable(R.mipmap.ico_pause));
                         if (mPlayBtnSRC.getDrawable() != mPlayDrawable) {
@@ -438,8 +438,8 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
                             ((Animatable) mPlayDrawable).start();
                         }
                     break;
-                case SpeechorStatePlaying:
-                case SpeechorStateLoadding:
+                case Playing:
+                case Loadding:
                     if (service.pause())
 //                        mPlayBtnSRC.setImageDrawable(getResources().getDrawable(R.mipmap.ico_playing));
                         if (mPlayBtnSRC.getDrawable() != mPauseDrawable) {
