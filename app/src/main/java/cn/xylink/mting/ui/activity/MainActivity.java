@@ -146,6 +146,7 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
             protected void onConnected(boolean connected, SpeechService service) {
                 if (connected) {
                     MainActivity.this.service = service;
+                    initPlayState();
                 }
             }
         };
@@ -385,6 +386,25 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
                     this.jumpActivity(ArticleDetailActivity.class, bundle);
                 }
                 break;
+        }
+    }
+
+    private void initPlayState() {
+        if (service != null) {
+            Speechor.SpeechorState state = service.getState();
+            switch (state) {
+                case SpeechorStateReady:
+                        mPlayBtnSRC.setImageDrawable(this.getDrawable(R.drawable.nsvg_play));
+                    break;
+                case SpeechorStatePaused:
+                        mPlayBtnSRC.setImageDrawable(this.getDrawable(R.drawable.nsvg_play));
+                    break;
+                case SpeechorStatePlaying:
+                case SpeechorStateLoadding:
+                        mPlayBtnSRC.setImageDrawable(this.getDrawable(R.drawable.nsvg_play));
+                        ((Animatable) mPlayBtnSRC.getDrawable()).start();
+                    break;
+            }
         }
     }
 
