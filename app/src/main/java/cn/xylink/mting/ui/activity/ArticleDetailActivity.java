@@ -19,6 +19,7 @@ import android.widget.TextView;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.w3c.dom.Text;
 
 import java.util.List;
 
@@ -368,30 +369,40 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
                     }
                     switch (type) {
                         case 0:
-                            WXapi.shareWx(ArticleDetailActivity.this, mCurrentArticle.getShareUrl(),
-                                    mCurrentArticle.getPicture(), mCurrentArticle.getTitle(),
-                                    mCurrentArticle.getContent().substring(0, 20));
+                            if (mCurrentArticle != null && !TextUtils.isEmpty(mCurrentArticle.getShareUrl()))
+                                WXapi.shareWx(ArticleDetailActivity.this, mCurrentArticle.getShareUrl(),
+                                        null, mCurrentArticle.getTitle(),
+                                        TextUtils.isEmpty(mCurrentArticle.getContent()) ? "" : mCurrentArticle.getContent().length() > 45 ?
+                                                mCurrentArticle.getContent().substring(0, 40) : mCurrentArticle.getContent());
                             break;
                         case 1:
-                            WXapi.sharePyq(ArticleDetailActivity.this, mCurrentArticle.getShareUrl(),
-                                    mCurrentArticle.getPicture(), mCurrentArticle.getTitle(),
-                                    mCurrentArticle.getContent().substring(0, 20));
+                            if (mCurrentArticle != null && !TextUtils.isEmpty(mCurrentArticle.getShareUrl()))
+                                WXapi.sharePyq(ArticleDetailActivity.this, mCurrentArticle.getShareUrl(),
+                                        null, mCurrentArticle.getTitle(),
+                                        TextUtils.isEmpty(mCurrentArticle.getContent()) ? "" : mCurrentArticle.getContent().length() > 45 ?
+                                                mCurrentArticle.getContent().substring(0, 40) : mCurrentArticle.getContent());
                             break;
                         case 2:
-                            QQApi.shareQQ(ArticleDetailActivity.this, mCurrentArticle.getShareUrl(),
-                                    mCurrentArticle.getPicture(), mCurrentArticle.getTitle(),
-                                    mCurrentArticle.getContent().substring(0, 20));
+                            if (mCurrentArticle != null && !TextUtils.isEmpty(mCurrentArticle.getShareUrl()))
+                                QQApi.shareQQ(ArticleDetailActivity.this, mCurrentArticle.getShareUrl(),
+                                        null, mCurrentArticle.getTitle(),
+                                        TextUtils.isEmpty(mCurrentArticle.getContent()) ? "" : mCurrentArticle.getContent().length() > 45 ?
+                                                mCurrentArticle.getContent().substring(0, 40) : mCurrentArticle.getContent());
                             break;
                         case 3:
-                            QQApi.shareSpace(ArticleDetailActivity.this, mCurrentArticle.getShareUrl(),
-                                    mCurrentArticle.getPicture(), mCurrentArticle.getTitle(),
-                                    mCurrentArticle.getContent().substring(0, 20));
+                            if (mCurrentArticle != null && !TextUtils.isEmpty(mCurrentArticle.getShareUrl()))
+                                QQApi.shareSpace(ArticleDetailActivity.this, mCurrentArticle.getShareUrl(),
+                                        null, mCurrentArticle.getTitle(),
+                                        TextUtils.isEmpty(mCurrentArticle.getContent()) ? "" : mCurrentArticle.getContent().length() > 45 ?
+                                                mCurrentArticle.getContent().substring(0, 40) : mCurrentArticle.getContent());
                             break;
                         case 4:
                             if (mCurrentArticle != null) {
-                                ClipboardManager cm = (ClipboardManager) ArticleDetailActivity.this.getSystemService(ArticleDetailActivity.this.CLIPBOARD_SERVICE);
+                                ClipboardManager cm =
+                                        (ClipboardManager) ArticleDetailActivity.this.getSystemService(ArticleDetailActivity.this.CLIPBOARD_SERVICE);
                                 ClipData mClipData = ClipData.newPlainText("Label", mCurrentArticle.getShareUrl());
                                 cm.setPrimaryClip(mClipData);
+                                ContentManager.getInstance().addCopyItem(mCurrentArticle.getShareUrl());
                                 toastShort("分享链接复制成功");
                             }
                             break;
