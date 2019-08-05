@@ -104,8 +104,12 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
         setContentView(R.layout.activity_article_detail);
     }
 
+    /*
+    获取播放服务后，初始化播放状态
+     */
     private void initServiceData() {
         getWindow().setStatusBarColor(Color.argb(0, 72, 141, 239));
+
         mCurrentArticle = service.getSelected();
         if (service.getState() == Speechor.SpeechorState.SpeechorStatePlaying && aid.equals(mCurrentArticle.getArticleId())) {
             if (mCurrentArticle != null && (mCurrentArticle.getInType() == 1 || TextUtils.isEmpty(mCurrentArticle.getUrl()))) {
