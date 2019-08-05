@@ -16,6 +16,7 @@ import cn.xylink.mting.bean.Article;
 import cn.xylink.mting.openapi.QQApi;
 import cn.xylink.mting.openapi.WXapi;
 import cn.xylink.mting.ui.fragment.BaseMainTabFragment;
+import cn.xylink.mting.utils.ContentManager;
 import cn.xylink.mting.utils.T;
 
 /*
@@ -71,25 +72,30 @@ public class MainListMenuDialog extends BaseDimDialog {
                 break;
             case R.id.tv_dialog_main_list_menu_wx:
                 if (mArticle != null && !TextUtils.isEmpty(mArticle.getShareUrl()))
-                    WXapi.shareWx((Activity) mContext, mArticle.getShareUrl(), null, mArticle.getTitle(), TextUtils.isEmpty(mArticle.getDescribe())?"":mArticle.getDescribe());
+                    WXapi.shareWx((Activity) mContext, mArticle.getShareUrl(), null, mArticle.getTitle(),
+                            TextUtils.isEmpty(mArticle.getDescribe()) ? "" : mArticle.getDescribe());
                 break;
             case R.id.tv_dialog_main_list_menu_wxp:
                 if (mArticle != null && !TextUtils.isEmpty(mArticle.getShareUrl()))
-                    WXapi.sharePyq((Activity) mContext, mArticle.getShareUrl(), null, mArticle.getTitle(), TextUtils.isEmpty(mArticle.getDescribe())?"":mArticle.getDescribe());
+                    WXapi.sharePyq((Activity) mContext, mArticle.getShareUrl(), null, mArticle.getTitle(),
+                            TextUtils.isEmpty(mArticle.getDescribe()) ? "" : mArticle.getDescribe());
                 break;
             case R.id.tv_dialog_main_list_menu_qq:
                 if (mArticle != null && !TextUtils.isEmpty(mArticle.getShareUrl()))
-                    QQApi.shareQQ((Activity) mContext, mArticle.getShareUrl(), null, mArticle.getTitle(), TextUtils.isEmpty(mArticle.getDescribe())?"":mArticle.getDescribe());
+                    QQApi.shareQQ((Activity) mContext, mArticle.getShareUrl(), null, mArticle.getTitle(),
+                            TextUtils.isEmpty(mArticle.getDescribe()) ? "" : mArticle.getDescribe());
                 break;
             case R.id.tv_dialog_main_list_menu_quen:
                 if (mArticle != null && !TextUtils.isEmpty(mArticle.getShareUrl()))
-                    QQApi.shareSpace((Activity) mContext, mArticle.getShareUrl(), null, mArticle.getTitle(), TextUtils.isEmpty(mArticle.getDescribe())?"":mArticle.getDescribe());
+                    QQApi.shareSpace((Activity) mContext, mArticle.getShareUrl(), null, mArticle.getTitle(),
+                            TextUtils.isEmpty(mArticle.getDescribe()) ? "" : mArticle.getDescribe());
                 break;
             case R.id.tv_dialog_main_list_menu_copy:
                 if (mArticle != null && !TextUtils.isEmpty(mArticle.getShareUrl())) {
                     ClipboardManager cm = (ClipboardManager) mContext.getSystemService(Context.CLIPBOARD_SERVICE);
                     ClipData mClipData = ClipData.newPlainText("Label", mArticle.getShareUrl());
                     cm.setPrimaryClip(mClipData);
+                    ContentManager.getInstance().addCopyItem(mArticle.getShareUrl());
                     T.showCustomToast("分享链接复制成功");
                 }
                 break;
