@@ -10,6 +10,7 @@ import cn.xylink.mting.model.InputCreateRequest;
 import cn.xylink.mting.model.data.OkGoUtils;
 import cn.xylink.mting.model.data.RemoteUrl;
 import cn.xylink.mting.utils.GsonUtil;
+import cn.xylink.mting.utils.L;
 import cn.xylink.mting.utils.LogUtils;
 
 public class EditArticlePresenter extends BasePresenter<EditArticleContact.ICreateView> implements EditArticleContact.Presenter {
@@ -35,6 +36,7 @@ public class EditArticlePresenter extends BasePresenter<EditArticleContact.ICrea
             @Override
             public void onSuccess(Object data) {
                 BaseResponse res= (BaseResponse) data;
+                L.v("res",res);
                 if (res.code==200){
                     mView.onSaveSuccess();
                 }else{

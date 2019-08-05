@@ -56,9 +56,13 @@ public class ArticleDetailEditActivity extends BasePresenterActivity implements 
         tvRight.setTextColor(Color.parseColor("#488def"));
     }
 
-    @OnClick(R.id.tv_right)
+    @OnClick({R.id.tv_right})
     void onSave(View v) {
         mEditArticlePresenter.onEditNote(id, etArticleTitle.getText().toString(), etArticleContent.getText().toString());
+    }
+    @OnClick({R.id.btn_left})
+    void onExit(View v) {
+        finish();
     }
 
     @Override
