@@ -204,6 +204,7 @@ public class LoginPwdActivity extends BasePresenterActivity implements LoginCont
             ContentManager.getInstance().setLoginToken(response.data.getToken());
             ContentManager.getInstance().setUserInfo(response.data);
             Intent mIntent = new Intent(this, MainActivity.class);
+            mIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(mIntent);
             finish();
             MTing.getActivityManager().popAllActivitys();

@@ -197,6 +197,7 @@ public class LoginActivity extends BasePresenterActivity implements ThirdLoginCo
             case 200: {
                 ContentManager.getInstance().setLoginToken(response.data.getToken());
                 Intent mIntent = new Intent(this, MainActivity.class);
+                mIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(mIntent);
                 finish();
                 break;
