@@ -301,8 +301,8 @@ public class SpeechService extends Service {
     }
 
 
-    public synchronized Speechor.SpeechorState getState() {
-        return speechor.getState();
+    public synchronized SpeechServiceState getState() {
+        return serviceState;
     }
 
     /*
@@ -325,7 +325,7 @@ public class SpeechService extends Service {
                 @Override
                 public void run() {
                     synchronized (SpeechService.this) {
-                        if (--SpeechService.this.countdownValue == 0 && SpeechService.this.getState() == Speechor.SpeechorState.SpeechorStatePlaying) {
+                        if (--SpeechService.this.countdownValue == 0 && SpeechService.this.getState() == SpeechServiceState.Playing) {
                             SpeechService.this.speechor.stop();
                             SpeechService.this.serviceState = SpeechServiceState.Stoped;
                             SpeechService.this.cancelCountDown();
@@ -625,6 +625,15 @@ public class SpeechService extends Service {
 
     public synchronized float getProgress() {
         return speechor.getProgress();
+    }
+
+
+    public synchronized List<String> getSpeechorTextFragments() {
+        return speechor.getTextFragments();
+    }
+
+    public synchronized  int getSpeechorFrameIndex() {
+        return speechor.getFragmentIndex();
     }
 
 

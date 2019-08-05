@@ -7,6 +7,8 @@ import android.graphics.Color;
 import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.Html;
 import android.text.TextUtils;
 import android.util.TypedValue;
@@ -15,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -110,9 +113,67 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
      */
     private void initServiceData() {
         getWindow().setStatusBarColor(Color.argb(0, 72, 141, 239));
-
+        //
         mCurrentArticle = service.getSelected();
+        Article prevArt = service.getSelected();
+        Article currArt = null;
+        //如果当前播放的不是选中的，或者当前没有选中的，那么开始播放选中的
+        if (prevArt != null && prevArt.getArticleId().equals(aid) == false || prevArt == null) {
+            service.play(aid);
+        }
+        //获取当前正在播放的ArticleInfo
+        currArt = service.getSelected();
+        llArticleEdit.setVisibility((currArt.getInType() == 1 || TextUtils.isEmpty(currArt.getUrl())) ? View.VISIBLE : View.GONE);
+        llSourceDetail.setVisibility((currArt.getInType() == 1 || TextUtils.isEmpty(currArt.getUrl())) ? View.GONE : View.VISIBLE);
+
+        //设定标题
+        tvTitle.setText(currArt.getTitle());
+        tvTitle.setVisibility(currArt.getTitle() != null ? View.VISIBLE : View.GONE);
+
+        //设定作者来源
+        tvAuthor.setText(currArt.getSourceName());
+        tvAuthor.setVisibility(currArt.getSourceName() != null ? View.VISIBLE : View.GONE);
+        tvFav.setText(currArt.getStore() == 1 ? "已收藏" : "收藏");
+
+        articleUrl = currArt.getUrl();
+
+        int frameIndex = service.getSpeechorFrameIndex();
+        int framesTotal = service.getSpeechorTextFragments().size();
+        List<String> textFragments = service.getSpeechorTextFragments();
+
+        Handler handler = new Handler(Looper.getMainLooper());
+        SpeechService.SpeechServiceState state = service.getState();
+        switch (state) {
+            case Playing:
+                ivPlayBarBtn.setImageDrawable(mPauseDrawable);
+                showContent(textFragments, frameIndex);
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        setArticleProgress(frameIndex, framesTotal);
+                    }
+                }, 100);
+                break;
+            case Loadding:
+                ivPlayBarBtn.setImageDrawable(mPauseDrawable);
+                break;
+            case Paused:
+                ivPlayBarBtn.setImageDrawable(mPlayDrawable);
+                showContent(textFragments, frameIndex);
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        setArticleProgress(frameIndex, framesTotal);
+                    }
+                }, 100);
+                break;
+        }
+        mTitleheight = tvContent.getY();
+
+
+        /*
         if (service.getState() == Speechor.SpeechorState.SpeechorStatePlaying && aid.equals(mCurrentArticle.getArticleId())) {
+            //判断是否是自己编写的文章
             if (mCurrentArticle != null && (mCurrentArticle.getInType() == 1 || TextUtils.isEmpty(mCurrentArticle.getUrl()))) {
                 llArticleEdit.setVisibility(View.VISIBLE);
                 llSourceDetail.setVisibility(View.GONE);
@@ -158,6 +219,9 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
             }
         }
         mTitleheight = tvContent.getY();
+
+
+        */
         svContent.setOnScrollListener(new MyScrollView.OnScrollListener() {
             @Override
             public void onScroll(int scrollY) {
@@ -191,7 +255,8 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
         int textSize = 16;
         if (ContentManager.getInstance().getTextSize() == 1) {
             textSize = 21;
-        } else if (ContentManager.getInstance().getTextSize() == 2) {
+        }
+        else if (ContentManager.getInstance().getTextSize() == 2) {
             textSize = 26;
         }
         tvContent.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSize);
@@ -433,16 +498,41 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
         if (service.hasNext()) {
             service.playNext();
         }
+        else {
+            Toast.makeText(this, "已经没有要播放的文章了", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @OnClick({R.id.rl_main_play_bar_play, R.id.iv_play_bar_btn})
     void onPlay(View v) {
-        if (isPlaying == 1) {
-            service.pause();
-        } else if (isPlaying == 0) {
-            service.play(aid);
-        } else if (isPlaying == -1) {
-            service.resume();
+        synchronized (service) {
+            if (ivPlayBarBtn.getDrawable() == mPauseDrawable) {
+                if (service.getSelected() == null) {
+                    Toast.makeText(this, "当前已经没有要播放的文章了", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                switch (service.getState()) {
+                    case Paused:
+                        service.resume();
+                    case Playing:
+                    case Loadding:
+                        setPauseIco();
+                        break;
+                }
+            }
+            else if (ivPlayBarBtn.getDrawable() == mPlayDrawable) {
+                if (service.getSelected() == null) {
+                    return;
+                }
+                switch (service.getState()) {
+                    case Loadding:
+                    case Playing:
+                        service.pause();
+                    case Paused:
+                        setPlayIco();
+                        break;
+                }
+            }
         }
     }
 
@@ -450,36 +540,47 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
     public void onSpeechStart(RecycleEvent event) {
         if (event instanceof SpeechStartEvent) {
             tvContent.setText("");
-        } else if (event instanceof SpeechReadyEvent) {
+            setPauseIco();
+        }
+        else if (event instanceof SpeechReadyEvent) {
             mCurrentArticle = event.getArticle();
+            tvContent.setText(event.getArticle().getContent());
+            /*
             if (mCurrentArticle.getInType() == 1 || TextUtils.isEmpty(mCurrentArticle.getUrl())) {
                 llArticleEdit.setVisibility(View.VISIBLE);
                 llSourceDetail.setVisibility(View.GONE);
                 mTitleheight = tvContent.getY();
             }
+
             isPlaying = 1;
             aid = event.getArticle().getId();
             tvContent.setText(event.getArticle().getContent());
             setPauseIco();
-        } else if (event instanceof SpeechProgressEvent) {
+            */
+        }
+        else if (event instanceof SpeechProgressEvent) {
             SpeechProgressEvent spe = (SpeechProgressEvent) event;
-            showContent(spe);
-            float progress = (float) spe.getFrameIndex() / (float) spe.getTextFragments().size();
-            setArticleProgress(progress, 100, spe);
-        } else if (event instanceof SpeechEndEvent) {
+            showContent(((SpeechProgressEvent) event).getTextFragments(), ((SpeechProgressEvent) event).getFrameIndex());
+            //float progress = (float) spe.getFrameIndex() / (float) spe.getTextFragments().size();
+            setArticleProgress(spe.getFrameIndex(), spe.getTextFragments().size());
+        }
+        else if (event instanceof SpeechEndEvent) {
             isPlaying = 0;
             float progress = 1;
-            setArticleProgress(progress, 100, null);
+            setArticleProgress(100, 100);
             setPlayIco();
-        } else if (event instanceof SpeechErrorEvent) {
+        }
+        else if (event instanceof SpeechErrorEvent) {
             isPlaying = 0;
             float progress = 0;
-            setArticleProgress(progress, 100, null);
+            //setArticleProgress(progress, 100, null);
             setPlayIco();
-        } else if (event instanceof SpeechPauseEvent) {
+        }
+        else if (event instanceof SpeechPauseEvent) {
             isPlaying = -1;
             setPlayIco();
-        } else if (event instanceof SpeechResumeEvent) {
+        }
+        else if (event instanceof SpeechResumeEvent) {
             isPlaying = 1;
             aid = event.getArticle().getId();
             setPauseIco();
@@ -500,12 +601,19 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
         }
     }
 
-    private void setArticleProgress(float progress, int base, SpeechProgressEvent spe) {
-        apbMain.setProgress((int) (progress * base));
-        skProgress.setProgress((int) (progress * base));
+    private void setArticleProgress(int frameIndex, int framesTotal) {
+        float percentage = 0f;
+        int progress = 0;
+
+        if (framesTotal != 0) {
+            percentage = (float) frameIndex / (float) framesTotal;
+            progress = (int) (percentage * 100);
+        }
+        apbMain.setProgress(progress);
+        skProgress.setProgress(progress);
         float height = tvContent.getLineCount() * tvContent.getLineHeight();
         if (height > tvContent.getMeasuredHeight()) {
-            int y = (int) (height * progress);
+            int y = (int) (height * percentage);
             y = y - 2 * tvContent.getLineHeight();
             if (y > 0) svContent.setScrollY(y);
 
@@ -521,23 +629,20 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
             ((Animatable) mPlayDrawable).start();
         }
         float progress = 0;
-        setArticleProgress(progress, 100, null);
+        setArticleProgress(100, 100);
     }
 
-    private void showContent(SpeechProgressEvent spe) {
-        int frameIndex = spe.getFrameIndex();
-        List<String> textFragments = spe.getTextFragments();
-        tvContent.setText("");
-        String txt = "";
-        for (int i = 0; i < textFragments.size(); i++) {
-            String s = textFragments.get(i);
+
+    private void showContent(List<String> textFragments, int frameIndex) {
+        StringBuilder textBuilder = new StringBuilder();
+        for (int i = 1; i < textFragments.size(); i++) {
+            String s = textFragments.get(i).replace("\n", "<br/>");
             if (i == frameIndex) {
                 s = "<font color=\"#488def\">" + s + "</font>";
             }
-            txt += s;
+            textBuilder.append(s);
         }
-        txt = txt.replace("\n", "<br>");
-        tvContent.setText(Html.fromHtml(txt));
+        tvContent.setText(Html.fromHtml(textBuilder.toString()));
     }
 
 
@@ -569,7 +674,8 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
     public void onSuccessAddLove(String str, Article article) {
         if ("收藏".equals(tvFav.getText().toString())) {
             tvFav.setText("已收藏");
-        } else {
+        }
+        else {
             tvFav.setText("收藏");
         }
         EventBus.getDefault().post(new AddStoreSuccessEvent());
