@@ -317,7 +317,15 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
         responseUrl = response.data.getUrl();
         L.v("title", title);
         L.v("describle", describe);
-        tv_content.setText(title + "\n\n"+ linkArticle.getSourceName() + "\n\n" + describe);
+        String sourcename = linkArticle.getSourceName();
+        if(sourcename.equals("null"))
+        {
+            sourcename = "";
+            tv_content.setText(title + "\n\n" + describe);
+        }else{
+
+            tv_content.setText(title + "\n\n"+ linkArticle.getSourceName() + "\n\n" + describe);
+        }
 
         tvFeedback.setVisibility(View.VISIBLE);
         if (llError.getVisibility() == View.VISIBLE) {
