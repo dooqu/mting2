@@ -63,6 +63,8 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
     View v_1;
     @BindView(R.id.pb_speech_bar)
     ImageView pb_speech_bar;
+    @BindView(R.id.iv_del_et)
+    ImageView ivDelEt;
 
     //文章类型 1 手动添加， 2 链接添加
     public int inLink = 2;
@@ -120,10 +122,12 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
                 L.v("s.length", s.length());
                 if (s.length() > 0) {
                     tvPreview.setTextColor(getResources().getColor(R.color.color_blue));
+                    ivDelEt.setVisibility(View.VISIBLE);
                 } else {
                     tvPreview.setText(R.string.load_on);
                     tvPreview.setVisibility(View.VISIBLE);
                     tvPreview.setTextColor(getResources().getColor(R.color.color_login_text_gray));
+                    ivDelEt.setVisibility(View.GONE);
                 }
             }
         });
@@ -160,9 +164,12 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
 
     }
 
-    @OnClick({R.id.tv_preview, R.id.tv_feedback})
+    @OnClick({R.id.tv_preview, R.id.tv_feedback,R.id.iv_del_et})
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.iv_del_et:
+                etLink.setText("");
+                break;
             case R.id.tv_preview:
                 isStop = !isStop;
                 if (isStop) {
@@ -227,6 +234,7 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
             if (fristText.startsWith("http://") || fristText.startsWith("https://")) {
                 etLink.setText(fristText);
                 tvPreview.setTextColor(getResources().getColorStateList(R.color.color_blue));
+                ivDelEt.setVisibility(View.VISIBLE);
             }
         }
     }

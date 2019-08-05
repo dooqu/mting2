@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -37,6 +38,8 @@ public class AddOneNoteFragment extends BasePresenterFragment implements InputCr
     EditText etTitle;
     @BindView(R.id.et_article_content)
     EditText etContent;
+    @BindView(R.id.iv_del_et)
+    ImageView ivDelEt;
 
     private InputCreatePresenter inputCreatePresenter;
 
