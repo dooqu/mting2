@@ -1,6 +1,5 @@
 package cn.xylink.mting.ui.activity;
 
-import android.app.AlertDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -9,7 +8,6 @@ import android.text.TextUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-import cn.xylink.mting.R;
 import cn.xylink.mting.base.BaseActivity;
 import cn.xylink.mting.contract.IBaseView;
 import cn.xylink.mting.presenter.BasePresenter;
@@ -134,12 +132,14 @@ public abstract class BasePresenterActivity<T extends BasePresenter> extends Bas
                             return;
                         }
                     }
-                if (tCopy == null)
-                    tCopy = new ArrayList<>();
-                tCopy.add(copy.toString());
-                if (tCopy.size() > 20)
-                    tCopy.remove(0);
-                ContentManager.getInstance().setCopyArray(tCopy);
+//                if (tCopy == null)
+//                    tCopy = new ArrayList<>();
+//                tCopy.add(copy.toString());
+//                if (tCopy.size() > 20)
+//                    tCopy.remove(0);
+//                ContentManager.getInstance().setCopyArray(tCopy);
+                ContentManager.getInstance().addCopyItem(copy.toString());
+                tCopy = ContentManager.getInstance().getCopyArray();
                 CopyAddDialog dialog = new CopyAddDialog(this, tCopy.get(tCopy.size() - 1));
                 dialog.show();
             }
