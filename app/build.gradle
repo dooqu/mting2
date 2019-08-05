@@ -9,7 +9,7 @@ android {
         //versionCode改为年份两位，月份两位，日两位，次数1位
 
         versionCode 1908011
-        versionName "0.31"
+        versionName "0.32"
     }
     signingConfigs {
         release {

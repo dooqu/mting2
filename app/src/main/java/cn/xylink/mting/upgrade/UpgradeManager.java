@@ -1,6 +1,5 @@
 package cn.xylink.mting.upgrade;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
@@ -16,7 +15,6 @@ import android.os.Environment;
 import android.provider.Settings;
 import android.support.annotation.RequiresApi;
 import android.support.v4.content.FileProvider;
-import android.util.Log;
 import android.widget.Toast;
 
 import java.io.File;
@@ -70,7 +68,7 @@ public class UpgradeManager {
         }
 
         public void installApk(String filePath) {
-            if(applyUnkownSourcePackagePermission(filePath) == true) {
+            if (applyUnkownSourcePackagePermission(filePath) == true) {
                 installApkProcess(filePath);
             }
         }
@@ -103,7 +101,7 @@ public class UpgradeManager {
             installIntent.setDataAndType(fileUri, "application/vnd.android.package-archive");
             try {
                 activity.startActivity(installIntent);
-                if(UpgradeManager.CurrentUpgradeInfo != null && UpgradeManager.CurrentUpgradeInfo.getNeedUpdate() == 0) {
+                if (UpgradeManager.CurrentUpgradeInfo != null && UpgradeManager.CurrentUpgradeInfo.getNeedUpdate() == 0) {
                     System.exit(0);
                 }
             }
@@ -113,7 +111,7 @@ public class UpgradeManager {
         }
 
 
-        private boolean applyUnkownSourcePackagePermission(String path){
+        private boolean applyUnkownSourcePackagePermission(String path) {
             boolean haveInstallPermission = true;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 //先获取是否有安装未知来源应用的权限
@@ -127,13 +125,12 @@ public class UpgradeManager {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     dialog.dismiss();
-                                    if(UpgradeManager.CurrentUpgradeInfo != null && UpgradeManager.CurrentUpgradeInfo.getNeedUpdate() == 0) {
+                                    if (UpgradeManager.CurrentUpgradeInfo != null && UpgradeManager.CurrentUpgradeInfo.getNeedUpdate() == 0) {
                                         System.exit(0);
                                         return;
                                     }
-                                    else
-                                    {
-                                        Toast.makeText(activity, "安全授权被取消", 3000).show();
+                                    else {
+                                        Toast.makeText(activity, "安全授权被取消", Toast.LENGTH_SHORT).show();
                                     }
                                 }
                             })

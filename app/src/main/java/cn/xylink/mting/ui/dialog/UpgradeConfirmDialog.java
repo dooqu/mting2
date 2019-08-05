@@ -1,25 +1,10 @@
 package cn.xylink.mting.ui.dialog;
 
-import android.Manifest;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.DownloadManager;
-import android.content.BroadcastReceiver;
 import android.content.Context;
-
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.Settings;
-import android.support.annotation.RequiresApi;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -27,17 +12,8 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import java.io.File;
-import java.io.IOException;
-import java.math.BigInteger;
 import java.text.SimpleDateFormat;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Calendar;
 import java.util.Date;
-
-import cn.xylink.mting.MTing;
 import cn.xylink.mting.R;
 import cn.xylink.mting.bean.UpgradeInfo;
 import cn.xylink.mting.upgrade.UpgradeManager;
@@ -117,8 +93,9 @@ public class UpgradeConfirmDialog extends Dialog {
             @Override
             public void onClick(View v) {
                 long id = initDownload();
-                dismiss();
                 Toast.makeText(context, "升级包正在下载中", Toast.LENGTH_SHORT).show();
+                dismiss();
+
                 if (listener != null) {
                     listener.callback(id, upgradeInfo);
                 }

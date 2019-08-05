@@ -54,7 +54,7 @@ public class BottomSelectSexDialog extends BaseDimDialog {
         return View.inflate(mContext, R.layout.bottom_select_sex_dialog, null);
     }
 
-    @OnClick({R.id.btn_bottom_select_first, R.id.btn_bottom_select_second, R.id.btn_bottom_select_cancel,R.id.iv_sex_man,R.id.iv_sex_woman})
+    @OnClick({R.id.btn_bottom_select_first, R.id.btn_bottom_select_second, R.id.btn_bottom_select_cancel,R.id.iv_sex_man,R.id.iv_sex_woman,R.id.v_top})
     void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_bottom_select_first:

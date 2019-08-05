@@ -59,6 +59,7 @@ public class PhoneCode extends RelativeLayout {
         View view = LayoutInflater.from(context).inflate(R.layout.phone_code, this);
         initView(view);
         initEvent();
+        showSoftInput();
     }
 
     private void initView(View view) {
@@ -67,6 +68,7 @@ public class PhoneCode extends RelativeLayout {
         tv_code3 = (TextView) view.findViewById(R.id.tv_code3);
         tv_code4 = (TextView) view.findViewById(R.id.tv_code4);
         et_code = (EditText) view.findViewById(R.id.et_code);
+        et_code.requestFocus();
         v1 = view.findViewById(R.id.v1);
         v2 = view.findViewById(R.id.v2);
         v3 = view.findViewById(R.id.v3);
