@@ -128,6 +128,7 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
                     tvPreview.setVisibility(View.VISIBLE);
                     tvPreview.setTextColor(getResources().getColor(R.color.color_login_text_gray));
                     ivDelEt.setVisibility(View.GONE);
+                    tvFeedback.setVisibility(View.GONE);
                 }
             }
         });
@@ -171,6 +172,11 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
                 etLink.setText("");
                 break;
             case R.id.tv_preview:
+                String link = etLink.getText().toString();
+                if (TextUtils.isEmpty(link)) {
+                    Toast.makeText(this.getContext(), "地址不能为空", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 isStop = !isStop;
                 if (isStop) {
                     pb_speech_bar.setVisibility(View.GONE);
@@ -186,11 +192,7 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
                 }
                 if (!isStop)
                     return;
-                String link = etLink.getText().toString();
-                if (TextUtils.isEmpty(link)) {
-                    Toast.makeText(this.getContext(), "地址不能为空", Toast.LENGTH_SHORT).show();
-                    return;
-                }
+
                 startAnim();
                 link = link.trim().replaceAll(" ", "");
                 pb_speech_bar.setVisibility(View.VISIBLE);
