@@ -214,10 +214,10 @@ public class PersonalInfoActivity extends BasePresenterActivity implements TakeP
                 etNickName.setVisibility(View.VISIBLE);
                 ivArrow3.setVisibility(View.INVISIBLE);
                 etNickName.setSelection(etNickName.getText().length());
-//                etNickName.findFocus();
-//                etNickName.setFocusable(true);
-//                etNickName.setFocusableInTouchMode(true);
-//                etNickName.requestFocus();
+                etNickName.findFocus();
+                etNickName.setFocusable(true);
+                etNickName.setFocusableInTouchMode(true);
+                etNickName.requestFocus();
                 showSoftInput(etNickName);
                 break;
         }

@@ -70,13 +70,15 @@
 
             <EditText
                 android:id="@+id/et_nickName"
-                android:layout_width="200dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
                 android:background="@android:color/transparent"
                 android:gravity="right"
                 android:maxLength="15"
                 android:maxLines="1"
+                android:lines="1"
+                android:singleLine="true"
                 android:textSize="@dimen/text_16"
                 android:visibility="gone" />
 
@@ -86,6 +88,10 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
                 android:gravity="right"
+                android:maxLength="15"
+                android:maxLines="1"
+                android:lines="1"
+                android:singleLine="true"
                 android:textSize="@dimen/text_16" />
         </FrameLayout>
 
