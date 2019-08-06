@@ -21,6 +21,7 @@ import android.graphics.Color;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -62,7 +63,7 @@ public class SpeechService extends Service {
         /*暂停中*/
         Paused,
         /*播放完成*/
-        Stoped,
+        //Stoped,
         /*加载中*/
         Loadding,
         /*发生错误*/
@@ -204,7 +205,7 @@ public class SpeechService extends Service {
                         //调用moveNext，不是为了要播放下一个，因为当前没有下一个了， 而是要通过moveNext的调用，把指向的当前元素删除掉;
                         SpeechService.this.moveNext();
                         //没有要读的文章了
-                        serviceState = SpeechServiceState.Stoped;
+                        serviceState = SpeechServiceState.Ready;
                         onSpeechStoped(reason);
                     }
                 }
@@ -269,6 +270,7 @@ public class SpeechService extends Service {
     private void onSpeechError(int errorCode, String message, Article article) {
         Log.d(TAG, "SpeechService.onSpeechError: errorCode=" + errorCode + ", message=" + message);
         EventBus.getDefault().post(new SpeechErrorEvent(errorCode, message, article));
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
         //initNotification();
     }
 
@@ -325,9 +327,9 @@ public class SpeechService extends Service {
                 @Override
                 public void run() {
                     synchronized (SpeechService.this) {
-                        if (--SpeechService.this.countdownValue == 0 && SpeechService.this.getState() == SpeechServiceState.Playing) {
-                            SpeechService.this.speechor.stop();
-                            SpeechService.this.serviceState = SpeechServiceState.Stoped;
+                        if (--SpeechService.this.countdownValue == 0
+                                && (getState() == SpeechServiceState.Playing || getState() == SpeechServiceState.Loadding)) {
+                            SpeechService.this.pause();
                             SpeechService.this.cancelCountDown();
                             SpeechService.this.onSpeechStoped(SpeechStopEvent.StopReason.CountDownToZero);
                         }
@@ -365,7 +367,7 @@ public class SpeechService extends Service {
             return -SpeechError.NOTHING_TO_PLAY;
         }
         //当前状态必须是在播放，或者是暂停，否则不支持
-        if (serviceState == SpeechServiceState.Playing || serviceState == SpeechServiceState.Paused) {
+        if (serviceState != SpeechServiceState.Ready && getSelected() != null && getSelected().getTextBody() != null) {
             int index;
             if ((index = helper.seekFragmentIndex(percentage, speechor.getTextFragments())) >= 0) {
                 int result = speechor.seek(index);
@@ -376,6 +378,7 @@ public class SpeechService extends Service {
             }
             return index;
         }
+
         return -SpeechError.SEEK_NOT_ALLOW;
     }
 
@@ -593,6 +596,7 @@ public class SpeechService extends Service {
         boolean isSelectedDeleted = this.speechList.removeAll();
         if (isSelectedDeleted) {
             this.speechor.stop();
+            this.serviceState = SpeechServiceState.Ready;
             this.onSpeechStoped(SpeechStopEvent.StopReason.ListIsNull);
         }
     }
@@ -611,6 +615,7 @@ public class SpeechService extends Service {
                 prepareArticle(article, false);
             }
             else {
+                this.serviceState = SpeechServiceState.Ready;
                 //没有要播放的内容了
                 this.onSpeechStoped(SpeechStopEvent.StopReason.ListIsNull);
             }
@@ -778,9 +783,19 @@ public class SpeechService extends Service {
                         break;
 
                     case "next":
-                        if (hasNext()) {
-                            playNext();
+                        switch (serviceState) {
+                            case Ready:
+                                if(getSelected() != null) {
+                                    playSelected();
+                                }
+                                break;
+                            default:
+                                if (hasNext()) {
+                                    playNext();
+                                }
+                                break;
                         }
+
                         break;
 
                     case "favorite":
