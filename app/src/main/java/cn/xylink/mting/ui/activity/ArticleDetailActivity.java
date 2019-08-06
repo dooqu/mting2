@@ -12,6 +12,7 @@ import android.os.Looper;
 import android.telephony.ServiceState;
 import android.text.Html;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.ImageView;
@@ -111,7 +112,8 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
     }
 
     /*
-    获取播放服务后，初始化播放状态
+    获取播放服务后，初始化播放状态， 因为页面进入后，可能onSpeechStart和onspeechReady未接收到，
+    那么就要靠获取服务状态，进行状态的拉取
      */
     private void initServiceData() {
         getWindow().setStatusBarColor(Color.argb(0, 72, 141, 239));
@@ -119,59 +121,62 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
         mCurrentArticle = service.getSelected();
         Article prevArt = service.getSelected();
         Article currArt = null;
-        //如果当前播放的不是选中的，或者当前没有选中的，那么开始播放选中的
-        if (prevArt != null && prevArt.getArticleId().equals(aid) == false || prevArt == null) {
-            service.play(aid);
+
+        synchronized (service) {
+            //如果当前播放的不是选中的，或者当前没有选中的，那么开始播放选中的
+            if (prevArt != null && prevArt.getArticleId().equals(aid) == false || prevArt == null) {
+                service.play(aid);
+            }
+            //获取当前正在播放的ArticleInfo
+            currArt = service.getSelected();
+            llArticleEdit.setVisibility((currArt.getInType() == 1 || TextUtils.isEmpty(currArt.getUrl())) ? View.VISIBLE : View.GONE);
+            llSourceDetail.setVisibility((currArt.getInType() == 1 || TextUtils.isEmpty(currArt.getUrl())) ? View.GONE : View.VISIBLE);
+
+            //设定标题
+            tvTitle.setText(currArt.getTitle());
+            tvTitle.setVisibility(currArt.getTitle() != null ? View.VISIBLE : View.GONE);
+
+            //设定作者来源
+            tvAuthor.setText(currArt.getSourceName());
+            tvAuthor.setVisibility(currArt.getSourceName() != null ? View.VISIBLE : View.GONE);
+            tvFav.setText(currArt.getStore() == 1 ? "已收藏" : "收藏");
+
+            articleUrl = currArt.getUrl();
+
+            int frameIndex = service.getSpeechorFrameIndex();
+            int framesTotal = service.getSpeechorTextFragments().size();
+            List<String> textFragments = service.getSpeechorTextFragments();
+
+            Handler handler = new Handler(Looper.getMainLooper());
+            SpeechService.SpeechServiceState state = service.getState();
+            switch (state) {
+                case Playing:
+                    //ivPlayBarBtn.setImageDrawable(mPauseDrawable);
+                    showContent(textFragments, frameIndex);
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            setArticleProgress(frameIndex, framesTotal);
+                        }
+                    }, 100);
+                    break;
+                case Loadding:
+                    //ivPlayBarBtn.setImageDrawable(mPauseDrawable);
+                    break;
+                case Paused:
+                    //ivPlayBarBtn.setImageDrawable(mPlayDrawable);
+                    showContent(textFragments, frameIndex);
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            setArticleProgress(frameIndex, framesTotal);
+                        }
+                    }, 100);
+                    break;
+            }
+            mTitleheight = tvContent.getY();
+            initPlayState();
         }
-        //获取当前正在播放的ArticleInfo
-        currArt = service.getSelected();
-        llArticleEdit.setVisibility((currArt.getInType() == 1 || TextUtils.isEmpty(currArt.getUrl())) ? View.VISIBLE : View.GONE);
-        llSourceDetail.setVisibility((currArt.getInType() == 1 || TextUtils.isEmpty(currArt.getUrl())) ? View.GONE : View.VISIBLE);
-
-        //设定标题
-        tvTitle.setText(currArt.getTitle());
-        tvTitle.setVisibility(currArt.getTitle() != null ? View.VISIBLE : View.GONE);
-
-        //设定作者来源
-        tvAuthor.setText(currArt.getSourceName());
-        tvAuthor.setVisibility(currArt.getSourceName() != null ? View.VISIBLE : View.GONE);
-        tvFav.setText(currArt.getStore() == 1 ? "已收藏" : "收藏");
-
-        articleUrl = currArt.getUrl();
-
-        int frameIndex = service.getSpeechorFrameIndex();
-        int framesTotal = service.getSpeechorTextFragments().size();
-        List<String> textFragments = service.getSpeechorTextFragments();
-
-        Handler handler = new Handler(Looper.getMainLooper());
-        SpeechService.SpeechServiceState state = service.getState();
-        switch (state) {
-            case Playing:
-                //ivPlayBarBtn.setImageDrawable(mPauseDrawable);
-                showContent(textFragments, frameIndex);
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        setArticleProgress(frameIndex, framesTotal);
-                    }
-                }, 100);
-                break;
-            case Loadding:
-                //ivPlayBarBtn.setImageDrawable(mPauseDrawable);
-                break;
-            case Paused:
-                //ivPlayBarBtn.setImageDrawable(mPlayDrawable);
-                showContent(textFragments, frameIndex);
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        setArticleProgress(frameIndex, framesTotal);
-                    }
-                }, 100);
-                break;
-        }
-        mTitleheight = tvContent.getY();
-        initPlayState();
 
 
         /*
@@ -243,6 +248,8 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
                 drawable.setTint(Color.rgb(fk, fk, fk));
                 ivBack.setImageDrawable(drawable);
                 tvFk.setTextColor(Color.rgb(fk, fk, fk));
+                tvTitle.setTextColor(Color.rgb(fk, fk, fk));
+
             }
         });
     }
@@ -292,6 +299,8 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
         proxy.bind();
     }
 
+
+    //根据service的状态，设定play按钮的各种状态
     private void initPlayState() {
         if (service != null) {
             SpeechService.SpeechServiceState state = service.getState();
@@ -519,19 +528,19 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
         switch (service.getState()) {
             case Ready:
                 /*
-                当状态为ready时，一种情况是列表为空，另外一种情况是定时器被关闭
+                当状态为ready时，一种情况是列表为空，另外一种情况是定时器被关闭，当定时器停止时，指针已经指向下一个
                  */
-                if(service.getSelected() != null) {
+                if (service.getSelected() != null) {
                     service.play(service.getSelected().getArticleId());
                     return;
                 }
                 break;
             default:
-            if (service.hasNext()) {
-                service.playNext();
-                return;
-            }
-            break;
+                if (service.hasNext()) {
+                    service.playNext();
+                    return;
+                }
+                break;
         }
         T.showSuccessToast("已经没有要播放的文章了");
     }
@@ -550,103 +559,52 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
                     break;
 
                 case Error:
-                    service.seek((float)skProgress.getProgress() / (float)100);
+                    service.seek((float) skProgress.getProgress() / (float) 100);
                     break;
             }
-            /*
-            if (ivPlayBarBtn.getDrawable() == mPauseDrawable) {
-                if (service.getSelected() == null) {
-                    Toast.makeText(this, "当前已经没有要播放的文章了", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                switch (service.getState()) {
-                    case Playing:
-                    case Loadding:
-                        service.pause();
-                    case Paused:
-                        //setPauseIco();
-                        break;
-                }
-            }
-            else if (ivPlayBarBtn.getDrawable() == mPlayDrawable) {
-                if (service.getSelected() == null) {
-                    return;
-                }
-                switch (service.getState()) {
-                    case Paused:
-                        service.resume();
-                    case Loadding:
-                    case Playing:
-                        //setPauseIco();
-                        break;
-                }
-            }
-            */
         }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onSpeechStart(RecycleEvent event) {
+    public void onSpeechEvent(RecycleEvent event) {
         if (event instanceof SpeechStartEvent) {
-            tvContent.setText("");
+            tvContent.setText("正文正在加载...");
             tvTitle.setText(event.getArticle().getTitle());
-           // setPauseIco();
+            tvAuthor.setText(event.getArticle().getSourceName());
+            tvAuthor.setVisibility(event.getArticle().getSourceName() != null && event.getArticle().getSourceName().trim() != "" ? View.VISIBLE : View.GONE);
         }
         else if (event instanceof SpeechReadyEvent) {
+            //需要从网络加载的字段，需要在此事件中才能获取到
             mCurrentArticle = event.getArticle();
-            tvContent.setText(event.getArticle().getContent());
-            /*
-            if (mCurrentArticle.getInType() == 1 || TextUtils.isEmpty(mCurrentArticle.getUrl())) {
-                llArticleEdit.setVisibility(View.VISIBLE);
-                llSourceDetail.setVisibility(View.GONE);
-                mTitleheight = tvContent.getY();
-            }
-
-            isPlaying = 1;
-            aid = event.getArticle().getId();
-            tvContent.setText(event.getArticle().getContent());
-            setPauseIco();
-            */
-
+            tvContent.setText(mCurrentArticle.getContent());
+            llArticleEdit.setVisibility((mCurrentArticle.getInType() == 1 || TextUtils.isEmpty(mCurrentArticle.getUrl())) ? View.VISIBLE : View.GONE);
+            llSourceDetail.setVisibility((mCurrentArticle.getInType() == 1 || TextUtils.isEmpty(mCurrentArticle.getUrl())) ? View.GONE : View.VISIBLE);
+            tvFav.setText(mCurrentArticle.getStore() == 1 ? "已收藏" : "收藏");
         }
         else if (event instanceof SpeechProgressEvent) {
             SpeechProgressEvent spe = (SpeechProgressEvent) event;
             showContent(((SpeechProgressEvent) event).getTextFragments(), ((SpeechProgressEvent) event).getFrameIndex());
-            //float progress = (float) spe.getFrameIndex() / (float) spe.getTextFragments().size();
             setArticleProgress(spe.getFrameIndex(), spe.getTextFragments().size());
             return;
         }
         else if (event instanceof SpeechEndEvent) {
-            isPlaying = 0;
-            float progress = 1;
             setArticleProgress(100, 100);
-           // setPlayIco();
-        }
-        else if (event instanceof SpeechErrorEvent) {
-            isPlaying = 0;
-            float progress = 0;
-            //setArticleProgress(progress, 100, null);
-           // setPlayIco();
-        }
-        else if (event instanceof SpeechPauseEvent) {
-            isPlaying = -1;
-           // setPauseIco();
         }
         else if (event instanceof SpeechResumeEvent) {
-            isPlaying = 1;
             aid = event.getArticle().getId();
-           // setPlayIco();
         }
-
+        else if (event instanceof SpeechStopEvent) {
+            if (ivPlayBarBtn.getDrawable() != mPlayDrawable) {
+                ivPlayBarBtn.setImageDrawable(mPlayDrawable);
+                ((Animatable) mPlayDrawable).start();
+            }
+            float progress = 0;
+            setArticleProgress(100, 100);
+        }
         setPlayerState(service.getState());
     }
 
     private void setPlayerState(SpeechService.SpeechServiceState state) {
-      //  if (ivPlayBarBtn.getDrawable() != mPlayDrawable) {
-          //  ivPlayBarBtn.setImageDrawable(mPauseDrawable);
-          // ((Animatable) mPauseDrawable).start();
-      //  }
-
         switch (state) {
             case Error:
                 if (ivPlayBarBtn.getDrawable() != mPauseDrawable) {
@@ -656,21 +614,18 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
                 break;
             case Playing:
             case Loadding:
-                if(ivPlayBarBtn.getDrawable() != mPlayDrawable) {
+                if (ivPlayBarBtn.getDrawable() != mPlayDrawable) {
                     ivPlayBarBtn.setImageDrawable(mPlayDrawable);
-                    ((Animatable)mPlayDrawable).start();
+                    ((Animatable) mPlayDrawable).start();
                 }
 
                 break;
-
             case Paused:
-                if(ivPlayBarBtn.getDrawable() != mPauseDrawable) {
+                if (ivPlayBarBtn.getDrawable() != mPauseDrawable) {
                     ivPlayBarBtn.setImageDrawable(mPauseDrawable);
-                    ((Animatable)mPauseDrawable).start();
+                    ((Animatable) mPauseDrawable).start();
                 }
                 break;
-
-            //case Stoped:
             case Ready:
                 if (ivPlayBarBtn.getDrawable() != mPauseDrawable) {
                     ivPlayBarBtn.setImageDrawable(mPauseDrawable);
@@ -680,12 +635,6 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
         }
     }
 
-    private void setPauseIco() {
-        //if (ivPlayBarBtn.getDrawable() != mPauseDrawable) {
-            ivPlayBarBtn.setImageDrawable(mPlayDrawable);
-             ((Animatable) mPauseDrawable).start();
-        //}
-    }
 
     private void setArticleProgress(int frameIndex, int framesTotal) {
         float percentage = 0f;
@@ -707,18 +656,7 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
     }
 
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onSpeechStop(SpeechStopEvent event) {
-        isPlaying = 0;
-        if (ivPlayBarBtn.getDrawable() != mPlayDrawable) {
-            ivPlayBarBtn.setImageDrawable(mPlayDrawable);
-            ((Animatable) mPlayDrawable).start();
-        }
-        float progress = 0;
-        setArticleProgress(100, 100);
-    }
-
-
+    //设定文章正文，以及播放文字的高亮
     private void showContent(List<String> textFragments, int frameIndex) {
         StringBuilder textBuilder = new StringBuilder();
         for (int i = 1; i < textFragments.size(); i++) {
@@ -771,5 +709,4 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
     public void onErrorAddLove(int code, String errorMsg) {
 
     }
-
 }

@@ -2,7 +2,7 @@ package cn.xylink.mting.speech.event;
 
 import cn.xylink.mting.bean.Article;
 
-public class SpeechStopEvent {
+public class SpeechStopEvent extends  RecycleEvent{
     public static enum StopReason {
         ListIsNull,
         CountDownToZero
