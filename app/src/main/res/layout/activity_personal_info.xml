@@ -26,6 +26,8 @@
             android:id="@+id/iv_my_head"
             android:layout_width="44dp"
             android:layout_height="44dp"
+            android:layout_marginEnd="10dp"
+            android:layout_toStartOf="@+id/iv_arrow_1"
             android:layout_toLeftOf="@+id/iv_arrow_1"
             android:scaleType="centerCrop"
             android:src="@mipmap/my_head" />
@@ -36,8 +38,10 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="10dp"
+            android:paddingLeft="10dp"
             android:adjustViewBounds="true"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
             android:paddingRight="32dp"
             android:scaleType="centerInside"
             android:src="@mipmap/arrow" />
@@ -91,8 +95,10 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_gravity="center_vertical"
-            android:layout_marginLeft="10dp"
+            android:paddingLeft="10dp"
             android:paddingRight="32dp"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
             android:scaleType="centerInside"
             android:src="@mipmap/arrow" />
 
@@ -115,6 +121,7 @@
             android:id="@+id/tv_sex"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingLeft="15dp"
             android:layout_toLeftOf="@+id/iv_arrow_3"
             android:text="@string/please_choose"
             android:textSize="@dimen/text_16" />
@@ -125,8 +132,10 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="10dp"
+            android:paddingLeft="10dp"
             android:paddingRight="32dp"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
             android:scaleType="centerInside"
             android:src="@mipmap/arrow" />
 

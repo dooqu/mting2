@@ -1,18 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center_horizontal|center_vertical">
+    android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/tv_guide_msg"
+    <ImageView
+        android:id="@+id/iv_guide_bitmap"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1.0"
+        android:layout_marginTop="80dp"
+        android:adjustViewBounds="true"
+        android:layout_gravity="center"
+        android:scaleType="centerCrop" />
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:gravity="center"
-        android:layout_centerHorizontal="true"
-        android:text="自己做主，只给自己想看的"/>
-
+        android:layout_height="0dp"
+        android:layout_weight="1.0"
+        android:orientation="vertical">
     <TextView
         android:id="@+id/tv_guide_title"
         android:layout_width="match_parent"
@@ -20,16 +25,21 @@
         android:layout_above="@id/tv_guide_msg"
         android:layout_centerHorizontal="true"
         android:gravity="center"
+        android:layout_marginTop="60dp"
+        android:textColor="@color/c999999"
+        android:textSize="@dimen/text_16"
         android:layout_marginBottom="10dp"
         android:text="高效便捷获取信息" />
-
-    <ImageView
-        android:id="@+id/iv_guide_bitmap"
-        android:layout_width="wrap_content"
+    <TextView
+        android:id="@+id/tv_guide_msg"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@id/tv_guide_title"
-        android:layout_marginBottom="20dp"
+        android:layout_centerVertical="true"
+        android:gravity="center"
         android:layout_centerHorizontal="true"
-        android:scaleType="centerCrop" />
-
-</RelativeLayout>
+        android:textColor="@color/c333333"
+        android:textSize="@dimen/text_21"
+        android:layout_marginTop="22dp"
+        android:text="自己做主，只给自己想看的"/>
+    </LinearLayout>
+</LinearLayout>
