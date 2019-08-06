@@ -49,6 +49,7 @@ import cn.xylink.mting.speech.SpeechService;
 import cn.xylink.mting.speech.SpeechServiceProxy;
 import cn.xylink.mting.speech.Speechor;
 import cn.xylink.mting.speech.data.SpeechList;
+import cn.xylink.mting.speech.event.FavoriteEvent;
 import cn.xylink.mting.speech.event.SpeechErrorEvent;
 import cn.xylink.mting.speech.event.SpeechPauseEvent;
 import cn.xylink.mting.speech.event.SpeechProgressEvent;
@@ -262,6 +263,10 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
     public void onSuccessAddLove(String str, Article article) {
         if (article != null) {
             article.setStore(article.getStore() ^ 1);
+            if (service != null && service.getSelected() != null
+                    && service.getSelected().getArticleId().equals(article.getArticleId())) {
+                service.updateNotification();
+            }
             if (article.getStore() == 1) {
                 T.s(this, "收藏成功");
             } else {
@@ -614,6 +619,13 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
         if (event.isStopSer() && service != null) {
             service.clearSpeechList();
         }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onNotifFavorite(FavoriteEvent event) {
+        L.v(event);
+        if (event.getArticle() != null)
+            EventBus.getDefault().post(new AddStoreSuccessEvent(event.getArticle()));
     }
 
     @Override
