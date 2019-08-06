@@ -155,6 +155,7 @@
 
         <activity
             android:name=".ui.activity.FeedBackActivity"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait" />
 
 
