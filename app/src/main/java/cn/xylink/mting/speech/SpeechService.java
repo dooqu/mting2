@@ -642,6 +642,10 @@ public class SpeechService extends Service {
         return speechor.getFragmentIndex();
     }
 
+    public void updateNotification() {
+        this.initNotification();
+    }
+
 
     private void initNotification() {
 

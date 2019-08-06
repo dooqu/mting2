@@ -41,6 +41,7 @@ import cn.xylink.mting.presenter.DelMainPresenter;
 import cn.xylink.mting.speech.SpeechService;
 import cn.xylink.mting.speech.SpeechServiceProxy;
 import cn.xylink.mting.speech.Speechor;
+import cn.xylink.mting.speech.data.ArticleDataProvider;
 import cn.xylink.mting.speech.event.FavoriteEvent;
 import cn.xylink.mting.speech.event.RecycleEvent;
 import cn.xylink.mting.speech.event.SpeechEndEvent;
@@ -514,6 +515,7 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
 
     @OnClick(R.id.tv_fav)
     void onFav(View v) {
+        /*
         String txt = tvFav.getText().toString();
         boolean isFav = "收藏".equals(txt);
         AddLoveRequest request = new AddLoveRequest();
@@ -521,6 +523,28 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
         request.setType(!isFav ? AddLoveRequest.TYPE.STORE.name() : AddLoveRequest.TYPE.CANCEL.name());
         request.doSign();
         mPresenter.addLove(request);
+        */
+
+        ArticleDataProvider provider = new ArticleDataProvider(this);
+        provider.favorite(mCurrentArticle, mCurrentArticle.getStore() == 1 ? false : true, new ArticleDataProvider.ArticleLoaderCallback() {
+            @Override
+            public void invoke(int errorCode, Article article) {
+                if(errorCode == 0) {
+                    tvFav.setText(article.getStore() == 1 ? "已收藏" : "收藏");
+                    if(service != null && service.getSelected() != null
+                            && mCurrentArticle != null
+                            && service.getSelected().getArticleId().equals(mCurrentArticle.getArticleId())) {
+                        service.getSelected().setStore(article.getStore());
+                        service.updateNotification();
+                    }
+                    EventBus.getDefault().post(new AddStoreSuccessEvent());
+
+                }
+                else {
+                    Toast.makeText(ArticleDetailActivity.this, "收藏失败", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
     @OnClick(R.id.tv_next)
@@ -700,6 +724,7 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
 
     }
 
+
     @Override
     public void onSuccessAddLove(String str, Article article) {
         if ("收藏".equals(tvFav.getText().toString())) {
@@ -708,11 +733,12 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
         else {
             tvFav.setText("收藏");
         }
-        EventBus.getDefault().post(new AddStoreSuccessEvent());
     }
+
 
     @Override
     public void onErrorAddLove(int code, String errorMsg) {
 
     }
+
 }
