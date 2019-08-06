@@ -25,6 +25,12 @@ android {
             storePassword 'xylink@20180928'
         }
     }
+    android.applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+            def time = new Date().format("yyyy-MM-dd", TimeZone.getTimeZone("GMT+08"))
+            outputFileName = "${variant.name}-v${defaultConfig.versionCode}-${defaultConfig.versionName}-${time}.apk"
+        }
+    }
 
     buildTypes {
         release {
