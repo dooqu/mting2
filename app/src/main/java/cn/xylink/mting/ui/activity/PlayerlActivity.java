@@ -3,8 +3,10 @@ package cn.xylink.mting.ui.activity;
 import android.os.Build;
 import android.view.View;
 import android.webkit.WebChromeClient;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 
 import butterknife.BindView;
@@ -60,6 +62,13 @@ public class PlayerlActivity extends BaseActivity {
                     progressBar.setVisibility(View.GONE);
             }
         });
+        wvHtml.setWebViewClient(new WebViewClient(){
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                view.loadUrl(url);
+                return false;
+            }
+        });
     }
 
     @Override
@@ -72,6 +81,17 @@ public class PlayerlActivity extends BaseActivity {
     @Override
     protected void initTitleBar() {
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        L.v("canGoBack",wvHtml.canGoBack());
+        if(wvHtml.canGoBack())
+        {
+            wvHtml.goBack();
+        }else{
+            super.onBackPressed();
+        }
     }
 
     @OnClick(R.id.iv_close)
