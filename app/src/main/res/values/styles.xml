@@ -13,7 +13,7 @@
         <!--默认的光标、选中的RadioButton颜色-->
         <item name="colorAccent">@color/color_main_bllue</item>
         <!-- 避免控件会顶到状态栏上 -->
-        <item name="android:fitsSystemWindows">true</item>
+        <!--<item name="android:fitsSystemWindows">true</item>-->
     </style>
 
     <style name="base_dim_dialog">
