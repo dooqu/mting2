@@ -542,7 +542,7 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
                 }
                 break;
         }
-        T.showSuccessToast("已经没有要播放的文章了");
+        T.s(this,"已经没有要播放的文章了");
     }
 
     @OnClick({R.id.rl_main_play_bar_play, R.id.iv_play_bar_btn})
