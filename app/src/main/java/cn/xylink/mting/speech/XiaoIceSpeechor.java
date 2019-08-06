@@ -169,6 +169,7 @@ public abstract class XiaoIceSpeechor implements Speechor {
             this.fragmentIndex = index;
             this.fragmentIndexNext = fragmentIndex;
             ttsAudioLoader.cancelAll();
+            clearErrorCacha(index);
             seekAndPlay(index);
             new Thread(() -> {
                 onStateChanged(SpeechorState.SpeechorStatePlaying);
@@ -321,6 +322,14 @@ public abstract class XiaoIceSpeechor implements Speechor {
             new Thread(() -> {
                 onStateChanged(SpeechorState.SpeechorStateReady);
             }).start();
+        }
+    }
+
+    private void clearErrorCacha(int startIndex) {
+        for(;startIndex < this.speechTextFragments.size(); startIndex ++) {
+            if(this.speechTextFragments.get(startIndex).getFragmentState() == SpeechTextFragmentState.Error) {
+                this.speechTextFragments.get(startIndex).setFragmentState(SpeechTextFragmentState.TextReady);
+            }
         }
     }
 

@@ -39,6 +39,9 @@
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
         android:layout_marginTop="37dp"  android:background="#ebebeb"  />
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
     <EditText
     android:layout_marginTop="22dp"
         android:layout_marginRight="20dp"
@@ -50,4 +53,5 @@
         android:hint="文章内容......"
         android:background="@android:color/transparent"
         android:textSize="@dimen/text_18"/>
+    </ScrollView>
 </LinearLayout>
