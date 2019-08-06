@@ -394,15 +394,15 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
             SpeechService.SpeechServiceState state = service.getState();
             switch (state) {
                 case Ready:
-                        mPlayBtnSRC.setImageDrawable(this.getDrawable(R.drawable.nsvg_play));
+                    mPlayBtnSRC.setImageDrawable(this.getDrawable(R.drawable.nsvg_play));
                     break;
                 case Paused:
-                        mPlayBtnSRC.setImageDrawable(this.getDrawable(R.drawable.nsvg_play));
+                    mPlayBtnSRC.setImageDrawable(this.getDrawable(R.drawable.nsvg_play));
                     break;
                 case Playing:
                 case Loadding:
-                        mPlayBtnSRC.setImageDrawable(this.getDrawable(R.drawable.nsvg_play));
-                        ((Animatable) mPlayBtnSRC.getDrawable()).start();
+                    mPlayBtnSRC.setImageDrawable(this.getDrawable(R.drawable.nsvg_play));
+                    ((Animatable) mPlayBtnSRC.getDrawable()).start();
                     break;
             }
         }
