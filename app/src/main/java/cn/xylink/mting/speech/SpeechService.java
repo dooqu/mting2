@@ -29,6 +29,7 @@ import cn.xylink.mting.R;
 import cn.xylink.mting.bean.Article;
 import cn.xylink.mting.speech.data.ArticleDataProvider;
 import cn.xylink.mting.speech.data.SpeechList;
+import cn.xylink.mting.speech.event.FavoriteEvent;
 import cn.xylink.mting.speech.event.SpeechArticleStatusSavedOnServerEvent;
 import cn.xylink.mting.speech.event.SpeechEndEvent;
 import cn.xylink.mting.speech.event.SpeechErrorEvent;
@@ -803,14 +804,20 @@ public class SpeechService extends Service {
                             break;
                         }
                         articleDataProvider.favorite(currentArticle, true, ((errorCode, article) -> {
-                            initNotification();
+                            if(errorCode == 0) {
+                                initNotification();
+                                EventBus.getDefault().post(new FavoriteEvent(currentArticle));
+                            }
                         }));
                     case "unfavorite":
                         if (currentArticle.getStore() == 0) {
                             break;
                         }
                         articleDataProvider.favorite(currentArticle, false, ((errorCode, article) -> {
-                            initNotification();
+                            if(errorCode == 0) {
+                                initNotification();
+                                EventBus.getDefault().post(new FavoriteEvent(currentArticle));
+                            }
                         }));
                         break;
                 } // end switch
