@@ -326,7 +326,7 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
         L.v("title", title);
         L.v("describle", describe);
         String sourcename = linkArticle.getSourceName();
-        if(sourcename.equals("null"))
+        if(sourcename == null || sourcename.equals("null"))
         {
             sourcename = "";
             tv_content.setText(title + "\n\n" + describe);
