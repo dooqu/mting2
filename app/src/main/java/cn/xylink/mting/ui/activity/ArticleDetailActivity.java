@@ -41,6 +41,7 @@ import cn.xylink.mting.presenter.DelMainPresenter;
 import cn.xylink.mting.speech.SpeechService;
 import cn.xylink.mting.speech.SpeechServiceProxy;
 import cn.xylink.mting.speech.Speechor;
+import cn.xylink.mting.speech.event.FavoriteEvent;
 import cn.xylink.mting.speech.event.RecycleEvent;
 import cn.xylink.mting.speech.event.SpeechEndEvent;
 import cn.xylink.mting.speech.event.SpeechErrorEvent;
@@ -524,7 +525,6 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
 
     @OnClick(R.id.tv_next)
     void onNext(View v) {
-
         switch (service.getState()) {
             case Ready:
                 /*
@@ -601,6 +601,13 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
             float progress = 0;
             setArticleProgress(100, 100);
         }
+        else if(event instanceof FavoriteEvent) {
+            Log.d("SPEECH_", "Favorite Event");
+            if(event.getArticle().getArticleId() != null && event.getArticle().getArticleId().equals(mCurrentArticle.getArticleId())) {
+                tvFav.setText(event.getArticle().getStore() == 1 ? "已收藏" : "收藏");
+            }
+            return;
+        }
         setPlayerState(service.getState());
     }
 
@@ -651,7 +658,6 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
             int y = (int) (height * percentage);
             y = y - 2 * tvContent.getLineHeight();
             if (y > 0) svContent.setScrollY(y);
-
         }
     }
 
