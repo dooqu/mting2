@@ -298,7 +298,7 @@ public class SpeechService extends Service {
     private void onSpeechStoped(SpeechStopEvent.StopReason reason) {
         EventBus.getDefault().post(new SpeechStopEvent(reason));
         //notificationManager.cancelAll();
-        if(reason == SpeechStopEvent.StopReason.ListIsNull) {
+        if (reason == SpeechStopEvent.StopReason.ListIsNull) {
             this.stopForeground(true);
         }
     }
@@ -428,6 +428,11 @@ public class SpeechService extends Service {
                 result = this.speechor.resume();
                 if (result) {
                     serviceState = SpeechServiceState.Playing;
+                    initNotification();
+                    onSpeechResume(speechList.getCurrent());
+                }
+                else {
+                    result = seek(getProgress()) > 0;
                     initNotification();
                     onSpeechResume(speechList.getCurrent());
                 }
@@ -638,7 +643,7 @@ public class SpeechService extends Service {
         return speechor.getTextFragments();
     }
 
-    public synchronized  int getSpeechorFrameIndex() {
+    public synchronized int getSpeechorFrameIndex() {
         return speechor.getFragmentIndex();
     }
 
@@ -790,7 +795,7 @@ public class SpeechService extends Service {
                     case "next":
                         switch (serviceState) {
                             case Ready:
-                                if(getSelected() != null) {
+                                if (getSelected() != null) {
                                     playSelected();
                                 }
                                 break;
@@ -808,7 +813,7 @@ public class SpeechService extends Service {
                             break;
                         }
                         articleDataProvider.favorite(currentArticle, true, ((errorCode, article) -> {
-                            if(errorCode == 0) {
+                            if (errorCode == 0) {
                                 initNotification();
                                 EventBus.getDefault().post(new FavoriteEvent(currentArticle));
                             }
@@ -818,7 +823,7 @@ public class SpeechService extends Service {
                             break;
                         }
                         articleDataProvider.favorite(currentArticle, false, ((errorCode, article) -> {
-                            if(errorCode == 0) {
+                            if (errorCode == 0) {
                                 initNotification();
                                 EventBus.getDefault().post(new FavoriteEvent(currentArticle));
                             }

@@ -230,7 +230,11 @@ public abstract class SpeechEngineWrapper implements Speechor {
                     speechor.setRole(role);
                     //speechor.setSpeed(preSpeed);
                     //如果原来在播放状态，继续播放
-                    if (preState == SpeechorState.SpeechorStatePlaying) {
+                    speechor.setFragmentIndex(preIndex);
+                    Log.d("SPEECH_", "prestate=" + preState);
+                    Log.d("SPEECH_", "currstate=" + speechor.getState());
+
+                    if(preState == SpeechorState.SpeechorStatePlaying) {
                         speechor.seek(preIndex);
                     }
                 }
@@ -276,6 +280,11 @@ public abstract class SpeechEngineWrapper implements Speechor {
         synchronized (this) {
             return speechor.getFragmentIndex();
         }
+    }
+
+    @Override
+    public void setFragmentIndex(int frameIndex) {
+
     }
 
     @Override

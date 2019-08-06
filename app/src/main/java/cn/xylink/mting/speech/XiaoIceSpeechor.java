@@ -530,20 +530,24 @@ public abstract class XiaoIceSpeechor implements Speechor {
     }
 
     @Override
+    public void setFragmentIndex(int fragmentIndex) {
+        this.fragmentIndex = fragmentIndex;
+    }
+
+    @Override
     public synchronized List<String> getTextFragments() {
         return textFragments;
     }
 
     @Override
-    public synchronized float getProgress() {
-        switch (this.state) {
-            case SpeechorStateReady:
+    public float getProgress() {
+        synchronized (this) {
+            if (this.textFragments.size() <= 0)
                 return 0f;
+            return (float) fragmentIndex / (float) this.textFragments.size();
 
-            default:
-                if (this.textFragments.size() <= 0)
-                    return 0f;
-                return (float) fragmentIndex / (float) this.textFragments.size();
+
         }
     }
+
 }

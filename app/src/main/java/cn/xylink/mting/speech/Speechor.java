@@ -87,6 +87,7 @@ public interface Speechor {
     SpeechorSpeed getSpeed();
     SpeechorState getState();
     int getFragmentIndex();
+    void setFragmentIndex(int frameIndex);
     List<String> getTextFragments();
     float getProgress();
 

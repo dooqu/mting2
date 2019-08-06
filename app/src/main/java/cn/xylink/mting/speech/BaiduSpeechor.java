@@ -179,7 +179,6 @@ public abstract class BaiduSpeechor implements Speechor {
 
 
     private int seekAndPlay(int frameIndex) {
-
         state = SpeechorState.SpeechorStatePlaying;
         for (int currentIndex = frameIndex, fragmentsSize = this.textFragments.size();
              currentIndex < fragmentsSize; ++currentIndex) {
@@ -292,6 +291,11 @@ public abstract class BaiduSpeechor implements Speechor {
     }
 
     @Override
+    public void setFragmentIndex(int fragmentIndex) {
+        this.fragmentIndex = fragmentIndex;
+    }
+
+    @Override
     public List<String> getTextFragments() {
         return this.textFragments;
     }
@@ -299,15 +303,11 @@ public abstract class BaiduSpeechor implements Speechor {
     @Override
     public float getProgress() {
         synchronized (this) {
-            switch (this.state) {
-                case SpeechorStateReady:
-                    return 0f;
+            if (this.textFragments.size() <= 0)
+                return 0f;
+             return (float) fragmentIndex / (float) this.textFragments.size();
 
-                default:
-                    if (this.textFragments.size() <= 0)
-                        return 0f;
-                    return (float) fragmentIndex / (float) this.textFragments.size();
-            }
+
         }
     }
 
@@ -319,6 +319,7 @@ public abstract class BaiduSpeechor implements Speechor {
             }
 
             if (state == SpeechorState.SpeechorStatePlaying) {
+                Log.d("SPEECH_", "百度可以pause，准备调用");
                 if (speechSynthesizer.pause() == 0) {
                     this.state = SpeechorState.SpeechorStatePaused;
                     this.onStateChanged(SpeechorState.SpeechorStatePaused);
