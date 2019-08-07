@@ -69,6 +69,7 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
 
     public static String SHARE_URL = "share_url";
     public static String SHARE_SUCCESS = "share_success";
+    public static String ARTICLE_ID = "article_id";
     @BindView(R.id.tv_main_tabar_unread)
     TextView mUnreadTextView;
     @BindView(R.id.tv_main_tabar_readed)
