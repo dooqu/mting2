@@ -455,7 +455,7 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
                             tvContent.setTextSize(TypedValue.COMPLEX_UNIT_SP, 26);
                             break;
                     }
-
+                    //因为文字大小已经发生变化，如果文章正在播放，直接更新文章滚动位置
                     synchronized (service) {
                         switch (service.getState()) {
                             case Ready:
@@ -681,14 +681,6 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
         }
         apbMain.setProgress(progress);
         skProgress.setProgress(progress);
-        /*
-        float height = tvContent.getLineCount() * tvContent.getLineHeight();
-        if (height > tvContent.getMeasuredHeight()) {
-            int y = (int) (height * percentage);
-            y = y - 2 * tvContent.getLineHeight();
-            if (y > 0) svContent.setScrollY(y);
-        }
-        */
     }
 
 
@@ -696,18 +688,24 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
     private void showContent(List<String> textFragments, int frameIndex) {
         StringBuilder textBuilder = new StringBuilder();
         final int fragmentsSize = textFragments.size();
+        //generate the readed text's view.
         for(int index = 0; index < frameIndex; ++index) {
             textBuilder.append(textFragments.get(index).replace("\n", "<br/>"));
         }
         tvContent.setText(Html.fromHtml(textBuilder.toString()));
+        //after invoke method setText, tvContent's getLineHeight not available.
+        //post measure behavior at next frame
         tvContent.post(()->{
+            //caculate the readed text's height.
             final int offsetHeight = tvContent.getLineHeight() * tvContent.getLineCount();
+            //generate whole text's view.
             for(int index = frameIndex; index < fragmentsSize; ++index ) {
                 String fragText = textFragments.get(index).replace("\n", "<br/>");
                 fragText = ((index == frameIndex)? "<font color=\"#488def\">" +fragText + "</font>" : fragText);
                 textBuilder.append(fragText);
             }
             tvContent.setText(Html.fromHtml(textBuilder.toString()));
+            //caculute the whole textview's height by same method.
             tvContent.post(()->{
                 int contentHeight = tvContent.getLineCount() * tvContent.getLineHeight();
                 if(contentHeight > svContent.getMeasuredHeight()) {
@@ -715,42 +713,6 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
                 }
             });
         });
-
-        /*
-
-        for (int i = 1; i < textFragments.size(); i++) {
-            String s = textFragments.get(i).replace("\n", "<br/>");
-            if (i == frameIndex) {
-                s = "<font color=\"#488def\">" + s + "</font>";
-            }
-            textBuilder.append(s);
-
-            if (i == (frameIndex - 1)) {
-                tvContent.setText(Html.fromHtml(textBuilder.toString()));
-                //offsetHeight = tvContent.getLineHeight() * tvContent.getLineCount();
-                tvContent.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        textReadedRuntimeHeight = tvContent.getLineHeight() * tvContent.getLineCount();
-                        tvContent.setText(Html.fromHtml(textBuilder.toString()));
-                    }
-                });
-                break;
-            }
-        }
-        tvContent.setText(Html.fromHtml(textBuilder.toString()));
-        int fragmentsSize = textFragments.size() - 1;
-        if (fragmentsSize <= 0) {
-            return;
-        }
-
-        int contentHeight = tvContent.getLineCount() * tvContent.getLineHeight();
-        int visibleHeight = svContent.getMeasuredHeight();
-        offsetHeight += tvArTitle.getHeight();
-        if (contentHeight > visibleHeight) {
-            svContent.setScrollY(offsetHeight);
-        }
-        */
     }
 
 
