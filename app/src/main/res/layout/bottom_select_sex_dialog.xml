@@ -23,7 +23,8 @@
             android:layout_width="wrap_content"
             android:layout_height="56dp"
             android:gravity="center"
-            android:paddingLeft="20dp"
+
+            android:paddingLeft="50dp"
             android:layout_marginRight="10dp"
             android:background="@android:color/transparent"
             android:textColor="@color/color_333333"
@@ -33,7 +34,7 @@
             android:layout_height="wrap_content"
             android:src="@mipmap/sex_0"
             android:id="@+id/iv_sex_man"
-            android:paddingRight="20dp"
+            android:paddingRight="50dp"
             android:layout_toRightOf="@+id/btn_bottom_select_first"
             android:layout_centerInParent="true"
             android:layout_centerVertical="true"/>
@@ -53,6 +54,7 @@
             android:layout_width="wrap_content"
             android:layout_height="56dp"
             android:layout_marginRight="10dp"
+            android:paddingLeft="50dp"
             android:background="@color/white"
             android:textColor="@color/color_333333"
             android:gravity="center"
@@ -62,6 +64,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@mipmap/sex_1"
+            android:paddingRight="50dp"
             android:layout_toRightOf="@+id/btn_bottom_select_second"
             android:layout_centerInParent="true"
             android:layout_centerVertical="true"/>

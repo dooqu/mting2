@@ -251,7 +251,6 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
                 ivBack.setImageDrawable(drawable);
                 tvFk.setTextColor(Color.rgb(fk, fk, fk));
                 tvTitle.setTextColor(Color.rgb(fk, fk, fk));
-
             }
         });
     }
@@ -515,16 +514,6 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
 
     @OnClick(R.id.tv_fav)
     void onFav(View v) {
-        /*
-        String txt = tvFav.getText().toString();
-        boolean isFav = "收藏".equals(txt);
-        AddLoveRequest request = new AddLoveRequest();
-        request.setArticleId(mCurrentArticle.getArticleId());
-        request.setType(!isFav ? AddLoveRequest.TYPE.STORE.name() : AddLoveRequest.TYPE.CANCEL.name());
-        request.doSign();
-        mPresenter.addLove(request);
-        */
-
         ArticleDataProvider provider = new ArticleDataProvider(this);
         provider.favorite(mCurrentArticle, mCurrentArticle.getStore() == 1 ? false : true, new ArticleDataProvider.ArticleLoaderCallback() {
             @Override

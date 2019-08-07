@@ -123,6 +123,7 @@
             android:layout_marginTop="20dp"
             android:layout_marginRight="20dp"
             android:lineSpacingExtra="5dp"
+            android:textIsSelectable="true"
             android:textColor="@android:color/black"
             android:textSize="@dimen/text_18" />
     </ScrollView>

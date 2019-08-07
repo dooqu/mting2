@@ -81,6 +81,9 @@ public class AddOneNoteFragment extends BasePresenterFragment implements InputCr
                 }
             }
         });
+        etContent.setFocusableInTouchMode(true);
+        etContent.setFocusable(true);
+        etContent.requestFocus();
     }
 
     @Override
