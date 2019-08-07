@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
@@ -23,6 +24,7 @@ import cn.xylink.mting.contract.CheckTokenContact;
 import cn.xylink.mting.model.CheckTokenRequest;
 import cn.xylink.mting.model.data.FileCache;
 import cn.xylink.mting.presenter.CheckTokenPresenter;
+import cn.xylink.mting.ui.activity.ArticleDetailActivity;
 import cn.xylink.mting.ui.activity.BasePresenterActivity;
 import cn.xylink.mting.ui.activity.GuideActivity;
 import cn.xylink.mting.ui.activity.LoginActivity;
@@ -37,6 +39,7 @@ public class SplashActivity extends BasePresenterActivity implements CheckTokenC
     private final int SPLASH_TIME = 3000;
     private long startTime;
     private long endTime;
+    private String codeId;
 
     @Override
     protected void preView() {
@@ -52,6 +55,19 @@ public class SplashActivity extends BasePresenterActivity implements CheckTokenC
     protected void initData() {
         tokenPresenter = (CheckTokenPresenter) createPresenter(CheckTokenPresenter.class);
         tokenPresenter.attachView(this);
+
+        Intent intent = getIntent();//在这个Activity里，我们可以通过getIntent()，来获取外部跳转传过来的信息。
+        if(intent.getDataString() != null) {
+            String data = intent.getDataString();//接收到网页传过来的数据：sharetest://data/http://www.huxiu.com/
+            L.v("data",data);
+            // mting://mting:20198/homePage?code=2019080715393763146809148
+            String url = data.substring(data.indexOf("homePage?code="),data.length());
+            codeId = url.substring("homePage?code=".length(),url.length());
+            //就得到：http://www.huxiu.com/(这就是我们需要网页传给我们的数据
+            L.v("url",codeId);
+        }
+
+
     }
 
     @Override
@@ -168,8 +184,17 @@ public class SplashActivity extends BasePresenterActivity implements CheckTokenC
                 case SUCCESS:
                     switch (code) {
                         case 200:
-                            startActivity(new Intent(SplashActivity.this, MainActivity.class));
-                            finish();
+                            if(!TextUtils.isEmpty(codeId)){
+                                Intent mIntent = new Intent(SplashActivity.this, ArticleDetailActivity.class);
+                                Bundle b = new Bundle();
+                                b.putString("aid",codeId);
+                                mIntent.putExtras(b);
+                                startActivity(mIntent);
+                                finish();
+                            }else {
+                                startActivity(new Intent(SplashActivity.this, MainActivity.class));
+                                finish();
+                            }
                             break;
                     }
                     break;
