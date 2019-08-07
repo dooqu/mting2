@@ -248,7 +248,7 @@ public class ArrangeActivity extends BasePresenterActivity implements AddUnreadC
     }
 
     @Override
-    public void onSuccessAddUnread(String msg) {
+    public void onSuccessAddUnread(Article msg) {
         hideLoading();
         T.s(this, "添加成功");
         if (service != null) {

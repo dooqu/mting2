@@ -212,7 +212,7 @@ public class SearchActivity extends BasePresenterActivity implements SearchContr
     }
 
     @Override
-    public void onSuccessAddUnread(String msg) {
+    public void onSuccessAddUnread(Article msg) {
 
     }
 
