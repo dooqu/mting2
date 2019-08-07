@@ -69,6 +69,7 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
 
     public static String SHARE_URL = "share_url";
     public static String SHARE_SUCCESS = "share_success";
+    public static String ARTICLE_ID = "article_id";
     @BindView(R.id.tv_main_tabar_unread)
     TextView mUnreadTextView;
     @BindView(R.id.tv_main_tabar_readed)
@@ -106,12 +107,24 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
         L.v();
 //        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
         showShareResultDialog(getIntent().getIntExtra(SHARE_SUCCESS, -1), getIntent().getStringExtra(SHARE_URL));
+        String articleID = getIntent().getStringExtra(ARTICLE_ID);
+        if (!TextUtils.isEmpty(articleID)){
+            Bundle bundle = new Bundle();
+            bundle.putString("aid", articleID);
+            this.jumpActivity(ArticleDetailActivity.class, bundle);
+        }
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
         L.v("*^*^*^*^*" + intent.getIntExtra(SHARE_SUCCESS, -1));
         showShareResultDialog(intent.getIntExtra(SHARE_SUCCESS, -1), getIntent().getStringExtra(SHARE_URL));
+        String articleID = getIntent().getStringExtra(ARTICLE_ID);
+        if (!TextUtils.isEmpty(articleID)){
+            Bundle bundle = new Bundle();
+            bundle.putString("aid", articleID);
+            this.jumpActivity(ArticleDetailActivity.class, bundle);
+        }
         super.onNewIntent(intent);
     }
 
@@ -282,7 +295,7 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
     }
 
     @Override
-    public void onSuccessAddUnread(String msg) {
+    public void onSuccessAddUnread(Article msg) {
 
     }
 

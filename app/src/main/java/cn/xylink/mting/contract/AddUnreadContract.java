@@ -1,6 +1,7 @@
 package cn.xylink.mting.contract;
 
 import cn.xylink.mting.bean.AddUnreadRequest;
+import cn.xylink.mting.bean.Article;
 
 /*
  *加入待读
@@ -12,7 +13,7 @@ import cn.xylink.mting.bean.AddUnreadRequest;
 public interface AddUnreadContract {
 
     interface IAddUnreadView extends IBaseView {
-        void onSuccessAddUnread(String msg);
+        void onSuccessAddUnread(Article article);
 
         void onErrorAddUnread(int code, String errorMsg);
     }
