@@ -282,7 +282,7 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
     }
 
     @Override
-    public void onSuccessAddUnread(String msg) {
+    public void onSuccessAddUnread(Article msg) {
 
     }
 

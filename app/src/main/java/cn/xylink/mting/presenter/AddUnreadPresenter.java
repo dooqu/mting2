@@ -5,6 +5,7 @@ import com.google.gson.reflect.TypeToken;
 
 import cn.xylink.mting.base.BaseResponse;
 import cn.xylink.mting.bean.AddUnreadRequest;
+import cn.xylink.mting.bean.Article;
 import cn.xylink.mting.contract.AddUnreadContract;
 import cn.xylink.mting.model.data.OkGoUtils;
 import cn.xylink.mting.model.data.RemoteUrl;
@@ -19,7 +20,7 @@ import cn.xylink.mting.model.data.RemoteUrl;
 public class AddUnreadPresenter extends BasePresenter<AddUnreadContract.IAddUnreadView> implements AddUnreadContract.Presenter {
     @Override
     public void addUnread(AddUnreadRequest request) {
-            OkGoUtils.getInstance().postData(mView, RemoteUrl.addUnreadUrl(), new Gson().toJson(request), new TypeToken<BaseResponse<String>>() {
+            OkGoUtils.getInstance().postData(mView, RemoteUrl.addUnreadUrl(), new Gson().toJson(request), new TypeToken<BaseResponse<Article>>() {
             }.getType(), new OkGoUtils.ICallback() {
                 @Override
                 public void onStart() {
@@ -28,10 +29,10 @@ public class AddUnreadPresenter extends BasePresenter<AddUnreadContract.IAddUnre
 
                 @Override
                 public void onSuccess(Object data) {
-                    BaseResponse<String> baseResponse = (BaseResponse<String>) data;
+                    BaseResponse<Article> baseResponse = (BaseResponse<Article>) data;
                     int code = baseResponse.code;
                     if (code == 200) {
-                        mView.onSuccessAddUnread(baseResponse.message);
+                        mView.onSuccessAddUnread(baseResponse.data);
                     } else {
                         mView.onErrorAddUnread(code, baseResponse.message);
                     }
