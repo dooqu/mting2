@@ -8,8 +8,8 @@ android {
         targetSdkVersion 28
         //versionCode改为年份两位，月份两位，日两位，次数1位
 
-        versionCode 1908062
-        versionName "0.34"
+        versionCode 1908071
+        versionName "0.35"
     }
     signingConfigs {
         release {
