@@ -655,7 +655,6 @@ public class SpeechService extends Service {
     private void initNotification() {
 
         synchronized (this) {
-
             Article currentArticle = this.speechList.getCurrent();
             if (currentArticle == null) {
                 return;
@@ -664,15 +663,6 @@ public class SpeechService extends Service {
             Intent intentNotifOpen = new Intent(this, MainActivity.class);
             intentNotifOpen.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             PendingIntent pendingIntent = PendingIntent.getActivity(this, 1, intentNotifOpen, PendingIntent.FLAG_UPDATE_CURRENT);
-
-            /*
-            Intent intentCancel = new Intent(this, BroadcastReceiver.class);
-            intentCancel.setAction("notification_cancelled");
-            intentCancel.putExtra("type", 3);
-            intentCancel.putExtra("message","message");
-            PendingIntent pendingIntentCancel = PendingIntent.getBroadcast(this,0,
-                    intentCancel,PendingIntent.FLAG_ONE_SHOT);
-                    */
 
             Notification.Builder builder = new Notification.Builder(this)
                     .setContentIntent(pendingIntent)
@@ -717,11 +707,6 @@ public class SpeechService extends Service {
 
             switch (serviceState) {
                 case Loadding:
-                    actionFav = new Notification.Action(favorited ? R.mipmap.favorited : R.mipmap.unfavorited, "", PendingIntent.getBroadcast(this, ++executeCode, noneIntent, PendingIntent.FLAG_UPDATE_CURRENT));
-                    actionPlay = new Notification.Action(R.mipmap.ico_pause, "", PendingIntent.getBroadcast(this, ++executeCode, noneIntent, PendingIntent.FLAG_UPDATE_CURRENT));
-                    actionNext = new Notification.Action(R.mipmap.next, "", PendingIntent.getBroadcast(this, ++executeCode, (hasNext() ? nextIntent : noneIntent), PendingIntent.FLAG_UPDATE_CURRENT));
-                    break;
-
                 case Playing:
                     actionFav = new Notification.Action(favorited ? R.mipmap.favorited : R.mipmap.unfavorited, "", PendingIntent.getBroadcast(this, ++executeCode, favorited ? unFavIntent : favIntent, PendingIntent.FLAG_UPDATE_CURRENT));
                     actionPlay = new Notification.Action(R.mipmap.ico_pause, "", PendingIntent.getBroadcast(this, ++executeCode, pauseIntent, PendingIntent.FLAG_UPDATE_CURRENT));
@@ -766,10 +751,8 @@ public class SpeechService extends Service {
     }
 
     private BroadcastReceiver notifReceiver = new BroadcastReceiver() {
-
         @Override
         public void onReceive(Context context, Intent intent) {
-
             synchronized (this) {
                 final String action = intent.getAction();
                 Article currentArticle = getSelected();
@@ -805,7 +788,6 @@ public class SpeechService extends Service {
                                 }
                                 break;
                         }
-
                         break;
 
                     case "favorite":
@@ -839,7 +821,6 @@ public class SpeechService extends Service {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             Log.i(TAG, "onReceive action=" + action);
-
             switch (action) {
                 case BluetoothA2dp.ACTION_CONNECTION_STATE_CHANGED:
                     int state = intent.getIntExtra(BluetoothA2dp.EXTRA_STATE, BluetoothA2dp.STATE_DISCONNECTED);
@@ -849,12 +830,10 @@ public class SpeechService extends Service {
                             pause();
                         }
                     }
-
                     break;
             }
         }
     };
-
 }
 
 
