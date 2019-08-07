@@ -272,7 +272,7 @@ public class SpeechService extends Service {
         Log.d(TAG, "SpeechService.onSpeechError: errorCode=" + errorCode + ", message=" + message);
         EventBus.getDefault().post(new SpeechErrorEvent(errorCode, message, article));
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-        //initNotification();
+        initNotification();
     }
 
     private void onSpeechEnd(Article article, float progress, boolean deleteFromList) {
@@ -379,7 +379,6 @@ public class SpeechService extends Service {
             }
             return index;
         }
-
         return -SpeechError.SEEK_NOT_ALLOW;
     }
 
