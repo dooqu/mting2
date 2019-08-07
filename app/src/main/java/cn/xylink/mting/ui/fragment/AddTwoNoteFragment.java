@@ -122,8 +122,10 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
                 L.v("s.length", s.length());
                 if (s.length() > 0) {
                     tvPreview.setTextColor(getResources().getColor(R.color.color_blue));
+                    tvPreview.setEnabled(true);
                     ivDelEt.setVisibility(View.VISIBLE);
                 } else {
+                    tvPreview.setEnabled(false);
                     tvPreview.setText(R.string.load_on);
                     tvPreview.setVisibility(View.VISIBLE);
                     tvPreview.setTextColor(getResources().getColor(R.color.color_login_text_gray));
@@ -165,7 +167,7 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
 
     }
 
-    @OnClick({R.id.tv_preview, R.id.tv_feedback,R.id.iv_del_et})
+    @OnClick({R.id.tv_preview, R.id.tv_feedback, R.id.iv_del_et})
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.iv_del_et:
@@ -177,6 +179,8 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
                     Toast.makeText(this.getContext(), "地址不能为空", Toast.LENGTH_SHORT).show();
                     return;
                 }
+                if (isStop)
+                    return;
                 isStop = !isStop;
                 if (isStop) {
                     pb_speech_bar.setVisibility(View.GONE);
@@ -190,8 +194,7 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
                         tvPreview.setText(R.string.load_on);
                     }
                 }
-                if (!isStop)
-                    return;
+//
 
                 startAnim();
                 link = link.trim().replaceAll(" ", "");
@@ -258,7 +261,7 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
             Toast.makeText(this.getContext(), "不能解析空地址", Toast.LENGTH_SHORT).show();
             return;
         }
-        if (linkArticle.getExistUnread() == 1 || linkArticle.getExistUnread() == 2 ) {
+        if (linkArticle.getExistUnread() == 1 || linkArticle.getExistUnread() == 2) {
             final CheckArticleDialog checkArticleDialog = new CheckArticleDialog(getContext());
             checkArticleDialog.setCanceledOnTouchOutside(true);
             checkArticleDialog.setData(linkArticle.getTitle(), new CheckArticleDialog.MessageListener() {
@@ -281,7 +284,7 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
             String msg = String.format(hint, day);
             checkArticleDialog.setUpdateMsg(msg);
             checkArticleDialog.show();
-        }else{
+        } else {
             linkPushRequset(responseUrl.trim().replaceAll(" ", ""));
         }
     }
@@ -319,8 +322,7 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
         stopAnim();
         pb_speech_bar.setVisibility(View.GONE);
         v_1.setVisibility(View.VISIBLE);
-        if (!isStop)
-            return;
+        isStop = false;
         linkArticle = response.data;
         String title = response.data.getTitle();
         String describe = response.data.getContent();
@@ -328,13 +330,12 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
         L.v("title", title);
         L.v("describle", describe);
         String sourcename = linkArticle.getSourceName();
-        if(sourcename == null || sourcename.equals("null"))
-        {
+        if (sourcename == null || sourcename.equals("null")) {
             sourcename = "";
             tv_content.setText(title + "\n\n" + describe);
-        }else{
+        } else {
 
-            tv_content.setText(title + "\n\n"+ linkArticle.getSourceName() + "\n\n" + describe);
+            tv_content.setText(title + "\n\n" + linkArticle.getSourceName() + "\n\n" + describe);
         }
 
         tvFeedback.setVisibility(View.VISIBLE);
@@ -361,6 +362,7 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
                 v_1.setVisibility(View.VISIBLE);
                 break;
         }
+        isStop = false;
         tvPreview.setText("重新加载");
     }
 
