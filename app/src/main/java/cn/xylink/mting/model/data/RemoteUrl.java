@@ -138,5 +138,9 @@ public class RemoteUrl {
     public static String getEditArticle() {
         return URL_BASE + "/api/sct/v1/article/edit";
     }
+    //分享加入待读接口
+    public static String shareAddUrl() {
+        return URL_BASE + "/api/sct/v1/article/share/add";
+    }
 
 }
