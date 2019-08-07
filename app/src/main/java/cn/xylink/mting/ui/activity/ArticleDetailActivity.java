@@ -12,6 +12,7 @@ import android.os.Looper;
 import android.telephony.ServiceState;
 import android.text.Html;
 import android.text.TextUtils;
+import android.text.style.TtsSpan;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
@@ -60,6 +61,8 @@ import cn.xylink.mting.utils.T;
 import cn.xylink.mting.widget.ArcProgressBar;
 import cn.xylink.mting.widget.MyScrollView;
 
+import static cn.xylink.mting.speech.SpeechService.SpeechServiceState.Playing;
+
 /**
  * Created by liuhe. on Date: 2019/7/2
  */
@@ -106,6 +109,8 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
     private float mTitleheight;
     private Drawable mPauseDrawable;
     private Drawable mPlayDrawable;
+    private int textReadedRuntimeHeight;
+    private int textTotalRuntimeHeight;
 
 
     @Override
@@ -450,6 +455,16 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
                             tvContent.setTextSize(TypedValue.COMPLEX_UNIT_SP, 26);
                             break;
                     }
+                    //因为文字大小已经发生变化，如果文章正在播放，直接更新文章滚动位置
+                    synchronized (service) {
+                        switch (service.getState()) {
+                            case Ready:
+                            case Playing:
+                            case Paused:
+                                showContent(service.getSpeechorTextFragments(), service.getSpeechorFrameIndex());
+                                break;
+                        }
+                    }
                 }
             });
         }
@@ -518,9 +533,9 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
         provider.favorite(mCurrentArticle, mCurrentArticle.getStore() == 1 ? false : true, new ArticleDataProvider.ArticleLoaderCallback() {
             @Override
             public void invoke(int errorCode, Article article) {
-                if(errorCode == 0) {
+                if (errorCode == 0) {
                     tvFav.setText(article.getStore() == 1 ? "已收藏" : "收藏");
-                    if(service != null && service.getSelected() != null
+                    if (service != null && service.getSelected() != null
                             && mCurrentArticle != null
                             && service.getSelected().getArticleId().equals(mCurrentArticle.getArticleId())) {
                         service.getSelected().setStore(article.getStore());
@@ -555,7 +570,7 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
                 }
                 break;
         }
-        T.s(this,"已经没有要播放的文章了");
+        T.s(this, "已经没有要播放的文章了");
     }
 
     @OnClick({R.id.rl_main_play_bar_play, R.id.iv_play_bar_btn})
@@ -614,9 +629,9 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
             float progress = 0;
             setArticleProgress(100, 100);
         }
-        else if(event instanceof FavoriteEvent) {
+        else if (event instanceof FavoriteEvent) {
             Log.d("SPEECH_", "Favorite Event");
-            if(event.getArticle().getArticleId() != null && event.getArticle().getArticleId().equals(mCurrentArticle.getArticleId())) {
+            if (event.getArticle().getArticleId() != null && event.getArticle().getArticleId().equals(mCurrentArticle.getArticleId())) {
                 tvFav.setText(event.getArticle().getStore() == 1 ? "已收藏" : "收藏");
             }
             return;
@@ -666,26 +681,38 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
         }
         apbMain.setProgress(progress);
         skProgress.setProgress(progress);
-        float height = tvContent.getLineCount() * tvContent.getLineHeight();
-        if (height > tvContent.getMeasuredHeight()) {
-            int y = (int) (height * percentage);
-            y = y - 2 * tvContent.getLineHeight();
-            if (y > 0) svContent.setScrollY(y);
-        }
     }
 
 
     //设定文章正文，以及播放文字的高亮
     private void showContent(List<String> textFragments, int frameIndex) {
         StringBuilder textBuilder = new StringBuilder();
-        for (int i = 1; i < textFragments.size(); i++) {
-            String s = textFragments.get(i).replace("\n", "<br/>");
-            if (i == frameIndex) {
-                s = "<font color=\"#488def\">" + s + "</font>";
-            }
-            textBuilder.append(s);
+        final int fragmentsSize = textFragments.size();
+        //generate the readed text's view.
+        for(int index = 0; index < frameIndex; ++index) {
+            textBuilder.append(textFragments.get(index).replace("\n", "<br/>"));
         }
         tvContent.setText(Html.fromHtml(textBuilder.toString()));
+        //after invoke method setText, tvContent's getLineHeight not available.
+        //post measure behavior at next frame
+        tvContent.post(()->{
+            //caculate the readed text's height.
+            final int offsetHeight = tvContent.getLineHeight() * tvContent.getLineCount();
+            //generate whole text's view.
+            for(int index = frameIndex; index < fragmentsSize; ++index ) {
+                String fragText = textFragments.get(index).replace("\n", "<br/>");
+                fragText = ((index == frameIndex)? "<font color=\"#488def\">" +fragText + "</font>" : fragText);
+                textBuilder.append(fragText);
+            }
+            tvContent.setText(Html.fromHtml(textBuilder.toString()));
+            //caculute the whole textview's height by same method.
+            tvContent.post(()->{
+                int contentHeight = tvContent.getLineCount() * tvContent.getLineHeight();
+                if(contentHeight > svContent.getMeasuredHeight()) {
+                    svContent.setScrollY(offsetHeight);
+                }
+            });
+        });
     }
 
 
