@@ -20,6 +20,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="12dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
         android:drawablePadding="8dp"
         android:gravity="center"
         android:textColor="@color/c333333"

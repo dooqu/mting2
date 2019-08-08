@@ -73,17 +73,14 @@ public class SplashActivity extends BasePresenterActivity implements CheckTokenC
         shareAddPresenter.attachView(this);
 
         Intent intent = getIntent();//在这个Activity里，我们可以通过getIntent()，来获取外部跳转传过来的信息。
-        if(intent.getDataString() != null) {
+        if (intent.getDataString() != null) {
             String data = intent.getDataString();//接收到网页传过来的数据：sharetest://data/http://www.huxiu.com/
-            L.v("data",data);
+            L.v("data", data);
             // mting://mting:20198/homePage?code=2019080715393763146809148
-            String url = data.substring(data.indexOf("homePage?code="),data.length());
-            codeId = url.substring("homePage?code=".length(),url.length());
-            //就得到：http://www.huxiu.com/(这就是我们需要网页传给我们的数据
-            L.v("url",codeId);
+            String url = data.substring(data.indexOf("homePage?code="), data.length());
+            codeId = url.substring("homePage?code=".length(), url.length());
+            L.v("url", codeId);
         }
-
-
     }
 
     @Override
@@ -200,12 +197,12 @@ public class SplashActivity extends BasePresenterActivity implements CheckTokenC
                 case SUCCESS:
                     switch (code) {
                         case 200:
-                            if(!TextUtils.isEmpty(codeId)){
+                            if (!TextUtils.isEmpty(codeId)) {
                                 ArticleInfoRequest request = new ArticleInfoRequest();
                                 request.setArticleId(codeId);
                                 request.doSign();
                                 shareAddPresenter.shareAdd(request);
-                            }else {
+                            } else {
                                 startActivity(new Intent(SplashActivity.this, MainActivity.class));
                                 finish();
                             }
@@ -214,12 +211,12 @@ public class SplashActivity extends BasePresenterActivity implements CheckTokenC
                     break;
                 case ERROR:
                     L.v("isGuideFirst", FileCache.getInstance().isGuideFirst());
-                    if(!TextUtils.isEmpty(codeId)){
+                    if (!TextUtils.isEmpty(codeId)) {
                         ArticleInfoRequest request = new ArticleInfoRequest();
                         request.setArticleId(codeId);
                         request.doSign();
                         shareAddPresenter.shareAdd(request);
-                    }else {
+                    } else {
                         if (FileCache.getInstance().isGuideFirst()) {
                             FileCache.getInstance().setHasGuide();
                             startActivity(new Intent(SplashActivity.this, GuideActivity.class));
@@ -272,8 +269,9 @@ public class SplashActivity extends BasePresenterActivity implements CheckTokenC
         finish();
 
     }
+
     private void addLocalUnread(ArticleDetailInfo linkArticle) {
-        if (linkArticle != null&& UnreadFragment.ISINIT) {
+        if (linkArticle != null && UnreadFragment.ISINIT) {
             Article article = new Article();
             article.setProgress(0);
             article.setTitle(linkArticle.getTitle());
