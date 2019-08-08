@@ -15,6 +15,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -43,11 +44,11 @@ import cn.xylink.mting.event.AddUnreadEvent;
 import cn.xylink.mting.event.CloseLeftMenuEvent;
 import cn.xylink.mting.event.DeleteArticleSuccessEvent;
 import cn.xylink.mting.event.NotifyMainPlayEvent;
+import cn.xylink.mting.event.PlayBarVisibilityEvent;
 import cn.xylink.mting.presenter.AddUnreadPresenter;
 import cn.xylink.mting.presenter.DelMainPresenter;
 import cn.xylink.mting.speech.SpeechService;
 import cn.xylink.mting.speech.SpeechServiceProxy;
-import cn.xylink.mting.speech.Speechor;
 import cn.xylink.mting.speech.data.SpeechList;
 import cn.xylink.mting.speech.event.FavoriteEvent;
 import cn.xylink.mting.speech.event.SpeechErrorEvent;
@@ -92,6 +93,8 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
     ImageView mPlayBtnSRC;
     @BindView(R.id.pb_main_play_progress)
     ProgressBar mLoadingProgress;
+    @BindView(R.id.ll_main_play_bar_layout)
+    LinearLayout mPlayBarLayout;
     private TAB_ENUM mCurrentTabIndex = TAB_ENUM.TAB_UNREAD;
     public SpeechServiceProxy proxy;
     private SpeechService service;
@@ -644,6 +647,13 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
         if (event.getArticle() != null)
             EventBus.getDefault().post(new AddStoreSuccessEvent(event.getArticle()));
     }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onPlayBarVis(PlayBarVisibilityEvent event) {
+        L.v(event);
+        mPlayBarLayout.setVisibility(event.getVisibility());
+    }
+
 
     @Override
     protected boolean enableVersionUpgrade() {

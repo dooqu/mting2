@@ -24,6 +24,7 @@ import cn.xylink.mting.contract.UnreadContract;
 import cn.xylink.mting.event.AddStoreSuccessEvent;
 import cn.xylink.mting.event.AddUnreadEvent;
 import cn.xylink.mting.event.DeleteArticleSuccessEvent;
+import cn.xylink.mting.event.PlayBarVisibilityEvent;
 import cn.xylink.mting.presenter.UnreadPresenter;
 import cn.xylink.mting.speech.data.ArticleDataProvider;
 import cn.xylink.mting.speech.data.SpeechList;
@@ -86,6 +87,7 @@ public class UnreadFragment extends BaseMainTabFragment implements UnreadAdapter
             mPresenter.createUnread(request);
         } else {
             mRecyclerView.setVisibility(View.VISIBLE);
+            EventBus.getDefault().post(new PlayBarVisibilityEvent(mRecyclerView.getVisibility()));
             if (mControllerListener != null)
                 mControllerListener.onDataSuccess();
         }
@@ -153,6 +155,7 @@ public class UnreadFragment extends BaseMainTabFragment implements UnreadAdapter
             mRecyclerView.setVisibility(View.GONE);
             mEnptyFirstLayout.setVisibility(View.GONE);
             mNetworkErrorLayout.setVisibility(View.GONE);
+            EventBus.getDefault().post(new PlayBarVisibilityEvent(mRecyclerView.getVisibility()));
         }
     }
 
@@ -172,6 +175,7 @@ public class UnreadFragment extends BaseMainTabFragment implements UnreadAdapter
                 mRecyclerView.setVisibility(View.GONE);
                 mEnptyFirstLayout.setVisibility(View.GONE);
                 mNetworkErrorLayout.setVisibility(View.GONE);
+                EventBus.getDefault().post(new PlayBarVisibilityEvent(mRecyclerView.getVisibility()));
             }
         } else if (event.getTab_type() == TAB_TYPE.COLLECT) {
             List<String> ids = event.getIds();
@@ -210,6 +214,7 @@ public class UnreadFragment extends BaseMainTabFragment implements UnreadAdapter
         }
         if (mRecyclerView.getVisibility() != View.VISIBLE) {
             mRecyclerView.setVisibility(View.VISIBLE);
+            EventBus.getDefault().post(new PlayBarVisibilityEvent(mRecyclerView.getVisibility()));
         }
     }
 
@@ -235,6 +240,7 @@ public class UnreadFragment extends BaseMainTabFragment implements UnreadAdapter
             mControllerListener.onDataSuccess();
             if (unreadList.size() > 0) {
                 mRecyclerView.setVisibility(View.VISIBLE);
+                EventBus.getDefault().post(new PlayBarVisibilityEvent(mRecyclerView.getVisibility()));
             } else {
                 if (used > 0)
                     mEnptyLayout.setVisibility(View.VISIBLE);
