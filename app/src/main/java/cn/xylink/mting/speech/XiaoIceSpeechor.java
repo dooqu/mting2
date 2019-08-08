@@ -395,7 +395,15 @@ public abstract class XiaoIceSpeechor implements Speechor {
                 seekAndPlay(fragmentIndex);
             }
             else {
-                mediaPlayer.start();
+                int fragSize = speechTextFragments.size();
+                if(fragSize > 0 && fragmentIndex < fragSize &&
+                        speechTextFragments.get(fragmentIndex).getAudioUrl() != null &&
+                        speechTextFragments.get(fragmentIndex).getFragmentState() == SpeechTextFragmentState.AudioReady) {
+                    mediaPlayer.start();
+                }
+                else {
+                    return false;
+                }
             }
             this.state = SpeechorState.SpeechorStatePlaying;
             return true;
@@ -503,12 +511,18 @@ public abstract class XiaoIceSpeechor implements Speechor {
         this.speed = speed;
         ttsAudioLoader.cancelAll();
         clearCachedFragmentsAudio();
-        //设定好速度后，用新速度播放该片段
-        if (state == SpeechorState.SpeechorStatePlaying || state == SpeechorState.SpeechorStateLoadding) {
-            if (mediaPlayer.isPlaying()) {
-                mediaPlayer.stop();
-            }
-            seekAndPlay(fragmentIndex);
+
+        switch (state) {
+            case SpeechorStateLoadding:
+            case SpeechorStatePlaying:
+                if(mediaPlayer.isPlaying()) {
+                    mediaPlayer.stop();
+                }
+                seekAndPlay(fragmentIndex);
+                break;
+
+            case SpeechorStatePaused:
+                break;
         }
     }
 
