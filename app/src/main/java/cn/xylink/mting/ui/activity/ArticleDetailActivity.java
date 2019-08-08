@@ -199,57 +199,6 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
         }
 
 
-        /*
-        if (service.getState() == Speechor.SpeechorState.SpeechorStatePlaying && aid.equals(mCurrentArticle.getArticleId())) {
-            //判断是否是自己编写的文章
-            if (mCurrentArticle != null && (mCurrentArticle.getInType() == 1 || TextUtils.isEmpty(mCurrentArticle.getUrl()))) {
-                llArticleEdit.setVisibility(View.VISIBLE);
-                llSourceDetail.setVisibility(View.GONE);
-                mTitleheight = tvContent.getY();
-                aid = mCurrentArticle.getId();
-            }
-            if (mCurrentArticle != null) {
-                tvContent.setText(mCurrentArticle.getContent());
-            }
-            isPlaying = 1;
-            if (ivPlayBarBtn.getDrawable() != mPauseDrawable) {
-                ivPlayBarBtn.setImageDrawable(mPauseDrawable);
-                ((Animatable) mPauseDrawable).start();
-            }
-        } else if (aid != null) {
-            isPlaying = 1;
-            service.play(aid);
-        }
-        if (mCurrentArticle != null) {
-            articleUrl = mCurrentArticle.getUrl();
-            tvContent.setText(mCurrentArticle.getContent());
-            tvTitle.setText(mCurrentArticle.getTitle());
-            if (TextUtils.isEmpty(mCurrentArticle.getTitle())) {
-                tvArTitle.setVisibility(View.GONE);
-            } else {
-                tvArTitle.setVisibility(View.VISIBLE);
-                tvArTitle.setText(mCurrentArticle.getTitle());
-            }
-            if (TextUtils.isEmpty(mCurrentArticle.getSourceName())) {
-                tvAuthor.setVisibility(View.GONE);
-            } else {
-                tvAuthor.setVisibility(View.VISIBLE);
-                tvAuthor.setText(mCurrentArticle.getSourceName());
-            }
-            if (mCurrentArticle.getInType() == 1 || TextUtils.isEmpty(mCurrentArticle.getUrl())) {
-                llArticleEdit.setVisibility(View.VISIBLE);
-                llSourceDetail.setVisibility(View.GONE);
-            }
-            if (mCurrentArticle.getStore() == 0) {
-                tvFav.setText("收藏");
-            } else {
-                tvFav.setText("已收藏");
-            }
-        }
-        mTitleheight = tvContent.getY();
-
-
-        */
         svContent.setOnScrollListener(new MyScrollView.OnScrollListener() {
             @Override
             public void onScroll(int scrollY) {
@@ -660,7 +609,11 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
                 ((Animatable) mPlayDrawable).start();
             }
             float progress = 0;
-            setArticleProgress(100, 100);
+            switch (((SpeechStopEvent) event).getStopReason()) {
+                case ListIsNull:
+                    setArticleProgress(100, 100);
+                    break;
+            }
         }
         else if (event instanceof FavoriteEvent) {
             Log.d("SPEECH_", "Favorite Event");
@@ -760,7 +713,7 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
 
     private void setFavorite(boolean isFav) {
         tvFav.setText(isFav ? "已收藏" : "收藏");
-        tvFav.setTextColor(Color.parseColor(isFav?"#488def" : "#666666"));
+        tvFav.setTextColor(Color.parseColor(isFav ? "#488def" : "#666666"));
     }
 
 
