@@ -64,7 +64,8 @@
                 android:layout_height="wrap_content"
                 android:lineSpacingMultiplier="1.7"
                 android:textColor="#333333"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                android:visibility="gone"/>
 
             <TextView
                 android:id="@+id/tv_author"

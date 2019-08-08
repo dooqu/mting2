@@ -96,7 +96,7 @@ public abstract class BaiduSpeechor implements Speechor {
                 synchronized (self) {
                     //System.out.println("onSpeechFinish:" + self);
                     ++self.fragmentIndexNext;
-                    if (self.fragmentIndexNext == self.textFragments.size()) {
+                    if (self.fragmentIndexNext >= self.textFragments.size()) {
                         self.fragmentIndexNext = 0;
                         self.fragmentIndex = 0;
                         self.state = SpeechorState.SpeechorStateReady;

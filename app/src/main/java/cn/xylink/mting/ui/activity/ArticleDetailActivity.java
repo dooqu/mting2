@@ -136,6 +136,11 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
             }
             //获取当前正在播放的ArticleInfo
             currArt = service.getSelected();
+            if(currArt == null) {
+                Toast.makeText(this, "未找到该文章", Toast.LENGTH_SHORT).show();
+                finish();
+                return;
+            }
             llArticleEdit.setVisibility((currArt.getInType() == 1 || TextUtils.isEmpty(currArt.getUrl())) ? View.VISIBLE : View.GONE);
             llSourceDetail.setVisibility((currArt.getInType() == 1 || TextUtils.isEmpty(currArt.getUrl())) ? View.GONE : View.VISIBLE);
 
@@ -410,10 +415,11 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
                 public void onVoiceType(int type) {
                     switch (type) {
                         case 0:
-                            service.setRole(Speechor.SpeechorRole.XiaoYao);
+                            service.setRole(Speechor.SpeechorRole.XiaoIce);
                             break;
                         case 1:
-                            service.setRole(Speechor.SpeechorRole.XiaoIce);
+
+                            service.setRole(Speechor.SpeechorRole.XiaoYao);
                             break;
                         case 2:
                             service.setRole(Speechor.SpeechorRole.XiaoMei);
@@ -689,26 +695,26 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
         StringBuilder textBuilder = new StringBuilder();
         final int fragmentsSize = textFragments.size();
         //generate the readed text's view.
-        for(int index = 0; index < frameIndex; ++index) {
+        for (int index = 1; index < frameIndex; ++index) {
             textBuilder.append(textFragments.get(index).replace("\n", "<br/>"));
         }
         tvContent.setText(Html.fromHtml(textBuilder.toString()));
         //after invoke method setText, tvContent's getLineHeight not available.
         //post measure behavior at next frame
-        tvContent.post(()->{
+        tvContent.post(() -> {
             //caculate the readed text's height.
             final int offsetHeight = tvContent.getLineHeight() * tvContent.getLineCount();
             //generate whole text's view.
-            for(int index = frameIndex; index < fragmentsSize; ++index ) {
+            for (int index = Math.max(1 ,frameIndex); index < fragmentsSize; ++index) {
                 String fragText = textFragments.get(index).replace("\n", "<br/>");
-                fragText = ((index == frameIndex)? "<font color=\"#488def\">" +fragText + "</font>" : fragText);
+                fragText = ((index == frameIndex) ? "<font color=\"#488def\">" + fragText + "</font>" : fragText);
                 textBuilder.append(fragText);
             }
             tvContent.setText(Html.fromHtml(textBuilder.toString()));
             //caculute the whole textview's height by same method.
-            tvContent.post(()->{
+            tvContent.post(() -> {
                 int contentHeight = tvContent.getLineCount() * tvContent.getLineHeight();
-                if(contentHeight > svContent.getMeasuredHeight()) {
+                if (contentHeight > svContent.getMeasuredHeight()) {
                     svContent.setScrollY(offsetHeight);
                 }
             });
@@ -756,5 +762,4 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
     public void onErrorAddLove(int code, String errorMsg) {
 
     }
-
 }
