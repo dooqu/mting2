@@ -2,10 +2,13 @@ package cn.xylink.mting.ui.activity;
 
 import android.content.Context;
 import android.content.pm.ActivityInfo;
+import android.content.res.Resources;
+import android.graphics.Color;
 import android.os.Build;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.WindowManager;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
@@ -15,6 +18,8 @@ import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+
+import java.lang.reflect.Method;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -38,7 +43,7 @@ public class PlayerlActivity extends BaseActivity {
 
 
     /** 视频全屏参数 */
-    protected static final FrameLayout.LayoutParams COVER_SCREEN_PARAMS = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+    protected  FrameLayout.LayoutParams COVER_SCREEN_PARAMS ;
     private View customView;
     private FrameLayout fullscreenContainer;
     private WebChromeClient.CustomViewCallback customViewCallback;
@@ -51,6 +56,10 @@ public class PlayerlActivity extends BaseActivity {
 
     @Override
     protected void initView() {
+
+        int height = getResources().getDisplayMetrics().heightPixels;
+        COVER_SCREEN_PARAMS = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height);
+//        COVER_SCREEN_PARAMS = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 800);
 
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
             wvHtml.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
@@ -124,15 +133,16 @@ public class PlayerlActivity extends BaseActivity {
         FrameLayout decor = (FrameLayout) getWindow().getDecorView();
         fullscreenContainer = new FullscreenHolder(PlayerlActivity.this);
         fullscreenContainer.addView(view, COVER_SCREEN_PARAMS);
+
         decor.addView(fullscreenContainer, COVER_SCREEN_PARAMS);
-        int uiOptions =
-                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
-        decor.setSystemUiVisibility(uiOptions);
+//        decor.setSystemUiVisibility(flag);
         customView = view;
+
 
         setStatusBarVisibility(true);
         customViewCallback = callback;
     }
+
 
     /** 隐藏视频全屏 */
     private void hideCustomView() {
