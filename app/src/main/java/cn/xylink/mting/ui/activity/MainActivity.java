@@ -100,6 +100,7 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
     private AddUnreadPresenter mAddUreadPresenter;
     private Drawable mPauseDrawable;
     private Drawable mPlayDrawable;
+    private String mOpenArticleID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,12 +108,8 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
         L.v();
 //        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
         showShareResultDialog(getIntent().getIntExtra(SHARE_SUCCESS, -1), getIntent().getStringExtra(SHARE_URL));
-        String articleID = getIntent().getStringExtra(ARTICLE_ID);
-        if (!TextUtils.isEmpty(articleID)){
-            Bundle bundle = new Bundle();
-            bundle.putString("aid", articleID);
-            this.jumpActivity(ArticleDetailActivity.class, bundle);
-        }
+        mOpenArticleID = getIntent().getStringExtra(ARTICLE_ID);
+
     }
 
     @Override
@@ -120,7 +117,7 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
         L.v("*^*^*^*^*" + intent.getIntExtra(SHARE_SUCCESS, -1));
         showShareResultDialog(intent.getIntExtra(SHARE_SUCCESS, -1), getIntent().getStringExtra(SHARE_URL));
         String articleID = getIntent().getStringExtra(ARTICLE_ID);
-        if (!TextUtils.isEmpty(articleID)){
+        if (!TextUtils.isEmpty(articleID)) {
             Bundle bundle = new Bundle();
             bundle.putString("aid", articleID);
             this.jumpActivity(ArticleDetailActivity.class, bundle);
@@ -204,6 +201,13 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
     public void onDataSuccess() {
         L.v();
         setPlayBarState();
+        if (!TextUtils.isEmpty(mOpenArticleID)) {
+            L.v();
+            Bundle bundle = new Bundle();
+            bundle.putString("aid", mOpenArticleID);
+            this.jumpActivity(ArticleDetailActivity.class, bundle);
+            mOpenArticleID = null;
+        }
     }
 
     @Override
