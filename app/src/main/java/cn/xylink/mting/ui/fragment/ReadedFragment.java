@@ -1,5 +1,6 @@
 package cn.xylink.mting.ui.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 import cn.xylink.mting.R;
 import cn.xylink.mting.base.BaseActivity;
 import cn.xylink.mting.bean.Article;
@@ -31,6 +33,7 @@ import cn.xylink.mting.speech.event.SpeechProgressEvent;
 import cn.xylink.mting.speech.event.SpeechStartEvent;
 import cn.xylink.mting.speech.event.SpeechStopEvent;
 import cn.xylink.mting.ui.activity.ArticleDetailActivity;
+import cn.xylink.mting.ui.activity.PlayerlActivity;
 import cn.xylink.mting.ui.adapter.ReadedAdapter;
 import cn.xylink.mting.ui.adapter.UnreadAdapter;
 import cn.xylink.mting.utils.L;
@@ -124,6 +127,15 @@ public class ReadedFragment extends BaseMainTabFragment implements UnreadAdapter
         showBottonDialog(TAB_TYPE.READED, article);
     }
 
+    @OnClick(R.id.ll_empty)
+    void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.ll_empty:
+                initData();
+                break;
+        }
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSpeechStart(SpeechStartEvent event) {
         L.v(event.getArticle());
@@ -164,7 +176,7 @@ public class ReadedFragment extends BaseMainTabFragment implements UnreadAdapter
         } else if (event.getTab_type() == TAB_TYPE.COLLECT) {
             List<String> ids = event.getIds();
             if (ids != null && ids.size() > 0 && mAdapter != null && mAdapter.getArticleList() != null && mAdapter.getArticleList().size() > 0) {
-                for (String id:ids){
+                for (String id : ids) {
                     for (int i = 0; i < mAdapter.getArticleList().size(); i++) {
                         if (id.equals(mAdapter.getArticleList().get(i).getArticleId())) {
                             mAdapter.getArticleList().get(i).setStore(0);
