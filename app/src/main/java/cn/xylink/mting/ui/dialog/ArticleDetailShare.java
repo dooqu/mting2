@@ -22,30 +22,45 @@ public class ArticleDetailShare extends ArticleDetailBottomDialog {
                 @Override
                 public void onClick(View v) {
                     listener.onShareChange(0);
+                    if (dialog != null && dialog.isShowing()) {
+                        dialog.dismiss();
+                    }
                 }
             });
             view.findViewById(R.id.ll_wx_quan).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     listener.onShareChange(1);
+                    if (dialog != null && dialog.isShowing()) {
+                        dialog.dismiss();
+                    }
                 }
             });
             view.findViewById(R.id.ll_qq).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     listener.onShareChange(2);
+                    if (dialog != null && dialog.isShowing()) {
+                        dialog.dismiss();
+                    }
                 }
             });
             view.findViewById(R.id.ll_qq_space).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     listener.onShareChange(3);
+                    if (dialog != null && dialog.isShowing()) {
+                        dialog.dismiss();
+                    }
                 }
             });
             view.findViewById(R.id.ll_link).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     listener.onShareChange(4);
+                    if (dialog != null && dialog.isShowing()) {
+                        dialog.dismiss();
+                    }
                 }
             });
         }
