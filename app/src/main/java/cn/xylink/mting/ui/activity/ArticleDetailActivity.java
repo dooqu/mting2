@@ -541,6 +541,7 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
             public void invoke(int errorCode, Article article) {
                 if (errorCode == 0) {
                     tvFav.setText(article.getStore() == 1 ? "已收藏" : "收藏");
+                    Toast.makeText(ArticleDetailActivity.this, article.getStore() == 1? "收藏成功" : "取消收藏成功", Toast.LENGTH_SHORT).show();
                     if (service != null && service.getSelected() != null
                             && mCurrentArticle != null
                             && service.getSelected().getArticleId().equals(mCurrentArticle.getArticleId())) {
@@ -548,10 +549,9 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
                         service.updateNotification();
                     }
                     EventBus.getDefault().post(new AddStoreSuccessEvent());
-
                 }
                 else {
-                    Toast.makeText(ArticleDetailActivity.this, "收藏失败", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ArticleDetailActivity.this, "收藏操作失败", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -576,7 +576,7 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
                 }
                 break;
         }
-        T.s(this, "已经没有要播放的文章了");
+        T.s(this, "后边没有文章了~");
     }
 
     @OnClick({R.id.rl_main_play_bar_play, R.id.iv_play_bar_btn})
@@ -694,11 +694,16 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
     private void showContent(List<String> textFragments, int frameIndex) {
         StringBuilder textBuilder = new StringBuilder();
         final int fragmentsSize = textFragments.size();
+
+        int readedFrameSize = (frameIndex == 0)? fragmentsSize : frameIndex;
         //generate the readed text's view.
-        for (int index = 1; index < frameIndex; ++index) {
-            textBuilder.append(textFragments.get(index).replace("\n", "<br/>"));
+        for (int index = 1; index < readedFrameSize; ++index) {
+            textBuilder.append(textFragments.get(index).replace("\n", "<br/><br/>"));
         }
         tvContent.setText(Html.fromHtml(textBuilder.toString()));
+        if(frameIndex == 0) {
+            return;
+        }
         //after invoke method setText, tvContent's getLineHeight not available.
         //post measure behavior at next frame
         tvContent.post(() -> {
@@ -706,7 +711,7 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
             final int offsetHeight = tvContent.getLineHeight() * tvContent.getLineCount();
             //generate whole text's view.
             for (int index = Math.max(1 ,frameIndex); index < fragmentsSize; ++index) {
-                String fragText = textFragments.get(index).replace("\n", "<br/>");
+                String fragText = textFragments.get(index).replace("\n", "<br/><br/>");
                 fragText = ((index == frameIndex) ? "<font color=\"#488def\">" + fragText + "</font>" : fragText);
                 textBuilder.append(fragText);
             }

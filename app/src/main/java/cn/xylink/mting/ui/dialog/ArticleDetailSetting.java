@@ -37,7 +37,6 @@ public class ArticleDetailSetting extends ArticleDetailBottomDialog {
                     view.findViewById(R.id.iv_check2).setVisibility(View.VISIBLE);
                     break;
                 case XiaoIce:
-
                     view.findViewById(R.id.iv_check1).setVisibility(View.VISIBLE);
                     break;
                 case XiaoMei:
