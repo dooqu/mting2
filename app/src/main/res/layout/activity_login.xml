@@ -59,6 +59,7 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:textColor="@color/color_login_text_gray"
+                android:textSize="@dimen/text_16"
                 android:text="其它账号登录" />
 
             <View
@@ -81,15 +82,19 @@
 
             <ImageView
                 android:id="@+id/imv_login_weChat"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:scaleType="centerCrop"
+                android:adjustViewBounds="true"
                 android:src="@mipmap/login_wechat" />
 
             <ImageView
                 android:id="@+id/imv_login_qq"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
                 android:layout_marginLeft="56dp"
+                android:scaleType="centerCrop"
+                android:adjustViewBounds="true"
                 android:src="@mipmap/login_qq" />
         </LinearLayout>
 

@@ -4,6 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
     <RelativeLayout
+        android:id="@+id/rl_top"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
        >
@@ -35,8 +36,13 @@
         android:layout_height="1dp"
         android:visibility="invisible"
         android:progressDrawable="@drawable/progressbar" />
+    <FrameLayout
+        android:id="@+id/fl_web"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
     <WebView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/wv_html"></WebView>
+    </FrameLayout>
 </LinearLayout>
