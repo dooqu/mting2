@@ -34,10 +34,11 @@ public class ArticleDetailSetting extends ArticleDetailBottomDialog {
         if (role != null) {
             switch (role) {
                 case XiaoYao:
-                    view.findViewById(R.id.iv_check1).setVisibility(View.VISIBLE);
+                    view.findViewById(R.id.iv_check2).setVisibility(View.VISIBLE);
                     break;
                 case XiaoIce:
-                    view.findViewById(R.id.iv_check2).setVisibility(View.VISIBLE);
+
+                    view.findViewById(R.id.iv_check1).setVisibility(View.VISIBLE);
                     break;
                 case XiaoMei:
                     view.findViewById(R.id.iv_check3).setVisibility(View.VISIBLE);
