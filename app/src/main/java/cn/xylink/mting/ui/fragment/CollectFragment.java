@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 import cn.xylink.mting.R;
 import cn.xylink.mting.base.BaseActivity;
 import cn.xylink.mting.bean.Article;
@@ -121,6 +122,15 @@ public class CollectFragment extends BaseMainTabFragment implements UnreadAdapte
     @Override
     public void onItemMoreClick(Article article) {
         showBottonDialog(TAB_TYPE.COLLECT, article);
+    }
+
+    @OnClick(R.id.ll_empty)
+    void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.ll_empty:
+                initData();
+                break;
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

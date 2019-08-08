@@ -91,8 +91,12 @@ public class LeftMenuFragment extends BasePresenterFragment {
     public void hideLoading() {
     }
 
+    @OnClick(R.id.ll_left_menu_layout)
+    void onClick(){
+
+    }
     @OnClick({R.id.rl_left_menu_about, R.id.rl_left_menu_feedback, R.id.rl_left_menu_fun, R.id.rl_left_menu_share, R.id.tv_left_menu_out,
-            R.id.tv_left_menu_title, R.id.iv_left_menu_head, R.id.ll_left_menu_layout})
+            R.id.tv_left_menu_title, R.id.iv_left_menu_head})
     void onClick(View view) {
         CloseLeftMenuEvent event = new CloseLeftMenuEvent();
         switch (view.getId()) {

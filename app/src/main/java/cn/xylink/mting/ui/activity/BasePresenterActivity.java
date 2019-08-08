@@ -81,8 +81,10 @@ public abstract class BasePresenterActivity<T extends BasePresenter> extends Bas
     protected void onResume() {
         super.onResume();
         L.v();
-        if (alertDialog == null || (alertDialog != null && !alertDialog.isShowing()))
+        tCopy = ContentManager.getInstance().getCopyArray();
+        if (alertDialog == null || (alertDialog != null && !alertDialog.isShowing())) {
             showCopyDialog();
+        }
     }
 
     private TipDialog alertDialog;
@@ -132,21 +134,21 @@ public abstract class BasePresenterActivity<T extends BasePresenter> extends Bas
                             return;
                         }
                     }
-//                if (tCopy == null)
-//                    tCopy = new ArrayList<>();
-//                tCopy.add(copy.toString());
-//                if (tCopy.size() > 20)
-//                    tCopy.remove(0);
-//                ContentManager.getInstance().setCopyArray(tCopy);
-                ContentManager.getInstance().addCopyItem(copy.toString());
-                tCopy = ContentManager.getInstance().getCopyArray();
+                if (tCopy == null)
+                    tCopy = new ArrayList<>();
+                tCopy.add(copy.toString());
+                if (tCopy.size() > 20)
+                    tCopy.remove(0);
+                ContentManager.getInstance().setCopyArray(tCopy);
+//                ContentManager.getInstance().addCopyItem(copy.toString());
+//                tCopy = ContentManager.getInstance().getCopyArray();
                 CopyAddDialog dialog = new CopyAddDialog(this, tCopy.get(tCopy.size() - 1));
                 dialog.show();
             }
         }
     }
 
-    private List<String> tCopy = ContentManager.getInstance().getCopyArray();
+    private List<String> tCopy ;
 
     public static CharSequence getCopy(Context context) {
         ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
