@@ -85,12 +85,10 @@ public class LeftMenuFragment extends BasePresenterFragment {
 
     @Override
     public void showLoading() {
-
     }
 
     @Override
     public void hideLoading() {
-
     }
 
     @OnClick({R.id.rl_left_menu_about, R.id.rl_left_menu_feedback, R.id.rl_left_menu_fun, R.id.rl_left_menu_share, R.id.tv_left_menu_out,
@@ -129,6 +127,4 @@ public class LeftMenuFragment extends BasePresenterFragment {
         }
         EventBus.getDefault().post(event);
     }
-
-
 }

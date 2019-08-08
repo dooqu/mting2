@@ -7,37 +7,39 @@
     android:focusable="false"
     android:focusableInTouchMode="true"
     android:orientation="vertical">
-<RelativeLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-    <EditText
 
-        android:id="@+id/et_article_title"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:background="@android:color/transparent"
-        android:hint="文章地址"
-        android:maxLines="3"
-        android:textSize="@dimen/text_18"
-        android:textStyle="bold" />
-    <ImageView
-        android:id="@+id/iv_del_et"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="10dp"
-        android:layout_centerVertical="true"
-        android:visibility="gone"
-        android:src="@mipmap/del_et"/>
-</RelativeLayout>
+        android:layout_height="wrap_content">
+
+        <EditText
+
+            android:id="@+id/et_article_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:background="@android:color/transparent"
+            android:hint="文章地址"
+            android:maxLines="3"
+            android:textSize="@dimen/text_18"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/iv_del_et"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
+            android:src="@mipmap/del_et"
+            android:visibility="gone" />
+    </RelativeLayout>
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="37dp"
-        >
+        android:layout_marginTop="37dp">
 
         <View
             android:id="@+id/v_1"
@@ -51,8 +53,8 @@
             android:id="@+id/pb_speech_bar"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:scaleType="centerCrop"
             android:adjustViewBounds="true"
+            android:scaleType="centerCrop"
             android:src="@drawable/gif_loading"
             android:visibility="gone" />
     </FrameLayout>
@@ -112,19 +114,26 @@
 
     <ScrollView
         android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
         android:paddingTop="20dp"
-        android:layout_height="match_parent">
+        android:scrollbars="none">
 
-        <TextView
-            android:id="@+id/tv_content"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="20dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginRight="20dp"
-            android:lineSpacingExtra="5dp"
-            android:textIsSelectable="true"
-            android:textColor="@android:color/black"
-            android:textSize="@dimen/text_18" />
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/tv_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginRight="20dp"
+                android:lineSpacingExtra="5dp"
+                android:textColor="@android:color/black"
+                android:textIsSelectable="true"
+                android:textSize="@dimen/text_18" />
+        </LinearLayout>
     </ScrollView>
 </LinearLayout>
