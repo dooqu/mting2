@@ -300,9 +300,12 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
 
     @OnClick(R.id.ll_source_detail)
     void onSourceDetail(View v) {
+        if(mCurrentArticle == null) {
+            return;
+        }
         Intent intent = new Intent();
         intent.setClass(this, HtmlActivity.class);
-        intent.putExtra(HtmlActivity.EXTRA_HTML, articleUrl);
+        intent.putExtra(HtmlActivity.EXTRA_HTML, mCurrentArticle.getUrl());
         startActivity(intent);
     }
 
