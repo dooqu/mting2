@@ -255,9 +255,13 @@ public abstract class BaiduSpeechor implements Speechor {
 
         this.speed = speed;
         speechSynthesizer.setParam(SpeechSynthesizer.PARAM_SPEED, paramSpeed);
+        //百度的引擎没有用到Loadding状态
         if (this.state == SpeechorState.SpeechorStatePlaying) {
             this.stop();
             this.seekAndPlay(fragmentIndex);
+        }
+        else if(this.state == SpeechorState.SpeechorStatePaused) {
+            this.stop();
         }
     }
 

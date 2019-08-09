@@ -186,19 +186,24 @@ public class ArticleDataProvider {
 
                     @Override
                     public void onSuccess(ArticleInfoResponse response) {
-                        if (callback != null && tickCountAtTime == tickcount) {
-                            article.setContent(response.data.getContent());
-                            article.setStore(response.data.getStore());
-                            article.setInType(response.data.getInType());
-                            article.setUrl(response.data.getUrl());
-                            article.setTitle(response.data.getTitle());
-                            article.setShareUrl(response.data.getShareUrl());
-                            article.setSourceName(response.data.getSourceName());
-                            article.setId(response.data.getId());
-                            article.setSourceLogo(response.data.getSourceLogo());
-                            article.setRead(response.data.getRead());
-                            article.setProgress(response.data.getProgress());
-                            callback.invoke(0, article);
+                        if(response.getCode() == 200) {
+                            if (callback != null && tickCountAtTime == tickcount) {
+                                article.setContent(response.data.getContent());
+                                article.setStore(response.data.getStore());
+                                article.setInType(response.data.getInType());
+                                article.setUrl(response.data.getUrl());
+                                article.setTitle(response.data.getTitle());
+                                article.setShareUrl(response.data.getShareUrl());
+                                article.setSourceName(response.data.getSourceName());
+                                article.setId(response.data.getId());
+                                article.setSourceLogo(response.data.getSourceLogo());
+                                article.setRead(response.data.getRead());
+                                article.setProgress(response.data.getProgress());
+                                callback.invoke(0, article);
+                            }
+                        }
+                        else {
+                            onFailure(-500, "服务端响应错误");
                         }
                     }
 

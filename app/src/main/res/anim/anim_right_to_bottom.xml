@@ -14,10 +14,9 @@
         L 60,80
         L 60,20"
         android:valueTo="
-        M 50,20
+        M 49.5,20
         L 80,70
-        L 50,70
-        L 50,20"
+        L 49.5,70
+        L 49.5,20"
         android:valueType="pathType" />
-
 </set>

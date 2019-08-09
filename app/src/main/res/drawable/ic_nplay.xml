@@ -3,15 +3,16 @@
     android:height="200dp"
     android:viewportWidth="100"
     android:viewportHeight="100">
+
     <group android:name="group"
         android:pivotX="50"
-        android:pivotY="50">
+        android:pivotY="51">
         <path
             android:name="left"
             android:fillColor="@color/c488def"
             android:pathData="
-        M 80,50
-        L 30,50
+        M 80,50.5
+        L 30,50.5
         L 30,20
         L 80,50"/>
 
@@ -20,7 +21,7 @@
             android:fillColor="@color/c488def"
             android:pathData="
         M 80,50
-        L 30,50
+        L 30,49.5
         L 30,80
         L 80,50"/>
     </group>

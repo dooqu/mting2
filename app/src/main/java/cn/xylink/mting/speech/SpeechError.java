@@ -10,5 +10,6 @@ public class SpeechError {
     public static int ARTICLE_LOAD_ERROR = 993;
     public static int NOTHING_TO_PLAY = 992;
     public static int SEEK_NOT_ALLOW = 991;
+    public static int HAS_NO_FRAGMENTS = 990;
 
 }

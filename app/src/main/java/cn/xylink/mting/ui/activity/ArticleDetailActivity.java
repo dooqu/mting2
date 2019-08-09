@@ -28,6 +28,8 @@ import org.greenrobot.eventbus.ThreadMode;
 import org.w3c.dom.Text;
 
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -111,6 +113,8 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
     private Drawable mPlayDrawable;
     private int textReadedRuntimeHeight;
     private int textTotalRuntimeHeight;
+    private Timer favTimer = new Timer();
+    private TimerTask favTimerTask;
 
 
     @Override
@@ -136,7 +140,7 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
             }
             //获取当前正在播放的ArticleInfo
             currArt = service.getSelected();
-            if(currArt == null) {
+            if (currArt == null) {
                 Toast.makeText(this, "未找到该文章", Toast.LENGTH_SHORT).show();
                 finish();
                 return;
@@ -151,7 +155,7 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
             //设定作者来源
             tvAuthor.setText(currArt.getSourceName());
             tvAuthor.setVisibility(currArt.getSourceName() != null ? View.VISIBLE : View.GONE);
-            tvFav.setText(currArt.getStore() == 1 ? "已收藏" : "收藏");
+            setFavorite(currArt.getStore() == 1);
 
             articleUrl = currArt.getUrl();
 
@@ -168,7 +172,9 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
                     handler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            setArticleProgress(frameIndex, framesTotal);
+                            if (isFinishing() == false && isDestroyed() == false) {
+                                setArticleProgress(frameIndex, framesTotal);
+                            }
                         }
                     }, 100);
                     break;
@@ -181,7 +187,9 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
                     handler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            setArticleProgress(frameIndex, framesTotal);
+                            if (isFinishing() == false && isDestroyed() == false) {
+                                setArticleProgress(frameIndex, framesTotal);
+                            }
                         }
                     }, 100);
                     break;
@@ -191,57 +199,6 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
         }
 
 
-        /*
-        if (service.getState() == Speechor.SpeechorState.SpeechorStatePlaying && aid.equals(mCurrentArticle.getArticleId())) {
-            //判断是否是自己编写的文章
-            if (mCurrentArticle != null && (mCurrentArticle.getInType() == 1 || TextUtils.isEmpty(mCurrentArticle.getUrl()))) {
-                llArticleEdit.setVisibility(View.VISIBLE);
-                llSourceDetail.setVisibility(View.GONE);
-                mTitleheight = tvContent.getY();
-                aid = mCurrentArticle.getId();
-            }
-            if (mCurrentArticle != null) {
-                tvContent.setText(mCurrentArticle.getContent());
-            }
-            isPlaying = 1;
-            if (ivPlayBarBtn.getDrawable() != mPauseDrawable) {
-                ivPlayBarBtn.setImageDrawable(mPauseDrawable);
-                ((Animatable) mPauseDrawable).start();
-            }
-        } else if (aid != null) {
-            isPlaying = 1;
-            service.play(aid);
-        }
-        if (mCurrentArticle != null) {
-            articleUrl = mCurrentArticle.getUrl();
-            tvContent.setText(mCurrentArticle.getContent());
-            tvTitle.setText(mCurrentArticle.getTitle());
-            if (TextUtils.isEmpty(mCurrentArticle.getTitle())) {
-                tvArTitle.setVisibility(View.GONE);
-            } else {
-                tvArTitle.setVisibility(View.VISIBLE);
-                tvArTitle.setText(mCurrentArticle.getTitle());
-            }
-            if (TextUtils.isEmpty(mCurrentArticle.getSourceName())) {
-                tvAuthor.setVisibility(View.GONE);
-            } else {
-                tvAuthor.setVisibility(View.VISIBLE);
-                tvAuthor.setText(mCurrentArticle.getSourceName());
-            }
-            if (mCurrentArticle.getInType() == 1 || TextUtils.isEmpty(mCurrentArticle.getUrl())) {
-                llArticleEdit.setVisibility(View.VISIBLE);
-                llSourceDetail.setVisibility(View.GONE);
-            }
-            if (mCurrentArticle.getStore() == 0) {
-                tvFav.setText("收藏");
-            } else {
-                tvFav.setText("已收藏");
-            }
-        }
-        mTitleheight = tvContent.getY();
-
-
-        */
         svContent.setOnScrollListener(new MyScrollView.OnScrollListener() {
             @Override
             public void onScroll(int scrollY) {
@@ -535,26 +492,44 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
 
     @OnClick(R.id.tv_fav)
     void onFav(View v) {
-        ArticleDataProvider provider = new ArticleDataProvider(this);
-        provider.favorite(mCurrentArticle, mCurrentArticle.getStore() == 1 ? false : true, new ArticleDataProvider.ArticleLoaderCallback() {
+        TextView fav = (TextView) v;
+        setFavorite(fav.getText().equals("收藏"));
+        if (favTimerTask != null) {
+            favTimerTask.cancel();
+        }
+        favTimer.purge();
+        favTimerTask = new TimerTask() {
             @Override
-            public void invoke(int errorCode, Article article) {
-                if (errorCode == 0) {
-                    tvFav.setText(article.getStore() == 1 ? "已收藏" : "收藏");
-                    Toast.makeText(ArticleDetailActivity.this, article.getStore() == 1? "收藏成功" : "取消收藏成功", Toast.LENGTH_SHORT).show();
-                    if (service != null && service.getSelected() != null
-                            && mCurrentArticle != null
-                            && service.getSelected().getArticleId().equals(mCurrentArticle.getArticleId())) {
-                        service.getSelected().setStore(article.getStore());
-                        service.updateNotification();
-                    }
-                    EventBus.getDefault().post(new AddStoreSuccessEvent());
-                }
-                else {
-                    Toast.makeText(ArticleDetailActivity.this, "收藏操作失败", Toast.LENGTH_SHORT).show();
+            public void run() {
+                Log.d("SPEECH_", "收藏操作");
+                if (ArticleDetailActivity.this.isDestroyed() == false && ArticleDetailActivity.this.isFinishing() == false) {
+                    ArticleDataProvider provider = new ArticleDataProvider(ArticleDetailActivity.this);
+                    provider.favorite(mCurrentArticle, fav.getText().equals("已收藏") ? true : false, new ArticleDataProvider.ArticleLoaderCallback() {
+                        @Override
+                        public void invoke(int errorCode, Article article) {
+                            if (errorCode == 0) {
+                                if (isFinishing() == false && isDestroyed() == false) {
+                                    if (service != null && service.getSelected() != null
+                                            && mCurrentArticle != null
+                                            && service.getSelected().getArticleId().equals(mCurrentArticle.getArticleId())) {
+                                        service.getSelected().setStore(article.getStore());
+                                        service.updateNotification();
+                                    }
+                                    EventBus.getDefault().post(new AddStoreSuccessEvent());
+                                }
+                                else {
+                                    //恢复状态
+                                    //fav.setText(fav.getText().equals("已收藏")? "收藏" : "已收藏");
+                                    setFavorite(fav.getText().equals("收藏"));
+                                    Toast.makeText(ArticleDetailActivity.this, "收藏操作失败", Toast.LENGTH_SHORT).show();
+                                }
+                            } // end errorCode == 0
+                        } // end invoke
+                    });
                 }
             }
-        });
+        };
+        favTimer.schedule(favTimerTask, 1500);
     }
 
     @OnClick(R.id.tv_next)
@@ -602,7 +577,7 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSpeechEvent(RecycleEvent event) {
         if (event instanceof SpeechStartEvent) {
-            tvContent.setText("正文正在加载...");
+            tvContent.setText("正在加载正文...");
             tvTitle.setText(event.getArticle().getTitle());
             tvAuthor.setText(event.getArticle().getSourceName());
             tvAuthor.setVisibility(event.getArticle().getSourceName() != null && event.getArticle().getSourceName().trim() != "" ? View.VISIBLE : View.GONE);
@@ -613,7 +588,8 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
             tvContent.setText(mCurrentArticle.getContent());
             llArticleEdit.setVisibility((mCurrentArticle.getInType() == 1 || TextUtils.isEmpty(mCurrentArticle.getUrl())) ? View.VISIBLE : View.GONE);
             llSourceDetail.setVisibility((mCurrentArticle.getInType() == 1 || TextUtils.isEmpty(mCurrentArticle.getUrl())) ? View.GONE : View.VISIBLE);
-            tvFav.setText(mCurrentArticle.getStore() == 1 ? "已收藏" : "收藏");
+            //tvFav.setText(mCurrentArticle.getStore() == 1 ? "已收藏" : "收藏");
+            setFavorite(mCurrentArticle.getStore() == 1);
         }
         else if (event instanceof SpeechProgressEvent) {
             SpeechProgressEvent spe = (SpeechProgressEvent) event;
@@ -633,12 +609,16 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
                 ((Animatable) mPlayDrawable).start();
             }
             float progress = 0;
-            setArticleProgress(100, 100);
+            switch (((SpeechStopEvent) event).getStopReason()) {
+                case ListIsNull:
+                    setArticleProgress(100, 100);
+                    break;
+            }
         }
         else if (event instanceof FavoriteEvent) {
             Log.d("SPEECH_", "Favorite Event");
             if (event.getArticle().getArticleId() != null && event.getArticle().getArticleId().equals(mCurrentArticle.getArticleId())) {
-                tvFav.setText(event.getArticle().getStore() == 1 ? "已收藏" : "收藏");
+                setFavorite(event.getArticle().getStore() == 1);
             }
             return;
         }
@@ -680,7 +660,6 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
     private void setArticleProgress(int frameIndex, int framesTotal) {
         float percentage = 0f;
         int progress = 0;
-
         if (framesTotal != 0) {
             percentage = (float) frameIndex / (float) framesTotal;
             progress = (int) (percentage * 100);
@@ -695,22 +674,25 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
         StringBuilder textBuilder = new StringBuilder();
         final int fragmentsSize = textFragments.size();
 
-        int readedFrameSize = (frameIndex == 0)? fragmentsSize : frameIndex;
+        int readedFrameSize = (frameIndex == 0) ? fragmentsSize : frameIndex;
         //generate the readed text's view.
         for (int index = 1; index < readedFrameSize; ++index) {
             textBuilder.append(textFragments.get(index).replace("\n", "<br/><br/>"));
         }
         tvContent.setText(Html.fromHtml(textBuilder.toString()));
-        if(frameIndex == 0) {
+        if (frameIndex == 0) {
             return;
         }
         //after invoke method setText, tvContent's getLineHeight not available.
         //post measure behavior at next frame
         tvContent.post(() -> {
+            if (isFinishing() || isDestroyed()) {
+                return;
+            }
             //caculate the readed text's height.
             final int offsetHeight = tvContent.getLineHeight() * tvContent.getLineCount();
             //generate whole text's view.
-            for (int index = Math.max(1 ,frameIndex); index < fragmentsSize; ++index) {
+            for (int index = Math.max(1, frameIndex); index < fragmentsSize; ++index) {
                 String fragText = textFragments.get(index).replace("\n", "<br/><br/>");
                 fragText = ((index == frameIndex) ? "<font color=\"#488def\">" + fragText + "</font>" : fragText);
                 textBuilder.append(fragText);
@@ -718,12 +700,20 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
             tvContent.setText(Html.fromHtml(textBuilder.toString()));
             //caculute the whole textview's height by same method.
             tvContent.post(() -> {
+                if (isFinishing() || isDestroyed()) {
+                    return;
+                }
                 int contentHeight = tvContent.getLineCount() * tvContent.getLineHeight();
-                if (contentHeight > svContent.getMeasuredHeight()) {
-                    svContent.setScrollY(offsetHeight);
+                if (frameIndex > 1 && contentHeight > svContent.getMeasuredHeight()) {
+                    svContent.setScrollY(offsetHeight - tvContent.getLineHeight());
                 }
             });
         });
+    }
+
+    private void setFavorite(boolean isFav) {
+        tvFav.setText(isFav ? "已收藏" : "收藏");
+        tvFav.setTextColor(Color.parseColor(isFav ? "#488def" : "#666666"));
     }
 
 

@@ -148,9 +148,12 @@ public abstract class XiaoIceSpeechor implements Speechor {
                 return -SpeechError.TARGET_IS_RELEASED;
 
             if (fragmentIndex < 0
-                    || fragmentIndex >= this.textFragments.size()
-                    || textFragments.size() == 0)
+                    || fragmentIndex >= this.textFragments.size())
                 return -SpeechError.INDEX_OUT_OF_RANGE;
+
+            if(textFragments.size() == 0) {
+                return -SpeechError.HAS_NO_FRAGMENTS;
+            }
 
             switch (this.state) {
                 case SpeechorStateLoadding:
@@ -281,7 +284,7 @@ public abstract class XiaoIceSpeechor implements Speechor {
         }
         catch (NullPointerException ex) {
             SpeechTextFragment fragment = speechTextFragments.get(segmentIndex);
-            onError(SpeechError.MEDIA_PLAYER_NULL_ERROR, "media play播放的Audio为空:" + ex.getMessage());
+            onError(SpeechError.MEDIA_PLAYER_NULL_ERROR, "media player播放的Audio为空:" + ex.getMessage());
         }
     }
 
@@ -392,7 +395,15 @@ public abstract class XiaoIceSpeechor implements Speechor {
                 seekAndPlay(fragmentIndex);
             }
             else {
-                mediaPlayer.start();
+                int fragSize = speechTextFragments.size();
+                if(fragSize > 0 && fragmentIndex < fragSize &&
+                        speechTextFragments.get(fragmentIndex).getAudioUrl() != null &&
+                        speechTextFragments.get(fragmentIndex).getFragmentState() == SpeechTextFragmentState.AudioReady) {
+                    mediaPlayer.start();
+                }
+                else {
+                    return false;
+                }
             }
             this.state = SpeechorState.SpeechorStatePlaying;
             return true;
@@ -500,12 +511,18 @@ public abstract class XiaoIceSpeechor implements Speechor {
         this.speed = speed;
         ttsAudioLoader.cancelAll();
         clearCachedFragmentsAudio();
-        //设定好速度后，用新速度播放该片段
-        if (state == SpeechorState.SpeechorStatePlaying || state == SpeechorState.SpeechorStateLoadding) {
-            if (mediaPlayer.isPlaying()) {
-                mediaPlayer.stop();
-            }
-            seekAndPlay(fragmentIndex);
+
+        switch (state) {
+            case SpeechorStateLoadding:
+            case SpeechorStatePlaying:
+                if(mediaPlayer.isPlaying()) {
+                    mediaPlayer.stop();
+                }
+                seekAndPlay(fragmentIndex);
+                break;
+
+            case SpeechorStatePaused:
+                break;
         }
     }
 
