@@ -13,7 +13,7 @@ import cn.xylink.mting.contract.AddFeedbackContact;
 import cn.xylink.mting.model.LinkCreateRequest;
 import cn.xylink.mting.presenter.AddFeedbackPresenter;
 
-public class FeedBackActivity extends BasePresenterActivity implements AddFeedbackContact.IAddFeedBackView {
+public class FeedBack2Activity extends BasePresenterActivity implements AddFeedbackContact.IAddFeedBackView {
 
     @BindView(R.id.tv_include_title)
     TextView tvTitle;
@@ -26,7 +26,7 @@ public class FeedBackActivity extends BasePresenterActivity implements AddFeedba
 
     @Override
     protected void preView() {
-        setContentView(R.layout.activity_fadeback);
+        setContentView(R.layout.activity_fadeback2);
     }
 
     @Override

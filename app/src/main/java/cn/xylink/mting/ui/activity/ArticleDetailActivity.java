@@ -336,7 +336,7 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
 
     @OnClick(R.id.tv_fk)
     void onTvfkClick(View v) {
-        jumpActivity(FeedBackActivity.class);
+        jumpActivity(FeedBack2Activity.class);
     }
 
     @OnClick({R.id.ll_setting, R.id.iv_setting, R.id.tv_setting})
@@ -593,6 +593,7 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
         if (event instanceof SpeechStartEvent) {
             tvContent.setText("正在加载正文...");
             tvTitle.setText(event.getArticle().getTitle());
+            tvTitle.requestFocus();
             tvAuthor.setText(event.getArticle().getSourceName());
             tvAuthor.setVisibility(event.getArticle().getSourceName() != null && event.getArticle().getSourceName().trim() != "" ? View.VISIBLE : View.GONE);
         }
