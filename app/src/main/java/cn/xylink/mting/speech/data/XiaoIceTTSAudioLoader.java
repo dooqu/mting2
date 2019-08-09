@@ -52,7 +52,6 @@ public class XiaoIceTTSAudioLoader implements TTSAudioLoader {
 
     @Override
     public void textToSpeech(String text, Speechor.SpeechorSpeed speechorSpeed, LoadResult result) {
-
         Log.d("xylink", "TTS:" + text);
         String postData = null;
 
@@ -81,11 +80,6 @@ public class XiaoIceTTSAudioLoader implements TTSAudioLoader {
                             JSONObject itemObject = itemArray.getJSONObject(0);
                             JSONObject contentObject = itemObject.getJSONObject("content");
                             String voiceUrl = contentObject.getString("audioUrl");
-
-
-                            if(voiceUrl == null || voiceUrl == null) {
-                                Log.d("SPEECH_", "voiceUrl = null");
-                            }
 
                             OkGo.<File>get(voiceUrl)
                                     .tag(XiaoIceTTSAudioLoader.this)

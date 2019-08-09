@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class BaiduSpeechor implements Speechor {
-    static String TAG = "SPEECH_";
+    static String TAG = BaiduSpeechor.class.getSimpleName();
     List<String> textFragments;
     SpeechHelper speechOperator;
     SpeechorState state;

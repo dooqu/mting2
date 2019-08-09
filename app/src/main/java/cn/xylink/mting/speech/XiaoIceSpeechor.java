@@ -13,7 +13,7 @@ import cn.xylink.mting.speech.data.XiaoIceTTSAudioLoader;
 
 public abstract class XiaoIceSpeechor implements Speechor {
 
-    static String TAG = "SPEECH_";
+    static String TAG = XiaoIceSpeechor.class.getSimpleName();
 
     enum SpeechTextFragmentState {
         TextReady,
@@ -193,7 +193,7 @@ public abstract class XiaoIceSpeechor implements Speechor {
 
 
     private void seekAndPlay(int indexToPlay) {
-        Log.d("SPEECH_", "___seekAndPlay:" + indexToPlay);
+        Log.d(TAG, "seekAndPlay:" + indexToPlay);
         seekTime = System.currentTimeMillis();
         int segmentSize = this.textFragments.size();
         for (int startIndex = indexToPlay, endIndex = Math.min(startIndex + LOADER_QUEUE_SIZE, segmentSize); startIndex < endIndex; ++startIndex) {
@@ -233,26 +233,15 @@ public abstract class XiaoIceSpeechor implements Speechor {
                                 }
                                 Log.d(TAG, "fragment loaded: index =" + this.fragment.getFrameIndex() + ", indexToPlay=" + indexToPlay + ", errorCode=" + errorCode);
                                 if (errorCode == 0) {
-                                    if(audioUrl == null) {
-                                        Log.d(TAG, "ttsloader.callback : errorcode=0, audioUrl = null, frameindex=" + this.fragment.getFrameIndex());
-                                    }
                                     this.fragment.setFragmentState(SpeechTextFragmentState.AudioReady);
                                     this.fragment.setAudioUrl(audioUrl);
 
-                                    if(audioUrl == null) {
-                                        Log.d("SPEECH_", "loadresult url= null");
-                                    }
-
                                     if(XiaoIceSpeechor.this.seekTime != this.fragment.getSeekTime()) {
-                                        Log.d("SPEECH_", "TIME 值验证失败");
+                                        Log.d(TAG, "TIME 值验证失败");
                                         return;
                                     }
-
                                     if (this.fragment.getFrameIndex() == XiaoIceSpeechor.this.fragmentIndex) {
                                         if (state == SpeechorState.SpeechorStateLoadding) {
-                                            if(speechTextFragments.get(this.fragment.getFrameIndex()).getAudioUrl() == null) {
-                                                Log.d("SPEECH_", "usl= null" + this.fragment.getFrameIndex());
-                                            }
                                             //定性
                                             state = SpeechorState.SpeechorStatePlaying;
                                             //play it;
@@ -261,7 +250,6 @@ public abstract class XiaoIceSpeechor implements Speechor {
                                     }
                                 }
                                 else {
-                                    Log.d("SPEECH_", "Log Error");
                                     //加载失败之后的逻辑分之
                                     if (++this.fragment.retryCount > Speechor.ERROR_RETRY_COUNT) {
                                         this.fragment.setFragmentState(SpeechTextFragmentState.Error);
@@ -286,6 +274,7 @@ public abstract class XiaoIceSpeechor implements Speechor {
                             } // end synchornized
                         } // end invoke
                     };
+
                     ttsAudioLoader.textToSpeech(fragment.getFragmentText(), speed, loadResult);
                     fragment.setFragmentState(SpeechTextFragmentState.AudioLoadding);
                     break;
@@ -303,9 +292,6 @@ public abstract class XiaoIceSpeechor implements Speechor {
 
     private void playSegment(int segmentIndex) {
         try {
-            if(speechTextFragments.get(segmentIndex).getAudioUrl() == null ) {
-                Log.d("SPEECH_", "playSegment=null, index=" + segmentIndex);
-            }
             mediaPlayer.reset();
             mediaPlayer.setDataSource(speechTextFragments.get(segmentIndex).getAudioUrl());
             mediaPlayer.prepareAsync();
