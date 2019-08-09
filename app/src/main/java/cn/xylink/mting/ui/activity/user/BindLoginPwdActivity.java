@@ -177,11 +177,11 @@ public class BindLoginPwdActivity extends BasePresenterActivity implements BindT
                 String pwd = etPwd.getText().toString();
                 if(pwd.length() == 0)
                 {
-                    Toast.makeText(this,"密码不能为空",Toast.LENGTH_SHORT).show();
+                    toastShort("密码不能为空");
                     return;
                 }else if(pwd.length() < 6)
                 {
-                    toastLong("密码长度小于6位，请重新输入");
+                    toastShort("密码长度小于6位，请重新输入");
                     return;
                 }
                 thirdPlatformRequest();
@@ -237,13 +237,13 @@ public class BindLoginPwdActivity extends BasePresenterActivity implements BindT
 
     @Override
     public void onThirdPlatformError(int code, String errorMsg) {
-        Toast.makeText(this,errorMsg,Toast.LENGTH_SHORT).show();
+        toastShort(errorMsg);
     }
 
     @Override
     public void onCodeSuccess(BaseResponse<CodeInfo> response) {
         L.v(response.code);
-        Toast.makeText(this, response.message, Toast.LENGTH_SHORT).show();
+        toastShort( response.message);
         if (response.data != null) {
             Intent mIntent = new Intent(this, GetCodeActivity.class);
             mIntent.putExtra(EXTRA_PHONE, phone);

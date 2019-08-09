@@ -111,7 +111,7 @@ public class AddOneNoteFragment extends BasePresenterFragment implements InputCr
             }
         }
         if (TextUtils.isEmpty(content)) {
-            Toast.makeText(getContext(), "请输入文章正文", Toast.LENGTH_SHORT).show();
+            toastShort("请输入文章正文");
             return;
         }
         L.v("title", title);
@@ -170,7 +170,7 @@ public class AddOneNoteFragment extends BasePresenterFragment implements InputCr
         L.v("response.msg", response.message);
         String json = new Gson().toJson(response.data);
 
-        Toast.makeText(getContext(),"已加入待读",Toast.LENGTH_SHORT).show();
+        toastShort("已加入待读");
         AddUnreadEvent event = new AddUnreadEvent();
         event.setArticleID(response.data.getArticleId());
         EventBus.getDefault().post(event);

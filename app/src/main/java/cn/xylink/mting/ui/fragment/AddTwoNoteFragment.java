@@ -176,7 +176,7 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
             case R.id.tv_preview:
                 String link = etLink.getText().toString();
                 if (TextUtils.isEmpty(link)) {
-                    Toast.makeText(this.getContext(), "地址不能为空", Toast.LENGTH_SHORT).show();
+                    toastShort("地址不能为空");
                     return;
                 }
                 if (isStop)
@@ -254,11 +254,11 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
         L.v("eventType", 2);
         String link = responseUrl;
         if (!TextUtils.isEmpty(etLink.getText()) && TextUtils.isEmpty(link)) {
-            Toast.makeText(this.getContext(), "请先点击预览", Toast.LENGTH_SHORT).show();
+            toastShort("请先点击预览");
             return;
         }
         if (TextUtils.isEmpty(link)) {
-            Toast.makeText(this.getContext(), "不能解析空地址", Toast.LENGTH_SHORT).show();
+            toastShort("不能解析空地址");
             return;
         }
         if (linkArticle.getExistUnread() == 1 || linkArticle.getExistUnread() == 2) {
@@ -292,8 +292,7 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
     @Override
     public void onPushSuccess(BaseResponse<LinkArticle> response) {
         L.v(response.data);
-
-        Toast.makeText(getContext(), "已加入待读", Toast.LENGTH_SHORT).show();
+        toastShort("已加入待读");
         AddUnreadEvent event = new AddUnreadEvent();
         event.setArticleID(response.data.getArticleId());
         EventBus.getDefault().post(event);
@@ -369,12 +368,12 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
 
     @Override
     public void onAddFeedBackSuccess(BaseResponse<String> response) {
-        Toast.makeText(this.getContext(), "反馈成功", Toast.LENGTH_SHORT).show();
+        toastShort("反馈成功");
 
     }
 
     @Override
     public void onBindCheckError(int code, String errorMsg) {
-        Toast.makeText(this.getContext(), errorMsg, Toast.LENGTH_SHORT).show();
+        toastShort(errorMsg);
     }
 }
