@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -77,6 +78,7 @@ public class UpgradeConfirmDialog extends Dialog {
 
         if (upgradeInfo != null && upgradeInfo.getNeedUpdate() == 0) {
             cancelButton.setVisibility(View.GONE);
+            dialog_upgrade_close.setVisibility(View.INVISIBLE);
         }
 
         cancelButton.setOnClickListener(new View.OnClickListener() {
@@ -128,5 +130,26 @@ public class UpgradeConfirmDialog extends Dialog {
         }
 
         return UpgradeManager.getInstance().startDownload(upgradeInfo);
+    }
+
+    boolean forceUpdateConfirm = false;
+
+    @Override
+    public boolean onKeyDown(int keyCode,  KeyEvent event) {
+        Log.d("SPEECH_", String.valueOf(keyCode));
+        if(keyCode != 4) {
+            return super.onKeyDown(keyCode, event);
+        }
+        else {
+            if(forceUpdateConfirm == false) {
+                forceUpdateConfirm = true;
+                Toast.makeText(this.context, "该升级为强制升级，再次点击返回键退出应用", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+            else {
+                System.exit(0);
+                return false;
+            }
+        }
     }
 }
