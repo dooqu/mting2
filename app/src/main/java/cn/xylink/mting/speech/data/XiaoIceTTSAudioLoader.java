@@ -52,7 +52,6 @@ public class XiaoIceTTSAudioLoader implements TTSAudioLoader {
 
     @Override
     public void textToSpeech(String text, Speechor.SpeechorSpeed speechorSpeed, LoadResult result) {
-
         Log.d("xylink", "TTS:" + text);
         String postData = null;
 

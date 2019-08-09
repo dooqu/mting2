@@ -127,7 +127,6 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
     那么就要靠获取服务状态，进行状态的拉取
      */
     private void initServiceData() {
-        getWindow().setStatusBarColor(Color.argb(0, 72, 141, 239));
         //
         mCurrentArticle = service.getSelected();
         Article prevArt = service.getSelected();
@@ -202,6 +201,8 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
         svContent.setOnScrollListener(new MyScrollView.OnScrollListener() {
             @Override
             public void onScroll(int scrollY) {
+                /*
+
                 float alpha = scrollY / mTitleheight;
                 if (alpha > 1) {
                     alpha = 1;
@@ -218,6 +219,7 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
                 ivBack.setImageDrawable(drawable);
                 tvFk.setTextColor(Color.rgb(fk, fk, fk));
                 tvTitle.setTextColor(Color.rgb(fk, fk, fk));
+                */
             }
         });
     }
@@ -237,6 +239,14 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
         else if (ContentManager.getInstance().getTextSize() == 2) {
             textSize = 26;
         }
+
+        llTitle.setBackgroundColor(Color.argb(255, 72, 141, 239));
+        tvTitle.setTextColor(Color.WHITE);
+        tvFk.setTextColor(Color.WHITE);
+        ivBack.getDrawable().setTint(Color.WHITE);
+
+
+
         tvContent.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSize);
         tvTitle.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSize);
         tvAuthor.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSize);
@@ -296,13 +306,17 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
 
     @Override
     protected void initTitleBar() {
+        getWindow().setStatusBarColor(Color.argb(255, 72, 141, 239));
     }
 
     @OnClick(R.id.ll_source_detail)
     void onSourceDetail(View v) {
+        if(mCurrentArticle == null) {
+            return;
+        }
         Intent intent = new Intent();
         intent.setClass(this, HtmlActivity.class);
-        intent.putExtra(HtmlActivity.EXTRA_HTML, articleUrl);
+        intent.putExtra(HtmlActivity.EXTRA_HTML, mCurrentArticle.getUrl());
         startActivity(intent);
     }
 
@@ -677,7 +691,7 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
         int readedFrameSize = (frameIndex == 0) ? fragmentsSize : frameIndex;
         //generate the readed text's view.
         for (int index = 1; index < readedFrameSize; ++index) {
-            textBuilder.append(textFragments.get(index).replace("\n", "<br/><br/>"));
+            textBuilder.append(textFragments.get(index).replace("\n", "<br/>"));
         }
         tvContent.setText(Html.fromHtml(textBuilder.toString()));
         if (frameIndex == 0) {
@@ -690,10 +704,10 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
                 return;
             }
             //caculate the readed text's height.
-            final int offsetHeight = tvContent.getLineHeight() * tvContent.getLineCount();
+            final int offsetHeight = tvContent.getHeight();//tvContent.getLineHeight() * tvContent.getLineCount();
             //generate whole text's view.
             for (int index = Math.max(1, frameIndex); index < fragmentsSize; ++index) {
-                String fragText = textFragments.get(index).replace("\n", "<br/><br/>");
+                String fragText = textFragments.get(index).replace("\n", "<br/>");
                 fragText = ((index == frameIndex) ? "<font color=\"#488def\">" + fragText + "</font>" : fragText);
                 textBuilder.append(fragText);
             }

@@ -53,7 +53,7 @@ Speechor的核心控制思想也是分片
 而对于SpeechService，内部的Loadding时刻是在文章和文章之间
  */
 public class SpeechService extends Service {
-    static String TAG = "SPEECH_";
+    static String TAG = SpeechService.class.getSimpleName();
 
     /*SpeechService的状态描述类型*/
     public enum SpeechServiceState {
@@ -614,7 +614,6 @@ public class SpeechService extends Service {
     }
 
     public synchronized void removeFromSpeechList(List<String> articleIds) {
-        Article currentArt = this.speechList.getCurrent();
         boolean isSelectedDeleted = this.speechList.removeSome(articleIds);
         //如果当前正在播放的被删除掉
         if (isSelectedDeleted) {

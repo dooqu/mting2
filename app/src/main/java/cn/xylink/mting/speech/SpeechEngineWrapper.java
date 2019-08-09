@@ -14,7 +14,7 @@ import static android.media.AudioManager.AUDIOFOCUS_REQUEST_GRANTED;
 Speechor 装饰器
  */
 public abstract class SpeechEngineWrapper implements Speechor {
-    static String TAG = "SPEECH_";
+    static String TAG = SpeechEngineWrapper.class.getSimpleName();
 
     Context context;
     Speechor speechor;
@@ -231,8 +231,6 @@ public abstract class SpeechEngineWrapper implements Speechor {
                     //speechor.setSpeed(preSpeed);
                     //如果原来在播放状态，继续播放
                     speechor.setFragmentIndex(preIndex);
-                    Log.d("SPEECH_", "prestate=" + preState);
-                    Log.d("SPEECH_", "currstate=" + speechor.getState());
 
                     if(preState == SpeechorState.SpeechorStatePlaying) {
                         speechor.seek(preIndex);
