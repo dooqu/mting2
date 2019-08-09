@@ -82,6 +82,11 @@ public class XiaoIceTTSAudioLoader implements TTSAudioLoader {
                             JSONObject contentObject = itemObject.getJSONObject("content");
                             String voiceUrl = contentObject.getString("audioUrl");
 
+
+                            if(voiceUrl == null || voiceUrl == null) {
+                                Log.d("SPEECH_", "voiceUrl = null");
+                            }
+
                             OkGo.<File>get(voiceUrl)
                                     .tag(XiaoIceTTSAudioLoader.this)
                                     .execute(new FileCallback() {
