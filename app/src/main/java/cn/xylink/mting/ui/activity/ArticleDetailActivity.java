@@ -692,7 +692,7 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
         int readedFrameSize = (frameIndex == 0) ? fragmentsSize : frameIndex;
         //generate the readed text's view.
         for (int index = 1; index < readedFrameSize; ++index) {
-            textBuilder.append(textFragments.get(index).replace("\n", "<br/>"));
+            textBuilder.append(textFragments.get(index).replace("\n", "<br/><br/>"));
         }
         tvContent.setText(Html.fromHtml(textBuilder.toString()));
         if (frameIndex == 0) {
@@ -708,7 +708,7 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
             final int offsetHeight = tvContent.getHeight();//tvContent.getLineHeight() * tvContent.getLineCount();
             //generate whole text's view.
             for (int index = Math.max(1, frameIndex); index < fragmentsSize; ++index) {
-                String fragText = textFragments.get(index).replace("\n", "<br/>");
+                String fragText = textFragments.get(index).replace("\n", "<br/><br/>");
                 fragText = ((index == frameIndex) ? "<font color=\"#488def\">" + fragText + "</font>" : fragText);
                 textBuilder.append(fragText);
             }
