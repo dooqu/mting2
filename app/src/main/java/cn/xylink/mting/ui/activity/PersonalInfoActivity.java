@@ -17,6 +17,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bigkoo.pickerview.TimePickerView;
 import com.jph.takephoto.app.TakePhoto;
@@ -90,6 +91,7 @@ public class PersonalInfoActivity extends BasePresenterActivity implements TakeP
 
     private InputMethodManager im;
     private String oldNiceName;
+    private long birthday;
 
 
     public TakePhoto getTakePhoto() {
@@ -179,6 +181,8 @@ public class PersonalInfoActivity extends BasePresenterActivity implements TakeP
             ImageUtils.get().loadCircle(ivhead, headImgUrl);
         if (!TextUtils.isEmpty(user.getNickName()))
             tvNickName.setText(user.getNickName());
+        if(user.getBirthdate() > 0)
+            tvBirthday.setText(DateUtils.getDateText(new Date(user.getBirthdate()),DateUtils.YMD_BREAK));
     }
 
     @Override
@@ -241,7 +245,17 @@ public class PersonalInfoActivity extends BasePresenterActivity implements TakeP
             @Override
             public void onTimeSelect(Date date, View v) {
                 String time = DateUtils.getDateText(date,DateUtils.YMD_BREAK);
+                if(TextUtils.isEmpty(tvNickName.getText())){
+                    Toast.makeText(PersonalInfoActivity.this,"昵称不能为空",Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                birthday = date.getTime();
                 tvBirthday.setText(time);
+                UpdateUserRequset requset = new UpdateUserRequset();
+                requset.setSex(ContentManager.getInstance().getUserInfo().getSex());
+                requset.setNickName(etNickName.getText().toString());
+                requset.setBirthdate(birthday);
+                updateUser(requset);
             }
         })
                 .setType(new boolean[]{true, true, true, false, false, false})// 默认全部显示
@@ -446,6 +460,8 @@ public class PersonalInfoActivity extends BasePresenterActivity implements TakeP
         if (!TextUtils.isEmpty(etNickName.getText())) {
             userInfo.setNickName(etNickName.getText().toString());
         }
+        if(birthday > 0)
+            userInfo.setBirthdate(birthday);
         ContentManager.getInstance().setUserInfo(userInfo);
     }
 
