@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import butterknife.ButterKnife;
+import cn.xylink.mting.utils.T;
 
 public abstract class BaseFragment extends Fragment {
 
@@ -66,4 +67,12 @@ public abstract class BaseFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         initData();
     }
+
+    /**
+     * 弹出一个3s显示的toast框
+     */
+    public void toastShort(String msg) {
+        T.showCustomToast(msg);
+    }
+
 }

@@ -167,16 +167,16 @@ public class BindingPhoneActivity extends BasePresenterActivity implements BindC
                 phone = etPhone.getText().toString();
                 phone = phone.replaceAll(" ", "");
                 if (phone.length() == 0) {
-                    Toast.makeText(this, "手机号不能为空", Toast.LENGTH_SHORT).show();
+                    toastShort("手机号不能为空");
                     return;
                 }
                 else if (phone.length() < 11 ){
-                    Toast.makeText(this,R.string.incomplete_telephone_number,Toast.LENGTH_SHORT).show();
+                    toastShort("手机号码应该是11位数字");
                     return;
                 }
                 else if(!PhoneNumberUtils.isMobileNO(phone))
                 {
-                    Toast.makeText(this,"手机号码输入有误，请重新输入",Toast.LENGTH_SHORT).show();
+                    toastShort("手机号码输入有误，请重新输入");
                     return;
                 }
                 BindCheckRequest requset = new BindCheckRequest();
@@ -241,7 +241,7 @@ public class BindingPhoneActivity extends BasePresenterActivity implements BindC
     @Override
     public void onCodeSuccess(BaseResponse<CodeInfo> response) {
         L.v(response.code);
-        Toast.makeText(this, response.message, Toast.LENGTH_SHORT).show();
+        toastShort(response.message);
         if (response.data != null) {
             Intent mIntent = new Intent(this, GetCodeActivity.class);
             mIntent.putExtra(EXTRA_PHONE, phone);

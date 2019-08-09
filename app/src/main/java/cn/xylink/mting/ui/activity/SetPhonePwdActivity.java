@@ -160,7 +160,7 @@ public class SetPhonePwdActivity extends BasePresenterActivity implements Regist
                 }
                 String pwd = etPwd.getText().toString();
                 if (etPwd.getText().length() == 0) {
-                    Toast.makeText(this, "密码不能为空", Toast.LENGTH_SHORT).show();
+                    toastShort("密码不能为空");
                     return;
                 }
 //                else if (etPwd.getText().length() > 20) {
@@ -168,7 +168,7 @@ public class SetPhonePwdActivity extends BasePresenterActivity implements Regist
 //                    return;
 //                }
                 else if (pwd.length() < 6) {
-                    toastLong("密码长度小于6位，请重新输入");
+                    toastShort("密码长度小于6位，请重新输入");
                     return;
                 }
                 L.v("pwd", pwd);

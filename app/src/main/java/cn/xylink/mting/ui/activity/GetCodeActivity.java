@@ -175,10 +175,11 @@ public class GetCodeActivity extends BasePresenterActivity implements GetCodeCon
     @Override
     public void onCodeSuccess(BaseResponse<CodeInfo> response) {
         L.v(response.code);
-        Toast.makeText(this, response.message, Toast.LENGTH_SHORT).show();
+        toastShort(response.message);
         if (response.data != null) {
             codeID = response.data.getCodeId();
         }
+        resetDownTimer(ONE_MINUTE);
     }
 
     private static final String PAUSE_TIME = "code_pause_time";

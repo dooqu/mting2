@@ -246,7 +246,7 @@ public class PersonalInfoActivity extends BasePresenterActivity implements TakeP
             public void onTimeSelect(Date date, View v) {
                 String time = DateUtils.getDateText(date,DateUtils.YMD_BREAK);
                 if(TextUtils.isEmpty(tvNickName.getText())){
-                    Toast.makeText(PersonalInfoActivity.this,"昵称不能为空",Toast.LENGTH_SHORT).show();
+                    toastShort("昵称不能为空");
                     return;
                 }
                 birthday = date.getTime();
