@@ -42,7 +42,7 @@ public class FeedBackActivity extends BasePresenterActivity implements AddFeedba
 
     @Override
     protected void initTitleBar() {
-        tvTitle.setText("建议与反馈");
+        tvTitle.setText("语音朗读不正确");
 
     }
 
