@@ -82,6 +82,7 @@ public class ReadedFragment extends BaseMainTabFragment implements UnreadAdapter
     }
 
     private void getInitData() {
+        mTotalItemCount = 0;
         UnreadRequest request = new UnreadRequest();
         request.setEvent(UnreadRequest.ENENT_TYPE.more.name());
         request.doSign();

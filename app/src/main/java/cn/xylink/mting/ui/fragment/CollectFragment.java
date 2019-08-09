@@ -80,6 +80,7 @@ public class CollectFragment extends BaseMainTabFragment implements UnreadAdapte
     }
 
     private void getInitData() {
+        mTotalItemCount = 0;
         UnreadRequest request = new UnreadRequest();
         request.setEvent(UnreadRequest.ENENT_TYPE.more.name());
         request.doSign();
