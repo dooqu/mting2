@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -63,6 +64,12 @@ public class HtmlActivity extends BaseActivity {
                 progressBar.setProgress(newProgress);
                 if(newProgress == 100)
                     progressBar.setVisibility(View.GONE);
+            }
+        });
+        wvHtml.setWebViewClient(new WebViewClient(){
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                return false;
             }
         });
     }
