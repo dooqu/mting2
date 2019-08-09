@@ -18,16 +18,20 @@
             android:layout_width="@dimen/dimen_title_height"
             android:layout_height="@dimen/dimen_title_height"
             android:scaleType="center"
-            android:src="@drawable/ic_chevron_left_black_24dp" />
+            android:src="@mipmap/back" />
 
         <TextView
             android:id="@+id/tv_title"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:layout_marginRight="16dp"
+            android:layout_height="wrap_content"
             android:ellipsize="marquee"
             android:singleLine="true"
             android:text="标题"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
             android:textColor="#666666"
             android:textSize="16sp" />
 
