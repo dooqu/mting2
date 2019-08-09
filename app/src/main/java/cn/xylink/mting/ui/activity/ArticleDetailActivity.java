@@ -38,6 +38,7 @@ import cn.xylink.mting.bean.AddLoveRequest;
 import cn.xylink.mting.bean.Article;
 import cn.xylink.mting.contract.DelMainContract;
 import cn.xylink.mting.event.AddStoreSuccessEvent;
+import cn.xylink.mting.event.ArticleEditEvent;
 import cn.xylink.mting.openapi.QQApi;
 import cn.xylink.mting.openapi.WXapi;
 import cn.xylink.mting.presenter.DelMainPresenter;
@@ -243,9 +244,7 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
         llTitle.setBackgroundColor(Color.argb(255, 72, 141, 239));
         tvTitle.setTextColor(Color.WHITE);
         tvFk.setTextColor(Color.WHITE);
-        ivBack.getDrawable().setTint(Color.WHITE);
-
-
+        //ivBack.getDrawable().setTint(Color.WHITE);
 
         tvContent.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSize);
         tvTitle.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSize);
@@ -638,6 +637,15 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
             return;
         }
         setPlayerState(service.getState());
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onArticleEdited(ArticleEditEvent event) {
+        synchronized (service) {
+            if(service.getSelected() != null && service.getSelected().getArticleId().equals(event.getArticleID())) {
+                service.play(event.getArticleID());
+            }
+        }
     }
 
     private void setPlayerState(SpeechService.SpeechServiceState state) {
