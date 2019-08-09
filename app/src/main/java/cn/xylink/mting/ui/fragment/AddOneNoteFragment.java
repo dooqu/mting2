@@ -179,6 +179,7 @@ public class AddOneNoteFragment extends BasePresenterFragment implements InputCr
 
     @Override
     public void onCreateError(int code, String errorMsg) {
+        toastShort("添加文章失败");
         L.v("code", code, "errorMsg", errorMsg);
 
     }
