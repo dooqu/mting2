@@ -114,7 +114,7 @@ public class MTing extends Application {
                     public void hideLoading() {
                     }
                 },
-                "http://test.xylink.cn/api/v2/version/check",
+                "http://service.xylink.cn/api/v2/version/check",
                 GsonUtil.GsonString(request), UpgradeResponse.class,
                 new OkGoUtils.ICallback<UpgradeResponse>() {
                     @Override
