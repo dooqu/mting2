@@ -23,11 +23,11 @@ public class UpdateUserRequset extends BaseRequest {
         this.nickName = nickName;
     }
 
-    public String getBirthdate() {
+    public long getBirthdate() {
         return birthdate;
     }
 
-    public void setBirthdate(String birthdate) {
+    public void setBirthdate(long birthdate) {
         this.birthdate = birthdate;
     }
 
@@ -39,6 +39,6 @@ public class UpdateUserRequset extends BaseRequest {
         this.sex = sex;
     }
 
-    private String birthdate;
+    private long birthdate;
     private int sex;
 }

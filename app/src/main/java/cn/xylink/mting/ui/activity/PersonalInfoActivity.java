@@ -17,7 +17,9 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.bigkoo.pickerview.TimePickerView;
 import com.jph.takephoto.app.TakePhoto;
 import com.jph.takephoto.app.TakePhotoImpl;
 import com.jph.takephoto.model.InvokeParam;
@@ -30,6 +32,8 @@ import com.yalantis.ucrop.UCrop;
 import com.yalantis.ucrop.UCropActivity;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,6 +52,7 @@ import cn.xylink.mting.presenter.UploadUserInfoPresenter;
 import cn.xylink.mting.ui.dialog.BottomSelectDialog;
 import cn.xylink.mting.ui.dialog.BottomSelectSexDialog;
 import cn.xylink.mting.utils.ContentManager;
+import cn.xylink.mting.utils.DateUtils;
 import cn.xylink.mting.utils.ImageUtils;
 import cn.xylink.mting.utils.L;
 import cn.xylink.mting.utils.MD5;
@@ -70,6 +75,9 @@ public class PersonalInfoActivity extends BasePresenterActivity implements TakeP
     @BindView(R.id.ll_root)
     LinearLayout ll_root;
 
+    @BindView(R.id.tv_birthday)
+    TextView tvBirthday;
+
     private TakePhoto takePhoto;
 
     private InvokeParam invokeParam;
@@ -83,6 +91,7 @@ public class PersonalInfoActivity extends BasePresenterActivity implements TakeP
 
     private InputMethodManager im;
     private String oldNiceName;
+    private long birthday;
 
 
     public TakePhoto getTakePhoto() {
@@ -172,6 +181,8 @@ public class PersonalInfoActivity extends BasePresenterActivity implements TakeP
             ImageUtils.get().loadCircle(ivhead, headImgUrl);
         if (!TextUtils.isEmpty(user.getNickName()))
             tvNickName.setText(user.getNickName());
+        if(user.getBirthdate() > 0)
+            tvBirthday.setText(DateUtils.getDateText(new Date(user.getBirthdate()),DateUtils.YMD_BREAK));
     }
 
     @Override
@@ -192,7 +203,9 @@ public class PersonalInfoActivity extends BasePresenterActivity implements TakeP
             R.id.tv_sex,
             R.id.iv_arrow_2,
             R.id.iv_arrow_3,
-            R.id.tv_nick_name
+            R.id.tv_nick_name,
+            R.id.tv_birthday,
+            R.id.iv_arrow_4
     })
     public void onClick(View v) {
         switch (v.getId()) {
@@ -220,8 +233,42 @@ public class PersonalInfoActivity extends BasePresenterActivity implements TakeP
                 etNickName.requestFocus();
                 showSoftInput(etNickName);
                 break;
+            case R.id.tv_birthday:
+            case R.id.iv_arrow_4:
+                showDate();
+                break;
         }
     }
+
+    private void showDate() {
+        TimePickerView pvTime = new TimePickerView.Builder(this, new TimePickerView.OnTimeSelectListener() {
+            @Override
+            public void onTimeSelect(Date date, View v) {
+                String time = DateUtils.getDateText(date,DateUtils.YMD_BREAK);
+                if(TextUtils.isEmpty(tvNickName.getText())){
+                    Toast.makeText(PersonalInfoActivity.this,"昵称不能为空",Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                birthday = date.getTime();
+                tvBirthday.setText(time);
+                UpdateUserRequset requset = new UpdateUserRequset();
+                requset.setSex(ContentManager.getInstance().getUserInfo().getSex());
+                requset.setNickName(etNickName.getText().toString());
+                requset.setBirthdate(birthday);
+                updateUser(requset);
+            }
+        })
+                .setType(new boolean[]{true, true, true, false, false, false})// 默认全部显示
+                .setCancelText("取消")//取消按钮文字
+                .setSubmitText("确定")//确认按钮文字
+                .isCenterLabel(false) //是否只显示中间选中项的label文字，false则每项item全部都带有label。
+                .build();
+
+        pvTime.show();
+    }
+
+
+
 
     public void hideSoftInput(View view) {
         try {
@@ -413,6 +460,8 @@ public class PersonalInfoActivity extends BasePresenterActivity implements TakeP
         if (!TextUtils.isEmpty(etNickName.getText())) {
             userInfo.setNickName(etNickName.getText().toString());
         }
+        if(birthday > 0)
+            userInfo.setBirthdate(birthday);
         ContentManager.getInstance().setUserInfo(userInfo);
     }
 

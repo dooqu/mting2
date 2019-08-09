@@ -367,6 +367,8 @@ public class SpeechService extends Service {
         if (speechList.getCurrent() == null) {
             return -SpeechError.NOTHING_TO_PLAY;
         }
+
+        SpeechServiceState preState = serviceState;
         //当前状态必须是在播放，或者是暂停，否则不支持
         if (serviceState != SpeechServiceState.Ready && getSelected() != null && getSelected().getTextBody() != null) {
             int index;
@@ -374,6 +376,10 @@ public class SpeechService extends Service {
                 int result = speechor.seek(index);
                 if (result >= 0) {
                     this.serviceState = SpeechServiceState.Playing;
+                    //如果seek之前是暂停状态，那么发出一个resume事件
+                    if (preState == SpeechServiceState.Paused) {
+                        onSpeechResume(getSelected());
+                    }
                 }
                 return result;
             }
@@ -417,6 +423,7 @@ public class SpeechService extends Service {
 
         boolean result = false;
         if (serviceState == SpeechServiceState.Paused) {
+            //如果是在loadding期间被pause掉，那么直接playSelected()
             if (this.isSimulatePaused == true) {
                 playSelected();
                 initNotification();
