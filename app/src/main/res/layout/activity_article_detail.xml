@@ -18,7 +18,7 @@
             android:layout_width="@dimen/dimen_title_height"
             android:layout_height="@dimen/dimen_title_height"
             android:scaleType="center"
-            android:src="@mipmap/back" />
+            android:src="@drawable/ic_chevron_left_black_24dp" />
 
         <TextView
             android:id="@+id/tv_title"
