@@ -109,7 +109,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/color_login_text_gray"
-                android:text="登录既表示您已同意"/>
+                android:text="登录即表示您已同意"/>
             <TextView
                 android:id="@+id/tv_user_protocol"
                 android:layout_width="wrap_content"
