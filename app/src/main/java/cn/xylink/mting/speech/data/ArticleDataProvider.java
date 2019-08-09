@@ -104,7 +104,7 @@ public class ArticleDataProvider {
                     public void hideLoading() {
                     }
                 },
-                "http://test.xylink.cn/api/sct/v2/article/detail",
+                "http://service.xylink.cn/api/sct/v2/article/detail",
                 GsonUtil.GsonString(request), ArticleInfoResponse.class,
                 new OkGoUtils.ICallback<ArticleInfoResponse>() {
                     @Override
@@ -169,7 +169,7 @@ public class ArticleDataProvider {
                     public void hideLoading() {
                     }
                 },
-                "http://test.xylink.cn/api/sct/v2/article/detail",
+                "http://service.xylink.cn/api/sct/v2/article/detail",
                 GsonUtil.GsonString(request), ArticleInfoResponse.class,
                 new OkGoUtils.ICallback<ArticleInfoResponse>() {
                     @Override
@@ -233,7 +233,7 @@ public class ArticleDataProvider {
                     public void hideLoading() {
                     }
                 }
-                , "http://test.xylink.cn//api/sct/v2/article/read",
+                , "http://service.xylink.cn//api/sct/v2/article/read",
                 GsonUtil.GsonString(request),
                 BaseResponse.class,
                 new OkGoUtils.ICallback<BaseResponse<Object>>() {
@@ -277,7 +277,7 @@ public class ArticleDataProvider {
                     public void hideLoading() {
                     }
                 }
-                , "http://test.xylink.cn//api/sct/v2/article/store",
+                , "http://service.xylink.cn//api/sct/v2/article/store",
                 GsonUtil.GsonString(request),
                 BaseResponse.class,
                 new OkGoUtils.ICallback<BaseResponse<Object>>() {
