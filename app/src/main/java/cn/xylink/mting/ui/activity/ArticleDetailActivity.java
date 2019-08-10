@@ -202,25 +202,6 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
         svContent.setOnScrollListener(new MyScrollView.OnScrollListener() {
             @Override
             public void onScroll(int scrollY) {
-                /*
-
-                float alpha = scrollY / mTitleheight;
-                if (alpha > 1) {
-                    alpha = 1;
-                }
-                if (alpha < 0) {
-                    alpha = 0;
-                }
-                int a = (int) (255 * alpha);
-                llTitle.setBackgroundColor(Color.argb(a, 72, 141, 239));
-                getWindow().setStatusBarColor(Color.argb(a, 72, 141, 239));
-                Drawable drawable = ivBack.getDrawable();
-                int fk = (int) (153 + 102 * (alpha));
-                drawable.setTint(Color.rgb(fk, fk, fk));
-                ivBack.setImageDrawable(drawable);
-                tvFk.setTextColor(Color.rgb(fk, fk, fk));
-                tvTitle.setTextColor(Color.rgb(fk, fk, fk));
-                */
             }
         });
     }
