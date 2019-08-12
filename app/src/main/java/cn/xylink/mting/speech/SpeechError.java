@@ -11,5 +11,6 @@ public class SpeechError {
     public static int NOTHING_TO_PLAY = 992;
     public static int SEEK_NOT_ALLOW = 991;
     public static int HAS_NO_FRAGMENTS = 990;
+    public static int FRAGMENT_LOAD_INNTERNAL_ERROR = 989;
 
 }

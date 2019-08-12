@@ -38,6 +38,7 @@ import cn.xylink.mting.bean.AddLoveRequest;
 import cn.xylink.mting.bean.Article;
 import cn.xylink.mting.contract.DelMainContract;
 import cn.xylink.mting.event.AddStoreSuccessEvent;
+import cn.xylink.mting.event.ArticleEditEvent;
 import cn.xylink.mting.openapi.QQApi;
 import cn.xylink.mting.openapi.WXapi;
 import cn.xylink.mting.presenter.DelMainPresenter;
@@ -201,25 +202,6 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
         svContent.setOnScrollListener(new MyScrollView.OnScrollListener() {
             @Override
             public void onScroll(int scrollY) {
-                /*
-
-                float alpha = scrollY / mTitleheight;
-                if (alpha > 1) {
-                    alpha = 1;
-                }
-                if (alpha < 0) {
-                    alpha = 0;
-                }
-                int a = (int) (255 * alpha);
-                llTitle.setBackgroundColor(Color.argb(a, 72, 141, 239));
-                getWindow().setStatusBarColor(Color.argb(a, 72, 141, 239));
-                Drawable drawable = ivBack.getDrawable();
-                int fk = (int) (153 + 102 * (alpha));
-                drawable.setTint(Color.rgb(fk, fk, fk));
-                ivBack.setImageDrawable(drawable);
-                tvFk.setTextColor(Color.rgb(fk, fk, fk));
-                tvTitle.setTextColor(Color.rgb(fk, fk, fk));
-                */
             }
         });
     }
@@ -243,9 +225,7 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
         llTitle.setBackgroundColor(Color.argb(255, 72, 141, 239));
         tvTitle.setTextColor(Color.WHITE);
         tvFk.setTextColor(Color.WHITE);
-        ivBack.getDrawable().setTint(Color.WHITE);
-
-
+        //ivBack.getDrawable().setTint(Color.WHITE);
 
         tvContent.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSize);
         tvTitle.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSize);
@@ -638,6 +618,15 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
             return;
         }
         setPlayerState(service.getState());
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onArticleEdited(ArticleEditEvent event) {
+        synchronized (service) {
+            if(service.getSelected() != null && service.getSelected().getArticleId().equals(event.getArticleID())) {
+                service.play(event.getArticleID());
+            }
+        }
     }
 
     private void setPlayerState(SpeechService.SpeechServiceState state) {

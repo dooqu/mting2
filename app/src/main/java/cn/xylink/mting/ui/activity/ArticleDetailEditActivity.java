@@ -6,10 +6,14 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import org.greenrobot.eventbus.EventBus;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import cn.xylink.mting.R;
+import cn.xylink.mting.bean.LinkArticle;
 import cn.xylink.mting.contract.EditArticleContact;
+import cn.xylink.mting.event.ArticleEditEvent;
 import cn.xylink.mting.presenter.EditArticlePresenter;
 
 public class ArticleDetailEditActivity extends BasePresenterActivity implements EditArticleContact.ICreateView {
@@ -68,6 +72,7 @@ public class ArticleDetailEditActivity extends BasePresenterActivity implements 
     @Override
     public void onSaveSuccess() {
         finish();
+        EventBus.getDefault().post(new ArticleEditEvent(id));
         toastShort("保存成功");
     }
 
