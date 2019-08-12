@@ -9,10 +9,8 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.telephony.ServiceState;
 import android.text.Html;
 import android.text.TextUtils;
-import android.text.style.TtsSpan;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
@@ -25,16 +23,14 @@ import android.widget.Toast;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-import org.w3c.dom.Text;
+
 
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-
 import butterknife.BindView;
 import butterknife.OnClick;
 import cn.xylink.mting.R;
-import cn.xylink.mting.bean.AddLoveRequest;
 import cn.xylink.mting.bean.Article;
 import cn.xylink.mting.contract.DelMainContract;
 import cn.xylink.mting.event.AddStoreSuccessEvent;
@@ -360,14 +356,14 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
                             service.setRole(Speechor.SpeechorRole.XiaoIce);
                             break;
                         case 1:
-
-                            service.setRole(Speechor.SpeechorRole.XiaoYao);
-                            break;
-                        case 2:
                             service.setRole(Speechor.SpeechorRole.XiaoMei);
                             break;
+                        case 2:
+                            service.setRole(Speechor.SpeechorRole.XiaoYao);
+                            break;
                         case 3:
-                            service.setRole(Speechor.SpeechorRole.YaYa);
+                            service.setRole(Speechor.SpeechorRole.XiaoYu
+                            );
                             break;
                     }
                 }
@@ -596,7 +592,7 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
             float progress = 0;
             switch (((SpeechStopEvent) event).getStopReason()) {
                 case ListIsNull:
-                    setArticleProgress(100, 100);
+                    finish();
                     break;
             }
         }

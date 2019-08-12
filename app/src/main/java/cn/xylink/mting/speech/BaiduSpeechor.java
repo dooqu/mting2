@@ -169,7 +169,7 @@ public abstract class BaiduSpeechor implements Speechor {
             if (this.state != SpeechorState.SpeechorStateReady) {
                 this.reset();
             }
-            List<String> textFragmentsNew = speechOperator.prepareTextFragments(text, 100, false);
+            List<String> textFragmentsNew = speechOperator.prepareTextFragments(text, 90, false);
             this.textFragments.addAll(textFragmentsNew);
         }
     }
@@ -224,13 +224,18 @@ public abstract class BaiduSpeechor implements Speechor {
                 paramRole = "0";
                 break;
 
+            case XiaoYu:
+                role = roleSet;
+                paramRole = "1";
+                break;
+
             case XiaoYao:
                 role = roleSet;
                 paramRole = "3";
                 break;
 
             case YaYa:
-                roleSet = roleSet;
+                role = roleSet;
                 paramRole = "4";
                 break;
 

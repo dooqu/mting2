@@ -199,6 +199,7 @@ public abstract class SpeechEngineWrapper implements Speechor {
             case XiaoMei:
             case YaYa:
             case XiaoYao:
+            case XiaoYu:
                 destSpeechor = baiduSpeechor;
                 break;
             case XiaoIce:

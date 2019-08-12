@@ -141,7 +141,7 @@ public abstract class XiaoIceSpeechor implements Speechor {
         if (this.state != SpeechorState.SpeechorStateReady) {
             this.reset();
         }
-        List<String> textFragmentsNew = speechHelper.prepareTextFragments(text, 120, false);
+        List<String> textFragmentsNew = speechHelper.prepareTextFragments(text, 90, false);
         this.textFragments.addAll(textFragmentsNew);
 
         for (int i = 0, size = textFragmentsNew.size(); i < size; i++) {
@@ -152,6 +152,7 @@ public abstract class XiaoIceSpeechor implements Speechor {
             speechTextFragments.add(fragment);
         }
     }
+
 
     @Override
     public synchronized int seek(int index) {
@@ -198,7 +199,7 @@ public abstract class XiaoIceSpeechor implements Speechor {
         Log.d(TAG, "seekAndPlay:" + indexToPlay);
         seekTime = System.currentTimeMillis();
         int segmentSize = this.textFragments.size();
-        for (int startIndex = indexToPlay, endIndex = Math.min(startIndex + LOADER_QUEUE_SIZE, segmentSize); startIndex < endIndex; ++startIndex) {
+        for (int startIndex = indexToPlay, endIndex = Math.min(startIndex + LOADER_QUEUE_SIZE, segmentSize); startIndex <= endIndex; ++startIndex) {
             boolean isSegumentCurrentToPlay = startIndex == this.fragmentIndex;
             SpeechTextFragment fragment = this.speechTextFragments.get(startIndex);
             fragment.setFrameIndex(startIndex);
@@ -216,7 +217,7 @@ public abstract class XiaoIceSpeechor implements Speechor {
                     if (isSegumentCurrentToPlay == true) {
                         this.state = SpeechorState.SpeechorStateReady;
                         //此时fragmentText装载的是错误信息
-                        this.onError(SpeechError.FRAGMENT_TTS_ERROR, fragment.getFragmentText());
+                        this.onError(SpeechError.FRAGMENT_TTS_ERROR, fragment.getErrorMessage());
                     }
                     return;
 
@@ -255,13 +256,13 @@ public abstract class XiaoIceSpeechor implements Speechor {
                                     //加载失败之后的逻辑分之
                                     if (++this.fragment.retryCount > Speechor.ERROR_RETRY_COUNT) {
                                         this.fragment.setFragmentState(SpeechTextFragmentState.Error);
-                                        this.fragment.setFragmentText("分片加载错误:" + message);
+                                        this.fragment.setErrorMessage("分片加载错误:" + message);
                                         //如果当前播放的主控正在等待当前分片的加载结果，那么反向主动回应
                                         if (this.fragment.getFrameIndex() == XiaoIceSpeechor.this.fragmentIndex) {
                                             //用户在重试等待期间，可能改动了播放主控的操作，如果播放还需要继续，那么就显示错误
                                             if (state == SpeechorState.SpeechorStateLoadding) {
                                                 state = SpeechorState.SpeechorStateReady;
-                                                onError(SpeechError.FRAGMENT_TTS_ERROR, this.fragment.getFragmentText());
+                                                onError(SpeechError.FRAGMENT_TTS_ERROR, this.fragment.getErrorMessage());
                                             }
                                         }
                                     }
@@ -368,7 +369,7 @@ public abstract class XiaoIceSpeechor implements Speechor {
     media player完成一个媒体切片加载后进行回调调用
      */
     private synchronized void onMediaFragmentPrepared(MediaPlayer mp) {
-        Log.d(TAG, "该分片的时长为:" + mp.getDuration());
+        Log.d(TAG, "play fragment at:{" + fragmentIndex + "},duration=" + mp.getDuration());
         long duration = mp.getDuration();
         if (state == SpeechorState.SpeechorStatePlaying) {
             new Thread(() -> {
@@ -598,9 +599,6 @@ public abstract class XiaoIceSpeechor implements Speechor {
             if (this.textFragments.size() <= 0)
                 return 0f;
             return (float) fragmentIndex / (float) this.textFragments.size();
-
-
         }
     }
-
 }

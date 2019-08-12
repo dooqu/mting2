@@ -52,7 +52,8 @@ public interface Speechor {
         XiaoMei,
         XiaoYao,
         YaYa,
-        XiaoIce
+        XiaoIce,
+        XiaoYu
     }
 
     //base operation method
