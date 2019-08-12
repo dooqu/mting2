@@ -109,14 +109,13 @@ public class UnreadFragment extends BaseMainTabFragment implements UnreadAdapter
         showBottonDialog(TAB_TYPE.UNREAD, article);
     }
 
-    @OnClick({R.id.tv_unread_empty_first,R.id.ll_empty,R.id.ll_empty_first})
+    @OnClick({R.id.tv_unread_empty_first,R.id.ll_network_error})
     void onClick(View v) {
         switch (v.getId()){
             case R.id.tv_unread_empty_first:
                 startActivity(new Intent(getActivity(), PlayerlActivity.class));
                 break;
-            case R.id.ll_empty:
-            case R.id.ll_empty_first:
+            case R.id.ll_network_error:
                 initData();
                 break;
         }
