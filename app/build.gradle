@@ -77,17 +77,15 @@ dependencies {
     implementation 'com.lzy.net:okrx2:2.0.2'
     //gson
     implementation 'com.android.support:recyclerview-v7:28.0.0'
-
     //glide
     implementation 'com.github.bumptech.glide:glide:4.9.0'
     implementation files('libs/open_sdk_r6019_lite.jar')
     implementation files('libs/bcprov-jdk15on-159.jar')
-    implementation "com.android.support:design:28.0.0"
-
+    implementation 'com.android.support:design:28.0.0'
     implementation('com.jph.takephoto:takephoto_library:4.0.3') {
         exclude group: 'com.android.support'
     }
-
     implementation 'com.github.yalantis:ucrop:2.2.2'
-    implementation  'com.contrarywind:Android-PickerView:3.2.6'
+    implementation 'com.contrarywind:Android-PickerView:3.2.6'
+    implementation files('libs/SaaS_AppAnalytics_Android_SDK_V4.0.30.jar')
 }

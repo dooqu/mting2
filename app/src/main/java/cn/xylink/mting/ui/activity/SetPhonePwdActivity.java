@@ -12,6 +12,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.tendcloud.tenddata.TCAgent;
+import com.tendcloud.tenddata.TDAccount;
+
 import org.apaches.commons.codec.binary.Base64;
 
 import java.security.NoSuchAlgorithmException;
@@ -134,7 +137,7 @@ public class SetPhonePwdActivity extends BasePresenterActivity implements Regist
 
     }
 
-    @OnClick({R.id.btn_next, R.id.pwd_icon,R.id.btn_left})
+    @OnClick({R.id.btn_next, R.id.pwd_icon, R.id.btn_left})
     public void onClick(View v) {
 
         switch (v.getId()) {
@@ -210,6 +213,9 @@ public class SetPhonePwdActivity extends BasePresenterActivity implements Regist
             L.v("token", response.data.getToken());
             ContentManager.getInstance().setLoginToken(response.data.getToken());
             ContentManager.getInstance().setUserInfo(response.data);
+
+            TCAgent.onRegister(ContentManager.getInstance().getUserInfo().getUserId(), TDAccount.AccountType.ANONYMOUS, "");
+            TCAgent.onLogin(ContentManager.getInstance().getUserInfo().getUserId(), TDAccount.AccountType.ANONYMOUS,"");
             Intent mIntent = new Intent(this, MainActivity.class);
             mIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(mIntent);
@@ -262,6 +268,18 @@ public class SetPhonePwdActivity extends BasePresenterActivity implements Regist
             L.v("token", response.data.getToken());
             ContentManager.getInstance().setLoginToken(response.data.getToken());
             ContentManager.getInstance().setUserInfo(response.data);
+
+
+            if (platform.equals("qq")) {
+                TCAgent.onRegister(ContentManager.getInstance().getUserInfo().getUserId(), TDAccount.AccountType.QQ, "");
+
+                TCAgent.onLogin(ContentManager.getInstance().getUserInfo().getUserId(), TDAccount.AccountType.QQ,"");
+            } else {
+                TCAgent.onRegister(ContentManager.getInstance().getUserInfo().getUserId(), TDAccount.AccountType.WEIXIN, "");
+                TCAgent.onLogin(ContentManager.getInstance().getUserInfo().getUserId(), TDAccount.AccountType.WEIXIN,"");
+            }
+
+
             Intent mIntent = new Intent(this, MainActivity.class);
             mIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(mIntent);
@@ -272,6 +290,6 @@ public class SetPhonePwdActivity extends BasePresenterActivity implements Regist
 
     @Override
     public void onThirdPlatformError(int code, String errorMsg) {
-            toastShort(errorMsg);
+        toastShort(errorMsg);
     }
 }
