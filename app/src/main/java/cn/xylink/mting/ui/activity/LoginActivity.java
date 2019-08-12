@@ -6,6 +6,8 @@ import android.view.View;
 import com.tencent.tauth.IUiListener;
 import com.tencent.tauth.Tencent;
 import com.tencent.tauth.UiError;
+import com.tendcloud.tenddata.TCAgent;
+import com.tendcloud.tenddata.TDAccount;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -195,6 +197,11 @@ public class LoginActivity extends BasePresenterActivity implements ThirdLoginCo
                 break;
             }
             case 200: {
+                if (platform.equals("qq")) {
+                    TCAgent.onLogin(ContentManager.getInstance().getUserInfo().getUserId(), TDAccount.AccountType.QQ,"");
+                } else {
+                    TCAgent.onLogin(ContentManager.getInstance().getUserInfo().getUserId(), TDAccount.AccountType.WEIXIN,"");
+                }
                 ContentManager.getInstance().setLoginToken(response.data.getToken());
                 Intent mIntent = new Intent(this, MainActivity.class);
                 mIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);

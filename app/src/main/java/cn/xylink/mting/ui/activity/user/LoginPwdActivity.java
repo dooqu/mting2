@@ -12,6 +12,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.tendcloud.tenddata.TCAgent;
+import com.tendcloud.tenddata.TDAccount;
+
 import org.apaches.commons.codec.binary.Base64;
 
 import java.security.NoSuchAlgorithmException;
@@ -203,6 +206,9 @@ public class LoginPwdActivity extends BasePresenterActivity implements LoginCont
             L.v("token", response.data.getToken());
             ContentManager.getInstance().setLoginToken(response.data.getToken());
             ContentManager.getInstance().setUserInfo(response.data);
+
+            TCAgent.onLogin(ContentManager.getInstance().getUserInfo().getUserId(), TDAccount.AccountType.ANONYMOUS,"");
+
             Intent mIntent = new Intent(this, MainActivity.class);
             mIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(mIntent);

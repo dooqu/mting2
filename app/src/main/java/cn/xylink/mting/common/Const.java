@@ -41,5 +41,7 @@ public class Const {
     public static String nextPagePlay;
     public static final String PAGE_PLAY = "PAGE_PLAY";
 
+    public static String TCAGENT_APPID = "FCAC8CE6C75F41C39A8F759E7FADB4F5";
+
 
 }

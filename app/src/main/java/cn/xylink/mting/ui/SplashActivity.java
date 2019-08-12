@@ -15,6 +15,9 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 
+import com.tendcloud.tenddata.TCAgent;
+import com.tendcloud.tenddata.TDAccount;
+
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
@@ -203,6 +206,7 @@ public class SplashActivity extends BasePresenterActivity implements CheckTokenC
                                 request.doSign();
                                 shareAddPresenter.shareAdd(request);
                             } else {
+                                TCAgent.onLogin(ContentManager.getInstance().getUserInfo().getUserId(), TDAccount.AccountType.ANONYMOUS,"");
                                 startActivity(new Intent(SplashActivity.this, MainActivity.class));
                                 finish();
                             }
@@ -227,6 +231,7 @@ public class SplashActivity extends BasePresenterActivity implements CheckTokenC
                                     startActivity(new Intent(SplashActivity.this, LoginActivity.class));
                                     finish();
                                 } else {
+                                    TCAgent.onLogin(ContentManager.getInstance().getUserInfo().getUserId(), TDAccount.AccountType.ANONYMOUS,"");
                                     startActivity(new Intent(SplashActivity.this, MainActivity.class));
                                     finish();
                                 }
@@ -262,6 +267,7 @@ public class SplashActivity extends BasePresenterActivity implements CheckTokenC
     @Override
     public void onShareAddSuccess(BaseResponse<ArticleDetailInfo> info) {
         addLocalUnread(info.data);
+        TCAgent.onLogin(ContentManager.getInstance().getUserInfo().getUserId(), TDAccount.AccountType.ANONYMOUS,"");
         Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra(MainActivity.ARTICLE_ID, info.data.getArticleId());
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -300,6 +306,7 @@ public class SplashActivity extends BasePresenterActivity implements CheckTokenC
                     startActivity(new Intent(SplashActivity.this, LoginActivity.class));
                     finish();
                 } else {
+                    TCAgent.onLogin(ContentManager.getInstance().getUserInfo().getUserId(), TDAccount.AccountType.ANONYMOUS,"");
                     startActivity(new Intent(SplashActivity.this, MainActivity.class));
                     finish();
                 }

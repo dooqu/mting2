@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.https.HttpsUtils;
 import com.lzy.okgo.interceptor.HttpLoggingInterceptor;
+import com.tendcloud.tenddata.TCAgent;
 
 import org.apaches.commons.codec.binary.Base64;
 
@@ -21,7 +22,7 @@ import cn.xylink.mting.bean.UpgradeInfo;
 import cn.xylink.mting.contract.IBaseView;
 import cn.xylink.mting.model.UpgradeRequest;
 import cn.xylink.mting.model.UpgradeResponse;
-import cn.xylink.mting.model.data.Const;
+import cn.xylink.mting.common.Const;
 import cn.xylink.mting.model.data.OkGoUtils;
 import cn.xylink.mting.openapi.QQApi;
 import cn.xylink.mting.openapi.WXapi;
@@ -54,6 +55,7 @@ public class MTing extends Application {
     public void onCreate() {
         super.onCreate();
         instance = this;
+
         activityManager = ActivityManager.getScreenManager();
         ContentManager.init(this);
         WXapi.init(this);
@@ -74,6 +76,10 @@ public class MTing extends Application {
         catch (Exception ex) {
             ex.printStackTrace();
         }
+
+        TCAgent.LOG_ON = true;
+        TCAgent.init(this, Const.TCAGENT_APPID, "mting");
+        TCAgent.setReportUncaughtExceptions(true);
     }
 
     private void initOkHttp() {
