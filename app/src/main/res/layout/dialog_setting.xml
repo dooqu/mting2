@@ -47,7 +47,7 @@
                     android:layout_width="56dp"
                     android:layout_height="56dp"
                     android:layout_gravity="center"
-                    android:src="@mipmap/ico_zixuan" />
+                    android:src="@mipmap/ico_jiayi" />
 
                 <ImageView
                     android:id="@+id/iv_check1"
@@ -62,7 +62,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                android:text="子轩"
+                android:text="佳怡"
                 android:textSize="14sp" />
         </LinearLayout>
 
@@ -86,7 +86,7 @@
                     android:layout_width="56dp"
                     android:layout_height="56dp"
                     android:layout_gravity="center"
-                    android:src="@mipmap/ico_zimo" />
+                    android:src="@mipmap/ico_jiaxin" />
 
                 <ImageView
                     android:id="@+id/iv_check2"
@@ -101,7 +101,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                android:text="子墨"
+                android:text="佳馨"
                 android:textSize="14sp" />
         </LinearLayout>
 
@@ -125,7 +125,7 @@
                     android:layout_width="56dp"
                     android:layout_height="56dp"
                     android:layout_gravity="center"
-                    android:src="@mipmap/ico_jiayi" />
+                    android:src="@mipmap/ico_zixuan" />
 
                 <ImageView
                     android:id="@+id/iv_check3"
@@ -140,7 +140,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                android:text="佳怡"
+                android:text="子轩"
                 android:textSize="14sp" />
         </LinearLayout>
 
@@ -164,7 +164,7 @@
                     android:layout_width="56dp"
                     android:layout_height="56dp"
                     android:layout_gravity="center"
-                    android:src="@mipmap/ico_jiaxin" />
+                    android:src="@mipmap/ico_zimo" />
 
                 <ImageView
                     android:id="@+id/iv_check4"
@@ -179,7 +179,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                android:text="佳馨"
+                android:text="子墨"
                 android:textSize="14sp" />
         </LinearLayout>
     </LinearLayout>

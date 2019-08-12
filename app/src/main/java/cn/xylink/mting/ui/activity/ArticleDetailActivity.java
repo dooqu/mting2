@@ -9,10 +9,8 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.telephony.ServiceState;
 import android.text.Html;
 import android.text.TextUtils;
-import android.text.style.TtsSpan;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
@@ -25,16 +23,14 @@ import android.widget.Toast;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-import org.w3c.dom.Text;
+
 
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-
 import butterknife.BindView;
 import butterknife.OnClick;
 import cn.xylink.mting.R;
-import cn.xylink.mting.bean.AddLoveRequest;
 import cn.xylink.mting.bean.Article;
 import cn.xylink.mting.contract.DelMainContract;
 import cn.xylink.mting.event.AddStoreSuccessEvent;
@@ -50,7 +46,6 @@ import cn.xylink.mting.speech.event.FavoriteEvent;
 import cn.xylink.mting.speech.event.RecycleEvent;
 import cn.xylink.mting.speech.event.SpeechEndEvent;
 import cn.xylink.mting.speech.event.SpeechErrorEvent;
-import cn.xylink.mting.speech.event.SpeechPauseEvent;
 import cn.xylink.mting.speech.event.SpeechProgressEvent;
 import cn.xylink.mting.speech.event.SpeechReadyEvent;
 import cn.xylink.mting.speech.event.SpeechResumeEvent;
@@ -166,9 +161,12 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
             Handler handler = new Handler(Looper.getMainLooper());
             SpeechService.SpeechServiceState state = service.getState();
             switch (state) {
+                case Error:
+                case Paused:
                 case Playing:
-                    //ivPlayBarBtn.setImageDrawable(mPauseDrawable);
-                    showContent(textFragments, frameIndex);
+                    if(textFragments.size() > 0) {
+                        showContent(textFragments, frameIndex);
+                    }
                     handler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -179,20 +177,9 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
                     }, 100);
                     break;
                 case Loadding:
-                    //ivPlayBarBtn.setImageDrawable(mPauseDrawable);
+                    tvContent.setText("正在加载正文...");
                     break;
-                case Paused:
-                    //ivPlayBarBtn.setImageDrawable(mPlayDrawable);
-                    showContent(textFragments, frameIndex);
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (isFinishing() == false && isDestroyed() == false) {
-                                setArticleProgress(frameIndex, framesTotal);
-                            }
-                        }
-                    }, 100);
-                    break;
+
             }
             mTitleheight = tvContent.getY();
             initPlayState();
@@ -369,14 +356,14 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
                             service.setRole(Speechor.SpeechorRole.XiaoIce);
                             break;
                         case 1:
-
-                            service.setRole(Speechor.SpeechorRole.XiaoYao);
-                            break;
-                        case 2:
                             service.setRole(Speechor.SpeechorRole.XiaoMei);
                             break;
+                        case 2:
+                            service.setRole(Speechor.SpeechorRole.XiaoYao);
+                            break;
                         case 3:
-                            service.setRole(Speechor.SpeechorRole.YaYa);
+                            service.setRole(Speechor.SpeechorRole.XiaoYu
+                            );
                             break;
                     }
                 }
@@ -583,7 +570,6 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
             tvContent.setText(mCurrentArticle.getContent());
             llArticleEdit.setVisibility((mCurrentArticle.getInType() == 1 || TextUtils.isEmpty(mCurrentArticle.getUrl())) ? View.VISIBLE : View.GONE);
             llSourceDetail.setVisibility((mCurrentArticle.getInType() == 1 || TextUtils.isEmpty(mCurrentArticle.getUrl())) ? View.GONE : View.VISIBLE);
-            //tvFav.setText(mCurrentArticle.getStore() == 1 ? "已收藏" : "收藏");
             setFavorite(mCurrentArticle.getStore() == 1);
         }
         else if (event instanceof SpeechProgressEvent) {
@@ -606,7 +592,7 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
             float progress = 0;
             switch (((SpeechStopEvent) event).getStopReason()) {
                 case ListIsNull:
-                    setArticleProgress(100, 100);
+                    finish();
                     break;
             }
         }
@@ -616,6 +602,9 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
                 setFavorite(event.getArticle().getStore() == 1);
             }
             return;
+        }
+        else if(event instanceof SpeechErrorEvent) {
+            Toast.makeText(this, ((SpeechErrorEvent) event).getMessage(), Toast.LENGTH_SHORT).show();
         }
         setPlayerState(service.getState());
     }

@@ -377,9 +377,9 @@ public class SpeechService extends Service {
                 if (result >= 0) {
                     this.serviceState = SpeechServiceState.Playing;
                     //如果seek之前是暂停状态，那么发出一个resume事件
-                    if (preState == SpeechServiceState.Paused) {
+                    //if (preState == SpeechServiceState.Paused) {
                         onSpeechResume(getSelected());
-                    }
+                    //}
                 }
                 return result;
             }
