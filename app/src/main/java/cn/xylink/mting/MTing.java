@@ -2,8 +2,10 @@ package cn.xylink.mting;
 
 import android.app.Application;
 import android.content.Intent;
+import android.os.Environment;
 import android.util.Log;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import com.lzy.okgo.OkGo;
@@ -49,6 +51,9 @@ public class MTing extends Application {
         return activityManager;
     }
 
+    public String AudioCachePath;
+
+
 
     @Override
     public void onCreate() {
@@ -66,6 +71,7 @@ public class MTing extends Application {
         initOkHttp();
         ImageUtils.init(this);
 
+        clearAudioCache();
         startService(new Intent(this, SpeechService.class));
 
         try {
@@ -92,6 +98,17 @@ public class MTing extends Application {
         OkGo.getInstance().init(this)
                 .setOkHttpClient(builder.build());
 
+    }
+
+    private void clearAudioCache() {
+        File audioCacheFile = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS + "/" + PackageUtils.getAppPackage(MTing.getInstance()) + "/audio/");
+        AudioCachePath = audioCacheFile.getPath();
+        new Thread(()->{
+            File[] mp3Files = audioCacheFile.listFiles();
+            for(File mp3File : mp3Files) {
+                mp3File.delete();
+            }
+        }).start();
     }
 
 

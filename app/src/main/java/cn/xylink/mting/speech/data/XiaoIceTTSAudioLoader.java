@@ -1,6 +1,8 @@
 package cn.xylink.mting.speech.data;
 
 
+import android.net.Uri;
+import android.os.Environment;
 import android.util.Log;
 
 import com.lzy.okgo.OkGo;
@@ -18,8 +20,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 
+import cn.xylink.mting.MTing;
 import cn.xylink.mting.speech.Speechor;
 import cn.xylink.mting.speech.TTSAudioLoader;
+import cn.xylink.mting.utils.PackageUtils;
 import okhttp3.Call;
 import okhttp3.MediaType;
 
@@ -80,10 +84,12 @@ public class XiaoIceTTSAudioLoader implements TTSAudioLoader {
                             JSONObject itemObject = itemArray.getJSONObject(0);
                             JSONObject contentObject = itemObject.getJSONObject("content");
                             String voiceUrl = contentObject.getString("audioUrl");
-
+                            Uri voiceUri = Uri.parse(voiceUrl);
+                            String fileStoragePath = MTing.getInstance().AudioCachePath;
+                            String filename = voiceUri.getLastPathSegment();
                             OkGo.<File>get(voiceUrl)
                                     .tag(XiaoIceTTSAudioLoader.this)
-                                    .execute(new FileCallback() {
+                                    .execute(new FileCallback(fileStoragePath, filename) {
                                 @Override
                                 public void onSuccess(Response<File> response) {
                                     String fileUrl = response.body().getAbsolutePath();
