@@ -125,10 +125,10 @@ public class CollectFragment extends BaseMainTabFragment implements UnreadAdapte
         showBottonDialog(TAB_TYPE.COLLECT, article);
     }
 
-    @OnClick(R.id.ll_empty)
+    @OnClick(R.id.ll_network_error)
     void onClick(View v) {
         switch (v.getId()) {
-            case R.id.ll_empty:
+            case R.id.ll_network_error:
                 initData();
                 break;
         }

@@ -14,6 +14,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static cn.xylink.mting.speech.SpeechError.FRAGMENT_LOAD_INNTERNAL_ERROR;
+
 public abstract class BaiduSpeechor implements Speechor {
     static String TAG = BaiduSpeechor.class.getSimpleName();
     List<String> textFragments;
@@ -56,7 +58,7 @@ public abstract class BaiduSpeechor implements Speechor {
         speechSynthesizer.setSpeechSynthesizerListener(new SpeechSynthesizerListener() {
             @Override
             public void onSynthesizeStart(String s) {
-                Log.d(TAG, "onSynthesizeStart:" + s);
+                //Log.d(TAG, "onSynthesizeStart:" + s);
             }
 
             @Override
@@ -65,7 +67,7 @@ public abstract class BaiduSpeechor implements Speechor {
 
             @Override
             public void onSynthesizeFinish(String s) {
-                Log.d(TAG, "onSynthesizeFinish:" + s);
+                //Log.d(TAG, "onSynthesizeFinish:" + s);
             }
 
             /*
@@ -74,9 +76,10 @@ public abstract class BaiduSpeechor implements Speechor {
              */
             @Override
             public void onSpeechStart(String s) {
-                Log.d(TAG, "onSpeechStart:" + s);
+
                 synchronized (self) {
                     self.fragmentIndex = self.fragmentIndexNext;
+                    Log.d(TAG, "onSpeechStart: s=" + s + ",fragmentIndex=" + self.fragmentIndex);
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
@@ -94,8 +97,10 @@ public abstract class BaiduSpeechor implements Speechor {
             public void onSpeechFinish(final String s) {
                 //System.out.println("onSpeechFinish:" + s + ",");
                 synchronized (self) {
+                    int finishIndex = Integer.parseInt(s);
+                    Log.d(TAG, "onSpeechFinish:s=" + s + ",fragIndexNext=" + String.valueOf(self.fragmentIndexNext + 1));
                     //System.out.println("onSpeechFinish:" + self);
-                    ++self.fragmentIndexNext;
+                    self.fragmentIndexNext = finishIndex + 1;
                     if (self.fragmentIndexNext >= self.textFragments.size()) {
                         self.fragmentIndexNext = 0;
                         self.fragmentIndex = 0;
@@ -108,6 +113,19 @@ public abstract class BaiduSpeechor implements Speechor {
                             }
                         }).start();
                     }
+
+                    else if(fragmentErrorMap.containsKey(self.fragmentIndexNext)) {
+                        Log.d(TAG, "当前帧:" + self.fragmentIndexNext + "侦测到错误,之前的重试次数是:" + fragmentErrorMap.get(self.fragmentIndexNext));
+                        //如果下一篇文章有出错的标识
+                        int errorRetyCount = fragmentErrorMap.get(self.fragmentIndexNext) + 1;
+                        if(errorRetyCount <= Speechor.ERROR_RETRY_COUNT) {
+                            fragmentErrorMap.put(self.fragmentIndexNext, errorRetyCount);
+                            seekAndPlay(self.fragmentIndexNext);
+                        }
+                        else {
+                            self.onError(cn.xylink.mting.speech.SpeechError.FRAGMENT_LOAD_INNTERNAL_ERROR, "语音分片加载错误:" + cn.xylink.mting.speech.SpeechError.FRAGMENT_LOAD_INNTERNAL_ERROR);
+                        }
+                    }
                 }
             }
 
@@ -117,15 +135,23 @@ public abstract class BaiduSpeechor implements Speechor {
                     if (isReleased) {
                         return;
                     }
-                    int currentFragmentRetryCount = fragmentErrorMap.containsKey(fragmentIndex) ? fragmentErrorMap.get(fragmentIndex) : 0;
+
+                    int errorFrameIndex = Integer.parseInt(s);
+                    int currentFragmentRetryCount = fragmentErrorMap.containsKey(errorFrameIndex) ? fragmentErrorMap.get(errorFrameIndex) : 0;
                     //发生错误后，回来要看一下当前的播放状态
-                    if (state == SpeechorState.SpeechorStatePlaying && ++currentFragmentRetryCount <= Speechor.ERROR_RETRY_COUNT) {
-                        Log.d(TAG, "BaiduSpeechor.onError:" + speechError.description + ", retrycount=" + currentFragmentRetryCount);
-                        fragmentErrorMap.put(fragmentIndex, currentFragmentRetryCount);
-                        seekAndPlay(fragmentIndex);
+                    if (fragmentIndex == errorFrameIndex) {
+                        if ((currentFragmentRetryCount + 1) <= Speechor.ERROR_RETRY_COUNT) {
+                            Log.d(TAG, "BaiduSpeechor.onError:s=" + s + "frameIndex=" + fragmentIndex + ",error=" + speechError.description + ", retrycount=" + currentFragmentRetryCount);
+                            fragmentErrorMap.put(errorFrameIndex, ++currentFragmentRetryCount);
+                            seekAndPlay(errorFrameIndex);
+                        }
+                        else {
+                            self.onError(cn.xylink.mting.speech.SpeechError.FRAGMENT_LOAD_INNTERNAL_ERROR, "语音分片内部加载错误:" + speechError.description);
+                        }
                     }
                     else {
-                        self.onError(speechError.code, speechError.description);
+                        Log.d(TAG, "在加载第" + errorFrameIndex + "贞时出现错误，当前frameindex=:" + fragmentIndex + "贞， retrycount=" + currentFragmentRetryCount + "，加入错误重试队列");
+                        fragmentErrorMap.put(errorFrameIndex, currentFragmentRetryCount);
                     }
                 }
             }
@@ -162,23 +188,27 @@ public abstract class BaiduSpeechor implements Speechor {
         if (index < 0 || index >= this.textFragments.size())
             return -cn.xylink.mting.speech.SpeechError.INDEX_OUT_OF_RANGE;
 
+        /*
         if (state == SpeechorState.SpeechorStatePlaying) {
             if (index == fragmentIndex) {
                 return index;
             }
             else {
+
                 speechSynthesizer.stop();
             }
         }
+        */
 
-        this.fragmentIndex = index;
-        this.fragmentIndexNext = fragmentIndex;
         this.onStateChanged(SpeechorState.SpeechorStatePlaying);
         return seekAndPlay(fragmentIndex);
     }
 
 
     private int seekAndPlay(int frameIndex) {
+        speechSynthesizer.stop();
+        this.fragmentIndex = frameIndex;
+        this.fragmentIndexNext = fragmentIndex;
         state = SpeechorState.SpeechorStatePlaying;
         for (int currentIndex = frameIndex, fragmentsSize = this.textFragments.size();
              currentIndex < fragmentsSize; ++currentIndex) {
@@ -189,7 +219,6 @@ public abstract class BaiduSpeechor implements Speechor {
 
     @Override
     public synchronized void setRole(SpeechorRole roleSet) {
-
         if (isReleased)
             return;
 
