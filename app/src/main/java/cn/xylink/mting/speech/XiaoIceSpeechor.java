@@ -107,7 +107,7 @@ public abstract class XiaoIceSpeechor implements Speechor {
     String speedInternal;
     SpeechHelper speechHelper;
     MediaPlayer mediaPlayer;
-    static int LOADER_QUEUE_SIZE = 2;
+    int LOADER_QUEUE_SIZE = 2;
     boolean isSimulatePaused;
     TTSAudioLoader ttsAudioLoader;
     long seekTime;
@@ -186,7 +186,11 @@ public abstract class XiaoIceSpeechor implements Speechor {
             this.fragmentIndexNext = fragmentIndex;
             ttsAudioLoader.cancelAll();
             clearErrorCacha(index);
+            //动态缓冲区，尽快让播放启动
+            LOADER_QUEUE_SIZE = 1;
             seekAndPlay(index);
+            //增加缓冲区
+            LOADER_QUEUE_SIZE = 2;
             new Thread(() -> {
                 onStateChanged(SpeechorState.SpeechorStatePlaying);
             }).start();
@@ -199,7 +203,7 @@ public abstract class XiaoIceSpeechor implements Speechor {
         Log.d(TAG, "seekAndPlay:" + indexToPlay);
         seekTime = System.currentTimeMillis();
         int segmentSize = this.textFragments.size();
-        for (int startIndex = indexToPlay, endIndex = Math.min(startIndex + LOADER_QUEUE_SIZE, segmentSize); startIndex <= endIndex; ++startIndex) {
+        for (int startIndex = indexToPlay, endIndex = Math.min(startIndex + LOADER_QUEUE_SIZE + 1, segmentSize); startIndex < endIndex; ++startIndex) {
             boolean isSegumentCurrentToPlay = startIndex == this.fragmentIndex;
             SpeechTextFragment fragment = this.speechTextFragments.get(startIndex);
             fragment.setFrameIndex(startIndex);
