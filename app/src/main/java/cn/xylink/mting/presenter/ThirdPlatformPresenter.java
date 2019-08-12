@@ -36,9 +36,14 @@ public class ThirdPlatformPresenter extends BasePresenter<BindThirdPlatformConta
                 BaseResponse<UserInfo> baseResponse = (BaseResponse<UserInfo>) data;
                 int code = baseResponse.code;
                 L.v("coce",code);
+                if(code == 200) {
                     mView.onThirdPlatformSuccess(baseResponse);
                     String userInfoData = new Gson().toJson(baseResponse.data);
                     FileUtil.writeFile(MTing.getInstance(), Const.FileName.USER_INFO_LOGIN, userInfoData);
+                }else
+                {
+                    mView.onThirdPlatformError(code, baseResponse.message);
+                }
             }
 
             @Override
