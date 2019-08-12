@@ -76,7 +76,7 @@ public abstract class BaiduSpeechor implements Speechor {
              */
             @Override
             public void onSpeechStart(String s) {
-
+                BaiduSpeechor self = BaiduSpeechor.this;
                 synchronized (self) {
                     self.fragmentIndex = self.fragmentIndexNext;
                     Log.d(TAG, "onSpeechStart: s=" + s + ",fragmentIndex=" + self.fragmentIndex);
@@ -95,6 +95,7 @@ public abstract class BaiduSpeechor implements Speechor {
 
             @Override
             public void onSpeechFinish(final String s) {
+                BaiduSpeechor self = BaiduSpeechor.this;
                 //System.out.println("onSpeechFinish:" + s + ",");
                 synchronized (self) {
                     int finishIndex = Integer.parseInt(s);
@@ -114,11 +115,11 @@ public abstract class BaiduSpeechor implements Speechor {
                         }).start();
                     }
 
-                    else if(fragmentErrorMap.containsKey(self.fragmentIndexNext)) {
+                    else if (fragmentErrorMap.containsKey(self.fragmentIndexNext)) {
                         Log.d(TAG, "当前帧:" + self.fragmentIndexNext + "侦测到错误,之前的重试次数是:" + fragmentErrorMap.get(self.fragmentIndexNext));
                         //如果下一篇文章有出错的标识
                         int errorRetyCount = fragmentErrorMap.get(self.fragmentIndexNext) + 1;
-                        if(errorRetyCount <= Speechor.ERROR_RETRY_COUNT) {
+                        if (errorRetyCount <= Speechor.ERROR_RETRY_COUNT) {
                             fragmentErrorMap.put(self.fragmentIndexNext, errorRetyCount);
                             seekAndPlay(self.fragmentIndexNext);
                         }
@@ -138,7 +139,7 @@ public abstract class BaiduSpeechor implements Speechor {
 
                     int errorFrameIndex = Integer.parseInt(s);
                     int currentFragmentRetryCount = fragmentErrorMap.containsKey(errorFrameIndex) ? fragmentErrorMap.get(errorFrameIndex) : 0;
-                    //发生错误后，回来要看一下当前的播放状态
+
                     if (fragmentIndex == errorFrameIndex) {
                         if ((currentFragmentRetryCount + 1) <= Speechor.ERROR_RETRY_COUNT) {
                             Log.d(TAG, "BaiduSpeechor.onError:s=" + s + "frameIndex=" + fragmentIndex + ",error=" + speechError.description + ", retrycount=" + currentFragmentRetryCount);
@@ -162,9 +163,9 @@ public abstract class BaiduSpeechor implements Speechor {
     @Override
     public void prepare(String text) {
         synchronized (this) {
-            if (isReleased)
+            if (isReleased) {
                 return;
-
+            }
             if (this.state != SpeechorState.SpeechorStateReady) {
                 this.reset();
             }
@@ -181,24 +182,17 @@ public abstract class BaiduSpeechor implements Speechor {
      */
     @Override
     public synchronized int seek(int index) {
-
-        if (isReleased)
+        if (isReleased) {
             return -cn.xylink.mting.speech.SpeechError.TARGET_IS_RELEASED;
-
-        if (index < 0 || index >= this.textFragments.size())
-            return -cn.xylink.mting.speech.SpeechError.INDEX_OUT_OF_RANGE;
-
-        /*
-        if (state == SpeechorState.SpeechorStatePlaying) {
-            if (index == fragmentIndex) {
-                return index;
-            }
-            else {
-
-                speechSynthesizer.stop();
-            }
         }
-        */
+
+        if(this.textFragments.size() <= 0) {
+            return  -cn.xylink.mting.speech.SpeechError.HAS_NO_FRAGMENTS;
+        }
+
+        if (index < 0 || index >= this.textFragments.size()) {
+            return -cn.xylink.mting.speech.SpeechError.INDEX_OUT_OF_RANGE;
+        }
 
         this.onStateChanged(SpeechorState.SpeechorStatePlaying);
         return seekAndPlay(fragmentIndex);
@@ -219,9 +213,9 @@ public abstract class BaiduSpeechor implements Speechor {
 
     @Override
     public synchronized void setRole(SpeechorRole roleSet) {
-        if (isReleased)
+        if (isReleased) {
             return;
-
+        }
         String paramRole = "0";
 
         switch (roleSet) {
@@ -263,9 +257,9 @@ public abstract class BaiduSpeechor implements Speechor {
 
     @Override
     public synchronized void setSpeed(SpeechorSpeed speed) {
-        if (isReleased)
+        if (isReleased) {
             return;
-
+        }
         String paramSpeed = "5";
         switch (speed) {
             case SPEECH_SPEED_MULTIPLE_1_POINT_5:
@@ -289,7 +283,7 @@ public abstract class BaiduSpeechor implements Speechor {
             this.stop();
             this.seekAndPlay(fragmentIndex);
         }
-        else if(this.state == SpeechorState.SpeechorStatePaused) {
+        else if (this.state == SpeechorState.SpeechorStatePaused) {
             this.stop();
         }
     }
@@ -338,9 +332,7 @@ public abstract class BaiduSpeechor implements Speechor {
         synchronized (this) {
             if (this.textFragments.size() <= 0)
                 return 0f;
-             return (float) fragmentIndex / (float) this.textFragments.size();
-
-
+            return (float) fragmentIndex / (float) this.textFragments.size();
         }
     }
 
@@ -352,7 +344,6 @@ public abstract class BaiduSpeechor implements Speechor {
             }
 
             if (state == SpeechorState.SpeechorStatePlaying) {
-                Log.d("SPEECH_", "百度可以pause，准备调用");
                 if (speechSynthesizer.pause() == 0) {
                     this.state = SpeechorState.SpeechorStatePaused;
                     this.onStateChanged(SpeechorState.SpeechorStatePaused);
@@ -365,12 +356,10 @@ public abstract class BaiduSpeechor implements Speechor {
 
     @Override
     public boolean resume() {
-
         synchronized (this) {
             if (isReleased) {
                 return false;
             }
-
             if (state == SpeechorState.SpeechorStatePaused) {
                 if (speechSynthesizer.resume() == 0) {
                     state = SpeechorState.SpeechorStatePlaying;
@@ -385,9 +374,9 @@ public abstract class BaiduSpeechor implements Speechor {
     @Override
     public void stop() {
         synchronized (this) {
-            if (isReleased)
+            if (isReleased) {
                 return;
-
+            }
             if (state != SpeechorState.SpeechorStateReady) {
                 state = SpeechorState.SpeechorStateReady;
                 speechSynthesizer.stop();
@@ -398,7 +387,6 @@ public abstract class BaiduSpeechor implements Speechor {
     @Override
     public void reset() {
         synchronized (this) {
-
             SpeechorState currState = this.state;
             this.state = SpeechorState.SpeechorStateReady;
             this.fragmentIndex = 0;
@@ -416,7 +404,7 @@ public abstract class BaiduSpeechor implements Speechor {
 
     @Override
     public void release() {
-        if(isReleased) {
+        if (isReleased) {
             return;
         }
         synchronized (this) {
