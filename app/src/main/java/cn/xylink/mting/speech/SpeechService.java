@@ -146,6 +146,16 @@ public class SpeechService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.d("SpeechService", "onStartCommand");
+
+        if(intent != null) {
+            String roleValue = intent.getStringExtra("role");
+            String speedValue = intent.getStringExtra("speed");
+            Speechor.SpeechorRole currRole = roleValue != null && roleValue.trim() != "" ? Speechor.SpeechorRole.valueOf(roleValue) : Speechor.SpeechorRole.XiaoIce;
+            Speechor.SpeechorSpeed currSpeed = speedValue != null && speedValue.trim() != "" ? Speechor.SpeechorSpeed.valueOf(speedValue) : Speechor.SpeechorSpeed.SPEECH_SPEED_NORMAL;
+            this.setRole(currRole);
+            this.setSpeed(currSpeed);
+        }
         return START_STICKY;
     }
 

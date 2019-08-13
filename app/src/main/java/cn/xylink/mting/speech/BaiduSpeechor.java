@@ -195,20 +195,20 @@ public abstract class BaiduSpeechor implements Speechor {
         }
 
         this.onStateChanged(SpeechorState.SpeechorStatePlaying);
-        return seekAndPlay(fragmentIndex);
+        return seekAndPlay(index);
     }
 
 
-    private int seekAndPlay(int frameIndex) {
+    private int seekAndPlay(int index) {
         speechSynthesizer.stop();
-        this.fragmentIndex = frameIndex;
+        this.fragmentIndex = index;
         this.fragmentIndexNext = fragmentIndex;
         state = SpeechorState.SpeechorStatePlaying;
-        for (int currentIndex = frameIndex, fragmentsSize = this.textFragments.size();
+        for (int currentIndex = index, fragmentsSize = this.textFragments.size();
              currentIndex < fragmentsSize; ++currentIndex) {
             speechSynthesizer.speak(this.textFragments.get(currentIndex), String.valueOf(currentIndex));
         }
-        return frameIndex;
+        return index;
     }
 
     @Override

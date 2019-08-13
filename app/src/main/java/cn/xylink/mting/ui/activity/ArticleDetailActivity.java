@@ -55,6 +55,7 @@ import cn.xylink.mting.ui.dialog.ArticleDetailFont;
 import cn.xylink.mting.ui.dialog.ArticleDetailSetting;
 import cn.xylink.mting.ui.dialog.ArticleDetailShare;
 import cn.xylink.mting.utils.ContentManager;
+import cn.xylink.mting.utils.SharedPreHelper;
 import cn.xylink.mting.utils.T;
 import cn.xylink.mting.widget.ArcProgressBar;
 import cn.xylink.mting.widget.MyScrollView;
@@ -326,6 +327,8 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
                             service.setSpeed(Speechor.SpeechorSpeed.SPEECH_SPEED_MULTIPLE_2_POINT_5);
                             break;
                     }
+
+                    SharedPreHelper.getInstance(getApplicationContext()).put("SPEECH_SPEED", String.valueOf(service.getSpeed()));
                 }
 
                 @Override
@@ -366,6 +369,7 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
                             );
                             break;
                     }
+                    SharedPreHelper.getInstance(getApplicationContext()).put("SPEECH_ROLE", String.valueOf(service.getRole()));
                 }
             });
         }

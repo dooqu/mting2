@@ -260,7 +260,7 @@ public abstract class XiaoIceSpeechor implements Speechor {
                                     //加载失败之后的逻辑分之
                                     if (++this.fragment.retryCount > Speechor.ERROR_RETRY_COUNT) {
                                         this.fragment.setFragmentState(SpeechTextFragmentState.Error);
-                                        this.fragment.setErrorMessage("分片加载错误:" + message);
+                                        this.fragment.setErrorMessage("网络连接失败，请稍候重试:" + errorCode);
                                         //如果当前播放的主控正在等待当前分片的加载结果，那么反向主动回应
                                         if (this.fragment.getFrameIndex() == XiaoIceSpeechor.this.fragmentIndex) {
                                             //用户在重试等待期间，可能改动了播放主控的操作，如果播放还需要继续，那么就显示错误
@@ -374,26 +374,11 @@ public abstract class XiaoIceSpeechor implements Speechor {
      */
     private synchronized void onMediaFragmentPrepared(MediaPlayer mp) {
         Log.d(TAG, "play fragment at:{" + fragmentIndex + "},duration=" + mp.getDuration());
-        long duration = mp.getDuration();
         if (state == SpeechorState.SpeechorStatePlaying) {
             new Thread(() -> {
                 onProgress(textFragments, fragmentIndex);
                 mp.start();
             }).start();
-
-            /*
-            if (duration > 500) {
-                long delayMilli = duration - 500;
-                Timer timer = new Timer();
-                timer.schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        mp.stop();
-                        onMediaFragmentComplete(mp);
-                    }
-                }, delayMilli);
-            }
-            */
         }
     }
 

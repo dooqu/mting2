@@ -34,6 +34,7 @@ public class XiaoIceTTSAudioLoader implements TTSAudioLoader {
     private final static String KEY_SUBSCRIPTION = "bc2c2003ad7342d7afd7d3c48f28abad";
     private final static String MSG_ID = "f5ff4f16fb90d07eb9475b5d9b582967ad09e3a7b875a62a26f02ffec1b37c2dff4ab5684fc620ee";
     private final static String TIMESTAMP = "300";
+    private static String TAG = XiaoIceTTSAudioLoader.class.getSimpleName();
 
 
     private String getSpeechString(Speechor.SpeechorSpeed speechorSpeed) {
@@ -56,7 +57,7 @@ public class XiaoIceTTSAudioLoader implements TTSAudioLoader {
 
     @Override
     public void textToSpeech(String text, Speechor.SpeechorSpeed speechorSpeed, LoadResult result) {
-        Log.d("xylink", "TTS:" + text);
+        Log.d(TAG, "TTS:" + text);
         String postData = null;
 
         try {
@@ -87,6 +88,8 @@ public class XiaoIceTTSAudioLoader implements TTSAudioLoader {
                             Uri voiceUri = Uri.parse(voiceUrl);
                             String fileStoragePath = MTing.getInstance().AudioCachePath;
                             String filename = voiceUri.getLastPathSegment();
+
+                            Log.d(TAG,  "download:" + text);
                             OkGo.<File>get(voiceUrl)
                                     .tag(XiaoIceTTSAudioLoader.this)
                                     .execute(new FileCallback(fileStoragePath, filename) {
@@ -94,6 +97,7 @@ public class XiaoIceTTSAudioLoader implements TTSAudioLoader {
                                 public void onSuccess(Response<File> response) {
                                     String fileUrl = response.body().getAbsolutePath();
                                     if(result != null) {
+                                        Log.d(TAG, "complete:" + text);
                                         result.invoke(0, null, fileUrl);
                                     }
                                 }
