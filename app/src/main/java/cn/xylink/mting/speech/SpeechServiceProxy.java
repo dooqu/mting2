@@ -30,8 +30,8 @@ public abstract class SpeechServiceProxy {
     }
 
 
-    public void bind() {
-        this.context.bindService(new Intent(context, SpeechService.class), this.connection, context.BIND_AUTO_CREATE);
+    public boolean bind() {
+        return this.context.bindService(new Intent(context, SpeechService.class), this.connection, context.BIND_AUTO_CREATE);
     }
 
     public void unbind() {
