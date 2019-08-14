@@ -242,7 +242,10 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
                 }
             }
         };
-        proxy.bind();
+
+        if(proxy.bind() == false) {
+            Toast.makeText(this, "未能连接到播放服务", Toast.LENGTH_SHORT).show();
+        }
     }
 
 
