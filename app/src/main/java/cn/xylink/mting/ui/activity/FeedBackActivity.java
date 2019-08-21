@@ -5,6 +5,8 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.tendcloud.tenddata.TCAgent;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import cn.xylink.mting.R;
@@ -58,6 +60,7 @@ public class FeedBackActivity extends BasePresenterActivity implements AddFeedba
         linkCreateRequest.setContent(etContent.getText().toString());
         linkCreateRequest.doSign();
         addFeedbackPresenter.onFeedBack(linkCreateRequest);
+        TCAgent.onEvent(this,"sys_feedback");
     }
 
     @Override
