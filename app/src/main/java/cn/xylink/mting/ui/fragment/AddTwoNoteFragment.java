@@ -233,9 +233,9 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
     public void onResume() {
         super.onResume();
         ClipboardManager cmb = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
-        if (cmb.getPrimaryClip() != null) {
+        if (cmb.getPrimaryClip() != null && cmb.getPrimaryClip().getItemCount() > 0) {
             String fristText = cmb.getPrimaryClip().getItemAt(0).getText().toString();
-            L.v("fristText");
+            L.v("fristText",fristText);
             if (fristText.startsWith("http://") || fristText.startsWith("https://")) {
                 etLink.setText(fristText);
                 tvPreview.setTextColor(getResources().getColorStateList(R.color.color_blue));
