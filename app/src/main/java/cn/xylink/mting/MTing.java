@@ -2,8 +2,10 @@ package cn.xylink.mting;
 
 import android.app.Application;
 import android.content.Intent;
+import android.os.Environment;
 import android.util.Log;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import com.lzy.okgo.OkGo;
@@ -28,15 +30,13 @@ import cn.xylink.mting.openapi.QQApi;
 import cn.xylink.mting.openapi.WXapi;
 import cn.xylink.mting.speech.SpeechService;
 import cn.xylink.mting.speech.Speechor;
-import cn.xylink.mting.speech.TTSAudioLoader;
-import cn.xylink.mting.speech.data.SpeechList;
-import cn.xylink.mting.speech.data.XiaoIceTTSAudioLoader;
 import cn.xylink.mting.upgrade.UpgradeManager;
 import cn.xylink.mting.utils.ContentManager;
 import cn.xylink.mting.utils.EncryptionUtil;
 import cn.xylink.mting.utils.GsonUtil;
 import cn.xylink.mting.utils.ImageUtils;
 import cn.xylink.mting.utils.PackageUtils;
+import cn.xylink.mting.utils.SharedPreHelper;
 import okhttp3.OkHttpClient;
 
 public class MTing extends Application {
@@ -49,6 +49,9 @@ public class MTing extends Application {
     public static ActivityManager getActivityManager() {
         return activityManager;
     }
+
+    public String AudioCachePath;
+
 
 
     @Override
@@ -68,7 +71,13 @@ public class MTing extends Application {
         initOkHttp();
         ImageUtils.init(this);
 
-        startService(new Intent(this, SpeechService.class));
+        clearAudioCache();
+        Intent serviceIntent = new Intent(this, SpeechService.class);
+        String defaultRole = String.valueOf(SharedPreHelper.getInstance(this).getSharedPreference("SPEECH_ROLE", "XiaoIce"));
+        String defaultSpeed = String.valueOf(SharedPreHelper.getInstance(this).getSharedPreference("SPEECH_SPEED", "SPEECH_SPEED_NORMAL"));
+        serviceIntent.putExtra("role", defaultRole);
+        serviceIntent.putExtra("speed", defaultSpeed);
+        startService(serviceIntent);
 
         try {
             checkOnlineUpgrade();
@@ -98,6 +107,20 @@ public class MTing extends Application {
         OkGo.getInstance().init(this)
                 .setOkHttpClient(builder.build());
 
+    }
+
+    private void clearAudioCache() {
+        File audioCacheFile = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS + "/" + PackageUtils.getAppPackage(MTing.getInstance()) + "/audio/");
+        AudioCachePath = audioCacheFile.getPath();
+        new Thread(()->{
+            File[] mp3Files = audioCacheFile.listFiles();
+            if(mp3Files == null || mp3Files.length <= 0) {
+                return;
+            }
+            for(File mp3File : mp3Files) {
+                mp3File.delete();
+            }
+        }).start();
     }
 
 

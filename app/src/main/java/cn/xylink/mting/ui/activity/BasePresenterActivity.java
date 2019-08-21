@@ -81,7 +81,6 @@ public abstract class BasePresenterActivity<T extends BasePresenter> extends Bas
     protected void onResume() {
         super.onResume();
         L.v();
-        tCopy = ContentManager.getInstance().getCopyArray();
         if (alertDialog == null || (alertDialog != null && !alertDialog.isShowing())) {
             showCopyDialog();
         }
@@ -128,6 +127,7 @@ public abstract class BasePresenterActivity<T extends BasePresenter> extends Bas
                 || this.getComponentName().getClassName().equals(ArticleDetailActivity.class.getName())) {
             CharSequence copy = getCopy(this);
             if (!TextUtils.isEmpty(copy) && (copy.toString().startsWith("http://") || copy.toString().startsWith("https://"))) {
+                tCopy = ContentManager.getInstance().getCopyArray();
                 if (tCopy != null && tCopy.size() > 0)
                     for (String s : tCopy) {
                         if (s.equals(copy.toString())) {

@@ -1,6 +1,7 @@
 package cn.xylink.mting.speech;
 
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -29,8 +30,8 @@ public abstract class SpeechServiceProxy {
     }
 
 
-    public void bind() {
-        this.context.bindService(new Intent(context, SpeechService.class), this.connection, 0);
+    public boolean bind() {
+        return this.context.bindService(new Intent(context, SpeechService.class), this.connection, context.BIND_AUTO_CREATE);
     }
 
     public void unbind() {
