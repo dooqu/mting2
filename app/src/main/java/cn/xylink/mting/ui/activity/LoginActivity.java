@@ -115,6 +115,7 @@ public class LoginActivity extends BasePresenterActivity implements ThirdLoginCo
                     return;
                 }
                 if (WXapi.isInstallWX()) {
+                    TCAgent.onEvent(this,"wechat_login");
                     WXapi.loginWX();
                 } else {
                     toastShort("您还未安装微信客户端！");
@@ -128,6 +129,7 @@ public class LoginActivity extends BasePresenterActivity implements ThirdLoginCo
                     return;
                 }
                 if(mTencent.isQQInstalled(this)){
+                    TCAgent.onEvent(this,"qq_login");
                     mTencent.login(this, "all", new BaseUiListener());
                 }else{
                     toastShort("您还未安装QQ客户端！");

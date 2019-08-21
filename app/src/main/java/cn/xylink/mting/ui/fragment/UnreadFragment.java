@@ -7,6 +7,8 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.LinearLayout;
 
+import com.tendcloud.tenddata.TCAgent;
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -106,6 +108,7 @@ public class UnreadFragment extends BaseMainTabFragment implements UnreadAdapter
     @Override
     public void onItemMoreClick(Article article) {
         L.v();
+        TCAgent.onEvent(getActivity(),"article_more");
         showBottonDialog(TAB_TYPE.UNREAD, article);
     }
 

@@ -19,6 +19,8 @@ import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
+import com.tendcloud.tenddata.TCAgent;
+
 import java.lang.reflect.Method;
 
 import butterknife.BindView;
@@ -56,7 +58,6 @@ public class PlayerlActivity extends BaseActivity {
 
     @Override
     protected void initView() {
-
         int height = getResources().getDisplayMetrics().heightPixels;
         COVER_SCREEN_PARAMS = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height);
 //        COVER_SCREEN_PARAMS = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 800);

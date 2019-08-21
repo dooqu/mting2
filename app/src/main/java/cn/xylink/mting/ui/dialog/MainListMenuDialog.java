@@ -9,6 +9,8 @@ import android.view.View;
 import android.view.Window;
 import android.widget.TextView;
 
+import com.tendcloud.tenddata.TCAgent;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import cn.xylink.mting.R;
@@ -71,26 +73,31 @@ public class MainListMenuDialog extends BaseDimDialog {
             case R.id.v_dialog_main_list_menu_out:
                 break;
             case R.id.tv_dialog_main_list_menu_wx:
+                TCAgent.onEvent(mContext,"article_more_wechat");
                 if (mArticle != null && !TextUtils.isEmpty(mArticle.getShareUrl()))
                     WXapi.shareWx((Activity) mContext, mArticle.getShareUrl(), null, mArticle.getTitle(),
                             TextUtils.isEmpty(mArticle.getDescribe()) ? "" : mArticle.getDescribe());
                 break;
             case R.id.tv_dialog_main_list_menu_wxp:
+                TCAgent.onEvent(mContext,"article_more_wecha1");
                 if (mArticle != null && !TextUtils.isEmpty(mArticle.getShareUrl()))
                     WXapi.sharePyq((Activity) mContext, mArticle.getShareUrl(), null, mArticle.getTitle(),
                             TextUtils.isEmpty(mArticle.getDescribe()) ? "" : mArticle.getDescribe());
                 break;
             case R.id.tv_dialog_main_list_menu_qq:
+                TCAgent.onEvent(mContext,"article_more_qq");
                 if (mArticle != null && !TextUtils.isEmpty(mArticle.getShareUrl()))
                     QQApi.shareQQ((Activity) mContext, mArticle.getShareUrl(), null, mArticle.getTitle(),
                             TextUtils.isEmpty(mArticle.getDescribe()) ? "" : mArticle.getDescribe());
                 break;
             case R.id.tv_dialog_main_list_menu_quen:
+                TCAgent.onEvent(mContext,"article_more_qq1");
                 if (mArticle != null && !TextUtils.isEmpty(mArticle.getShareUrl()))
                     QQApi.shareSpace((Activity) mContext, mArticle.getShareUrl(), null, mArticle.getTitle(),
                             TextUtils.isEmpty(mArticle.getDescribe()) ? "" : mArticle.getDescribe());
                 break;
             case R.id.tv_dialog_main_list_menu_copy:
+                TCAgent.onEvent(mContext,"article_more_copyurl");
                 if (mArticle != null && !TextUtils.isEmpty(mArticle.getShareUrl())) {
                     ClipboardManager cm = (ClipboardManager) mContext.getSystemService(Context.CLIPBOARD_SERVICE);
                     ClipData mClipData = ClipData.newPlainText("Label", mArticle.getShareUrl());
@@ -100,10 +107,12 @@ public class MainListMenuDialog extends BaseDimDialog {
                 }
                 break;
             case R.id.tv_dialog_main_list_menu_love:
+                TCAgent.onEvent(mContext,"article_more_collection");
                 if (mArticle != null)
                     mListener.onItemLove(mArticle);
                 break;
             case R.id.tv_dialog_main_list_menu_del:
+                TCAgent.onEvent(mContext,"article_more_delete");
                 if (mArticle != null)
                     mListener.onItemDel(mTabType, mTabType == BaseMainTabFragment.TAB_TYPE.UNREAD ? mArticle.getArticleId() : mArticle.getId());
             case R.id.tv_dialog_main_list_menu_cancel:
