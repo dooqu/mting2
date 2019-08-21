@@ -198,8 +198,10 @@ public class LoginActivity extends BasePresenterActivity implements ThirdLoginCo
             }
             case 200: {
                 if (platform.equals("qq")) {
+                    TCAgent.onEvent(this,"qq_login");
                     TCAgent.onLogin(ContentManager.getInstance().getUserInfo().getUserId(), TDAccount.AccountType.QQ,"");
                 } else {
+                    TCAgent.onEvent(this,"wechat_login");
                     TCAgent.onLogin(ContentManager.getInstance().getUserInfo().getUserId(), TDAccount.AccountType.WEIXIN,"");
                 }
                 ContentManager.getInstance().setLoginToken(response.data.getToken());
