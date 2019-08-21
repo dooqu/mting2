@@ -55,12 +55,12 @@ public class FeedBackActivity extends BasePresenterActivity implements AddFeedba
 
     @OnClick(R.id.bt_submit)
     void onSubmit(View v) {
+        TCAgent.onEvent(this,"sys_feedback");
         LinkCreateRequest linkCreateRequest = new LinkCreateRequest();
         linkCreateRequest.setType((String) snType.getSelectedItem());
         linkCreateRequest.setContent(etContent.getText().toString());
         linkCreateRequest.doSign();
         addFeedbackPresenter.onFeedBack(linkCreateRequest);
-        TCAgent.onEvent(this,"sys_feedback");
     }
 
     @Override

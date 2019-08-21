@@ -58,7 +58,6 @@ public class PlayerlActivity extends BaseActivity {
 
     @Override
     protected void initView() {
-        TCAgent.onEvent(this,"sys_course");
         int height = getResources().getDisplayMetrics().heightPixels;
         COVER_SCREEN_PARAMS = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height);
 //        COVER_SCREEN_PARAMS = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 800);
