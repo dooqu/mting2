@@ -233,8 +233,10 @@ public class BindLoginPwdActivity extends BasePresenterActivity implements BindT
 
 
             if (platform.equals("qq")) {
+                TCAgent.onEvent(this,"qq_login");
                 TCAgent.onLogin(ContentManager.getInstance().getUserInfo().getUserId(), TDAccount.AccountType.QQ,"");
             } else {
+                TCAgent.onEvent(this,"wechat_login");
                 TCAgent.onLogin(ContentManager.getInstance().getUserInfo().getUserId(), TDAccount.AccountType.WEIXIN,"");
             }
 
@@ -270,4 +272,16 @@ public class BindLoginPwdActivity extends BasePresenterActivity implements BindT
             toastShort(errorMsg);
         }
     }
+
+//    @Override
+//    protected void onPause() {
+//        super.onPause();
+//        TCAgent.onPageEnd(this,"绑定登录");
+//    }
+//
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//        TCAgent.onPageStart(this,"绑定登录");
+//    }
 }
