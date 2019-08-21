@@ -11,6 +11,8 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.PopupWindow;
 
+import com.tendcloud.tenddata.TCAgent;
+
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.xylink.mting.R;
@@ -67,9 +69,11 @@ public class MainAddMenuPop extends PopupWindow {
     void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_group_member_pop_invite:
+                TCAgent.onEvent(mContext,"add_article");
                 mListener.onAdd();
                 break;
             case R.id.btn_group_member_pop_remove:
+                TCAgent.onEvent(mContext,"add_sort");
                 mListener.onArrange();
                 break;
         }

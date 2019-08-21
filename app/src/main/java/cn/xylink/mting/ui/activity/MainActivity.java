@@ -20,6 +20,8 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.tendcloud.tenddata.TCAgent;
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -372,9 +374,11 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
                 mDrawerLayout.openDrawer(Gravity.LEFT);
                 break;
             case R.id.iv_main_title_search:
+                TCAgent.onEvent(this,"article_search");
                 startActivity(new Intent(this, SearchActivity.class));
                 break;
             case R.id.iv_main_title_add:
+                TCAgent.onEvent(this,"add");
                 MainAddMenuPop pop = new MainAddMenuPop(MainActivity.this, this);
                 pop.showAsRight(mAddImageView);
                 break;

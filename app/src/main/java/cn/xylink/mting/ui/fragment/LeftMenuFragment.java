@@ -7,6 +7,8 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.tendcloud.tenddata.TCAgent;
+
 import org.greenrobot.eventbus.EventBus;
 
 import butterknife.BindView;
@@ -61,11 +63,11 @@ public class LeftMenuFragment extends BasePresenterFragment {
         L.v(info);
         if (info != null) {
             if (!TextUtils.isEmpty(info.getHeadImg()))
-                ImageUtils.get().loadCircle(mHeadImageView,info.getHeadImg());
+                ImageUtils.get().loadCircle(mHeadImageView, info.getHeadImg());
             if (!TextUtils.isEmpty(info.getNickName()))
                 mTitleView.setText(info.getNickName());
             if (info.getSex() == 0)
-                mTitleView.setCompoundDrawablesWithIntrinsicBounds(null, null, getActivity().getResources().getDrawable(R.mipmap.icon_my_man),null);
+                mTitleView.setCompoundDrawablesWithIntrinsicBounds(null, null, getActivity().getResources().getDrawable(R.mipmap.icon_my_man), null);
             else if (info.getSex() == 1)
                 mTitleView.setCompoundDrawablesWithIntrinsicBounds(null, null, getActivity().getResources().getDrawable(R.mipmap.icon_my_women),
                         null);
@@ -92,9 +94,10 @@ public class LeftMenuFragment extends BasePresenterFragment {
     }
 
     @OnClick(R.id.ll_left_menu_layout)
-    void onClick(){
+    void onClick() {
 
     }
+
     @OnClick({R.id.rl_left_menu_about, R.id.rl_left_menu_feedback, R.id.rl_left_menu_fun, R.id.rl_left_menu_share, R.id.tv_left_menu_out,
             R.id.tv_left_menu_title, R.id.iv_left_menu_head})
     void onClick(View view) {
@@ -105,22 +108,26 @@ public class LeftMenuFragment extends BasePresenterFragment {
                 mHeadImageView.postDelayed(() -> {
                     Intent intent = new Intent(getActivity(), PersonalInfoActivity.class);
                     startActivity(intent);
-                },200);
+                }, 200);
 
                 break;
             case R.id.rl_left_menu_share://分享
+                TCAgent.onEvent(getActivity(), "sys_share");
                 event.setShare(true);
                 break;
             case R.id.rl_left_menu_feedback://反馈
+                TCAgent.onEvent(getActivity(), "sys_feedback");
                 startActivity(new Intent(getActivity(), FeedBackActivity.class));
                 break;
             case R.id.rl_left_menu_fun://玩转
-                mHeadImageView.postDelayed(() -> startActivity(new Intent(getActivity(), PlayerlActivity.class)),200);
+                TCAgent.onEvent(getActivity(), "sys_course");
+                mHeadImageView.postDelayed(() -> startActivity(new Intent(getActivity(), PlayerlActivity.class)), 200);
                 break;
             case R.id.rl_left_menu_about://关于
-                mHeadImageView.postDelayed(() -> startActivity(new Intent(getActivity(), AboutVersion.class)),200);
+                mHeadImageView.postDelayed(() -> startActivity(new Intent(getActivity(), AboutVersion.class)), 200);
                 break;
             case R.id.tv_left_menu_out://退出
+                TCAgent.onEvent(getActivity(), "sys_exit");
                 event.setStopSer(true);
                 ContentManager.getInstance().setUserInfo(null);
                 ContentManager.getInstance().setLoginToken("");
