@@ -146,6 +146,7 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
 
             //设定标题
             tvTitle.setText(currArt.getTitle());
+            tvTitle.requestFocus();
             tvTitle.setVisibility(currArt.getTitle() != null ? View.VISIBLE : View.GONE);
 
             //设定作者来源
