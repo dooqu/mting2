@@ -406,6 +406,10 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
                             tvContent.setTextSize(TypedValue.COMPLEX_UNIT_SP, 26);
                             break;
                     }
+
+                    if(service == null) {
+                        return;
+                    }
                     //因为文字大小已经发生变化，如果文章正在播放，直接更新文章滚动位置
                     synchronized (service) {
                         switch (service.getState()) {
