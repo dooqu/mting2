@@ -20,6 +20,8 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.tendcloud.tenddata.TCAgent;
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -406,6 +408,10 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
                             tvAuthor.setTextSize(TypedValue.COMPLEX_UNIT_SP, 26);
                             tvContent.setTextSize(TypedValue.COMPLEX_UNIT_SP, 26);
                             break;
+                    }
+
+                    if(service == null) {
+                        return;
                     }
                     //因为文字大小已经发生变化，如果文章正在播放，直接更新文章滚动位置
                     synchronized (service) {

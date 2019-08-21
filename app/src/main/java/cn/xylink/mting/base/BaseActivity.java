@@ -28,6 +28,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.tendcloud.tenddata.TCAgent;
+
 import java.io.File;
 import java.util.List;
 import java.util.Map;
@@ -71,6 +73,8 @@ public abstract class BaseActivity extends AppCompatActivity {
         if (enableVersionUpgrade() == true) {
             checkOnlineUpgrade();
         }
+
+        TCAgent.onPageStart(this, this.toString());
     }
 
 
@@ -96,6 +100,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
         return false;
     }
+
 
 
 
@@ -128,6 +133,23 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
 
         downloadReceiver.regist(null);
+
+        TCAgent.onPageEnd(this, this.toString());
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        TCAgent.onPageStart(this, this.toString());
+    }
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        TCAgent.onPageEnd(this, this.toString());
     }
 
     /**
