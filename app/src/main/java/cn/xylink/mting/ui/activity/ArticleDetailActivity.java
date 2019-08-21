@@ -292,6 +292,7 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
         intent.setClass(this, HtmlActivity.class);
         intent.putExtra(HtmlActivity.EXTRA_HTML, mCurrentArticle.getUrl());
         startActivity(intent);
+        TCAgent.onEvent(this, "articleDetails_show_original");
     }
 
     @OnClick(R.id.ll_article_edit)
@@ -301,6 +302,8 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
         bundle.putString("title", mCurrentArticle.getTitle());
         bundle.putString("content", mCurrentArticle.getContent());
         jumpActivity(ArticleDetailEditActivity.class, bundle);
+
+        TCAgent.onEvent(this, "articleDetails_edit_article");
     }
 
     @OnClick(R.id.iv_back)
@@ -311,6 +314,7 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
     @OnClick(R.id.tv_fk)
     void onTvfkClick(View v) {
         jumpActivity(FeedBack2Activity.class);
+        TCAgent.onEvent(this, "articleDetails_feedback");
     }
 
     @OnClick({R.id.ll_setting, R.id.iv_setting, R.id.tv_setting})
@@ -339,23 +343,30 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
 
                 @Override
                 public void onTime(int time) {
+                    String optName = "articleDetails_timing_close";
                     switch (time) {
                         case 0:
                             service.cancelCountDown();
                             break;
                         case 1:
                             service.setCountDown(SpeechService.CountDownMode.NumberCount, 1);
+                            optName = "articleDetails_timing_article";
                             break;
                         case 2:
                             service.setCountDown(SpeechService.CountDownMode.MinuteCount, 10);
+                            optName = "articleDetails_timing_10";
                             break;
                         case 3:
                             service.setCountDown(SpeechService.CountDownMode.MinuteCount, 20);
+                            optName = "articleDetails_timing_20";
                             break;
                         case 4:
                             service.setCountDown(SpeechService.CountDownMode.MinuteCount, 30);
+                            optName = "articleDetails_timing_30";
                             break;
                     }
+
+                    TCAgent.onEvent(ArticleDetailActivity.this, optName);
                 }
 
                 @Override
@@ -383,6 +394,7 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
         mArticleDetailSetting.setSpeed(service.getSpeed());
         mArticleDetailSetting.setCountDown(service.getCountDownMode(), service.getCountDownValue());
         mArticleDetailSetting.showDialog(this);
+        TCAgent.onEvent(this, "articleDetails_readsetting");
     }
 
     @OnClick({R.id.ll_font, R.id.iv_font, R.id.tv_font})
@@ -392,21 +404,25 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
                 @Override
                 public void onFontChange(int change) {
                     ContentManager.getInstance().setTextSize(change);
+                    String optName = "";
                     switch (change) {
                         case 0:
                             tvArTitle.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
                             tvAuthor.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
                             tvContent.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
+                            optName = "articleDetails_font_small";
                             break;
                         case 1:
                             tvArTitle.setTextSize(TypedValue.COMPLEX_UNIT_SP, 21);
                             tvAuthor.setTextSize(TypedValue.COMPLEX_UNIT_SP, 21);
                             tvContent.setTextSize(TypedValue.COMPLEX_UNIT_SP, 21);
+                            optName = "articleDetails_font_medium";
                             break;
                         case 2:
                             tvArTitle.setTextSize(TypedValue.COMPLEX_UNIT_SP, 26);
                             tvAuthor.setTextSize(TypedValue.COMPLEX_UNIT_SP, 26);
                             tvContent.setTextSize(TypedValue.COMPLEX_UNIT_SP, 26);
+                            optName = "articleDetails_font_big";
                             break;
                     }
 
@@ -423,6 +439,8 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
                                 break;
                         }
                     }
+
+                    TCAgent.onEvent(ArticleDetailActivity.this, optName);
                 }
             });
         }
@@ -439,6 +457,8 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
                     if (mCurrentArticle == null) {
                         return;
                     }
+
+                    String optName = "";
                     switch (type) {
                         case 0:
                             if (mCurrentArticle != null && !TextUtils.isEmpty(mCurrentArticle.getShareUrl()))
@@ -446,6 +466,7 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
                                         null, mCurrentArticle.getTitle(),
                                         TextUtils.isEmpty(mCurrentArticle.getContent()) ? "" : mCurrentArticle.getContent().length() > 45 ?
                                                 mCurrentArticle.getContent().substring(0, 40) : mCurrentArticle.getContent());
+                            optName = "articleDetails_share_wechat";
                             break;
                         case 1:
                             if (mCurrentArticle != null && !TextUtils.isEmpty(mCurrentArticle.getShareUrl()))
@@ -453,6 +474,7 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
                                         null, mCurrentArticle.getTitle(),
                                         TextUtils.isEmpty(mCurrentArticle.getContent()) ? "" : mCurrentArticle.getContent().length() > 45 ?
                                                 mCurrentArticle.getContent().substring(0, 40) : mCurrentArticle.getContent());
+                            optName = "articleDetails_share_wechat1";
                             break;
                         case 2:
                             if (mCurrentArticle != null && !TextUtils.isEmpty(mCurrentArticle.getShareUrl()))
@@ -460,6 +482,7 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
                                         null, mCurrentArticle.getTitle(),
                                         TextUtils.isEmpty(mCurrentArticle.getContent()) ? "" : mCurrentArticle.getContent().length() > 45 ?
                                                 mCurrentArticle.getContent().substring(0, 40) : mCurrentArticle.getContent());
+                            optName = "articleDetails_share_qq";
                             break;
                         case 3:
                             if (mCurrentArticle != null && !TextUtils.isEmpty(mCurrentArticle.getShareUrl()))
@@ -467,6 +490,7 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
                                         null, mCurrentArticle.getTitle(),
                                         TextUtils.isEmpty(mCurrentArticle.getContent()) ? "" : mCurrentArticle.getContent().length() > 45 ?
                                                 mCurrentArticle.getContent().substring(0, 40) : mCurrentArticle.getContent());
+                            optName = "articleDetails_shareqq1";
                             break;
                         case 4:
                             if (mCurrentArticle != null) {
@@ -476,13 +500,18 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
                                 cm.setPrimaryClip(mClipData);
                                 ContentManager.getInstance().addCopyItem(mCurrentArticle.getShareUrl());
                                 toastShort("分享链接复制成功");
+                                optName = "articleDetails_copyurl";
                             }
                             break;
                     }
+
+                    TCAgent.onEvent(ArticleDetailActivity.this, optName);
                 }
             });
         }
         mArticleDetailShare.showDialog(this);
+
+        TCAgent.onEvent(this, "articleDetails_share");
     }
 
     @OnClick(R.id.tv_fav)
@@ -525,6 +554,7 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
             }
         };
         favTimer.schedule(favTimerTask, 1500);
+        TCAgent.onEvent(this, "articleDetails_collection");
     }
 
     @OnClick(R.id.tv_next)
@@ -547,6 +577,8 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
                 break;
         }
         T.s(this, "后边没有文章了~");
+
+        TCAgent.onEvent(this, "articleDetails_next");
     }
 
     @OnClick({R.id.rl_main_play_bar_play, R.id.iv_play_bar_btn})
@@ -567,6 +599,8 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
                     break;
             }
         }
+
+        TCAgent.onEvent(this, "articleDetails_play");
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
