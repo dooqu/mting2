@@ -407,19 +407,19 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
                     String optName = "";
                     switch (change) {
                         case 0:
-                            tvArTitle.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
+                            tvTitle.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
                             tvAuthor.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
                             tvContent.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
                             optName = "articleDetails_font_small";
                             break;
                         case 1:
-                            tvArTitle.setTextSize(TypedValue.COMPLEX_UNIT_SP, 21);
+                            tvTitle.setTextSize(TypedValue.COMPLEX_UNIT_SP, 21);
                             tvAuthor.setTextSize(TypedValue.COMPLEX_UNIT_SP, 21);
                             tvContent.setTextSize(TypedValue.COMPLEX_UNIT_SP, 21);
                             optName = "articleDetails_font_medium";
                             break;
                         case 2:
-                            tvArTitle.setTextSize(TypedValue.COMPLEX_UNIT_SP, 26);
+                            tvTitle.setTextSize(TypedValue.COMPLEX_UNIT_SP, 26);
                             tvAuthor.setTextSize(TypedValue.COMPLEX_UNIT_SP, 26);
                             tvContent.setTextSize(TypedValue.COMPLEX_UNIT_SP, 26);
                             optName = "articleDetails_font_big";
