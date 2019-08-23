@@ -82,6 +82,15 @@ public class LoginPwdActivity extends BasePresenterActivity implements LoginCont
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        if(loginPresenter.getmView() == null)
+        {
+            loginPresenter.attachView(this);
+        }
+    }
+
+    @Override
     protected void initView() {
         tvTitle.setText("手机号登录");
         mBtnNext.setEnabled(false);

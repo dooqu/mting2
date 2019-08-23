@@ -141,7 +141,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        TCAgent.onPageStart(this, this.toString());
+        TCAgent.onPageStart(this, this.getComponentName().getClassName());
     }
 
 
@@ -149,7 +149,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
 
-        TCAgent.onPageEnd(this, this.toString());
+        TCAgent.onPageEnd(this, this.getComponentName().getClassName());
     }
 
     /**
