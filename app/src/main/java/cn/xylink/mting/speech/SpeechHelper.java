@@ -94,17 +94,27 @@ public class SpeechHelper {
         }
         List<String> fragmentsGenerated = new ArrayList<>();
         int newFragmentSizeTotal = 0;
+        //使用stringbuilder进行缓冲
         StringBuilder newFragmentText = new StringBuilder();
         for(int index = 0, size = fragments.size(); index < size; ++index) {
             int currFragSize = fragments.get(index).length();
-            //如果当前的fragment 加不上去， 加上就超标， 同时， 当前不是空串;那就先把之前的加上去
+            //如果当前缓冲区的剩余空间不可以放下当前的segment
             if(newFragmentSizeTotal + currFragSize >= singleFragmentMaxSize && newFragmentSizeTotal != 0) {
+                //把目前缓冲区内的送进list
                 fragmentsGenerated.add(newFragmentText.toString());
+                //清空缓冲区
                 newFragmentText.delete(0, newFragmentText.length());
                 newFragmentSizeTotal = 0;
             }
             newFragmentSizeTotal += currFragSize;
             newFragmentText.append(fragments.get(index));
+
+            if(fragments.get(index).endsWith("\n")) {
+                fragmentsGenerated.add(newFragmentText.toString());
+                newFragmentText.delete(0, newFragmentText.length());
+                newFragmentSizeTotal = 0;
+                continue;
+            }
 
             if(index == (size - 1)) {
                 fragmentsGenerated.add(newFragmentText.toString());

@@ -2,12 +2,15 @@ package cn.xylink.mting.widget;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.widget.ScrollView;
 
 public class MyScrollView extends ScrollView {
 
 
     private OnScrollListener onScrollListener;
+
+    private boolean manualScroll;
 
     public MyScrollView(Context context) {
         super(context);
@@ -28,8 +31,10 @@ public class MyScrollView extends ScrollView {
 
     @Override
     protected void onScrollChanged(int l, int t, int oldl, int oldt) {
+        boolean manualScrollCurrent = this.manualScroll;
+        Log.d("scrollview", "onscrollChaned:" + manualScrollCurrent + ":" + t);
         super.onScrollChanged(l, t, oldl, oldt);
-        if (onScrollListener != null) {
+        if (onScrollListener != null && manualScrollCurrent == false) {
             onScrollListener.onScroll(t);
         }
     }
@@ -55,5 +60,30 @@ public class MyScrollView extends ScrollView {
          * @param scrollY 、
          */
         void onScroll(int scrollY);
+    }
+
+    @Override
+    public void setScrollY(int value) {
+        super.setScrollY(value);
+    }
+
+    public boolean isScrollingOrInDelay()
+    {
+        return manualScroll;
+    }
+
+    public void beginUpdateScroll() {
+        this.manualScroll = true;
+        Log.d("scrollview", "set menuscroll = true");
+    }
+
+    public void endUpdateScroll() {
+        this.post(new Runnable() {
+            @Override
+            public void run() {
+                Log.d("scrollview", "set menusroll = false");
+                MyScrollView.this.manualScroll = false;
+            }
+        });
     }
 }

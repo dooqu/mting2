@@ -114,6 +114,9 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
     private int textTotalRuntimeHeight;
     private Timer favTimer = new Timer();
     private TimerTask favTimerTask;
+    private TimerTask scrollTimerTask;
+    //页面是否是滚动状态
+    private boolean isScrolling;
 
 
     @Override
@@ -193,6 +196,9 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
         svContent.setOnScrollListener(new MyScrollView.OnScrollListener() {
             @Override
             public void onScroll(int scrollY) {
+                if(scrollTimerTask != null) {
+                    scrollTimerTask.cancel();
+                }
             }
         });
     }
@@ -275,6 +281,12 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
 
     @Override
     protected void initData() {
+        this.scrollTimerTask = new TimerTask() {
+            @Override
+            public void run() {
+
+            }
+        };
 
     }
 
@@ -504,7 +516,6 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
                             }
                             break;
                     }
-
                     TCAgent.onEvent(ArticleDetailActivity.this, optName);
                 }
             });
@@ -720,14 +731,18 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
         for (int index = 1; index < readedFrameSize; ++index) {
             textBuilder.append(textFragments.get(index).replace("\n", "<br/><br/>"));
         }
+
+        svContent.beginUpdateScroll();
         tvContent.setText(Html.fromHtml(textBuilder.toString()));
         if (frameIndex == 0) {
+            svContent.endUpdateScroll();
             return;
         }
         //after invoke method setText, tvContent's getLineHeight not available.
         //post measure behavior at next frame
         tvContent.post(() -> {
             if (isFinishing() || isDestroyed()) {
+                svContent.endUpdateScroll();
                 return;
             }
             //caculate the readed text's height.
@@ -742,12 +757,14 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
             //caculute the whole textview's height by same method.
             tvContent.post(() -> {
                 if (isFinishing() || isDestroyed()) {
+                    svContent.endUpdateScroll();
                     return;
                 }
                 int contentHeight = tvContent.getLineCount() * tvContent.getLineHeight();
                 if (frameIndex > 1 && contentHeight > svContent.getMeasuredHeight()) {
                     svContent.setScrollY(offsetHeight - tvContent.getLineHeight());
                 }
+                svContent.endUpdateScroll();
             });
         });
     }

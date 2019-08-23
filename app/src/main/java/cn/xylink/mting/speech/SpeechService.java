@@ -251,6 +251,7 @@ public class SpeechService extends Service {
         notifIntent.addAction("resume");
         notifIntent.addAction("favorite");
         notifIntent.addAction("unfavorite");
+        notifIntent.addAction("exit");
         registerReceiver(notifReceiver, notifIntent);
 
         //注册广播接收者监听状态改变
@@ -715,8 +716,9 @@ public class SpeechService extends Service {
             Intent unFavIntent = new Intent("unfavorite");
             Intent nextIntent = new Intent("next");
             Intent noneIntent = new Intent("null");
+            Intent exitIntent = new Intent("exit");
 
-            Notification.Action actionPlay = null, actionNext = null, actionFav = null;
+            Notification.Action actionPlay = null, actionNext = null, actionFav = null, actionExit = null;
 
             boolean favorited = currentArticle.getStore() == 1;
 
@@ -744,6 +746,8 @@ public class SpeechService extends Service {
                     return;
             }
 
+            actionExit = new Notification.Action(R.mipmap.dialog_close, "",PendingIntent.getBroadcast(this, ++executeCode, exitIntent, PendingIntent.FLAG_UPDATE_CURRENT));
+
             if (actionFav != null) {
                 builder.addAction(actionFav);
             }
@@ -756,8 +760,10 @@ public class SpeechService extends Service {
                 builder.addAction(actionNext);
             }
 
+            builder.addAction(actionExit);
+
             Notification.MediaStyle mediaStyle = new Notification.MediaStyle();
-            mediaStyle.setShowActionsInCompactView(0, 1, 2);
+            mediaStyle.setShowActionsInCompactView( 1, 2, 3);
             builder.setStyle(mediaStyle);
 
             Notification notification = builder.build();
@@ -768,7 +774,7 @@ public class SpeechService extends Service {
     private BroadcastReceiver notifReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            synchronized (this) {
+            synchronized (SpeechService.this) {
                 final String action = intent.getAction();
                 Article currentArticle = getSelected();
                 if (currentArticle == null) {
@@ -825,6 +831,11 @@ public class SpeechService extends Service {
                                 EventBus.getDefault().post(new FavoriteEvent(currentArticle));
                             }
                         }));
+                        break;
+
+                    case "exit":
+                        pause();
+                        stopForeground(true);
                         break;
                 } // end switch
             } // end sychornized
