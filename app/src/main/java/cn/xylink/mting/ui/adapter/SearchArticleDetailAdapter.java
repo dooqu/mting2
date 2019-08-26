@@ -51,6 +51,11 @@ public class SearchArticleDetailAdapter extends RecyclerView.Adapter<SearchArtic
         String str = mData.get(i);
         if (!TextUtils.isEmpty(str))
             searchArticleDetailHolder.tvContact.setText(str);
+        if (i==0){
+            searchArticleDetailHolder.tvContact.setTextColor(mContext.getResources().getColor(R.color.c999999));
+        }else {
+            searchArticleDetailHolder.tvContact.setTextColor(mContext.getResources().getColor(R.color.c333333));
+        }
     }
 
     @Override

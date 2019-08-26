@@ -96,11 +96,12 @@ public class SearchArticleDetailDialog extends Dialog {
     public void show(ArticleDetailInfo info) {
         mData = info;
         mTitleTextView.setText(info.getTitle());
-        mFromTextView.setText(TextUtils.isEmpty(info.getSourceName()) ? "其他" : info.getSourceName());
+//        mFromTextView.setText(TextUtils.isEmpty(info.getSourceName()) ? "其他" : info.getSourceName());
 //        mContactTextView.setText(info.getContent());
         if (!TextUtils.isEmpty(info.getContent())) {
             String[] strs = info.getContent().split("\n");
             ArrayList<String> arrayList = new ArrayList<>(Arrays.asList(strs));
+            arrayList.add(0,TextUtils.isEmpty(info.getSourceName()) ? "其他" : info.getSourceName());
             mAdapter.setmData(arrayList);
         }
         super.show();
