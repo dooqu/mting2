@@ -196,9 +196,11 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
         svContent.setOnScrollListener(new MyScrollView.OnScrollListener() {
             @Override
             public void onScroll(int scrollY) {
+                /*
                 if(scrollTimerTask != null) {
                     scrollTimerTask.cancel();
                 }
+                */
             }
         });
     }
