@@ -67,6 +67,10 @@ public class SpeechService extends Service {
         //Stoped,
         /*加载中*/
         Loadding,
+
+        //数据缓冲中
+        Buffering,
+
         /*发生错误*/
         Error
     }
