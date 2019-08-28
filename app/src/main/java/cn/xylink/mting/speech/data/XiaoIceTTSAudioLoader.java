@@ -89,31 +89,31 @@ public class XiaoIceTTSAudioLoader implements TTSAudioLoader {
                             String fileStoragePath = MTing.getInstance().AudioCachePath;
                             String filename = voiceUri.getLastPathSegment();
 
-                            Log.d(TAG,  "download:" + text);
+                            Log.d(TAG, "download:" + text);
                             OkGo.<File>get(voiceUrl)
                                     .tag(XiaoIceTTSAudioLoader.this)
                                     .execute(new FileCallback(fileStoragePath, filename) {
-                                @Override
-                                public void onSuccess(Response<File> response) {
-                                    String fileUrl = response.body().getAbsolutePath();
-                                    if(result != null) {
-                                        Log.d(TAG, "complete:" + text);
-                                        result.invoke(0, null, fileUrl);
-                                    }
-                                }
+                                        @Override
+                                        public void onSuccess(Response<File> response) {
+                                            String fileUrl = response.body().getAbsolutePath();
+                                            if (result != null) {
+                                                Log.d(TAG, "complete:" + text);
+                                                result.invoke(0, null, fileUrl);
+                                            }
+                                        }
 
-                                @Override
-                                public void onError(Response<File> response) {
-                                    super.onError(response);
-                                    if(result != null) {
-                                        result.invoke(-101, "文件下载错误", null);
-                                    }
-                                }
-                            });
+                                        @Override
+                                        public void onError(Response<File> response) {
+                                            super.onError(response);
+                                            if (result != null) {
+                                                result.invoke(-101, "文件下载错误", null);
+                                            }
+                                        }
+                                    });
                         }
                         catch (JSONException jsonError) {
                             Log.d("SPEECH", "testToSpeechError:" + jsonError.toString());
-                            if(result != null) {
+                            if (result != null) {
                                 result.invoke(-100, jsonError.getMessage(), null);
                             }
                         }
@@ -122,7 +122,7 @@ public class XiaoIceTTSAudioLoader implements TTSAudioLoader {
                     @Override
                     public void onError(Response<String> response) {
                         super.onError(response);
-                        if(result != null) {
+                        if (result != null) {
                             result.invoke(-response.code(), response.message(), null);
                         }
                     }
@@ -135,15 +135,14 @@ public class XiaoIceTTSAudioLoader implements TTSAudioLoader {
     }
 
 
-    private String createPostString(String text, String speedStr) throws JSONException
-    {
+    private String createPostString(String text, String speedStr) throws JSONException {
         JSONObject itemObject = new JSONObject();
 
         itemObject.put("senderId", "11111");
         itemObject.put("senderNickname", "Dilly");
         JSONObject contentObject = new JSONObject();
 
-        contentObject.put("text",text);
+        contentObject.put("text", text);
 
         JSONObject medataObject = new JSONObject();
         medataObject.put("ReadContent", "true");
@@ -163,6 +162,7 @@ public class XiaoIceTTSAudioLoader implements TTSAudioLoader {
 
     /**
      * 字符串 SHA 加密
+     *
      * @return
      */
     private static String SHA(final String strText, final String strType) {
@@ -182,7 +182,8 @@ public class XiaoIceTTSAudioLoader implements TTSAudioLoader {
                     strHexString.append(hex);
                 }
                 strResult = strHexString.toString();
-            } catch (NoSuchAlgorithmException e) {
+            }
+            catch (NoSuchAlgorithmException e) {
                 e.printStackTrace();
             }
         }

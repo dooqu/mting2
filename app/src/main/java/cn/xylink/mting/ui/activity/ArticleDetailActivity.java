@@ -16,6 +16,7 @@ import android.util.TypedValue;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -46,8 +47,10 @@ import cn.xylink.mting.speech.Speechor;
 import cn.xylink.mting.speech.data.ArticleDataProvider;
 import cn.xylink.mting.speech.event.FavoriteEvent;
 import cn.xylink.mting.speech.event.RecycleEvent;
+import cn.xylink.mting.speech.event.SpeechBufferingEvent;
 import cn.xylink.mting.speech.event.SpeechEndEvent;
 import cn.xylink.mting.speech.event.SpeechErrorEvent;
+import cn.xylink.mting.speech.event.SpeechPauseEvent;
 import cn.xylink.mting.speech.event.SpeechProgressEvent;
 import cn.xylink.mting.speech.event.SpeechReadyEvent;
 import cn.xylink.mting.speech.event.SpeechResumeEvent;
@@ -75,6 +78,10 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
     private ArticleDetailShare mArticleDetailShare;
     private SpeechService service;
     private SpeechServiceProxy proxy;
+
+    @BindView(R.id.pb_main_play_progress)
+    ProgressBar loadingBar;
+
     @BindView(R.id.tv_content)
     TextView tvContent;
     @BindView(R.id.apb_main_play_progress)
@@ -171,6 +178,7 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
                 case Error:
                 case Paused:
                 case Playing:
+                //case Buffering:
                     if(textFragments.size() > 0) {
                         showContent(textFragments, frameIndex);
                     }
@@ -196,9 +204,11 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
         svContent.setOnScrollListener(new MyScrollView.OnScrollListener() {
             @Override
             public void onScroll(int scrollY) {
+                /*
                 if(scrollTimerTask != null) {
                     scrollTimerTask.cancel();
                 }
+                */
             }
         });
     }
@@ -271,6 +281,7 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
                     break;
                 case Playing:
                 case Loadding:
+                //case Buffering:
                     ivPlayBarBtn.setImageDrawable(this.getDrawable(R.drawable.nsvg_play));
                     ((Animatable) ivPlayBarBtn.getDrawable()).start();
                     break;
@@ -281,13 +292,6 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
 
     @Override
     protected void initData() {
-        this.scrollTimerTask = new TimerTask() {
-            @Override
-            public void run() {
-
-            }
-        };
-
     }
 
     @Override
@@ -598,6 +602,7 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
             switch (service.getState()) {
                 case Loadding:
                 case Playing:
+                //case Buffering:
                     service.pause();
                     break;
 
@@ -622,6 +627,7 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
             tvTitle.requestFocus();
             tvAuthor.setText(event.getArticle().getSourceName());
             tvAuthor.setVisibility(event.getArticle().getSourceName() != null && event.getArticle().getSourceName().trim() != "" ? View.VISIBLE : View.GONE);
+            showLoaddingBar(true);
         }
         else if (event instanceof SpeechReadyEvent) {
             //需要从网络加载的字段，需要在此事件中才能获取到
@@ -630,11 +636,13 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
             llArticleEdit.setVisibility((mCurrentArticle.getInType() == 1 || TextUtils.isEmpty(mCurrentArticle.getUrl())) ? View.VISIBLE : View.GONE);
             llSourceDetail.setVisibility((mCurrentArticle.getInType() == 1 || TextUtils.isEmpty(mCurrentArticle.getUrl())) ? View.GONE : View.VISIBLE);
             setFavorite(mCurrentArticle.getStore() == 1);
+            showLoaddingBar(false);
         }
         else if (event instanceof SpeechProgressEvent) {
             SpeechProgressEvent spe = (SpeechProgressEvent) event;
             showContent(((SpeechProgressEvent) event).getTextFragments(), ((SpeechProgressEvent) event).getFrameIndex());
             setArticleProgress(spe.getFrameIndex(), spe.getTextFragments().size());
+            showLoaddingBar(false);
             return;
         }
         else if (event instanceof SpeechEndEvent) {
@@ -643,26 +651,32 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
         else if (event instanceof SpeechResumeEvent) {
             aid = event.getArticle().getId();
         }
+        else if(event instanceof SpeechPauseEvent) {
+            showLoaddingBar(false);
+        }
         else if (event instanceof SpeechStopEvent) {
             if (ivPlayBarBtn.getDrawable() != mPlayDrawable) {
                 ivPlayBarBtn.setImageDrawable(mPlayDrawable);
                 ((Animatable) mPlayDrawable).start();
             }
-            float progress = 0;
             switch (((SpeechStopEvent) event).getStopReason()) {
                 case ListIsNull:
                     finish();
                     break;
             }
         }
+        else if(event instanceof SpeechBufferingEvent) {
+            showLoaddingBar(true);
+            return;
+        }
         else if (event instanceof FavoriteEvent) {
-            Log.d("SPEECH_", "Favorite Event");
             if (event.getArticle().getArticleId() != null && event.getArticle().getArticleId().equals(mCurrentArticle.getArticleId())) {
                 setFavorite(event.getArticle().getStore() == 1);
             }
             return;
         }
         else if(event instanceof SpeechErrorEvent) {
+            showLoaddingBar(false);
             Toast.makeText(this, ((SpeechErrorEvent) event).getMessage(), Toast.LENGTH_SHORT).show();
         }
         setPlayerState(service.getState());
@@ -676,6 +690,7 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
             }
         }
     }
+
 
     private void setPlayerState(SpeechService.SpeechServiceState state) {
         switch (state) {
@@ -718,6 +733,11 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
         }
         apbMain.setProgress(progress);
         skProgress.setProgress(progress);
+    }
+
+    private void showLoaddingBar(boolean state) {
+        loadingBar.setVisibility(state? View.VISIBLE : View.INVISIBLE);
+        apbMain.setVisibility(state? View.INVISIBLE : View.VISIBLE);
     }
 
 
