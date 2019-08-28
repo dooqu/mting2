@@ -374,11 +374,11 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
                 mDrawerLayout.openDrawer(Gravity.LEFT);
                 break;
             case R.id.iv_main_title_search:
-                TCAgent.onEvent(this,"article_search");
+                TCAgent.onEvent(this, "article_search");
                 startActivity(new Intent(this, SearchActivity.class));
                 break;
             case R.id.iv_main_title_add:
-                TCAgent.onEvent(this,"add");
+                TCAgent.onEvent(this, "add");
                 MainAddMenuPop pop = new MainAddMenuPop(MainActivity.this, this);
                 pop.showAsRight(mAddImageView);
                 break;
@@ -531,8 +531,19 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
             mPlayBtnSRC.setImageDrawable(mPlayDrawable);
             ((Animatable) mPlayDrawable).start();
         }
-        mLoadingProgress.setVisibility(View.VISIBLE);
-        mProgress.setVisibility(View.INVISIBLE);
+        if (mLoadingProgress.getVisibility() != View.VISIBLE) {
+            mLoadingProgress.setVisibility(View.VISIBLE);
+            mProgress.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void SpeechBufferingEvent(SpeechStartEvent event) {
+        L.v();
+        if (mLoadingProgress.getVisibility() != View.VISIBLE) {
+            mLoadingProgress.setVisibility(View.VISIBLE);
+            mProgress.setVisibility(View.INVISIBLE);
+        }
     }
 
 
