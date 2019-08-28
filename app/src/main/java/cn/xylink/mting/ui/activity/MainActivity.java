@@ -53,6 +53,7 @@ import cn.xylink.mting.speech.SpeechService;
 import cn.xylink.mting.speech.SpeechServiceProxy;
 import cn.xylink.mting.speech.data.SpeechList;
 import cn.xylink.mting.speech.event.FavoriteEvent;
+import cn.xylink.mting.speech.event.SpeechBufferingEvent;
 import cn.xylink.mting.speech.event.SpeechErrorEvent;
 import cn.xylink.mting.speech.event.SpeechPauseEvent;
 import cn.xylink.mting.speech.event.SpeechProgressEvent;
@@ -538,7 +539,7 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void SpeechBufferingEvent(SpeechStartEvent event) {
+    public void onSpeechBufferingEvent(SpeechBufferingEvent event) {
         L.v();
         if (mLoadingProgress.getVisibility() != View.VISIBLE) {
             mLoadingProgress.setVisibility(View.VISIBLE);
