@@ -31,6 +31,7 @@ import cn.xylink.mting.speech.data.ArticleDataProvider;
 import cn.xylink.mting.speech.data.SpeechList;
 import cn.xylink.mting.speech.event.FavoriteEvent;
 import cn.xylink.mting.speech.event.SpeechArticleStatusSavedOnServerEvent;
+import cn.xylink.mting.speech.event.SpeechBufferingEvent;
 import cn.xylink.mting.speech.event.SpeechEndEvent;
 import cn.xylink.mting.speech.event.SpeechErrorEvent;
 import cn.xylink.mting.speech.event.SpeechPauseEvent;
@@ -69,7 +70,7 @@ public class SpeechService extends Service {
         Loadding,
 
         //数据缓冲中
-        Buffering,
+        //Buffering,
 
         /*发生错误*/
         Error
@@ -223,6 +224,9 @@ public class SpeechService extends Service {
                         serviceState = SpeechServiceState.Ready;
                         onSpeechStoped(reason);
                     }
+                    else if(speakerState == SpeechorState.SpeechorStateLoadding) {
+                        onSpeechBuffering(currentArticle);
+                    }
                 }
             }
 
@@ -281,6 +285,10 @@ public class SpeechService extends Service {
         initNotification();
         // }
         EventBus.getDefault().post(new SpeechProgressEvent(fragmentIndex, fragments, article));
+    }
+
+    private void onSpeechBuffering(Article article) {
+        EventBus.getDefault().post(new SpeechBufferingEvent(getSpeechorFrameIndex(), getSpeechorTextFragments(), article));
     }
 
     private void onSpeechError(int errorCode, String message, Article article) {

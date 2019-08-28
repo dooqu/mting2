@@ -21,6 +21,7 @@ public class SpeechHelper {
         SplitSymbols.add(';');
         SplitSymbols.add('!');
         SplitSymbols.add('?');
+        SplitSymbols.add(' ');
         SplitSymbols.add('.');
     }
 
