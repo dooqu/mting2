@@ -1,5 +1,7 @@
 package cn.xylink.mting.ui.activity;
 
+import android.content.Intent;
+import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -118,6 +120,12 @@ public class AddArticleActivity extends BasePresenterActivity {
         }
 
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        L.v(requestCode,resultCode);
+//        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override

@@ -29,3 +29,6 @@ public void *(***);
 -keep class com.apptalkingdata.** {*;}
 -keep class dice.** {*; }
 -dontwarn dice.**
+
+-keep class com.baidu.ocr.sdk.**{*;}
+-dontwarn com.baidu.ocr.**

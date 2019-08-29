@@ -1,0 +1,24 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="cn.xylink.multi_image_selector">
+
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_CONTACTS"/>
+
+    <application android:allowBackup="true"
+       >
+        <activity
+            android:configChanges="orientation|screenSize"
+            android:name="cn.xylink.multi_image_selector.MultiImageSelectorActivity"
+            android:launchMode="singleTask"/>
+
+        <activity android:name="cn.xylink.multi_image_selector.ViewPagerActivity"
+            android:launchMode="singleTask"
+            />
+        <activity android:name="cn.xylink.multi_image_selector.PictureVideoPlayActivity"
+            android:launchMode="singleTask"
+            />
+
+    </application>
+
+</manifest>

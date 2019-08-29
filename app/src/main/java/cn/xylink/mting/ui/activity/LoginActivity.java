@@ -77,6 +77,11 @@ public class LoginActivity extends BasePresenterActivity implements ThirdLoginCo
     }
 
     @Override
+    protected boolean enableVersionUpgrade() {
+        return true;
+    }
+
+    @Override
     protected void initData() {
         thirdLoginPresenter = (ThirdLoginPresenter) createPresenter(ThirdLoginPresenter.class);
         thirdLoginPresenter.attachView(this);
