@@ -6,21 +6,13 @@ import android.os.Environment;
 import android.util.Log;
 
 import java.io.File;
-import java.util.ArrayList;
-
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.https.HttpsUtils;
 import com.lzy.okgo.interceptor.HttpLoggingInterceptor;
 import com.tendcloud.tenddata.TCAgent;
-
 import org.apaches.commons.codec.binary.Base64;
-
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
-
-import cn.xylink.mting.bean.Article;
-import cn.xylink.mting.bean.UpgradeInfo;
 import cn.xylink.mting.contract.IBaseView;
 import cn.xylink.mting.model.UpgradeRequest;
 import cn.xylink.mting.model.UpgradeResponse;
@@ -29,7 +21,6 @@ import cn.xylink.mting.model.data.OkGoUtils;
 import cn.xylink.mting.openapi.QQApi;
 import cn.xylink.mting.openapi.WXapi;
 import cn.xylink.mting.speech.SpeechService;
-import cn.xylink.mting.speech.Speechor;
 import cn.xylink.mting.upgrade.UpgradeManager;
 import cn.xylink.mting.utils.ContentManager;
 import cn.xylink.mting.utils.EncryptionUtil;
