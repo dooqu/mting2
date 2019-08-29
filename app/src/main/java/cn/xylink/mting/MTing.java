@@ -125,6 +125,7 @@ public class MTing extends Application {
 
 
     private void checkOnlineUpgrade() throws Exception {
+        /*
         UpgradeRequest request = new UpgradeRequest();
         request.setAppPackage(PackageUtils.getAppPackage(this));
         request.setAppVersion(PackageUtils.getAppVersionName(this));
@@ -170,6 +171,7 @@ public class MTing extends Application {
                         Log.d("xylink", "onComplete");
                     }
                 });
+                */
     }
 
     public static MTing getInstance() {

@@ -5,9 +5,15 @@ import android.app.DownloadManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import org.apaches.commons.codec.binary.Base64;
+
+import java.security.NoSuchAlgorithmException;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -15,8 +21,15 @@ import cn.xylink.mting.MTing;
 import cn.xylink.mting.R;
 import cn.xylink.mting.base.BaseActivity;
 import cn.xylink.mting.bean.UpgradeInfo;
+import cn.xylink.mting.common.Const;
+import cn.xylink.mting.contract.IBaseView;
+import cn.xylink.mting.model.UpgradeRequest;
+import cn.xylink.mting.model.UpgradeResponse;
+import cn.xylink.mting.model.data.OkGoUtils;
 import cn.xylink.mting.ui.dialog.UpgradeConfirmDialog;
 import cn.xylink.mting.upgrade.UpgradeManager;
+import cn.xylink.mting.utils.EncryptionUtil;
+import cn.xylink.mting.utils.GsonUtil;
 import cn.xylink.mting.utils.PackageUtils;
 
 public class AboutVersion extends BaseActivity {
@@ -54,7 +67,7 @@ public class AboutVersion extends BaseActivity {
             versionName.setText("轩辕听 v" + UpgradeManager.CurrentUpgradeInfo.getAppVersionName());
             return;
         }
-        versionName.setText("当前是最新版本");
+        versionName.setText("检测新版本");
     }
 
     @Override
@@ -81,14 +94,77 @@ public class AboutVersion extends BaseActivity {
     protected void checkNewVersion(View view) {
         /* 如果当前有下载，不弹出*/
         if (UpgradeManager.DownloadTaskId != 0) {
+            Toast.makeText(this, "升级包正在下载中", Toast.LENGTH_SHORT).show();
             return;
         }
         int currentVersionCode = Integer.parseInt(PackageUtils.getAppVersionCode(this));
+        /*
         if (UpgradeManager.CurrentUpgradeInfo != null && UpgradeManager.CurrentUpgradeInfo.getAppVersionCode() > currentVersionCode) {
             UpgradeConfirmDialog upgradeConfirmDialog = new UpgradeConfirmDialog(this, UpgradeManager.CurrentUpgradeInfo);
             upgradeConfirmDialog.setListener(this::onUpgradeConfirm);
             upgradeConfirmDialog.show();
         }
+        */
+        versionName.setText("正在检测新版本...");
+        UpgradeRequest request = new UpgradeRequest();
+        request.setAppPackage(PackageUtils.getAppPackage(this));
+        request.setAppVersion(PackageUtils.getAppVersionName(this));
+        request.setVersionId(PackageUtils.getAppVersionCode(this));
+        try {
+            request.setChannel(new Base64().encodeToString(EncryptionUtil.encrypt("mting", EncryptionUtil.getPublicKey(Const.publicKey))));
+        }
+        catch (Exception ex) {
+            versionName.setText("升级检测发生错误");
+            return;
+        }
+        request.setDeviceId(PackageUtils.getWifiMac(this));
+        request.doSign();
+
+        OkGoUtils.getInstance().postData(
+                new IBaseView() {
+                    @Override
+                    public void showLoading() {
+                    }
+
+                    @Override
+                    public void hideLoading() {
+                    }
+                },
+                "http://service.xylink.cn/api/v2/version/check",
+                GsonUtil.GsonString(request), UpgradeResponse.class,
+                new OkGoUtils.ICallback<UpgradeResponse>() {
+                    @Override
+                    public void onStart() {
+                    }
+
+                    @Override
+                    public void onFailure(int code, String errorMsg) {
+                        Log.d("SPEECH", "onFailure:" + errorMsg);
+                        UpgradeManager.CurrentUpgradeInfo = null;
+                        versionName.setText("恭喜您，当前已经是最新版本");
+                        versionName.setOnClickListener(null);
+                    }
+
+                    @Override
+                    public void onSuccess(UpgradeResponse response) {
+                        versionName.setText("检测新版本");
+                        if ((response.getCode() == 200 || response.getCode() == 201) && response.getData() != null  && response.getData().getAppVersionCode() > currentVersionCode) {
+                            UpgradeConfirmDialog upgradeConfirmDialog = new UpgradeConfirmDialog(AboutVersion.this, response.getData());
+                            upgradeConfirmDialog.setListener(AboutVersion.this::onUpgradeConfirm);
+                            upgradeConfirmDialog.show();
+                        }
+                        else {
+                            versionName.setText("恭喜您，当前已经是最新版本");
+                            versionName.setOnClickListener(null);
+                        }
+                    }
+
+                    @Override
+                    public void onComplete() {
+                    }
+                });
+
+
     }
 
 
