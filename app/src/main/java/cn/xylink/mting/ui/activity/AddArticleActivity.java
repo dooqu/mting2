@@ -1,10 +1,14 @@
 package cn.xylink.mting.ui.activity;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.TextView;
 
@@ -13,6 +17,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -24,7 +29,10 @@ import cn.xylink.mting.ui.adapter.FragmentAdapter;
 import cn.xylink.mting.ui.fragment.AddOneNoteFragment;
 import cn.xylink.mting.ui.fragment.AddTwoNoteFragment;
 import cn.xylink.mting.utils.L;
+import cn.xylink.mting.utils.TingUtils;
 import cn.xylink.mting.widget.CustomViewPager;
+import cn.xylink.multi_image_selector.MultiImageSelector;
+import io.reactivex.annotations.NonNull;
 
 public class AddArticleActivity extends BasePresenterActivity {
 
@@ -139,6 +147,61 @@ public class AddArticleActivity extends BasePresenterActivity {
     protected void initTitleBar() {
 
     }
+    private String[] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE};
+
+    public void checkPermission() {
+        List<String> mPermissionList = new ArrayList<>();
+        for (String str : permissions) {
+            if (ContextCompat.checkSelfPermission(this, str) != PackageManager.PERMISSION_GRANTED) {
+                mPermissionList.add(str);
+            }
+        }
+        String[] permis = new String[mPermissionList.size()];
+        L.v(permis.toString());
+        permissions = mPermissionList.toArray(permis);
+        //权限发生了改变 true  //  false
+        if (permissions.length > 0) {
+            ActivityCompat.requestPermissions(this, permissions, 1);
+        } else {
+            callGallery();
+        }
+    }
+
+    /**
+     * @param requestCode
+     * @param permissions  请求的权限
+     * @param grantResults 请求权限返回的结果
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == 1) {
+            // camear 权限回调
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // 表示用户授权
+                callGallery();
+            } else {
+                //用户拒绝权限
+            }
+        }
+    }
+
+    /**
+     * 调用图库选择
+     */
+    private void callGallery() {
+
+        MultiImageSelector.create()
+                .showCamera(true) // 是否显示相机. 默认为显示
+                .count(9) // 最大选择图片数量, 默认为9. 只有在选择模式为多选时有效
+                // 单选模式
+                .multi() // 多选模式, 默认模式;
+                .count(9)
+                .setVideo(true)
+                .selectCount(9)
+                .start(this, 11);
+    }
+
 
     @OnClick({R.id.tv_right,R.id.btn_left})
     public void onClick(View v)
@@ -146,10 +209,13 @@ public class AddArticleActivity extends BasePresenterActivity {
         switch (v.getId())
         {
             case R.id.btn_left:
-                EventBus.getDefault().post(new OneArticleEvent(OneArticleEvent.TYPE_BACK));
-                finish();
+                checkPermission();
+                TingUtils.isMarketInstalled(this);
+//                EventBus.getDefault().post(new OneArticleEvent(OneArticleEvent.TYPE_BACK));
+//                finish();
                 break;
             case R.id.tv_right:
+                TingUtils.isMarketInstalled(this);
                 if(pageIndex == 0){
                     EventBus.getDefault().post(new OneArticleEvent(OneArticleEvent.TYPE_SAVE));
                 }else {

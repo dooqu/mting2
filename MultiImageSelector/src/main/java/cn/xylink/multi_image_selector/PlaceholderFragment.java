@@ -1,8 +1,5 @@
 package cn.xylink.multi_image_selector;
 
-import android.graphics.drawable.BitmapDrawable;
-import android.media.MediaMetadataRetriever;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -23,16 +20,12 @@ import com.bumptech.glide.request.target.Target;
 
 import java.io.File;
 
-import cn.jzvd.JZVideoPlayer;
-import cn.jzvd.JZVideoPlayerStandard;
-import cn.xylink.ijk.IjkVideoView;
 import cn.xylink.multi_image_selector.image.IntensifyImage;
 import cn.xylink.multi_image_selector.image.IntensifyImageView;
 import cn.xylink.multi_image_selector.model.MediaConstant;
 import cn.xylink.multi_image_selector.view.CustomViewPager;
-import tv.danmaku.ijk.media.player.IMediaPlayer;
 
-public class PlaceholderFragment extends Fragment implements View.OnClickListener,IMediaPlayer.OnCompletionListener,IMediaPlayer.OnPreparedListener {
+public class PlaceholderFragment extends Fragment implements View.OnClickListener {
 
     String name, url;
     int pos;
@@ -44,7 +37,6 @@ public class PlaceholderFragment extends Fragment implements View.OnClickListene
 
     private MediaController mMediaController;
 //    private IjkVideoView mVideoView;
-    private JZVideoPlayerStandard mVideoView;
     private ImageView ivPlay;
     private ImageView ivGif;
 
@@ -109,7 +101,6 @@ public class PlaceholderFragment extends Fragment implements View.OnClickListene
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.view_page_item_image, container, false);
         mIvImage = rootView.findViewById(R.id.image);
-        mVideoView = rootView.findViewById(R.id.video_view);
         ivPlay = rootView.findViewById(R.id.iv_play);
         ivGif = rootView.findViewById(R.id.iv_gif);
 
@@ -124,17 +115,6 @@ public class PlaceholderFragment extends Fragment implements View.OnClickListene
         if (url.endsWith(MediaConstant.MP4)) {
 
             mIvImage.setVisibility(View.GONE);
-            MediaMetadataRetriever mmr = new MediaMetadataRetriever();
-            mmr.setDataSource(url);
-            mVideoView.setBackground(new BitmapDrawable(mmr.getFrameAtTime()));
-            mVideoView.setVisibility(View.VISIBLE);
-            ivPlay.setVisibility(View.VISIBLE);
-//            mVideoView.setVideoPath(url);
-//            mVideoView.setOnCompletionListener(this);
-//            mVideoView.setOnPreparedListener(this);
-            mVideoView.setUp(url, JZVideoPlayerStandard.SCREEN_WINDOW_LIST, "");
-//            mVideoView.setAllControlsVisiblity(View.VISIBLE,View.VISIBLE,View.VISIBLE,View.VISIBLE,View.VISIBLE,View.VISIBLE,View.VISIBLE);
-
         } else if (url.endsWith(".gif")){
             ivGif.setVisibility(View.VISIBLE);
             mIvImage.setVisibility(View.GONE);
@@ -156,7 +136,6 @@ public class PlaceholderFragment extends Fragment implements View.OnClickListene
             }).into(ivGif);
         }else {
             mIvImage.setVisibility(View.VISIBLE);
-            mVideoView.setVisibility(View.GONE);
             ivPlay.setVisibility(View.GONE);
         }
         registerListenter();
@@ -182,28 +161,5 @@ public class PlaceholderFragment extends Fragment implements View.OnClickListene
 //            ivOne.setVisibility(View.GONE);
             ivPlay.setVisibility(View.GONE);
         }
-    }
-
-    @Override
-    public void onCompletion(IMediaPlayer iMediaPlayer) {
-//        iMediaPlayer.stop();
-//        mVideoView.stopPlayback();
-        Log.e(PlaceholderFragment.class.getName(),"onCompletion !");
-        MediaMetadataRetriever mmr = new MediaMetadataRetriever();
-        mmr.setDataSource(url);
-        mVideoView.setBackground(new BitmapDrawable(mmr.getFrameAtTime()));
-
-        ivPlay.setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    public void onPrepared(IMediaPlayer iMediaPlayer) {
-        iMediaPlayer.setOnPreparedListener(new IMediaPlayer.OnPreparedListener() {
-            @Override
-            public void onPrepared(IMediaPlayer iMediaPlayer) {
-                mVideoView.setBackground(null);
-            }
-        });
-
     }
 }

@@ -1,1 +1,1 @@
-include ':app', ':IjkModule', ':MultiImageSelector'
+include ':app', ':MultiImageSelector'

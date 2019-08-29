@@ -2,10 +2,15 @@ package cn.xylink.mting.utils;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
+
+import java.util.List;
 
 public class TingUtils {
 
@@ -50,4 +55,39 @@ public class TingUtils {
         return deviceId.toString();
     }
 
+
+    /**
+     * 去应用市场评分
+     */
+    private void goToMarket(Context context) {
+        if (!isMarketInstalled(context)) {
+            T.showCustomToast("您的手机没有安装应用市场");
+            return;
+        }
+        try {
+            //Uri uri = Uri.parse("market://details?id="+getPackageName());
+            Uri uri = Uri.parse("market://details?id=" + "com.tencent.mobileqq");
+            Intent intent = new Intent(Intent.ACTION_VIEW,uri);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            if (intent.resolveActivity(context.getPackageManager()) != null) {
+                context.startActivity(intent);
+            }
+        } catch (Exception e) {
+            // 也可以调到某个网页应用市场
+            T.showCustomToast("手机没有安装应用市场");
+        }
+    }
+
+    /**
+     * 本手机是否安装了应用市场
+     * @param context
+     * @return
+     */
+    public static boolean isMarketInstalled(Context context) {
+        Intent intent = new Intent();
+        intent.setData(Uri.parse("market://details?id=android.browser"));
+        List list = context.getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+        return 0 != list.size();
+
+    }
 }

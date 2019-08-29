@@ -28,7 +28,6 @@ import cn.xylink.multi_image_selector.event.EventImageMsg;
 import cn.xylink.multi_image_selector.event.EventMsg;
 import cn.xylink.multi_image_selector.utils.SharedPreHelper;
 import cn.xylink.multi_image_selector.view.CustomViewPager;
-import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
 public class ViewPagerActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -59,8 +58,6 @@ public class ViewPagerActivity extends AppCompatActivity implements View.OnClick
         super.onCreate(savedInstanceState);
         setContentView(R.layout.mis_view_pager);
 
-        IjkMediaPlayer.loadLibrariesOnce(null);
-        IjkMediaPlayer.native_profileBegin("libijkplayer.so");
         initView();
         initData();
         initListener();
