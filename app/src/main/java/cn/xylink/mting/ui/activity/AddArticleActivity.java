@@ -1,5 +1,7 @@
 package cn.xylink.mting.ui.activity;
 
+import android.content.Intent;
+import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -20,6 +22,7 @@ import cn.xylink.mting.event.OneArticleEvent;
 import cn.xylink.mting.event.TwoArticleEvent;
 import cn.xylink.mting.ui.adapter.FragmentAdapter;
 import cn.xylink.mting.ui.fragment.AddOneNoteFragment;
+import cn.xylink.mting.ui.fragment.AddTwo2NoteFragment;
 import cn.xylink.mting.ui.fragment.AddTwoNoteFragment;
 import cn.xylink.mting.utils.L;
 import cn.xylink.mting.widget.CustomViewPager;
@@ -118,6 +121,12 @@ public class AddArticleActivity extends BasePresenterActivity {
         }
 
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        L.v(requestCode,resultCode);
+//        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
