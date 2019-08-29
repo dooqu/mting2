@@ -27,6 +27,8 @@ import cn.xylink.mting.utils.PackageUtils;
 import okhttp3.Call;
 import okhttp3.MediaType;
 
+import static cn.xylink.mting.speech.SpeechError.FRAGMENT_LOAD_INNTERNAL_ERROR;
+
 
 public class XiaoIceTTSAudioLoader implements TTSAudioLoader {
 
@@ -106,7 +108,7 @@ public class XiaoIceTTSAudioLoader implements TTSAudioLoader {
                                         public void onError(Response<File> response) {
                                             super.onError(response);
                                             if (result != null) {
-                                                result.invoke(-101, "文件下载错误", null);
+                                                result.invoke(FRAGMENT_LOAD_INNTERNAL_ERROR, "音频文件下载错误:" + response.getException().getMessage(), null);
                                             }
                                         }
                                     });
@@ -114,7 +116,7 @@ public class XiaoIceTTSAudioLoader implements TTSAudioLoader {
                         catch (JSONException jsonError) {
                             Log.d("SPEECH", "testToSpeechError:" + jsonError.toString());
                             if (result != null) {
-                                result.invoke(-100, jsonError.getMessage(), null);
+                                result.invoke(FRAGMENT_LOAD_INNTERNAL_ERROR, "音频文件下载错误:" + jsonError.getMessage(), null);
                             }
                         }
                     }
