@@ -22,7 +22,6 @@ import cn.xylink.mting.event.OneArticleEvent;
 import cn.xylink.mting.event.TwoArticleEvent;
 import cn.xylink.mting.ui.adapter.FragmentAdapter;
 import cn.xylink.mting.ui.fragment.AddOneNoteFragment;
-import cn.xylink.mting.ui.fragment.AddTwo2NoteFragment;
 import cn.xylink.mting.ui.fragment.AddTwoNoteFragment;
 import cn.xylink.mting.utils.L;
 import cn.xylink.mting.widget.CustomViewPager;
