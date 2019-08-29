@@ -123,16 +123,16 @@ public class WXapi {
 
                 webpage.webpageUrl = webUrl;
                 WXMediaMessage msg = new WXMediaMessage(webpage);
-                if (title.length() > 18) {
-                    msg.title = title.substring(0, 15) + "...";
-                } else {
+//                if (title.length() > 18) {
+//                    msg.title = title.substring(0, 15) + "...";
+//                } else {
                     msg.title = title;
-                }
-                if (description.length() > 18) {
-                    msg.description = description.substring(0, 15) + "...";
-                } else {
+//                }
+//                if (description.length() > 18) {
+//                    msg.description = description.substring(0, 15) + "...";
+//                } else {
                     msg.description = description;
-                }
+//                }
                 Bitmap thumbBmp = Bitmap.createScaledBitmap(bmp, THUMB_SIZE, THUMB_SIZE, true);
                 bmp.recycle();
                 msg.thumbData = WxUtil.bmpToByteArray(thumbBmp, true);
