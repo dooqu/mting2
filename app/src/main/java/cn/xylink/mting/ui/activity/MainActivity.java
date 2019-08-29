@@ -68,6 +68,7 @@ import cn.xylink.mting.utils.L;
 import cn.xylink.mting.utils.T;
 import cn.xylink.mting.widget.ArcProgressBar;
 
+/*主页面*/
 public class MainActivity extends BasePresenterActivity implements BaseMainTabFragment.OnControllerListener, MainAddMenuPop.OnMainAddMenuListener
         , DelMainContract.IDelMainView, AddUnreadContract.IAddUnreadView, ViewPager.OnPageChangeListener {
 
