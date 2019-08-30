@@ -59,14 +59,13 @@ public class TingUtils {
     /**
      * 去应用市场评分
      */
-    private void goToMarket(Context context) {
-        if (!isMarketInstalled(context)) {
-            T.showCustomToast("您的手机没有安装应用市场");
-            return;
-        }
+    public static void goToMarket(Context context) {
+//        if (!isMarketInstalled(context)) {
+//            T.showCustomToast("您的手机没有安装应用市场");
+//            return;
+//        }
         try {
-            //Uri uri = Uri.parse("market://details?id="+getPackageName());
-            Uri uri = Uri.parse("market://details?id=" + "com.tencent.mobileqq");
+            Uri uri = Uri.parse("market://details?id="+ context.getPackageName());
             Intent intent = new Intent(Intent.ACTION_VIEW,uri);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             if (intent.resolveActivity(context.getPackageManager()) != null) {

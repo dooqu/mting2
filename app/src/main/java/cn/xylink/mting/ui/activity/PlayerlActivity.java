@@ -29,10 +29,13 @@ import cn.xylink.mting.R;
 import cn.xylink.mting.base.BaseActivity;
 import cn.xylink.mting.utils.L;
 
+import static cn.xylink.mting.ui.activity.HtmlActivity.EXTRA_HTML;
+
 public class PlayerlActivity extends BaseActivity {
 
 //    public static final String EXTRA_HTML = "html_url";
     public final String PROTOCOL_URL = "http://test.xylink.cn/article/html/tutorial.html";
+    public static final String EXTRA_HTML = "html_url";
 
     @BindView(R.id.wv_html)
     WebView wvHtml;
@@ -49,6 +52,8 @@ public class PlayerlActivity extends BaseActivity {
     private View customView;
     private FrameLayout fullscreenContainer;
     private WebChromeClient.CustomViewCallback customViewCallback;
+
+
 
 
     @Override
@@ -184,9 +189,9 @@ public class PlayerlActivity extends BaseActivity {
 
     @Override
     protected void initData() {
-//        String url = getIntent().getStringExtra(EXTRA_HTML);
+        String url = getIntent().getStringExtra(EXTRA_HTML);
 //        L.v(url);
-        wvHtml.loadUrl(PROTOCOL_URL);
+        wvHtml.loadUrl(url);
     }
 
     @Override

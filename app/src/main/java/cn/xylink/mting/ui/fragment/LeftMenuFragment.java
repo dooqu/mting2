@@ -121,7 +121,9 @@ public class LeftMenuFragment extends BasePresenterFragment {
                 break;
             case R.id.rl_left_menu_fun://玩转
                 TCAgent.onEvent(getActivity(), "sys_course");
-                mHeadImageView.postDelayed(() -> startActivity(new Intent(getActivity(), PlayerlActivity.class)), 200);
+                mHeadImageView.postDelayed(() ->
+                        startActivity(new Intent(getActivity(), PlayerlActivity.class))
+                        , 200);
                 break;
             case R.id.rl_left_menu_about://关于
                 mHeadImageView.postDelayed(() -> startActivity(new Intent(getActivity(), AboutVersion.class)), 200);

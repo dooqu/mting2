@@ -210,9 +210,9 @@ public class AddArticleActivity extends BasePresenterActivity {
         {
             case R.id.btn_left:
 //                checkPermission();
-//                TingUtils.isMarketInstalled(this);
-                EventBus.getDefault().post(new OneArticleEvent(OneArticleEvent.TYPE_BACK));
-                finish();
+                TingUtils.goToMarket(this);
+//                EventBus.getDefault().post(new OneArticleEvent(OneArticleEvent.TYPE_BACK));
+//                finish();
                 break;
             case R.id.tv_right:
                 TingUtils.isMarketInstalled(this);

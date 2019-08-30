@@ -211,6 +211,7 @@ public class ImageGridAdapter extends BaseAdapter {
                         callBack.imageseleected(data, i);
                     }
                 });
+
                 return view;
             }
         }
