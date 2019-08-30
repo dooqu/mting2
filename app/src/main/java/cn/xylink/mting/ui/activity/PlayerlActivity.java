@@ -34,7 +34,7 @@ import static cn.xylink.mting.ui.activity.HtmlActivity.EXTRA_HTML;
 public class PlayerlActivity extends BaseActivity {
 
 //    public static final String EXTRA_HTML = "html_url";
-    public final String PROTOCOL_URL = "http://test.xylink.cn/article/html/tutorial.html";
+    public static final String PROTOCOL_URL = "http://test.xylink.cn/article/html/tutorial.html";
     public static final String EXTRA_HTML = "html_url";
 
     @BindView(R.id.wv_html)

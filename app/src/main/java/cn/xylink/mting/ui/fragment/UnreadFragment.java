@@ -116,7 +116,9 @@ public class UnreadFragment extends BaseMainTabFragment implements UnreadAdapter
     void onClick(View v) {
         switch (v.getId()){
             case R.id.tv_unread_empty_first:
-                startActivity(new Intent(getActivity(), PlayerlActivity.class));
+                Intent intent = new Intent(getActivity(), PlayerlActivity.class);
+                intent.putExtra(PlayerlActivity.EXTRA_HTML,PlayerlActivity.PROTOCOL_URL);
+                startActivity(intent);
                 break;
             case R.id.ll_network_error:
                 initData();
