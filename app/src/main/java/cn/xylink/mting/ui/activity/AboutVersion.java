@@ -2,6 +2,7 @@ package cn.xylink.mting.ui.activity;
 
 import android.app.Activity;
 import android.app.DownloadManager;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -39,6 +40,10 @@ public class AboutVersion extends BaseActivity {
     View backIcon;
     Timer timer;
 
+    View institutionOfUserButton;
+    View privacyButton;
+    View contactUsButton;
+
 
     @Override
     protected void onDestroy() {
@@ -68,6 +73,13 @@ public class AboutVersion extends BaseActivity {
             return;
         }
         versionName.setText("检测新版本");
+
+        institutionOfUserButton = findViewById(R.id.institutionOfUserButton);
+        privacyButton = findViewById(R.id.privacyButton);
+        contactUsButton = findViewById(R.id.contactUsButton);
+        institutionOfUserButton.setOnClickListener(this::onButtonClick);
+        privacyButton.setOnClickListener(this::onButtonClick);
+        contactUsButton.setOnClickListener(this::onButtonClick);
     }
 
     @Override
@@ -164,7 +176,6 @@ public class AboutVersion extends BaseActivity {
                     }
                 });
 
-
     }
 
 
@@ -204,4 +215,11 @@ public class AboutVersion extends BaseActivity {
         }, 10, 500);
 
     }
+
+    private void onButtonClick(View v) {
+        Intent intent = new Intent(this, PlayerlActivity.class);
+        intent.putExtra(PlayerlActivity.EXTRA_HTML , "https://www.baidu.com");
+        startActivity(intent);
+    }
+
 }

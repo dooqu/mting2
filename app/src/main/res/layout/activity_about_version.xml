@@ -110,7 +110,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="70dp"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:id="@+id/institutionOfUserButton">
 
             <TextView
                 android:layout_width="0px"
@@ -138,7 +139,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="70dp"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:id="@+id/privacyButton">
 
             <TextView
                 android:layout_width="0px"
@@ -166,7 +168,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="70dp"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:id="@+id/contactUsButton">
 
             <TextView
                 android:layout_width="0px"

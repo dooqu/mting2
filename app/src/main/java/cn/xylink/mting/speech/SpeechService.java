@@ -126,6 +126,8 @@ public class SpeechService extends Service {
 
     boolean isSimulatePaused;
 
+    long speechStartTime;
+
 
     public class SpeechBinder extends Binder {
         public SpeechService getService() {
@@ -261,12 +263,10 @@ public class SpeechService extends Service {
         notifIntent.addAction("unfavorite");
         notifIntent.addAction("exit");
         registerReceiver(notifReceiver, notifIntent);
-
         //注册广播接收者监听状态改变
         IntentFilter a2dpIntent = new IntentFilter(BluetoothA2dp.ACTION_CONNECTION_STATE_CHANGED);
         //a2dpIntent.addAction(BluetoothA2dp.ACTION_PLAYING_STATE_CHANGED);
         registerReceiver(a2dpReceiver, a2dpIntent);
-
     }
 
 
@@ -277,6 +277,7 @@ public class SpeechService extends Service {
 
     private void onSpeechReady(Article article) {
         EventBus.getDefault().post(new SpeechReadyEvent(article));
+        speechStartTime = System.currentTimeMillis();
     }
 
     private void onSpeechProgress(Article article, int fragmentIndex, List<String> fragments) {
