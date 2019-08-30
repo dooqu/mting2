@@ -13,8 +13,10 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
 import cn.xylink.mting.R;
 import cn.xylink.mting.bean.UpgradeInfo;
 import cn.xylink.mting.upgrade.UpgradeManager;
@@ -135,13 +137,13 @@ public class UpgradeConfirmDialog extends Dialog {
     boolean forceUpdateConfirm = false;
 
     @Override
-    public boolean onKeyDown(int keyCode,  KeyEvent event) {
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
         Log.d("SPEECH_", String.valueOf(keyCode));
-        if(keyCode != 4) {
+        if (keyCode != 4) {
             return super.onKeyDown(keyCode, event);
         }
         else {
-            if(forceUpdateConfirm == false) {
+            if (forceUpdateConfirm == false) {
                 forceUpdateConfirm = true;
                 Toast.makeText(this.context, "该升级为强制升级，再次点击返回键退出应用", Toast.LENGTH_SHORT).show();
                 return false;
