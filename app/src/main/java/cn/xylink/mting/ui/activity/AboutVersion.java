@@ -34,7 +34,6 @@ import cn.xylink.mting.utils.GsonUtil;
 import cn.xylink.mting.utils.PackageUtils;
 
 public class AboutVersion extends BaseActivity {
-
     TextView versionName;
     TextView txtCurrentVersion;
     View backIcon;
@@ -43,7 +42,6 @@ public class AboutVersion extends BaseActivity {
     View institutionOfUserButton;
     View privacyButton;
     View contactUsButton;
-
 
     @Override
     protected void onDestroy() {
@@ -160,7 +158,7 @@ public class AboutVersion extends BaseActivity {
                     @Override
                     public void onSuccess(UpgradeResponse response) {
                         versionName.setText("检测新版本");
-                        if ((response.getCode() == 200 || response.getCode() == 201) && response.getData() != null  && response.getData().getAppVersionCode() > currentVersionCode) {
+                        if ((response.getCode() == 200 || response.getCode() == 201) && response.getData() != null && response.getData().getAppVersionCode() > currentVersionCode) {
                             UpgradeConfirmDialog upgradeConfirmDialog = new UpgradeConfirmDialog(AboutVersion.this, response.getData());
                             upgradeConfirmDialog.setListener(AboutVersion.this::onUpgradeConfirm);
                             upgradeConfirmDialog.show();
@@ -187,7 +185,6 @@ public class AboutVersion extends BaseActivity {
             public void run() {
                 Handler handler = new Handler(Looper.getMainLooper());
                 handler.post(() -> {
-
                     int[] status = UpgradeManager.getInstance().queryInfo(downloadId);
                     switch (status[2]) {
                         case DownloadManager.STATUS_PAUSED:
@@ -218,8 +215,12 @@ public class AboutVersion extends BaseActivity {
 
     private void onButtonClick(View v) {
         Intent intent = new Intent(this, PlayerlActivity.class);
-        intent.putExtra(PlayerlActivity.EXTRA_HTML , "https://www.baidu.com");
+        if (v == privacyButton) {
+            intent.putExtra(PlayerlActivity.EXTRA_HTML, "http://service.xylink.cn/article/html/policy.html");
+        }
+        else if (v == institutionOfUserButton) {
+            intent.putExtra(PlayerlActivity.EXTRA_HTML, "http://service.xylink.cn/article/html/agreement.html");
+        }
         startActivity(intent);
     }
-
 }
