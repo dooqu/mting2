@@ -392,6 +392,7 @@ public abstract class BaseActivity extends AppCompatActivity {
             }
             if (UpgradeManager.CurrentUpgradeInfo != null && UpgradeManager.CurrentUpgradeInfo.getAppVersionCode() > currentVersionCode) {
                 UpgradeConfirmDialog upgradeConfirmDialog = new UpgradeConfirmDialog(this, UpgradeManager.CurrentUpgradeInfo);
+                UpgradeManager.CurrentUpgradeInfo = null;
                 upgradeConfirmDialog.show();
             }
         }, 3000);

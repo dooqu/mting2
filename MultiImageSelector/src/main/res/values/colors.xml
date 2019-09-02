@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <color name="mis_actionbar_color">#21282C</color>
+    <color name="mis_button_selected_bg">#007D7B</color>
+    <color name="mis_button_default_bg">#80000000</color>
+    <color name="image_overlay_true" tools:ignore="ResourceName">#80000000</color>
+    <color name="image_overlay_false" tools:ignore="ResourceName">#20000000</color>
+    <color name="color_69" tools:ignore="ResourceName">#999999</color>
+    <color name="white_color" tools:ignore="ResourceName">#80FFFFFF</color>
+
+
+
+</resources>

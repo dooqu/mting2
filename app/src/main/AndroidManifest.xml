@@ -291,6 +291,7 @@
         <meta-data android:name="TD_APP_ID" android:value="FCAC8CE6C75F41C39A8F759E7FADB4F5" />
         <meta-data android:name="TD_CHANNEL_ID" android:value="mting" />
 
+
     </application>
 
 </manifest>

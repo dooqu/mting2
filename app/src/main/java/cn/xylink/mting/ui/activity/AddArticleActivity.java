@@ -1,8 +1,14 @@
 package cn.xylink.mting.ui.activity;
 
+import android.Manifest;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.TextView;
 
@@ -11,6 +17,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -22,7 +29,10 @@ import cn.xylink.mting.ui.adapter.FragmentAdapter;
 import cn.xylink.mting.ui.fragment.AddOneNoteFragment;
 import cn.xylink.mting.ui.fragment.AddTwoNoteFragment;
 import cn.xylink.mting.utils.L;
+import cn.xylink.mting.utils.TingUtils;
 import cn.xylink.mting.widget.CustomViewPager;
+import cn.xylink.multi_image_selector.MultiImageSelector;
+import io.reactivex.annotations.NonNull;
 
 public class AddArticleActivity extends BasePresenterActivity {
 
@@ -121,6 +131,12 @@ public class AddArticleActivity extends BasePresenterActivity {
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        L.v(requestCode,resultCode);
+//        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
     public void onBackPressed() {
         L.v("onBackPressed");
         EventBus.getDefault().post(new OneArticleEvent(OneArticleEvent.TYPE_BACK));
@@ -138,10 +154,13 @@ public class AddArticleActivity extends BasePresenterActivity {
         switch (v.getId())
         {
             case R.id.btn_left:
+//                checkPermission();
+//                TingUtils.goToMarket(this);
                 EventBus.getDefault().post(new OneArticleEvent(OneArticleEvent.TYPE_BACK));
                 finish();
                 break;
             case R.id.tv_right:
+                TingUtils.isMarketInstalled(this);
                 if(pageIndex == 0){
                     EventBus.getDefault().post(new OneArticleEvent(OneArticleEvent.TYPE_SAVE));
                 }else {
