@@ -63,6 +63,7 @@
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
@@ -169,7 +170,8 @@
         <activity
             android:name=".ui.activity.FeedBackActivity"
             android:launchMode="singleTask"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
 
 
         <activity
@@ -187,9 +189,9 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.PlayerlActivity"
-            android:launchMode="singleTask"
-            android:hardwareAccelerated="true"
             android:configChanges="orientation|screenSize|keyboardHidden"
+            android:hardwareAccelerated="true"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait" />
 
         <activity
@@ -278,14 +280,20 @@
             </intent-filter>
         </activity>
 
-        <service android:name="com.talkingdata.sdk.TDAntiCheatingService"
+        <service
+            android:name="com.talkingdata.sdk.TDAntiCheatingService"
             android:process="com.talkingdata.sdk.TDAntiCheatingService">  <!--用户质量评估Service可以配置在主进程或者单独进程-->
             <intent-filter>
                 <action android:name="com.talkingdata.sdk.TDAntiCheatingService" />
             </intent-filter>
         </service>
-        <meta-data android:name="TD_APP_ID" android:value="FCAC8CE6C75F41C39A8F759E7FADB4F5" />
-        <meta-data android:name="TD_CHANNEL_ID" android:value="mting" />
+
+        <meta-data
+            android:name="TD_APP_ID"
+            android:value="FCAC8CE6C75F41C39A8F759E7FADB4F5" />
+        <meta-data
+            android:name="TD_CHANNEL_ID"
+            android:value="mting" />
 
 
     </application>

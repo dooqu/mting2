@@ -4,8 +4,9 @@ import android.content.Intent;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 
 import com.tendcloud.tenddata.TCAgent;
@@ -17,6 +18,8 @@ import cn.xylink.mting.base.BaseResponse;
 import cn.xylink.mting.contract.AddFeedbackContact;
 import cn.xylink.mting.model.LinkCreateRequest;
 import cn.xylink.mting.presenter.AddFeedbackPresenter;
+import cn.xylink.mting.utils.adapter.BaseAdapterHelper;
+import cn.xylink.mting.utils.adapter.QuickAdapter;
 
 public class FeedBackActivity extends BasePresenterActivity implements AddFeedbackContact.IAddFeedBackView {
 
@@ -26,8 +29,11 @@ public class FeedBackActivity extends BasePresenterActivity implements AddFeedba
     Spinner snType;
     @BindView(R.id.et_content)
     EditText etContent;
+    @BindView(R.id.gv_content)
+    GridView gvContent;
 
     private AddFeedbackPresenter addFeedbackPresenter;
+    private QuickAdapter<String> mAdapter;
 
     @Override
     protected void preView() {
@@ -38,16 +44,26 @@ public class FeedBackActivity extends BasePresenterActivity implements AddFeedba
     protected void initView() {
         addFeedbackPresenter = (AddFeedbackPresenter) createPresenter(AddFeedbackPresenter.class);
         addFeedbackPresenter.attachView(this);
+        mAdapter = new QuickAdapter<String>(this, R.layout.item_fadeback) {
+            @Override
+            protected void convert(BaseAdapterHelper helper, String item) {
+                ImageView ivItem = helper.getView(R.id.iv_item);
+                if ("del".equals(item)) {
+                    ivItem.setImageResource(R.mipmap.ico_add);
+                }
+            }
+        };
+        gvContent.setAdapter(mAdapter);
     }
 
     @Override
     protected void initData() {
         Intent intent = getIntent();
-        if (intent!=null&&intent.getExtras()!=null){
+        if (intent != null && intent.getExtras() != null) {
             String type = intent.getExtras().getString("type");
-            if ("detail".equals(type)){
+            if ("detail".equals(type)) {
                 String[] fadeType2 = getResources().getStringArray(R.array.fade_type2);
-                ArrayAdapter arrayAdapter = new ArrayAdapter(this,android.R.layout.simple_list_item_1,fadeType2);
+                ArrayAdapter arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, fadeType2);
                 snType.setAdapter(arrayAdapter);
                 arrayAdapter.notifyDataSetChanged();
             }
@@ -67,7 +83,7 @@ public class FeedBackActivity extends BasePresenterActivity implements AddFeedba
 
     @OnClick(R.id.bt_submit)
     void onSubmit(View v) {
-        TCAgent.onEvent(this,"sys_feedback");
+        TCAgent.onEvent(this, "sys_feedback");
         LinkCreateRequest linkCreateRequest = new LinkCreateRequest();
         linkCreateRequest.setType((String) snType.getSelectedItem());
         linkCreateRequest.setContent(etContent.getText().toString());
