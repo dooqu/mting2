@@ -305,8 +305,8 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
             return;
         }
         Intent intent = new Intent();
-        intent.setClass(this, HtmlActivity.class);
-        intent.putExtra(HtmlActivity.EXTRA_HTML, mCurrentArticle.getUrl());
+        intent.setClass(this, PlayerlActivity.class);
+        intent.putExtra(PlayerlActivity.EXTRA_HTML, mCurrentArticle.getUrl());
         startActivity(intent);
         TCAgent.onEvent(this, "articleDetails_show_original");
     }

@@ -157,7 +157,7 @@ public class PhoneLoginActivity extends BasePresenterActivity implements GetCode
                 GetCodeRequest requset = new GetCodeRequest();
                 requset.setDeviceId(TingUtils.getDeviceId(getApplicationContext()));
                 requset.phone = phone;
-                requset.source = "register";
+                requset.source = "";
                 requset.doSign();
                 codePresenter.onGetCode(requset);
 
@@ -170,25 +170,25 @@ public class PhoneLoginActivity extends BasePresenterActivity implements GetCode
     public void onCodeSuccess(BaseResponse<CodeInfo> response) {
         final int code = response.code;
 
-        switch (code)
-        {
-            case 200:
-            case -3:{
+//        switch (code)
+//        {
+//            case 200:
+//            case -3:{
 
                 Intent mIntent = new Intent(this, GetCodeActivity.class);
                 mIntent.putExtra(EXTRA_PHONE, phone);
                 mIntent.putExtra(EXTRA_SOURCE,"register");
                 mIntent.putExtra(EXTRA_CODE, response.data.getCodeId());
                 startActivity(mIntent);
-                break;
-            }
-            case -2: {
-                Intent mIntent = new Intent(this, LoginPwdActivity.class);
-                mIntent.putExtra(EXTRA_PHONE, phone);
-                startActivity(mIntent);
-                break;
-            }
-        }
+//                break;
+//            }
+//            case -2: {
+//                Intent mIntent = new Intent(this, LoginPwdActivity.class);
+//                mIntent.putExtra(EXTRA_PHONE, phone);
+//                startActivity(mIntent);
+//                break;
+//            }
+//        }
     }
 
     @Override

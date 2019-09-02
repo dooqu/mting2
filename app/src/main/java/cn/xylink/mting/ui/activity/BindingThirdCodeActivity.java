@@ -6,15 +6,12 @@ import android.os.SystemClock;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.tendcloud.tenddata.TCAgent;
 import com.tendcloud.tenddata.TDAccount;
 
 import org.apaches.commons.codec.binary.Base64;
 
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.spec.InvalidKeySpecException;
@@ -27,31 +24,33 @@ import cn.xylink.mting.base.BaseResponse;
 import cn.xylink.mting.bean.CheckInfo;
 import cn.xylink.mting.bean.CodeInfo;
 import cn.xylink.mting.bean.UserInfo;
+import cn.xylink.mting.contract.BindThirdPlatformContact;
 import cn.xylink.mting.contract.CheckPhoneContact;
 import cn.xylink.mting.contract.GetCodeContact;
 import cn.xylink.mting.contract.SmsLoginContact;
-import cn.xylink.mting.model.CheckPhoneRequest;
 import cn.xylink.mting.model.GetCodeRequest;
 import cn.xylink.mting.model.SmsLoginRequset;
+import cn.xylink.mting.model.ThirdPlatformRequest;
 import cn.xylink.mting.model.data.Const;
 import cn.xylink.mting.model.data.HttpConst;
 import cn.xylink.mting.presenter.CheckPhonePresenter;
 import cn.xylink.mting.presenter.GetCodePresenter;
 import cn.xylink.mting.presenter.SmsLoginPresenter;
+import cn.xylink.mting.presenter.ThirdPlatformPresenter;
 import cn.xylink.mting.utils.ContentManager;
 import cn.xylink.mting.utils.EncryptionUtil;
 import cn.xylink.mting.utils.L;
+import cn.xylink.mting.utils.MD5;
 import cn.xylink.mting.utils.SafeUtils;
 import cn.xylink.mting.utils.SharedPreHelper;
-import cn.xylink.mting.utils.TingUtils;
 import cn.xylink.mting.widget.PhoneCode;
 import cn.xylink.mting.widget.ZpPhoneEditText;
 
-public class GetCodeActivity extends BasePresenterActivity implements GetCodeContact.IGetCodeView, CheckPhoneContact.ICheckPhoneView, SmsLoginContact.ISmsLoginView {
+public class BindingThirdCodeActivity extends BasePresenterActivity implements GetCodeContact.IGetCodeView, CheckPhoneContact.ICheckPhoneView, BindThirdPlatformContact.IThirdPlatformView {
 
     private GetCodePresenter codePresenter;
     private CheckPhonePresenter checkPhonePresenter;
-    private SmsLoginPresenter smsLoginPresenter;
+    private ThirdPlatformPresenter thirdPlatformPresenter;
     private CodeInfo codeInfo;
     public static final String EXTRA_TICKET = "extra_ticket";
     public static final String EXTRA_PHONE = "extra_phone";
@@ -145,19 +144,6 @@ public class GetCodeActivity extends BasePresenterActivity implements GetCodeCon
                 codeLength = content.length();
                 if (TextUtils.isEmpty(phone))
                     return;
-//                CheckPhoneRequest requset = new CheckPhoneRequest();
-//                requset.source = "register";
-//                requset.codeId = codeID;
-//                requset.phone = phone.replaceAll(" ", "");
-//                requset.setDeviceId(TingUtils.getDeviceId(getApplicationContext()));
-//                try {
-//                    requset.code = SafeUtils.getRsaString(content, Const.publicKey);
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//                requset.doSign();
-//                checkPhonePresenter.onCheckPhone(requset);
-
                 smsLogin(content);
 
 
@@ -172,18 +158,23 @@ public class GetCodeActivity extends BasePresenterActivity implements GetCodeCon
     private void smsLogin(String smsContent)
     {
         L.v(smsContent.length());
-        SmsLoginRequset requset = new SmsLoginRequset();
+        ThirdPlatformRequest requset = new ThirdPlatformRequest();
         try {
-            requset.code = SafeUtils.getRsaString(smsContent, Const.publicKey);
-            L.v("code",requset.code);
+            requset.setCode( SafeUtils.getRsaString(smsContent, Const.publicKey) );
         } catch (Exception e) {
             e.printStackTrace();
         }
-        requset.phone = phone.replaceAll(" ", "");
-        requset.codeId = codeID;
+        SharedPreHelper sharedPreHelper = SharedPreHelper.getInstance(this);
+        String access_token = (String) sharedPreHelper.getSharedPreference(SharedPreHelper.SharedAttribute.ACCESS_TOKEN, "");
+        String appid = (String) sharedPreHelper.getSharedPreference(SharedPreHelper.SharedAttribute.OPENID, "");
+
+        requset.setAccess_token(access_token);
+        requset.setOpenid(appid);
+        requset.setPhone(phone.replaceAll(" ", ""));
+        requset.setPlatform(platform);
+        requset.setCodeId(codeID);
         requset.doSign();
-        smsLoginPresenter.onSmsLogin(requset);
-        requset = null;
+        thirdPlatformPresenter.onThirdPlatform(requset);
     }
 
     @Override
@@ -202,8 +193,8 @@ public class GetCodeActivity extends BasePresenterActivity implements GetCodeCon
         checkPhonePresenter = (CheckPhonePresenter) createPresenter(CheckPhonePresenter.class);
         checkPhonePresenter.attachView(this);
 
-        smsLoginPresenter = (SmsLoginPresenter) createPresenter(SmsLoginPresenter.class);
-        smsLoginPresenter.attachView(this);
+        thirdPlatformPresenter = (ThirdPlatformPresenter) createPresenter(ThirdPlatformPresenter.class);
+        thirdPlatformPresenter.attachView(this);
 //        if (!"register".equals(source))
 //            requsetCode();
     }
@@ -264,7 +255,6 @@ public class GetCodeActivity extends BasePresenterActivity implements GetCodeCon
             return;
         GetCodeRequest requset = new GetCodeRequest();
         requset.phone = phone.replaceAll(" ", "");
-//        requset.source = source;
         requset.source = "";
         requset.doSign();
         codePresenter.onGetCode(requset);
@@ -338,7 +328,7 @@ public class GetCodeActivity extends BasePresenterActivity implements GetCodeCon
     }
 
     @Override
-    public void onSmsLoginSuccess(BaseResponse<UserInfo> response) {
+    public void onThirdPlatformSuccess(BaseResponse<UserInfo> response) {
         if (response.data != null) {
             L.v("token", response.data.getToken());
             ContentManager.getInstance().setLoginToken(response.data.getToken());
@@ -355,7 +345,7 @@ public class GetCodeActivity extends BasePresenterActivity implements GetCodeCon
     }
 
     @Override
-    public void onSmsLoginError(int code, String errorMsg) {
+    public void onThirdPlatformError(int code, String errorMsg) {
         L.v("code",code);
         if(!TextUtils.isEmpty(errorMsg)) {
             toastShort(errorMsg);
