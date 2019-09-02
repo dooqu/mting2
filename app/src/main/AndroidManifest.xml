@@ -77,6 +77,7 @@
         </activity>
 
         <service android:name=".speech.SpeechService" />
+        <service android:name=".service.CopyCheckService" />
 
         <activity
             android:name=".ui.activity.MainActivity"
@@ -167,10 +168,6 @@
 
         <activity
             android:name=".ui.activity.FeedBackActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.activity.FeedBack2Activity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
 

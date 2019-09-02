@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
+import android.text.TextUtils;
 import android.text.style.AbsoluteSizeSpan;
 import android.text.style.ForegroundColorSpan;
 
@@ -937,6 +938,18 @@ public class StringUtil {
             sdf = new SimpleDateFormat("MM-dd");
         }
         return sdf.format(new Date(createAt));
+    }
+
+    public static String matcherUrl(String str){
+        if (!TextUtils.isEmpty(str)){
+            String regex= "(https?)://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]";
+            Pattern p = Pattern.compile(regex);
+            Matcher matcher = p.matcher(str);
+            if (matcher.find()){
+                return matcher.group();
+            }
+        }
+        return "";
     }
 
 }

@@ -22,10 +22,10 @@
 
         <Spinner
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="30dp"
             android:id="@+id/sn_type"
             android:layout_marginLeft="16dp"
-            android:entries="@array/week"
+            android:entries="@array/fade_type1"
             android:background="@drawable/spinner_background" />
     </LinearLayout>
 

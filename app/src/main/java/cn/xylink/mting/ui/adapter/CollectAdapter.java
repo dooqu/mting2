@@ -98,6 +98,11 @@ public class CollectAdapter extends RecyclerView.Adapter<CollectAdapter.ReadedHo
             if (mOnItemClickListener != null)
                 mOnItemClickListener.onItemClick(data);
         });
+        holder.itemView.setOnLongClickListener(v -> {
+            if (mOnItemClickListener != null)
+                mOnItemClickListener.onItemMoreClick(data);
+            return false;
+        });
     }
 
     public List<Article> getArticleList() {

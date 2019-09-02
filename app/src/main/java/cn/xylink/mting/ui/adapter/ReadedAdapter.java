@@ -116,6 +116,11 @@ public class ReadedAdapter extends RecyclerView.Adapter<ReadedAdapter.ReadedHold
             if (mOnItemClickListener != null)
                 mOnItemClickListener.onItemClick(data);
         });
+        holder.itemView.setOnLongClickListener(v -> {
+            if (mOnItemClickListener != null)
+                mOnItemClickListener.onItemMoreClick(data);
+            return false;
+        });
     }
 
     public List<Article> getArticleList() {

@@ -1,8 +1,11 @@
 package cn.xylink.mting.ui.activity;
 
+import android.content.Intent;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 
 import com.tendcloud.tenddata.TCAgent;
@@ -39,7 +42,16 @@ public class FeedBackActivity extends BasePresenterActivity implements AddFeedba
 
     @Override
     protected void initData() {
-
+        Intent intent = getIntent();
+        if (intent!=null&&intent.getExtras()!=null){
+            String type = intent.getExtras().getString("type");
+            if ("detail".equals(type)){
+                String[] fadeType2 = getResources().getStringArray(R.array.fade_type2);
+                ArrayAdapter arrayAdapter = new ArrayAdapter(this,android.R.layout.simple_list_item_1,fadeType2);
+                snType.setAdapter(arrayAdapter);
+                arrayAdapter.notifyDataSetChanged();
+            }
+        }
     }
 
     @Override

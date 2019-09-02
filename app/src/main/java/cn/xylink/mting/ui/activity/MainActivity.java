@@ -6,6 +6,7 @@ import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.os.Bundle;
@@ -49,6 +50,7 @@ import cn.xylink.mting.event.NotifyMainPlayEvent;
 import cn.xylink.mting.event.PlayBarVisibilityEvent;
 import cn.xylink.mting.presenter.AddUnreadPresenter;
 import cn.xylink.mting.presenter.DelMainPresenter;
+import cn.xylink.mting.service.CopyCheckService;
 import cn.xylink.mting.speech.SpeechService;
 import cn.xylink.mting.speech.SpeechServiceProxy;
 import cn.xylink.mting.speech.data.SpeechList;
@@ -116,7 +118,10 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
 //        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
         showShareResultDialog(getIntent().getIntExtra(SHARE_SUCCESS, -1), getIntent().getStringExtra(SHARE_URL));
         mOpenArticleID = getIntent().getStringExtra(ARTICLE_ID);
-
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(new Intent(this, CopyCheckService.class));
+        } else
+            startService(new Intent(this, CopyCheckService.class));
     }
 
     @Override
