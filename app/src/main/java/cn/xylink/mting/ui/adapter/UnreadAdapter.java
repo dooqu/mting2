@@ -100,6 +100,11 @@ public class UnreadAdapter extends RecyclerView.Adapter<UnreadAdapter.UnreadHold
             if (mOnItemClickListener != null)
                 mOnItemClickListener.onItemClick(data);
         });
+        holder.itemView.setOnLongClickListener(v -> {
+            if (mOnItemClickListener != null)
+                mOnItemClickListener.onItemMoreClick(data);
+            return false;
+        });
     }
 
     public List<Article> getArticleList() {
