@@ -170,10 +170,6 @@
             android:name=".ui.activity.FeedBackActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.activity.FeedBack2Activity"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait" />
 
 
         <activity
