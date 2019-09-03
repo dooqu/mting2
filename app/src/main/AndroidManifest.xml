@@ -184,10 +184,10 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.PlayerlActivity"
-            android:launchMode="singleTask"
-            android:process=":PlayerlActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:hardwareAccelerated="true"
+            android:launchMode="singleTask"
+            android:process=":PlayerlActivity"
             android:screenOrientation="portrait" />
 
         <activity
@@ -196,10 +196,13 @@
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
             android:name=".ui.activity.BindingThirdCodeActivity"
-            android:screenOrientation="portrait"
             android:launchMode="singleTask"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
 
+        <activity
+            android:name=".ui.activity.ImageDetailActivity"
+            android:screenOrientation="portrait" />
 
         <meta-data
             android:name="TING_CHANNEL"

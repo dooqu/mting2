@@ -179,6 +179,12 @@ public class ImageUtils {
                 .into(iv);
     }
 
+
+    public void load(ImageView ivItem, int ico_add) {
+        Glide.with(context)
+                .load(ico_add)
+                .into(ivItem);
+    }
     /**
      * 获取glide普通加载图片
      *
@@ -354,4 +360,5 @@ public class ImageUtils {
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(iv);
     }
+
 }

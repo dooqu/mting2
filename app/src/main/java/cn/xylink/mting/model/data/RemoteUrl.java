@@ -118,6 +118,11 @@ public class RemoteUrl {
     public static String feedbackUrl() {
         return URL_BASE + "/api/sct/v1/feedback/save";
     }
+    //反馈接口
+    public static String feedbackUrlv2() {
+        return URL_BASE + "/api/sct/v2/feedback/save";
+    }
+
 
     //上传头像
     public static String upLoadHeadImg() {
