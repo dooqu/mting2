@@ -13,6 +13,7 @@ import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -123,6 +124,10 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
     private Timer favTimer = new Timer();
     private TimerTask favTimerTask;
     private TimerTask scrollTimerTask;
+    float mPosX = 0;
+    float mPosY = 0;
+    float mCurPosX = 0;
+    float mCurPosY = 0;
     //页面是否是滚动状态
     private boolean isScrolling;
 
@@ -261,6 +266,34 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
                 }
             }
         };
+
+        svContent.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+
+                    case MotionEvent.ACTION_DOWN:
+                        mPosX = event.getX();
+                        mPosY = event.getY();
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        mCurPosX = event.getX();
+                        mCurPosY = event.getY();
+
+                        break;
+
+                    case MotionEvent.ACTION_UP:
+                        if (mCurPosX - mPosX > 0
+                                && (Math.abs(mCurPosX - mPosX) > 50 ) && Math.abs(mCurPosY - mPosY) < 50) {
+                        finish();
+                        return false;
+                    }
+                    break;
+                }
+
+                return false;
+            }
+        });
 
         if (proxy.bind() == false) {
             Toast.makeText(this, "未能连接到播放服务", Toast.LENGTH_SHORT).show();
