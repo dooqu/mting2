@@ -179,11 +179,12 @@ public class BindingPhoneActivity extends BasePresenterActivity implements BindC
                     toastShort("手机号码输入有误，请重新输入");
                     return;
                 }
-                BindCheckRequest requset = new BindCheckRequest();
-                requset.setPhone(phone);
-                requset.setPlatform(platform);
-                requset.doSign();
-                bindCheckPresenter.onBindCheck(requset);
+//                BindCheckRequest requset = new BindCheckRequest();
+//                requset.setPhone(phone);
+//                requset.setPlatform(platform);
+//                requset.doSign();
+//                bindCheckPresenter.onBindCheck(requset);
+                requsetCode();
                 break;
         }
     }
@@ -243,7 +244,7 @@ public class BindingPhoneActivity extends BasePresenterActivity implements BindC
         L.v(response.code);
         toastShort(response.message);
         if (response.data != null) {
-            Intent mIntent = new Intent(this, GetCodeActivity.class);
+            Intent mIntent = new Intent(this, BindingThirdCodeActivity.class);
             mIntent.putExtra(EXTRA_PHONE, phone);
             mIntent.putExtra(EXTRA_SOURCE, source);
             mIntent.putExtra(EXTRA_PLATFORM, platform);

@@ -23,7 +23,7 @@ public class ThirdPlatformPresenter extends BasePresenter<BindThirdPlatformConta
         L.v("request",request);
         String json = new Gson().toJson(request);
         L.v("json",json);
-        OkGoUtils.getInstance().postData(mView, RemoteUrl.bindThirdPlatformUrl(),json , new TypeToken<BaseResponse<UserInfo>>() {
+        OkGoUtils.getInstance().postData(mView, RemoteUrl.v1PlatformBind(),json , new TypeToken<BaseResponse<UserInfo>>() {
 
         }.getType(), new OkGoUtils.ICallback() {
             @Override

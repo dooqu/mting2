@@ -133,4 +133,5 @@
     <string name="load_on">立即加载</string>
     <string name="load_stop">停止加载</string>
     <string name="load_refresh">重新加载</string>
+    <string name="player_mting">玩转轩辕听</string>
 </resources>

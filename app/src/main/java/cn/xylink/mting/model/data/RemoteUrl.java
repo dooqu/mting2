@@ -1,7 +1,7 @@
 package cn.xylink.mting.model.data;
 
 public class RemoteUrl {
-    private static final String URL_BASE = "http://service.xylink.cn";//外网2019-4-9
+    private static final String URL_BASE = "http://test.xylink.cn";//外网2019-4-9
 
 
     //获取短信验证码
@@ -118,6 +118,11 @@ public class RemoteUrl {
     public static String feedbackUrl() {
         return URL_BASE + "/api/sct/v1/feedback/save";
     }
+    //反馈接口
+    public static String feedbackUrlv2() {
+        return URL_BASE + "/api/sct/v2/feedback/save";
+    }
+
 
     //上传头像
     public static String upLoadHeadImg() {
@@ -141,6 +146,14 @@ public class RemoteUrl {
     //分享加入待读接口
     public static String shareAddUrl() {
         return URL_BASE + "/api/sct/v1/article/share/add";
+    }
+    //短信快捷登录接口
+    public static String smsLogin() {
+        return URL_BASE + "/api/user/common/v3/sms/login";
+    }
+    //第三方账号绑定接口(验证码)v1
+    public static String v1PlatformBind() {
+        return URL_BASE + "/api/user/v1/third_platform/bind";
     }
 
 }

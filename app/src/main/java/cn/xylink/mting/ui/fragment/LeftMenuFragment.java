@@ -24,6 +24,7 @@ import cn.xylink.mting.ui.activity.PlayerlActivity;
 import cn.xylink.mting.utils.ContentManager;
 import cn.xylink.mting.utils.ImageUtils;
 import cn.xylink.mting.utils.L;
+import cn.xylink.mting.utils.TingUtils;
 
 /*
  *左侧菜单
@@ -98,7 +99,7 @@ public class LeftMenuFragment extends BasePresenterFragment {
     }
 
     @OnClick({R.id.rl_left_menu_about, R.id.rl_left_menu_feedback, R.id.rl_left_menu_fun, R.id.rl_left_menu_share, R.id.tv_left_menu_out,
-            R.id.tv_left_menu_title, R.id.iv_left_menu_head})
+            R.id.tv_left_menu_title, R.id.iv_left_menu_head,R.id.rl_left_menu_app_star_grade})
     void onClick(View view) {
         CloseLeftMenuEvent event = new CloseLeftMenuEvent();
         switch (view.getId()) {
@@ -123,6 +124,7 @@ public class LeftMenuFragment extends BasePresenterFragment {
                 mHeadImageView.postDelayed(() -> {
                     Intent intent = new Intent(getActivity(), PlayerlActivity.class);
                     intent.putExtra(PlayerlActivity.EXTRA_HTML,PlayerlActivity.PROTOCOL_URL);
+                    intent.putExtra(PlayerlActivity.EXTRA_TITLE,getResources().getString(R.string.player_mting));
                     startActivity(intent);
                 }, 200);
                 break;
@@ -137,6 +139,9 @@ public class LeftMenuFragment extends BasePresenterFragment {
                 Intent intents = new Intent(getActivity(), LoginActivity.class);
                 intents.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intents);
+                break;
+            case R.id.rl_left_menu_app_star_grade:
+                TingUtils.goToMarket(this.getContext());
                 break;
         }
         EventBus.getDefault().post(event);

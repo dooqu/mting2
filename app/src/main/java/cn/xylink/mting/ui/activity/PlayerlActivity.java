@@ -1,27 +1,20 @@
 package cn.xylink.mting.ui.activity;
 
 import android.content.Context;
-import android.content.pm.ActivityInfo;
-import android.content.res.Resources;
-import android.graphics.Color;
 import android.os.Build;
+import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.view.WindowManager;
 import android.webkit.WebChromeClient;
-import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-
-import com.tendcloud.tenddata.TCAgent;
-
-import java.lang.reflect.Method;
+import android.widget.TextView;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -29,13 +22,13 @@ import cn.xylink.mting.R;
 import cn.xylink.mting.base.BaseActivity;
 import cn.xylink.mting.utils.L;
 
-import static cn.xylink.mting.ui.activity.HtmlActivity.EXTRA_HTML;
 
 public class PlayerlActivity extends BaseActivity {
 
 //    public static final String EXTRA_HTML = "html_url";
     public static final String PROTOCOL_URL = "http://test.xylink.cn/article/html/tutorial.html";
     public static final String EXTRA_HTML = "html_url";
+    public static final String EXTRA_TITLE = "title";
 
     @BindView(R.id.wv_html)
     WebView wvHtml;
@@ -45,6 +38,9 @@ public class PlayerlActivity extends BaseActivity {
     FrameLayout flWeb;
     @BindView(R.id.rl_top)
     RelativeLayout rlTop;
+    @BindView(R.id.tv_title)
+    TextView tvTitle;
+
 
 
     /** 视频全屏参数 */
@@ -192,6 +188,10 @@ public class PlayerlActivity extends BaseActivity {
         String url = getIntent().getStringExtra(EXTRA_HTML);
 //        L.v(url);
         wvHtml.loadUrl(url);
+
+        String title = getIntent().getStringExtra(EXTRA_TITLE);
+        if(!TextUtils.isEmpty(title))
+            tvTitle.setText(title);
     }
 
     @Override
@@ -207,7 +207,13 @@ public class PlayerlActivity extends BaseActivity {
             wvHtml.goBack();
         }else{
             super.onBackPressed();
+            finish();
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 
     @OnClick(R.id.iv_close)

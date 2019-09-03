@@ -2,6 +2,7 @@ package cn.xylink.mting.ui.activity;
 
 import android.app.Activity;
 import android.app.DownloadManager;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -33,12 +34,14 @@ import cn.xylink.mting.utils.GsonUtil;
 import cn.xylink.mting.utils.PackageUtils;
 
 public class AboutVersion extends BaseActivity {
-
     TextView versionName;
     TextView txtCurrentVersion;
     View backIcon;
     Timer timer;
 
+    View institutionOfUserButton;
+    View privacyButton;
+    View contactUsButton;
 
     @Override
     protected void onDestroy() {
@@ -68,6 +71,13 @@ public class AboutVersion extends BaseActivity {
             return;
         }
         versionName.setText("检测新版本");
+
+        institutionOfUserButton = findViewById(R.id.institutionOfUserButton);
+        privacyButton = findViewById(R.id.privacyButton);
+        contactUsButton = findViewById(R.id.contactUsButton);
+        institutionOfUserButton.setOnClickListener(this::onButtonClick);
+        privacyButton.setOnClickListener(this::onButtonClick);
+        contactUsButton.setOnClickListener(this::onButtonClick);
     }
 
     @Override
@@ -148,7 +158,7 @@ public class AboutVersion extends BaseActivity {
                     @Override
                     public void onSuccess(UpgradeResponse response) {
                         versionName.setText("检测新版本");
-                        if ((response.getCode() == 200 || response.getCode() == 201) && response.getData() != null  && response.getData().getAppVersionCode() > currentVersionCode) {
+                        if ((response.getCode() == 200 || response.getCode() == 201) && response.getData() != null && response.getData().getAppVersionCode() > currentVersionCode) {
                             UpgradeConfirmDialog upgradeConfirmDialog = new UpgradeConfirmDialog(AboutVersion.this, response.getData());
                             upgradeConfirmDialog.setListener(AboutVersion.this::onUpgradeConfirm);
                             upgradeConfirmDialog.show();
@@ -164,7 +174,6 @@ public class AboutVersion extends BaseActivity {
                     }
                 });
 
-
     }
 
 
@@ -176,7 +185,6 @@ public class AboutVersion extends BaseActivity {
             public void run() {
                 Handler handler = new Handler(Looper.getMainLooper());
                 handler.post(() -> {
-
                     int[] status = UpgradeManager.getInstance().queryInfo(downloadId);
                     switch (status[2]) {
                         case DownloadManager.STATUS_PAUSED:
@@ -203,5 +211,16 @@ public class AboutVersion extends BaseActivity {
             }
         }, 10, 500);
 
+    }
+
+    private void onButtonClick(View v) {
+        Intent intent = new Intent(this, PlayerlActivity.class);
+        if (v == privacyButton) {
+            intent.putExtra(PlayerlActivity.EXTRA_HTML, "http://service.xylink.cn/article/html/policy.html");
+        }
+        else if (v == institutionOfUserButton) {
+            intent.putExtra(PlayerlActivity.EXTRA_HTML, "http://service.xylink.cn/article/html/agreement.html");
+        }
+        startActivity(intent);
     }
 }
