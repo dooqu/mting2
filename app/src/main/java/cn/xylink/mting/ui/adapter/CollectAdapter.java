@@ -27,10 +27,8 @@ import cn.xylink.mting.utils.L;
  * 2019/7/15 10:50 : Create CollectAdapter.java (JoDragon);
  * -----------------------------------------------------------------
  */
-public class CollectAdapter extends RecyclerView.Adapter<CollectAdapter.ReadedHolder> {
+public class CollectAdapter extends BaseMainTabAdapter {
     private Context mContext;
-    private List<Article> mData;
-    private UnreadAdapter.OnItemClickListener mOnItemClickListener;
     private Article mCurrent = SpeechList.getInstance().getCurrent();
     private int mCurrentPosition = 0;
 
@@ -65,13 +63,13 @@ public class CollectAdapter extends RecyclerView.Adapter<CollectAdapter.ReadedHo
 
     @NonNull
     @Override
-    public CollectAdapter.ReadedHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int position) {
+    public View onCreateView(@NonNull ViewGroup viewGroup, int position) {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_unread, viewGroup, false);
-        return new CollectAdapter.ReadedHolder(view);
+        return view;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull CollectAdapter.ReadedHolder holder, int position) {
+    public void onBindView(@NonNull ItemHolder holder, int position) {
         Article data = mData.get(position);
         holder.tvTitle.setText(data.getTitle());
         holder.tvFrom.setText(TextUtils.isEmpty(data.getSourceName()) ? "其他" : data.getSourceName());
@@ -109,37 +107,4 @@ public class CollectAdapter extends RecyclerView.Adapter<CollectAdapter.ReadedHo
         return mData;
     }
 
-    public static String getPercentFormat(double d) {
-        NumberFormat nf = java.text.NumberFormat.getPercentInstance();
-        nf.setMaximumIntegerDigits(3);//小数点前保留几位
-        nf.setMinimumFractionDigits(0);// 小数点后保留几位
-        String str = nf.format(d);
-        return str;
-    }
-
-    @Override
-    public int getItemCount() {
-        return mData.size();
-    }
-
-    class ReadedHolder extends RecyclerView.ViewHolder {
-        ImageView ivMore;
-        TextView tvTitle;
-        TextView tvFrom;
-        TextView tvProgress;
-
-        public ReadedHolder(@NonNull View itemView) {
-            super(itemView);
-            ivMore = itemView.findViewById(R.id.iv_unread_item_more);
-            tvTitle = itemView.findViewById(R.id.tv_unread_item_title);
-            tvFrom = itemView.findViewById(R.id.tv_unread_item_from);
-            tvProgress = itemView.findViewById(R.id.tv_unread_item_progress);
-        }
-    }
-
-    public interface OnItemClickListener {
-        void onItemClick(Article article);
-
-        void onItemMoreClick(Article article);
-    }
 }

@@ -16,6 +16,7 @@ import cn.xylink.mting.ui.dialog.LoadingDialog;
 import cn.xylink.mting.ui.dialog.TipDialog;
 import cn.xylink.mting.utils.ContentManager;
 import cn.xylink.mting.utils.L;
+import cn.xylink.mting.utils.StringUtil;
 
 
 public abstract class BasePresenterActivity<T extends BasePresenter> extends BaseActivity implements IBaseView<T> {
@@ -125,18 +126,20 @@ public abstract class BasePresenterActivity<T extends BasePresenter> extends Bas
         if (this.getComponentName().getClassName().equals(MainActivity.class.getName())
                 || this.getComponentName().getClassName().equals(SearchActivity.class.getName())
                 || this.getComponentName().getClassName().equals(ArticleDetailActivity.class.getName())) {
-            CharSequence copy = getCopy(this);
-            if (!TextUtils.isEmpty(copy) && (copy.toString().startsWith("http://") || copy.toString().startsWith("https://"))) {
+            CharSequence copyStr = getCopy(this);
+//            if (!TextUtils.isEmpty(copy) && (copy.toString().startsWith("http://") || copy.toString().startsWith("https://"))) {
+            if (!TextUtils.isEmpty(copyStr) && !TextUtils.isEmpty(StringUtil.matcherUrl(copyStr.toString()))) {
+                copyStr = StringUtil.matcherUrl(copyStr.toString());
                 tCopy = ContentManager.getInstance().getCopyArray();
                 if (tCopy != null && tCopy.size() > 0)
                     for (String s : tCopy) {
-                        if (s.equals(copy.toString())) {
+                        if (s.equals(copyStr)) {
                             return;
                         }
                     }
                 if (tCopy == null)
                     tCopy = new ArrayList<>();
-                tCopy.add(copy.toString());
+                tCopy.add(copyStr.toString());
                 if (tCopy.size() > 20)
                     tCopy.remove(0);
                 ContentManager.getInstance().setCopyArray(tCopy);

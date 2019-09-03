@@ -60,7 +60,6 @@ public class LeftMenuFragment extends BasePresenterFragment {
 
     public void setUserInfo() {
         UserInfo info = ContentManager.getInstance().getUserInfo();
-        L.v(info);
         if (info != null) {
             if (!TextUtils.isEmpty(info.getHeadImg()))
                 ImageUtils.get().loadCircle(mHeadImageView, info.getHeadImg());

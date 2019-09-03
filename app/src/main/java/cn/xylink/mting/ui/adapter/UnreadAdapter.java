@@ -27,10 +27,8 @@ import cn.xylink.mting.utils.L;
  * 2019/7/8 15:13 : Create UnreadAdapter.java (JoDragon);
  * -----------------------------------------------------------------
  */
-public class UnreadAdapter extends RecyclerView.Adapter<UnreadAdapter.UnreadHolder> {
+public class UnreadAdapter extends BaseMainTabAdapter {
     private Context mContext;
-    private List<Article> mData;
-    private OnItemClickListener mOnItemClickListener;
     private Article mCurrent = SpeechList.getInstance().getCurrent();
     private int mCurrentPosition = 0;
 
@@ -67,13 +65,13 @@ public class UnreadAdapter extends RecyclerView.Adapter<UnreadAdapter.UnreadHold
 
     @NonNull
     @Override
-    public UnreadHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int position) {
+    public View onCreateView(@NonNull ViewGroup viewGroup, int position) {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_unread, viewGroup, false);
-        return new UnreadHolder(view);
+        return view;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull UnreadHolder holder, int position) {
+    public void onBindView(@NonNull ItemHolder holder, int position) {
         Article data = mData.get(position);
         holder.tvTitle.setText(data.getTitle());
         holder.tvFrom.setText(TextUtils.isEmpty(data.getSourceName()) ? "其他" : data.getSourceName());
@@ -111,37 +109,4 @@ public class UnreadAdapter extends RecyclerView.Adapter<UnreadAdapter.UnreadHold
         return mData;
     }
 
-    public static String getPercentFormat(double d) {
-        NumberFormat nf = java.text.NumberFormat.getPercentInstance();
-        nf.setMaximumIntegerDigits(3);//小数点前保留几位
-        nf.setMinimumFractionDigits(0);// 小数点后保留几位
-        String str = nf.format(d);
-        return str;
-    }
-
-    @Override
-    public int getItemCount() {
-        return mData.size();
-    }
-
-    class UnreadHolder extends RecyclerView.ViewHolder {
-        ImageView ivMore;
-        TextView tvTitle;
-        TextView tvFrom;
-        TextView tvProgress;
-
-        public UnreadHolder(@NonNull View itemView) {
-            super(itemView);
-            ivMore = itemView.findViewById(R.id.iv_unread_item_more);
-            tvTitle = itemView.findViewById(R.id.tv_unread_item_title);
-            tvFrom = itemView.findViewById(R.id.tv_unread_item_from);
-            tvProgress = itemView.findViewById(R.id.tv_unread_item_progress);
-        }
-    }
-
-    public interface OnItemClickListener {
-        void onItemClick(Article article);
-
-        void onItemMoreClick(Article article);
-    }
 }
