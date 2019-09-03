@@ -3,9 +3,7 @@ package cn.xylink.mting.ui.fragment;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.drawable.AnimationDrawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -15,7 +13,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -39,9 +36,8 @@ import cn.xylink.mting.model.LinkCreateRequest;
 import cn.xylink.mting.presenter.AddFeedbackPresenter;
 import cn.xylink.mting.presenter.CheckLinkPresenter;
 import cn.xylink.mting.presenter.LinkCreatePresenter;
-import cn.xylink.mting.ui.activity.HtmlActivity;
+import cn.xylink.mting.ui.activity.PlayerlActivity;
 import cn.xylink.mting.ui.dialog.CheckArticleDialog;
-import cn.xylink.mting.ui.dialog.LoadingDialog;
 import cn.xylink.mting.utils.DateUtils;
 import cn.xylink.mting.utils.L;
 
@@ -273,8 +269,8 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
 
                 @Override
                 public void onLook() {
-                    Intent mIntent = new Intent(getActivity(), HtmlActivity.class);
-                    mIntent.putExtra(HtmlActivity.EXTRA_HTML, responseUrl);
+                    Intent mIntent = new Intent(getActivity(), PlayerlActivity.class);
+                    mIntent.putExtra(PlayerlActivity.EXTRA_HTML, responseUrl);
                     startActivity(mIntent);
                 }
             });

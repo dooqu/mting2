@@ -9,7 +9,26 @@ public class ThirdPlatformRequest extends BaseRequest {
     private String platform;
     private String ticket;
     private String phone;
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getCodeId() {
+        return codeId;
+    }
+
+    public void setCodeId(String codeId) {
+        this.codeId = codeId;
+    }
+
     private String password;
+    private String code;
+    private String codeId;
 
     public String getAccess_token() {
         return access_token;

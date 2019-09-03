@@ -74,7 +74,7 @@ public class CopyCheckService extends Service {
                     }
                 mNotifManager.cancel(212312313);
                 mHandler.removeCallbacks(runnable);
-                sendCustomHeadsUpViewNotification(this, getCopy().toString());
+                sendCustomHeadsUpViewNotification(this, copyStr.toString());
                 mNotifTime = System.currentTimeMillis();
             }
 //            if ((mDialog == null || !mDialog.isShowing())

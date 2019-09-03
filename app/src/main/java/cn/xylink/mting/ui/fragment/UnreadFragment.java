@@ -2,9 +2,12 @@ package cn.xylink.mting.ui.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 
 import com.tendcloud.tenddata.TCAgent;
@@ -36,9 +39,11 @@ import cn.xylink.mting.speech.event.SpeechStartEvent;
 import cn.xylink.mting.speech.event.SpeechStopEvent;
 import cn.xylink.mting.ui.activity.ArticleDetailActivity;
 import cn.xylink.mting.ui.activity.PlayerlActivity;
+import cn.xylink.mting.ui.adapter.BaseMainTabAdapter;
 import cn.xylink.mting.ui.adapter.UnreadAdapter;
 import cn.xylink.mting.utils.L;
 import cn.xylink.mting.widget.SpaceItemDecoration;
+import cn.xylink.mting.widget.TabListItemDecoration;
 
 /*
  *未读
@@ -57,6 +62,7 @@ public class UnreadFragment extends BaseMainTabFragment implements UnreadAdapter
     LinearLayout mEnptyFirstLayout;
     @BindView(R.id.ll_network_error)
     LinearLayout mNetworkErrorLayout;
+    private LinearLayoutManager mLinearLayoutManager;
 
     @Override
     protected int getLayoutViewId() {
@@ -69,12 +75,14 @@ public class UnreadFragment extends BaseMainTabFragment implements UnreadAdapter
         mPresenter.attachView(this);
         mAdapter = new UnreadAdapter(getActivity(), SpeechList.getInstance().getArticleList(), this);
         mRecyclerView = view.findViewById(R.id.rv_unread);
-        mRecyclerView.addItemDecoration(new SpaceItemDecoration());
+        mRecyclerView.addItemDecoration(new TabListItemDecoration());
 //        mRecyclerView.setItemAnimator(null);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
-        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        mRecyclerView.setLayoutManager(linearLayoutManager);
+        mLinearLayoutManager = new LinearLayoutManager(getActivity());
+        mLinearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        mRecyclerView.setLayoutManager(mLinearLayoutManager);
         mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.addOnScrollListener(scrollListener);
+        mRecyclerView.getViewTreeObserver().addOnGlobalLayoutListener(globalLayoutListener);
         EventBus.getDefault().register(this);
     }
 
@@ -108,16 +116,17 @@ public class UnreadFragment extends BaseMainTabFragment implements UnreadAdapter
     @Override
     public void onItemMoreClick(Article article) {
         L.v();
-        TCAgent.onEvent(getActivity(),"article_more");
+        TCAgent.onEvent(getActivity(), "article_more");
         showBottonDialog(TAB_TYPE.UNREAD, article);
     }
 
-    @OnClick({R.id.tv_unread_empty_first,R.id.ll_network_error})
+    @OnClick({R.id.tv_unread_empty_first, R.id.ll_network_error})
     void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.tv_unread_empty_first:
                 Intent intent = new Intent(getActivity(), PlayerlActivity.class);
                 intent.putExtra(PlayerlActivity.EXTRA_HTML,PlayerlActivity.PROTOCOL_URL);
+                intent.putExtra(PlayerlActivity.EXTRA_TITLE,getResources().getString(R.string.player_mting));
                 startActivity(intent);
                 break;
             case R.id.ll_network_error:
@@ -184,7 +193,7 @@ public class UnreadFragment extends BaseMainTabFragment implements UnreadAdapter
         } else if (event.getTab_type() == TAB_TYPE.COLLECT) {
             List<String> ids = event.getIds();
             if (ids != null && ids.size() > 0 && mAdapter != null && mAdapter.getArticleList() != null && mAdapter.getArticleList().size() > 0) {
-                for (String id:ids){
+                for (String id : ids) {
                     for (int i = 0; i < mAdapter.getArticleList().size(); i++) {
                         if (id.equals(mAdapter.getArticleList().get(i).getArticleId())) {
                             mAdapter.getArticleList().get(i).setStore(0);
@@ -261,9 +270,38 @@ public class UnreadFragment extends BaseMainTabFragment implements UnreadAdapter
 //        }
     }
 
+    private RecyclerView.OnScrollListener scrollListener = new RecyclerView.OnScrollListener() {
+        @Override
+        public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+            super.onScrollStateChanged(recyclerView, newState);
+        }
+
+        @Override
+        public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+            super.onScrolled(recyclerView, dx, dy);
+            mAdapter.setFootType(BaseMainTabAdapter.TYPE_END);
+        }
+    };
+
+    private ViewTreeObserver.OnGlobalLayoutListener globalLayoutListener = new ViewTreeObserver.OnGlobalLayoutListener() {
+        @Override
+        public void onGlobalLayout() {
+            boolean isUp = mRecyclerView.canScrollVertically(-1);
+            boolean isDown = mRecyclerView.canScrollVertically(1);
+            if (!isUp && !isDown && mAdapter.getFootType() != BaseMainTabAdapter.TYPE_GONE) {
+                mAdapter.setFootType(BaseMainTabAdapter.TYPE_GONE);
+                mAdapter.notifyItemChanged(mAdapter.getItemCount() - 1);
+            }
+        }
+    };
+
     @Override
     public void onDestroy() {
         super.onDestroy();
+        if (mRecyclerView != null) {
+            mRecyclerView.removeOnScrollListener(scrollListener);
+            mRecyclerView.getViewTreeObserver().removeOnGlobalLayoutListener(globalLayoutListener);
+        }
         EventBus.getDefault().unregister(this);
     }
 }

@@ -98,9 +98,10 @@ public class MainListMenuDialog extends BaseDimDialog {
                 break;
             case R.id.tv_dialog_main_list_menu_copy:
                 TCAgent.onEvent(mContext,"article_more_copyurl");
-                if (mArticle != null && !TextUtils.isEmpty(mArticle.getShareUrl())) {
+                if (mArticle != null && !TextUtils.isEmpty(mArticle.getShareUrl())&& !TextUtils.isEmpty(mArticle.getTitle())) {
+                    String cs = "我正在使用【轩辕听】收听："+mArticle.getTitle()+mArticle.getShareUrl();
                     ClipboardManager cm = (ClipboardManager) mContext.getSystemService(Context.CLIPBOARD_SERVICE);
-                    ClipData mClipData = ClipData.newPlainText("Label", mArticle.getShareUrl());
+                    ClipData mClipData = ClipData.newPlainText("Label", cs);
                     cm.setPrimaryClip(mClipData);
                     ContentManager.getInstance().addCopyItem(mArticle.getShareUrl());
                     T.showCustomToast("分享链接复制成功");

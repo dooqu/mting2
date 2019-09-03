@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 
 import com.tendcloud.tenddata.TCAgent;
@@ -34,10 +35,12 @@ import cn.xylink.mting.speech.event.SpeechProgressEvent;
 import cn.xylink.mting.speech.event.SpeechStartEvent;
 import cn.xylink.mting.speech.event.SpeechStopEvent;
 import cn.xylink.mting.ui.activity.ArticleDetailActivity;
+import cn.xylink.mting.ui.adapter.BaseMainTabAdapter;
 import cn.xylink.mting.ui.adapter.CollectAdapter;
 import cn.xylink.mting.ui.adapter.UnreadAdapter;
 import cn.xylink.mting.utils.L;
 import cn.xylink.mting.widget.SpaceItemDecoration;
+import cn.xylink.mting.widget.TabListItemDecoration;
 
 /*
  *收藏
@@ -66,13 +69,14 @@ public class CollectFragment extends BaseMainTabFragment implements UnreadAdapte
         mPresenter.attachView(this);
         mAdapter = new CollectAdapter(getActivity(), null, this);
         mRecyclerView = view.findViewById(R.id.rv_collect);
-        mRecyclerView.addItemDecoration(new SpaceItemDecoration());
+        mRecyclerView.addItemDecoration(new TabListItemDecoration());
         mRecyclerView.setItemAnimator(null);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(linearLayoutManager);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.addOnScrollListener(scrollListener);
+        mRecyclerView.getViewTreeObserver().addOnGlobalLayoutListener(globalLayoutListener);
         EventBus.getDefault().register(this);
     }
 
@@ -124,7 +128,7 @@ public class CollectFragment extends BaseMainTabFragment implements UnreadAdapte
 
     @Override
     public void onItemMoreClick(Article article) {
-        TCAgent.onEvent(getActivity(),"article_more");
+        TCAgent.onEvent(getActivity(), "article_more");
         showBottonDialog(TAB_TYPE.COLLECT, article);
     }
 
@@ -263,6 +267,11 @@ public class CollectFragment extends BaseMainTabFragment implements UnreadAdapte
             L.v("lastVisibleItemPosition=" + lastVisibleItemPosition);
             L.v("totalItemCount=" + totalItemCount);
             L.v("mTotalItemCount=" + mTotalItemCount);
+            if (totalItemCount != mTotalItemCount) {
+                mAdapter.setFootType(BaseMainTabAdapter.TYPE_LOADING);
+            } else {
+                mAdapter.setFootType(BaseMainTabAdapter.TYPE_END);
+            }
             if (visibleItemCount > 0 && lastVisibleItemPosition >= totalItemCount - 30
                     && totalItemCount != mTotalItemCount) {
                 mTotalItemCount = totalItemCount;
@@ -271,10 +280,25 @@ public class CollectFragment extends BaseMainTabFragment implements UnreadAdapte
         }
     };
 
+    private ViewTreeObserver.OnGlobalLayoutListener globalLayoutListener = new ViewTreeObserver.OnGlobalLayoutListener() {
+        @Override
+        public void onGlobalLayout() {
+            boolean isUp = mRecyclerView.canScrollVertically(-1);
+            boolean isDown = mRecyclerView.canScrollVertically(1);
+            if (!isUp && !isDown && mAdapter.getFootType() != BaseMainTabAdapter.TYPE_GONE) {
+                mAdapter.setFootType(BaseMainTabAdapter.TYPE_GONE);
+                mAdapter.notifyItemChanged(mAdapter.getItemCount() - 1);
+            }
+        }
+    };
+
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mRecyclerView.removeOnScrollListener(scrollListener);
+        if (mRecyclerView != null) {
+            mRecyclerView.removeOnScrollListener(scrollListener);
+            mRecyclerView.getViewTreeObserver().removeOnGlobalLayoutListener(globalLayoutListener);
+        }
         EventBus.getDefault().unregister(this);
     }
 }
