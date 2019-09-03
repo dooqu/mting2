@@ -94,7 +94,7 @@ public abstract class BasePresenterActivity<T extends BasePresenter> extends Bas
             String msg;
             if (sucess == 1) {
                 msg = "分享成功";
-                if (!TextUtils.isEmpty(shareUrl)){
+                if (!TextUtils.isEmpty(shareUrl)) {
                     if (tCopy == null)
                         tCopy = new ArrayList<>();
                     tCopy.add(shareUrl);
@@ -128,7 +128,8 @@ public abstract class BasePresenterActivity<T extends BasePresenter> extends Bas
                 || this.getComponentName().getClassName().equals(ArticleDetailActivity.class.getName())) {
             CharSequence copyStr = getCopy(this);
 //            if (!TextUtils.isEmpty(copy) && (copy.toString().startsWith("http://") || copy.toString().startsWith("https://"))) {
-            if (!TextUtils.isEmpty(copyStr) && !TextUtils.isEmpty(StringUtil.matcherUrl(copyStr.toString()))) {
+            if (!TextUtils.isEmpty(copyStr) && !TextUtils.isEmpty(StringUtil.matcherUrl(copyStr.toString()))
+                    && !StringUtil.isShieldUrl(this, copyStr.toString())) {
                 copyStr = StringUtil.matcherUrl(copyStr.toString());
                 tCopy = ContentManager.getInstance().getCopyArray();
                 if (tCopy != null && tCopy.size() > 0)
@@ -151,7 +152,7 @@ public abstract class BasePresenterActivity<T extends BasePresenter> extends Bas
         }
     }
 
-    private List<String> tCopy ;
+    private List<String> tCopy;
 
     public static CharSequence getCopy(Context context) {
         ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);

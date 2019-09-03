@@ -62,7 +62,8 @@ public class CopyCheckService extends Service {
 //            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 //            startActivity(intent);
             if (!TextUtils.isEmpty(copyStr) && (System.currentTimeMillis() - mNotifTime) > 500
-                    && !TextUtils.isEmpty(StringUtil.matcherUrl(copyStr.toString()))) {
+                    && !TextUtils.isEmpty(StringUtil.matcherUrl(copyStr.toString()))
+                    && !StringUtil.isShieldUrl(this, copyStr.toString())) {
                 copyStr = StringUtil.matcherUrl(copyStr.toString());
                 L.v(copyStr);
                 List<String> tCopy = ContentManager.getInstance().getCopyArray();

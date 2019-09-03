@@ -1,17 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="fade_type1">
-        <item >产品建议</item>
-        <item >语音朗读不正确</item>
-        <item >文章内容不正确</item>
-        <item >用户体验</item>
-        <item >其他</item>
+        <item>产品建议</item>
+        <item>语音朗读不正确</item>
+        <item>文章内容不正确</item>
+        <item>用户体验</item>
+        <item>其他</item>
     </string-array>
     <string-array name="fade_type2">
-        <item >语音朗读不正确</item>
-        <item >产品建议</item>
-        <item >文章内容不正确</item>
-        <item >用户体验</item>
-        <item >其他</item>
+        <item>语音朗读不正确</item>
+        <item>产品建议</item>
+        <item>文章内容不正确</item>
+        <item>用户体验</item>
+        <item>其他</item>
+    </string-array>
+
+    <string-array name="shield_url">
+        <item>www.jd.com</item>
+        <item>www.taobao.com</item>
+        <item>www.tb.cn</item>
+        <item>www.mi.com</item>
+        <item>www.taobao.com</item>
+        <item>www.xiaomiyoupin.com</item>
+        <item>www.vip.com</item>
+        <item>www.dangdang.com</item>
+        <item>www.yangkeduo.com</item>
+        <item>www.pinduoduo.com</item>
     </string-array>
 </resources>

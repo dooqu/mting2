@@ -24,6 +24,8 @@ import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import cn.xylink.mting.R;
+
 import static okhttp3.internal.Util.closeQuietly;
 
 public class StringUtil {
@@ -950,6 +952,17 @@ public class StringUtil {
             }
         }
         return "";
+    }
+
+    public static boolean isShieldUrl(Context context,String str){
+        if (!TextUtils.isEmpty(str)){
+            String[] shield=context.getResources().getStringArray(R.array.shield_url);
+            for (String s:shield) {
+                if (s.equals(str))
+                    return true;
+            }
+        }
+        return false;
     }
 
 }
