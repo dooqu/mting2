@@ -761,7 +761,6 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
     }
 
     private void showLoaddingBar(boolean state) {
-        state = true;
         loadingBar.setVisibility(state ? View.VISIBLE : View.INVISIBLE);
         apbMain.setVisibility(state ? View.INVISIBLE : View.VISIBLE);
         if (mArticleDetailSetting != null) {
