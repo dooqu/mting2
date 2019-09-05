@@ -16,9 +16,11 @@ import cn.xylink.mting.contract.IBaseView;
 import cn.xylink.mting.model.ArticleInfoRequest;
 import cn.xylink.mting.model.ArticleInfoResponse;
 import cn.xylink.mting.model.FavoriteArticleRequest;
+import cn.xylink.mting.model.UpdateSpeechSettingRequest;
 import cn.xylink.mting.model.data.OkGoUtils;
 import cn.xylink.mting.model.ReadArticleRequest;
 import cn.xylink.mting.speech.SoundEffector;
+import cn.xylink.mting.speech.Speechor;
 import cn.xylink.mting.utils.ContentManager;
 import cn.xylink.mting.utils.GsonUtil;
 
@@ -358,6 +360,92 @@ public class ArticleDataProvider {
                     public void onComplete() {
                     }
                 });
+    }
+
+    public void updateSpeechSetting(Speechor.SpeechorRole role, Speechor.SpeechorSpeed speed, Integer fontType) {
+        UpdateSpeechSettingRequest request = new UpdateSpeechSettingRequest();
+        int sound = 1;
+        switch (role) {
+            case XiaoIce:
+                sound = 1;
+                break;
+
+            case XiaoMei:
+                sound = 2;
+                break;
+
+            case XiaoYu:
+                sound = 4;
+                break;
+
+            case XiaoYao:
+                sound = 3;
+                break;
+        }
+
+        request.setSound(sound);
+
+        float speedFloat = 1f;
+
+        switch (speed) {
+            case SPEECH_SPEED_HALF:
+                speedFloat = 0.5f;
+                break;
+            case  SPEECH_SPEED_NORMAL:
+                speedFloat = 1f;
+                break;
+
+            case SPEECH_SPEED_MULTIPLE_1_POINT_5:
+                speedFloat = 1.5f;
+                break;
+
+            case SPEECH_SPEED_MULTIPLE_2:
+                speedFloat = 2f;
+                break;
+
+            case SPEECH_SPEED_MULTIPLE_2_POINT_5:
+                speedFloat = 2.5f;
+                break;
+        }
+
+        request.setSpeed(speedFloat);
+        request.setFont(fontType);
+        request.setToken(ContentManager.getInstance().getLoginToken());
+        request.doSign();
+
+        OkGoUtils.getInstance().postData(
+                new IBaseView() {
+                    @Override
+                    public void showLoading() {
+                    }
+
+                    @Override
+                    public void hideLoading() {
+                    }
+                }
+                , serverURL + "/api/analyse/v1/article/reader_time",
+                GsonUtil.GsonString(request),
+                BaseResponse.class,
+                new OkGoUtils.ICallback<BaseResponse<Object>>() {
+                    @Override
+                    public void onStart() {
+                    }
+
+                    @Override
+                    public void onSuccess(BaseResponse data) {
+                        Log.d("xy", data.toString());
+                    }
+
+                    @Override
+                    public void onFailure(int code, String errorMsg) {
+                        Log.d("xy", errorMsg);
+                    }
+
+                    @Override
+                    public void onComplete() {
+                    }
+                });
+
     }
 
 }

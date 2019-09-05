@@ -41,14 +41,18 @@ public class XiaoIceTTSAudioLoader implements TTSAudioLoader {
 
     private String getSpeechString(Speechor.SpeechorSpeed speechorSpeed) {
         switch (speechorSpeed) {
-            case SPEECH_SPEED_NORMAL:
+
+            case SPEECH_SPEED_HALF:
                 return "0";
 
+            case SPEECH_SPEED_NORMAL:
+                return "40";
+
             case SPEECH_SPEED_MULTIPLE_1_POINT_5:
-                return "50";
+                return "80";
 
             case SPEECH_SPEED_MULTIPLE_2:
-                return "100";
+                return "120";
 
             case SPEECH_SPEED_MULTIPLE_2_POINT_5:
                 return "200";
