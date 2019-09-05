@@ -40,7 +40,7 @@
                 android:singleLine="true"
                 android:text="@string/all_select"
                 android:textSize="18sp" />
-          <!--  <Button
+            <Button
                 android:id="@+id/commit"
                 android:background="@android:color/transparent"
                 android:layout_width="wrap_content"
@@ -51,10 +51,10 @@
                 android:text="发布"
                 android:textColor="@color/mis_default_text_color"
                 android:textSize="16sp"
-                android:visibility="visible" />-->
+                android:visibility="visible" />
             <!--  -->
         </RelativeLayout>
-    <Button
+   <!-- <Button
         android:id="@+id/commit"
         android:background="#999999"
         android:layout_width="match_parent"
@@ -63,7 +63,7 @@
         android:layout_alignParentBottom="true"
         android:textColor="@android:color/white"
         android:textSize="16sp"
-        android:visibility="visible" />
+        android:visibility="visible" />-->
     <FrameLayout
         android:layout_below="@+id/top_title_layout"
         android:layout_above="@+id/commit"
