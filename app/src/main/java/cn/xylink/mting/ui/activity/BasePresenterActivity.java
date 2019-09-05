@@ -122,6 +122,7 @@ public abstract class BasePresenterActivity<T extends BasePresenter> extends Bas
         }
     }
 
+    private CopyAddDialog mCopyAddDialog;
     private void showCopyDialog() {
         if (this.getComponentName().getClassName().equals(MainActivity.class.getName())
                 || this.getComponentName().getClassName().equals(SearchActivity.class.getName())
@@ -146,8 +147,10 @@ public abstract class BasePresenterActivity<T extends BasePresenter> extends Bas
                 ContentManager.getInstance().setCopyArray(tCopy);
 //                ContentManager.getInstance().addCopyItem(copy.toString());
 //                tCopy = ContentManager.getInstance().getCopyArray();
-                CopyAddDialog dialog = new CopyAddDialog(this, tCopy.get(tCopy.size() - 1));
-                dialog.show();
+                if (mCopyAddDialog!=null)
+                    mCopyAddDialog.dismiss();
+                mCopyAddDialog = new CopyAddDialog(this, tCopy.get(tCopy.size() - 1));
+                mCopyAddDialog.show();
             }
         }
     }

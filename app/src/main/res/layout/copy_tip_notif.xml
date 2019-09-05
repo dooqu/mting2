@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="48dp"
+    android:background="@color/white"
     android:gravity="center_vertical"
     android:orientation="horizontal">
 
@@ -21,12 +22,14 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@color/c333333"
             android:text="添加到轩辕听" />
 
         <TextView
             android:id="@+id/tv_copy_tip_notif_link"
             android:layout_width="wrap_content"
             android:singleLine="true"
+            android:textColor="@color/cbbbbbb"
             android:ellipsize="end"
             android:layout_height="wrap_content" />
     </LinearLayout>
@@ -36,6 +39,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="28dp"
+        android:textColor="@color/c488def"
         android:layout_marginRight="28dp"
         android:text="添加" />
 </LinearLayout>
