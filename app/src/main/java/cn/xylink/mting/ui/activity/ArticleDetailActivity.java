@@ -284,11 +284,11 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
 
                     case MotionEvent.ACTION_UP:
                         if (mCurPosX - mPosX > 0
-                                && (Math.abs(mCurPosX - mPosX) > 50 ) && Math.abs(mCurPosY - mPosY) < 50) {
-                        finish();
-                        return false;
-                    }
-                    break;
+                                && (Math.abs(mCurPosX - mPosX) > 50) && Math.abs(mCurPosY - mPosY) < 50) {
+                            finish();
+                            return false;
+                        }
+                        break;
                 }
 
                 return false;
@@ -763,6 +763,9 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
     private void showLoaddingBar(boolean state) {
         loadingBar.setVisibility(state ? View.VISIBLE : View.INVISIBLE);
         apbMain.setVisibility(state ? View.INVISIBLE : View.VISIBLE);
+        if (mArticleDetailSetting != null) {
+            mArticleDetailSetting.setLoading(state, service.getRole());
+        }
     }
 
 
