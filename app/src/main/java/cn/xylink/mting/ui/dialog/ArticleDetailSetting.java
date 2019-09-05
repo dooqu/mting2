@@ -5,6 +5,7 @@ import android.content.Context;
 import android.util.Log;
 import android.view.View;
 import android.widget.CompoundButton;
+import android.widget.ProgressBar;
 import android.widget.RadioGroup;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -22,14 +23,47 @@ public class ArticleDetailSetting extends ArticleDetailBottomDialog {
     private SpeechService.CountDownMode countDownMode;
     private Speechor.SpeechorRole role;
     private int countDownValue;
+    private ProgressBar mpb1;
+    private ProgressBar mpb2;
+    private ProgressBar mpb3;
+    private ProgressBar mpb4;
 
     public ArticleDetailSetting(SettingListener listener) {
         this.listener = listener;
     }
 
+
+    public void setLoading( boolean tf, Speechor.SpeechorRole role) {
+        mpb1.setVisibility(View.INVISIBLE);
+        mpb2.setVisibility(View.INVISIBLE);
+        mpb3.setVisibility(View.INVISIBLE);
+        mpb4.setVisibility(View.INVISIBLE);
+        if (tf) {
+            switch (role) {
+                case XiaoIce:
+                    mpb1.setVisibility(View.VISIBLE);
+                    break;
+                case XiaoMei:
+                    mpb2.setVisibility(View.VISIBLE);
+                    break;
+                case XiaoYao:
+                    mpb3.setVisibility(View.VISIBLE);
+                    break;
+                case XiaoYu:
+                    mpb4.setVisibility(View.VISIBLE);
+                    break;
+            }
+        }
+    }
+
+
     @Override
     public View initView(Context context, Dialog dialog) {
         View view = View.inflate(context, R.layout.dialog_setting, null);
+        mpb1 = view.findViewById(R.id.pb_main_play_progress1);
+        mpb2 = view.findViewById(R.id.pb_main_play_progress2);
+        mpb3 = view.findViewById(R.id.pb_main_play_progress3);
+        mpb4 = view.findViewById(R.id.pb_main_play_progress4);
         closeAll(view);
         if (role != null) {
             switch (role) {
@@ -49,14 +83,18 @@ public class ArticleDetailSetting extends ArticleDetailBottomDialog {
         }
         RadioGroup rgSpeed = view.findViewById(R.id.rg_speed);
         switch (speed) {
-            case SPEECH_SPEED_NORMAL:
+            //因为产品需求修改， 这里数值是串的
+            case SPEECH_SPEED_HALF:
                 rgSpeed.check(R.id.rb_normal);
                 break;
-            case SPEECH_SPEED_MULTIPLE_1_POINT_5:
+            case SPEECH_SPEED_NORMAL:
                 rgSpeed.check(R.id.rb_1_5);
                 break;
-            case SPEECH_SPEED_MULTIPLE_2:
+            case SPEECH_SPEED_MULTIPLE_1_POINT_5:
                 rgSpeed.check(R.id.rb_2);
+                break;
+            case SPEECH_SPEED_MULTIPLE_2:
+                rgSpeed.check(R.id.rb_2_5);
                 break;
             case SPEECH_SPEED_MULTIPLE_2_POINT_5:
                 rgSpeed.check(R.id.rb_2_5);

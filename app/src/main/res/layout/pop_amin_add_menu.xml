@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="80dp"
+    android:layout_width="match_parent"
     android:layout_height="88dp"
     android:background="@mipmap/bg_main_add_menu_pop"
     android:paddingLeft="26dp"
@@ -12,8 +12,10 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:background="@color/transparent"
-        android:text="添加"
+        android:text="添加文章"
         android:textColor="@color/c666666"
+        android:drawableLeft="@mipmap/pop_add"
+        android:drawablePadding="12dp"
         android:gravity="left|center_vertical"
         android:textSize="15sp" />
 
@@ -25,8 +27,10 @@
         android:layout_weight="1"
         android:background="@color/transparent"
         android:textColor="@color/c666666"
-        android:text="整理"
+        android:text="整理文章"
         android:gravity="left|center_vertical"
+        android:drawableLeft="@mipmap/pop_arrange"
+        android:drawablePadding="12dp"
         android:textSize="15sp" />
 
 </LinearLayout>

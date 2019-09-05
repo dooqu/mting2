@@ -1,8 +1,9 @@
 package cn.xylink.mting.ui.activity;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.support.v4.app.ActivityOptionsCompat;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -12,12 +13,12 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.lzy.okgo.model.HttpParams;
 import com.tendcloud.tenddata.TCAgent;
 
+import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.Serializable;
+import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,15 +27,13 @@ import butterknife.OnClick;
 import cn.xylink.mting.R;
 import cn.xylink.mting.base.BaseResponse;
 import cn.xylink.mting.contract.AddFeedbackContact;
-import cn.xylink.mting.model.LinkCreateRequest;
 import cn.xylink.mting.presenter.AddFeedbackPresenter;
+import cn.xylink.mting.utils.FileUtil;
 import cn.xylink.mting.utils.ImageUtils;
 import cn.xylink.mting.utils.adapter.BaseAdapterHelper;
 import cn.xylink.mting.utils.adapter.QuickAdapter;
 import cn.xylink.multi_image_selector.MultiImageSelector;
 import cn.xylink.multi_image_selector.MultiImageSelectorActivity;
-import cn.xylink.multi_image_selector.ViewPagerActivity;
-import cn.xylink.multi_image_selector.bean.Image;
 
 public class FeedBackActivity extends BasePresenterActivity implements AddFeedbackContact.IAddFeedBackView, AdapterView.OnItemClickListener {
 
@@ -121,12 +120,25 @@ public class FeedBackActivity extends BasePresenterActivity implements AddFeedba
         TCAgent.onEvent(this, "sys_feedback");
         HttpParams param = new HttpParams();
         List<File> files = new ArrayList<>();
+        FileUtil.clearImageCache(this);
         for (int i = 0; i < mAdapter.getCount(); i++) {
             String item = mAdapter.getItem(i);
             if ("add".equals(item)) {
                 continue;
             }
-            files.add(new File(item));
+            try {
+                File file = new File(item);
+                BufferedInputStream in = new BufferedInputStream(
+                        new FileInputStream(file));
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inJustDecodeBounds = false;
+                options.inSampleSize = 2;//宽和高变为原来的1/2，即图片压缩为原来的1/4
+                Bitmap bitmap = BitmapFactory.decodeStream(in, null, options);
+                String path = FileUtil.saveImage(this, bitmap);
+                files.add(new File(path));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         param.put("type", (String) snType.getSelectedItem());
         param.put("content", etContent.getText().toString());

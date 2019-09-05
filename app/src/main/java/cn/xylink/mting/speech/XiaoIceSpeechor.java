@@ -116,7 +116,6 @@ public abstract class XiaoIceSpeechor implements Speechor {
     String speedInternal;
     SpeechHelper speechHelper;
     MediaPlayer mediaPlayer;
-    int FRAGMENT_BUFFER_SIZE = 1;
     boolean isSimulatePaused;
     TTSAudioLoader ttsAudioLoader;
     long seekTime;

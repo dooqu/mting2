@@ -221,6 +221,9 @@ public class AboutVersion extends BaseActivity {
         else if (v == institutionOfUserButton) {
             intent.putExtra(PlayerlActivity.EXTRA_HTML, "http://service.xylink.cn/article/html/agreement.html");
         }
+        else if(v  == contactUsButton) {
+            intent = new Intent(this, JoinUsActivity.class);
+        }
         startActivity(intent);
     }
 }

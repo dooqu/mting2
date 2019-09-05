@@ -10,8 +10,6 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.bluetooth.BluetoothA2dp;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -68,10 +66,6 @@ public class SpeechService extends Service {
         //Stoped,
         /*加载中*/
         Loadding,
-
-        //数据缓冲中
-        //Buffering,
-
         /*发生错误*/
         Error
     }
@@ -126,7 +120,9 @@ public class SpeechService extends Service {
 
     boolean isSimulatePaused;
 
-    long speechStartTime;
+    long speechDurationOfArticle;
+    long speechStartTimeOfArticle;
+    String speechArticleIdOfArticle;
 
 
     public class SpeechBinder extends Binder {
@@ -273,11 +269,15 @@ public class SpeechService extends Service {
     private void onSpeechStart(Article article) {
         initNotification();
         EventBus.getDefault().post(new SpeechStartEvent(article));
+
     }
 
     private void onSpeechReady(Article article) {
         EventBus.getDefault().post(new SpeechReadyEvent(article));
-        speechStartTime = System.currentTimeMillis();
+        speechDurationOfArticle = System.currentTimeMillis();
+        speechDurationOfArticle = 0;
+        speechStartTimeOfArticle = new java.util.Date().getTime();
+        speechArticleIdOfArticle = article.getArticleId();
     }
 
     private void onSpeechProgress(Article article, int fragmentIndex, List<String> fragments) {
@@ -308,14 +308,22 @@ public class SpeechService extends Service {
         if (progress == 1) {
             EventBus.getDefault().post(new SpeechEndEvent(article, progress));
         }
+
+        long duration = new java.util.Date().getTime() - speechStartTimeOfArticle;
+        speechDurationOfArticle += (duration > 0)? duration : 0;
+
+        articleDataProvider.appendArticleRecord(speechArticleIdOfArticle, speechDurationOfArticle/1000);
     }
 
     private void onSpeechPause(Article article) {
         EventBus.getDefault().post(new SpeechPauseEvent(article));
+        long duration = new java.util.Date().getTime() - speechStartTimeOfArticle;
+        speechDurationOfArticle += (duration > 0)? duration : 0;
     }
 
     private void onSpeechResume(Article article) {
         EventBus.getDefault().post(new SpeechResumeEvent(article));
+        speechStartTimeOfArticle = new java.util.Date().getTime();
     }
 
 

@@ -25,6 +25,7 @@ public interface Speechor {
 
     static enum  SpeechorSpeed
     {
+        SPEECH_SPEED_HALF,
         /*正常语速*/
         SPEECH_SPEED_NORMAL,
         /*1.5倍语速*/
