@@ -48,7 +48,7 @@ public class MainAddMenuPop extends PopupWindow {
 //        this.setAnimationStyle(R.style.anim_pop);
         mWindow = ((Activity) context).getWindow();
         WindowManager.LayoutParams params = mWindow.getAttributes();
-//        params.alpha = 0.4f;
+        params.alpha = 0.6f;
         mWindow.setAttributes(params);
     }
 
