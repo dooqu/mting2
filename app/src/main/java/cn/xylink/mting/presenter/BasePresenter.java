@@ -18,10 +18,10 @@ public class BasePresenter<V extends IBaseView> {
         mView = weakReference.get();
     }
 
-    public void deatchView()
-    {
+    public void deatchView() {
         OkGoUtils.getInstance().cancel(mView);
-        weakReference.clear();
+        if (weakReference != null)
+            weakReference.clear();
         weakReference = null;
         mView = null;
 
