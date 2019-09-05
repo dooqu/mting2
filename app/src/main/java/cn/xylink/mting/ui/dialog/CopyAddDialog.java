@@ -88,13 +88,11 @@ public class CopyAddDialog extends BaseDimDialog implements
     void onClick(View view) {
         switch (view.getId()) {
             case R.id.tv_copy_add_add_unread:
-                L.v();
                 addUnread();
                 break;
             case R.id.tv_copy_add_play:
                 isPlay = true;
                 addUnread();
-                L.v();
                 break;
             case R.id.iv_copy_add_close:
             case R.id.v_copy_add_nc:
