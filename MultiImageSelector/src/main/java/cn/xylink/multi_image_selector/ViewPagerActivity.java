@@ -32,9 +32,9 @@ import cn.xylink.multi_image_selector.view.CustomViewPager;
 public class ViewPagerActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final String TAG = ViewPagerActivity.class.getName();
-    private Button btn_left;
+    private ImageView btn_left;
     private TextView tv_title;
-    private ImageView iv_select;
+    private Button iv_select;
     private RecyclerView rv_bottom;
 
     private Button mSubmitButton;
@@ -86,7 +86,10 @@ public class ViewPagerActivity extends AppCompatActivity implements View.OnClick
         String title = String.format("%s/%s", currentIndex + 1, imageSize);
         tv_title.setText(title);
         if (mSelectedImages.contains(mImages.get(currentIndex))) {
-            iv_select.setImageResource(R.drawable.mis_btn_selected);
+            iv_select.setText("删除");
+        }else
+        {
+            iv_select.setText("选择");
         }
         pageAdapter = new ImagePageAdapter(this, mSelectedImages);
         rv_bottom.setAdapter(pageAdapter);
@@ -132,9 +135,7 @@ public class ViewPagerActivity extends AppCompatActivity implements View.OnClick
                     int imagePos = mSelectedImages.indexOf(curItem);
                     rv_bottom.scrollToPosition(imagePos);
                     pageAdapter.setCurentIndex(imagePos);
-                    iv_select.setImageResource(R.drawable.mis_btn_selected);
                 } else {
-                    iv_select.setImageResource(R.drawable.mis_btn_unselected);
                 }
                 String title = String.format("%s/%s", currentIndex + 1, imageSize);
                 tv_title.setText(title);
@@ -152,40 +153,11 @@ public class ViewPagerActivity extends AppCompatActivity implements View.OnClick
                 //預覽位置索引
                 currentIndex = mSelectedImages.indexOf(curItem);
 
-                //预览列表是否存在
-                if (mSelectedImages.contains(curItem)) {
-//                    mViewPager.clearAnimation();
-                    iv_select.setImageResource(R.drawable.mis_btn_unselected);
-                    //存在即删除，并更新
-                    mSelectedImages.remove(curItem);
-                    pageAdapter.notifyDataSetChanged();
-                    if (mSelectedImages.size() > 0) {
-                        currentIndex = currentIndex - 1;
-                        if(currentIndex < 0)
-                        {
-                            currentIndex = 0;
-                        }
-                        rv_bottom.scrollToPosition(currentIndex);
-                        pageAdapter.setCurentIndex(currentIndex);
-                        int pos = mImages.indexOf(mSelectedImages.get(currentIndex));
-                        mViewPager.setCurrentItem(pos,false);
-                    } else {
-                        finish();
-                    }
-
-                } else {
-                    int COUNT = (int) SharedPreHelper.getInstance(ViewPagerActivity.this).getSharedPreference(SharedPreHelper.SharedAttribute.SELECT_COUNT,0);
-                    if (COUNT == mSelectedImages.size()) {
-                        Toast.makeText(ViewPagerActivity.this, R.string.mis_msg_amount_limit, Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    iv_select.setImageResource(R.drawable.mis_btn_selected);
                     mSelectedImages.add(curItem);
                     pageAdapter.notifyDataSetChanged();
                     int index = mSelectedImages.indexOf(curItem);
                     rv_bottom.scrollToPosition(index);
                     pageAdapter.setCurentIndex(index);
-                }
                 updateDoneText(mSelectedImages.size());
             }
         });
@@ -195,9 +167,10 @@ public class ViewPagerActivity extends AppCompatActivity implements View.OnClick
             @Override
             public void onItemClick(View itemView, Object item, int pos) {
                 curItem = (Image) item;
-                pageAdapter.setCurentIndex(pos);
-                int pagerIndex = mImages.indexOf(curItem);
-                mViewPager.setCurrentItem(pagerIndex,false);
+                ArrayList<String> resultList = new ArrayList<>();
+                    resultList.add(curItem.path);
+                EventBus.getDefault().post(new EventMsg(new Object[]{EventConstant.ACTIVITY_FINISH, resultList}));
+                finish();
             }
         });
     }

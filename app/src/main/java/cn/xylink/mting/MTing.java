@@ -2,17 +2,24 @@ package cn.xylink.mting;
 
 import android.app.Application;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Environment;
 import android.util.Log;
 
 import java.io.File;
+
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.https.HttpsUtils;
 import com.lzy.okgo.interceptor.HttpLoggingInterceptor;
 import com.tendcloud.tenddata.TCAgent;
+
 import org.apaches.commons.codec.binary.Base64;
+
+import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
+
 import cn.xylink.mting.contract.IBaseView;
 import cn.xylink.mting.model.UpgradeRequest;
 import cn.xylink.mting.model.UpgradeResponse;
@@ -44,19 +51,25 @@ public class MTing extends Application {
     public String AudioCachePath;
 
 
-
     @Override
     public void onCreate() {
         super.onCreate();
         instance = this;
-
+        int pid = android.os.Process.myPid();
+        String processAppName = getAppName(pid);
+        // 如果APP启用了远程的service，此application:onCreate会被调用2次
+        // 为了防止环信SDK被初始化2次，加此判断会保证SDK被初始化1次
+        // 默认的APP会在以包名为默认的process name下运行，如果查到的process name不是APP的process name就立即返回
+        if (processAppName == null || !processAppName.equalsIgnoreCase(getPackageName())) {
+            // 则此application::onCreate 是被service 调用的，直接返回
+            return;
+        }
         activityManager = ActivityManager.getScreenManager();
         ContentManager.init(this);
         WXapi.init(this);
         try {
             QQApi.init(this);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             Log.e("Application", "qq未安装");
         }
         initOkHttp();
@@ -72,8 +85,7 @@ public class MTing extends Application {
 
         try {
             checkOnlineUpgrade();
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
 
@@ -103,12 +115,12 @@ public class MTing extends Application {
     private void clearAudioCache() {
         File audioCacheFile = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS + "/" + PackageUtils.getAppPackage(MTing.getInstance()) + "/audio/");
         AudioCachePath = audioCacheFile.getPath();
-        new Thread(()->{
+        new Thread(() -> {
             File[] mp3Files = audioCacheFile.listFiles();
-            if(mp3Files == null || mp3Files.length <= 0) {
+            if (mp3Files == null || mp3Files.length <= 0) {
                 return;
             }
-            for(File mp3File : mp3Files) {
+            for (File mp3File : mp3Files) {
                 mp3File.delete();
             }
         }).start();
@@ -173,5 +185,25 @@ public class MTing extends Application {
     @Override
     public void onTerminate() {
         super.onTerminate();
+    }
+
+    private String getAppName(int pID) {
+        String processName = null;
+        android.app.ActivityManager am = (android.app.ActivityManager) this.getSystemService(ACTIVITY_SERVICE);
+        List l = am.getRunningAppProcesses();
+        Iterator i = l.iterator();
+        PackageManager pm = this.getPackageManager();
+        while (i.hasNext()) {
+            android.app.ActivityManager.RunningAppProcessInfo info = (android.app.ActivityManager.RunningAppProcessInfo) (i.next());
+            try {
+                if (info.pid == pID) {
+                    processName = info.processName;
+                    return processName;
+                }
+            } catch (Exception e) {
+                // Log.d("Process", "Error>> :"+ e.toString());
+            }
+        }
+        return processName;
     }
 }

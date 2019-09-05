@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -72,7 +73,7 @@ public class MultiImageSelectorActivity extends AppCompatActivity
 
     private ArrayList<String> resultList = new ArrayList<>();
     private Button mSubmitButton;
-    private Button mBtnBack;
+    private ImageView mBtnBack;
     private TextView mTvTitle;
     public int mDefaultCount = 0;
     private int selectCount;
@@ -113,14 +114,7 @@ public class MultiImageSelectorActivity extends AppCompatActivity
         mTvTitle = findViewById(R.id.tv_title);
 
         mSubmitButton.setText(getString(R.string.mis_action_button_string,
-                getString(R.string.mis_action_done), resultList.size(), mDefaultCount));
-
-        mTvTitle.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                multiImageSelectorFragment.showPopupFoladerList(findViewById(R.id.top_title_layout));
-            }
-        });
+               "请选择图片", resultList.size(), mDefaultCount));
 
         mBtnBack = findViewById(R.id.btn_left);
         mBtnBack.setOnClickListener(new View.OnClickListener() {
@@ -224,8 +218,8 @@ public class MultiImageSelectorActivity extends AppCompatActivity
         else
             mSubmitButton.setBackgroundColor(getColor(R.color.mis_button_default_bg));
 
-        mSubmitButton.setText(getString(R.string.mis_action_button_string,
-                getString(R.string.mis_action_done), resultList.size(), mDefaultCount));
+        mTvTitle.setText(getString(R.string.mis_action_button_string,
+                "请选择图片", resultList.size(), mDefaultCount));
 
     }
 

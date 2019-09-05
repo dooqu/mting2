@@ -13,7 +13,7 @@
         android:background="#fff"
         android:paddingTop="5dp"
         android:paddingRight="5dp">
-        <Button
+        <ImageView
             android:id="@+id/btn_left"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -22,9 +22,7 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
             android:gravity="center|left"
-            android:text="@string/cancel_str"
-            android:background="@android:color/transparent"
-            android:textColor="@color/mis_default_text_color"
+            android:src="@drawable/back"
             android:textSize="18sp" />
         <TextView
             android:id="@+id/tv_title"
@@ -39,13 +37,12 @@
             android:visibility="gone"
             android:textSize="18sp" />
 
-          <ImageView
+          <Button
               android:id="@+id/iv_select"
-              android:src="@drawable/mis_btn_unselected"
-              android:layout_width="45dp"
-              android:layout_height="45dp"
-              android:scaleType="fitXY"
-              android:adjustViewBounds="true"
+              android:background="@android:color/transparent"
+              android:text="选择"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
               android:layout_alignParentRight="true"
               android:layout_centerInParent="true"
               android:layout_marginRight="10dp"
@@ -66,6 +63,7 @@
         android:layout_height="60dp"
         android:layout_marginTop="20dp"
         android:layout_marginBottom="20dp"
+        android:visibility="gone"
        />
     <Button
         android:id="@+id/commit"
@@ -75,5 +73,5 @@
         android:text="完成"
         android:textColor="@android:color/white"
         android:textSize="16sp"
-        android:visibility="visible" />
+        android:visibility="gone" />
 </LinearLayout>
