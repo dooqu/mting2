@@ -40,13 +40,14 @@
                 android:textSize="18sp" />
             <Button
                 android:id="@+id/commit"
-                android:background="@android:color/transparent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_centerInParent="true"
                 android:layout_marginRight="10dp"
                 android:text="确定"
+
+                android:background="@android:color/transparent"
                 android:textColor="#4285f4"
                 android:textSize="16sp"
                 android:visibility="visible" />

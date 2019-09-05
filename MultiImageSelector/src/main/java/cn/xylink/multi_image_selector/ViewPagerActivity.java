@@ -39,7 +39,6 @@ public class ViewPagerActivity extends AppCompatActivity implements View.OnClick
 
     private Button mSubmitButton;
 
-    private List<Image> mImages = new ArrayList<>();
     private List<Image> mSelectedImages = new ArrayList<>();
 
     private Image curItem;
@@ -79,33 +78,28 @@ public class ViewPagerActivity extends AppCompatActivity implements View.OnClick
 
     private void initData() {
         curItem = (Image) getIntent().getSerializableExtra(SELECT_INDEX);
-        mImages = (List<Image>) getIntent().getSerializableExtra(IMAGES_DATA);
         mSelectedImages = (List<Image>) getIntent().getSerializableExtra(SELECTED_IMAGES);
-        imageSize = mImages.size();
-        currentIndex = mImages.indexOf(curItem);
-        String title = String.format("%s/%s", currentIndex + 1, imageSize);
-        tv_title.setText(title);
-        if (mSelectedImages.contains(mImages.get(currentIndex))) {
+        if (mSelectedImages.size() > 0) {
             iv_select.setText("删除");
         }else
         {
             iv_select.setText("选择");
         }
+        if(mSelectedImages.size() <= 0)
+        {
+            mSelectedImages.add(curItem);
+        }
         pageAdapter = new ImagePageAdapter(this, mSelectedImages);
         rv_bottom.setAdapter(pageAdapter);
 
 
-        SectionsPagerAdapter mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager(), mImages,mViewPager);
+        SectionsPagerAdapter mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager(), mSelectedImages,mViewPager);
         // Set up the ViewPager with the sections adapter.
 //        mViewPager.setPageTransformer(true, new DepthPageTransformer());
 
         mViewPager.setAdapter(mSectionsPagerAdapter);
-        mViewPager.setCurrentItem(currentIndex);
+        mViewPager.setCanScroll(false);
 
-        int scrollPosition = mSelectedImages.indexOf(curItem);
-        rv_bottom.scrollToPosition(scrollPosition);
-        pageAdapter.setCurentIndex(scrollPosition);
-        updateDoneText(mSelectedImages.size());
 
     }
 
@@ -117,83 +111,33 @@ public class ViewPagerActivity extends AppCompatActivity implements View.OnClick
         for (Image image : mSelectedImages)
             data.add(image.path);
         EventBus.getDefault().post(new EventImageMsg(new Object[]{EventConstant.RESUME, data}));
+        mSelectedImages.clear();
     }
 
     public void initListener() {
         btn_left.setOnClickListener(this);
         mSubmitButton.setOnClickListener(this);
 
-        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int i, float v, int i1) {
-            }
-
-            @Override
-            public void onPageSelected(int i) {
-                curItem = mImages.get(i);
-                if (mSelectedImages.contains(mImages.get(i))) {
-                    int imagePos = mSelectedImages.indexOf(curItem);
-                    rv_bottom.scrollToPosition(imagePos);
-                    pageAdapter.setCurentIndex(imagePos);
-                } else {
-                }
-                String title = String.format("%s/%s", currentIndex + 1, imageSize);
-                tv_title.setText(title);
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int i) {
-
-            }
-        });
-
         iv_select.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //預覽位置索引
-                currentIndex = mSelectedImages.indexOf(curItem);
-
-                    mSelectedImages.add(curItem);
-                    pageAdapter.notifyDataSetChanged();
-                    int index = mSelectedImages.indexOf(curItem);
-                    rv_bottom.scrollToPosition(index);
-                    pageAdapter.setCurentIndex(index);
-                updateDoneText(mSelectedImages.size());
-            }
-        });
-
-        pageAdapter.setOnItemClickListener(new RecyclerAdapter.OnItemClickListener() {
-
-            @Override
-            public void onItemClick(View itemView, Object item, int pos) {
-                curItem = (Image) item;
-                ArrayList<String> resultList = new ArrayList<>();
+                if(iv_select.getText().equals("删除")){
+                    EventBus.getDefault().post(new EventMsg(new Object[]{EventConstant.ACTIVITY_FINISH, new ArrayList<String>()}));
+                }else {
+                    //預覽位置索引
+                    ArrayList<String> resultList = new ArrayList<>();
                     resultList.add(curItem.path);
-                EventBus.getDefault().post(new EventMsg(new Object[]{EventConstant.ACTIVITY_FINISH, resultList}));
+                    EventBus.getDefault().post(new EventMsg(new Object[]{EventConstant.ACTIVITY_FINISH, resultList}));
+
+                }
                 finish();
             }
         });
+
     }
 
 
-    @TargetApi(Build.VERSION_CODES.M)
-    private void updateDoneText(int selectCount) {
-        if (selectCount <= 0) {
-            mSubmitButton.setText(R.string.mis_action_done);
-            mSubmitButton.setEnabled(false);
-        } else {
-            mSubmitButton.setEnabled(true);
-        }
-        if (selectCount > 0)
-            mSubmitButton.setBackgroundColor(getColor(R.color.mis_button_selected_bg));
-        else
-            mSubmitButton.setBackgroundColor(getColor(R.color.mis_button_default_bg));
 
-        int COUNT = (int) SharedPreHelper.getInstance(ViewPagerActivity.this).getSharedPreference(SharedPreHelper.SharedAttribute.SELECT_COUNT,0);
-
-        mSubmitButton.setText(getString(R.string.mis_action_button_string,
-                getString(R.string.mis_action_done), selectCount, COUNT));
-    }
 
     @Override
     protected void onDestroy() {

@@ -113,8 +113,7 @@ public class MultiImageSelectorActivity extends AppCompatActivity
         mSubmitButton = (Button) findViewById(R.id.commit);
         mTvTitle = findViewById(R.id.tv_title);
 
-        mSubmitButton.setText(getString(R.string.mis_action_button_string,
-               "请选择图片", resultList.size(), mDefaultCount));
+        mSubmitButton.setText("确定");
 
         mBtnBack = findViewById(R.id.btn_left);
         mBtnBack.setOnClickListener(new View.OnClickListener() {
@@ -213,11 +212,6 @@ public class MultiImageSelectorActivity extends AppCompatActivity
         } else {
             mSubmitButton.setEnabled(true);
         }
-        if (resultList.size() > 0)
-            mSubmitButton.setBackgroundColor(getColor(R.color.mis_button_selected_bg));
-        else
-            mSubmitButton.setBackgroundColor(getColor(R.color.mis_button_default_bg));
-
         mTvTitle.setText(getString(R.string.mis_action_button_string,
                 "请选择图片", resultList.size(), mDefaultCount));
 
