@@ -126,7 +126,9 @@ public class SpeechService extends Service {
 
     boolean isSimulatePaused;
 
-    long speechStartTime;
+    long speechDurationOfArticle;
+    long speechStartTimeOfArticle;
+    String speechArticleIdOfArticle;
 
 
     public class SpeechBinder extends Binder {
@@ -273,11 +275,15 @@ public class SpeechService extends Service {
     private void onSpeechStart(Article article) {
         initNotification();
         EventBus.getDefault().post(new SpeechStartEvent(article));
+
     }
 
     private void onSpeechReady(Article article) {
         EventBus.getDefault().post(new SpeechReadyEvent(article));
-        speechStartTime = System.currentTimeMillis();
+        speechDurationOfArticle = System.currentTimeMillis();
+        speechDurationOfArticle = 0;
+        speechStartTimeOfArticle = new java.util.Date().getTime();
+        speechArticleIdOfArticle = article.getArticleId();
     }
 
     private void onSpeechProgress(Article article, int fragmentIndex, List<String> fragments) {
@@ -308,14 +314,22 @@ public class SpeechService extends Service {
         if (progress == 1) {
             EventBus.getDefault().post(new SpeechEndEvent(article, progress));
         }
+
+        long duration = new java.util.Date().getTime() - speechStartTimeOfArticle;
+        speechDurationOfArticle += (duration > 0)? duration : 0;
+
+        articleDataProvider.appendArticleRecord(speechArticleIdOfArticle, speechDurationOfArticle/1000);
     }
 
     private void onSpeechPause(Article article) {
         EventBus.getDefault().post(new SpeechPauseEvent(article));
+        long duration = new java.util.Date().getTime() - speechStartTimeOfArticle;
+        speechDurationOfArticle += (duration > 0)? duration : 0;
     }
 
     private void onSpeechResume(Article article) {
         EventBus.getDefault().post(new SpeechResumeEvent(article));
+        speechStartTimeOfArticle = new java.util.Date().getTime();
     }
 
 

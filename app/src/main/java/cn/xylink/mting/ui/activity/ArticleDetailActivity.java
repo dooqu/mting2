@@ -128,6 +128,8 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
     float mPosY = 0;
     float mCurPosX = 0;
     float mCurPosY = 0;
+
+    ArticleDataProvider articleDataProvider;
     //页面是否是滚动状态
     private boolean isScrolling;
 
@@ -143,6 +145,7 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
      */
     private void initServiceData() {
         //
+        articleDataProvider = new ArticleDataProvider(this);
         mCurrentArticle = service.getSelected();
         Article prevArt = service.getSelected();
         Article currArt = null;
@@ -376,20 +379,20 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
                 public void onSpeed(int speed) {
                     switch (speed) {
                         case 0:
-                            service.setSpeed(Speechor.SpeechorSpeed.SPEECH_SPEED_NORMAL);
+                            service.setSpeed(Speechor.SpeechorSpeed.SPEECH_SPEED_HALF);
                             break;
                         case 1:
-                            service.setSpeed(Speechor.SpeechorSpeed.SPEECH_SPEED_MULTIPLE_1_POINT_5);
+                            service.setSpeed(Speechor.SpeechorSpeed.SPEECH_SPEED_NORMAL);
                             break;
                         case 2:
-                            service.setSpeed(Speechor.SpeechorSpeed.SPEECH_SPEED_MULTIPLE_2);
+                            service.setSpeed(Speechor.SpeechorSpeed.SPEECH_SPEED_MULTIPLE_1_POINT_5);
                             break;
                         case 3:
-                            service.setSpeed(Speechor.SpeechorSpeed.SPEECH_SPEED_MULTIPLE_2_POINT_5);
+                            service.setSpeed(Speechor.SpeechorSpeed.SPEECH_SPEED_MULTIPLE_2);
                             break;
                     }
-
                     SharedPreHelper.getInstance(getApplicationContext()).put("SPEECH_SPEED", String.valueOf(service.getSpeed()));
+                    articleDataProvider.updateSpeechSetting(service.getRole(), service.getSpeed(), null);
                 }
 
                 @Override
@@ -416,7 +419,6 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
                             optName = "articleDetails_timing_30";
                             break;
                     }
-
                     TCAgent.onEvent(ArticleDetailActivity.this, optName);
                 }
 
@@ -438,6 +440,7 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
                             break;
                     }
                     SharedPreHelper.getInstance(getApplicationContext()).put("SPEECH_ROLE", String.valueOf(service.getRole()));
+                    articleDataProvider.updateSpeechSetting(service.getRole(), service.getSpeed(), null);
                 }
             });
         }
@@ -492,6 +495,7 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
                     }
 
                     TCAgent.onEvent(ArticleDetailActivity.this, optName);
+                    articleDataProvider.updateSpeechSetting(service.getRole(), service.getSpeed(), change + 1);
                 }
             });
         }

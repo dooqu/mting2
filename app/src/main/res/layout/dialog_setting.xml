@@ -234,7 +234,7 @@
         android:layout_marginLeft="16dp"
         android:layout_marginTop="10dp"
         android:gravity="center_vertical"
-        android:text="朗读速度"
+        android:text="倍数朗读"
         android:textColor="#333333"
         android:textSize="16sp" />
 
@@ -257,7 +257,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:buttonTint="@color/selector_button_color"
-                android:text="正常" />
+                android:text="x0.5" />
 
             <View
                 android:layout_width="0dp"
@@ -269,7 +269,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:buttonTint="@color/selector_button_color"
-                android:text="x1.5" />
+                android:text="x1" />
 
             <View
                 android:layout_width="0dp"
@@ -281,7 +281,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:buttonTint="@color/selector_button_color"
-                android:text="x2" />
+                android:text="x1.5" />
 
             <View
                 android:layout_width="0dp"
@@ -293,7 +293,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:buttonTint="@color/selector_button_color"
-                android:text="x2.5" />
+                android:text="x2" />
         </RadioGroup>
 
     </LinearLayout>

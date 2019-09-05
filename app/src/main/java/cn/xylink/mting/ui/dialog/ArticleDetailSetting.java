@@ -83,14 +83,18 @@ public class ArticleDetailSetting extends ArticleDetailBottomDialog {
         }
         RadioGroup rgSpeed = view.findViewById(R.id.rg_speed);
         switch (speed) {
-            case SPEECH_SPEED_NORMAL:
+            //因为产品需求修改， 这里数值是串的
+            case SPEECH_SPEED_HALF:
                 rgSpeed.check(R.id.rb_normal);
                 break;
-            case SPEECH_SPEED_MULTIPLE_1_POINT_5:
+            case SPEECH_SPEED_NORMAL:
                 rgSpeed.check(R.id.rb_1_5);
                 break;
-            case SPEECH_SPEED_MULTIPLE_2:
+            case SPEECH_SPEED_MULTIPLE_1_POINT_5:
                 rgSpeed.check(R.id.rb_2);
+                break;
+            case SPEECH_SPEED_MULTIPLE_2:
+                rgSpeed.check(R.id.rb_2_5);
                 break;
             case SPEECH_SPEED_MULTIPLE_2_POINT_5:
                 rgSpeed.check(R.id.rb_2_5);

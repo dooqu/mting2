@@ -8,7 +8,7 @@ android {
         targetSdkVersion 28
         //versionCode改为年份两位，月份两位，日两位，次数1位
 
-        versionCode 1907291
+        versionCode 1909051
         versionName "1.21"
     }
     signingConfigs {
