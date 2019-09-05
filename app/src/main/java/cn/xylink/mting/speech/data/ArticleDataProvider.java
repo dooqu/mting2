@@ -423,7 +423,7 @@ public class ArticleDataProvider {
                     public void hideLoading() {
                     }
                 }
-                , serverURL + "/api/analyse/v1/article/reader_time",
+                , serverURL + "/api/user/v1/user_setting/update",
                 GsonUtil.GsonString(request),
                 BaseResponse.class,
                 new OkGoUtils.ICallback<BaseResponse<Object>>() {
