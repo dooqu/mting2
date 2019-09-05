@@ -10,8 +10,6 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.bluetooth.BluetoothA2dp;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -68,10 +66,6 @@ public class SpeechService extends Service {
         //Stoped,
         /*加载中*/
         Loadding,
-
-        //数据缓冲中
-        //Buffering,
-
         /*发生错误*/
         Error
     }
