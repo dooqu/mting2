@@ -83,7 +83,8 @@ public class CopyAddDialog extends BaseDimDialog implements
         return View.inflate(mContext, R.layout.dialog_copy_add, null);
     }
 
-    @OnClick({R.id.ll_copy_add_write, R.id.ll_copy_add_layout, R.id.iv_copy_add_close, R.id.tv_copy_add_play, R.id.tv_copy_add_add_unread})
+    @OnClick({R.id.ll_copy_add_write, R.id.ll_copy_add_layout, R.id.iv_copy_add_close, R.id.tv_copy_add_play, R.id.tv_copy_add_add_unread,
+            R.id.btn_copy_add_fastadd})
     void onClick(View view) {
         switch (view.getId()) {
             case R.id.tv_copy_add_add_unread:
@@ -102,8 +103,8 @@ public class CopyAddDialog extends BaseDimDialog implements
                 break;
             case R.id.btn_copy_add_fastadd:
                 Intent intent = new Intent(mContext, PlayerlActivity.class);
-                intent.putExtra(PlayerlActivity.EXTRA_HTML,PlayerlActivity.PROTOCOL_URL);
-                intent.putExtra(PlayerlActivity.EXTRA_TITLE,mContext.getResources().getString(R.string.player_mting));
+                intent.putExtra(PlayerlActivity.EXTRA_HTML, PlayerlActivity.PROTOCOL_URL);
+                intent.putExtra(PlayerlActivity.EXTRA_TITLE, mContext.getResources().getString(R.string.player_mting));
                 mContext.startActivity(intent);
                 this.dismiss();
                 break;

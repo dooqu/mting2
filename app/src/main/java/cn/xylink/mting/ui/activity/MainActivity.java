@@ -640,6 +640,8 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
             mPlayBtnSRC.setImageDrawable(mPauseDrawable);
             ((Animatable) mPauseDrawable).start();
         }
+        mLoadingProgress.setVisibility(View.INVISIBLE);
+        mProgress.setVisibility(View.VISIBLE);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
