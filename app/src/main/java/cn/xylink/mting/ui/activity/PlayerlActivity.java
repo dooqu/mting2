@@ -207,7 +207,7 @@ public class PlayerlActivity extends BaseActivity {
             wvHtml.goBack();
         }else{
             super.onBackPressed();
-            finish();
+            android.os.Process.killProcess(android.os.Process.myPid());
         }
     }
 
@@ -222,7 +222,7 @@ public class PlayerlActivity extends BaseActivity {
         switch (v.getId())
         {
             case R.id.iv_close:
-                finish();
+                android.os.Process.killProcess(android.os.Process.myPid());
                 break;
         }
     }

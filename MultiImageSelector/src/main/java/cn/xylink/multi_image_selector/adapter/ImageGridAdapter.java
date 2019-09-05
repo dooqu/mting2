@@ -232,29 +232,29 @@ public class ImageGridAdapter extends BaseAdapter {
         holder.image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                if (mSelectedImages.size() != mDefalutCount || mSelectedImages.contains(data)) {
-//                    Intent mIntent = new Intent();
-//                    mIntent.setClass(mContext, ViewPagerActivity.class);
-//                    mIntent.putExtra(ViewPagerActivity.IMAGES_DATA, (Serializable) mImages);
-//                    mIntent.putExtra(ViewPagerActivity.SELECTED_IMAGES, (Serializable) mSelectedImages);
-//                    mIntent.putExtra(ViewPagerActivity.SELECT_INDEX, data);
-//                    mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                    ActivityOptionsCompat compat = ActivityOptionsCompat.makeScaleUpAnimation(holder.image,
-//                            holder.image.getWidth() * 2, holder.image.getHeight() * 2, -500, 780);
-//
-//                    mContext.startActivity(mIntent,
-//                            compat.toBundle());
-//                }
-                callBack.imageseleected(data, i);
-                if (mSelectedImages.size() != mDefalutCount) {
-                    if (mSelectedImages.contains(data)) {
-                        // 设置选中状态
-                        zoom(holder.image);
-                    } else {
-                        // 未选择
-                        disZoom(holder.image);
-                    }
+                if (mSelectedImages.size() != mDefalutCount || mSelectedImages.contains(data)) {
+                    Intent mIntent = new Intent();
+                    mIntent.setClass(mContext, ViewPagerActivity.class);
+                    mIntent.putExtra(ViewPagerActivity.IMAGES_DATA, (Serializable) mImages);
+                    mIntent.putExtra(ViewPagerActivity.SELECTED_IMAGES, (Serializable) mSelectedImages);
+                    mIntent.putExtra(ViewPagerActivity.SELECT_INDEX, data);
+                    mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    ActivityOptionsCompat compat = ActivityOptionsCompat.makeScaleUpAnimation(holder.image,
+                            holder.image.getWidth() * 2, holder.image.getHeight() * 2, -500, 780);
+
+                    mContext.startActivity(mIntent,
+                            compat.toBundle());
                 }
+//                callBack.imageseleected(data, i);
+//                if (mSelectedImages.size() != mDefalutCount) {
+//                    if (mSelectedImages.contains(data)) {
+//                        // 设置选中状态
+//                        zoom(holder.image);
+//                    } else {
+//                        // 未选择
+//                        disZoom(holder.image);
+//                    }
+//                }
             }
         });
 
