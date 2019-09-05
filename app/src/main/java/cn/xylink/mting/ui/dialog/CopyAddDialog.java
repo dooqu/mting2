@@ -1,11 +1,14 @@
 package cn.xylink.mting.ui.dialog;
 
 import android.content.Context;
+import android.content.Intent;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -31,7 +34,9 @@ import cn.xylink.mting.presenter.ArticleDetailPresenter;
 import cn.xylink.mting.presenter.CheckLinkPresenter;
 import cn.xylink.mting.presenter.LinkCreatePresenter;
 import cn.xylink.mting.speech.data.SpeechList;
+import cn.xylink.mting.ui.activity.PlayerlActivity;
 import cn.xylink.mting.utils.L;
+import cn.xylink.mting.utils.T;
 
 /*
  *检测黏贴板
@@ -40,13 +45,11 @@ import cn.xylink.mting.utils.L;
  * 2019/7/22 18:09 : Create CopyAddDialog.java (JoDragon);
  * -----------------------------------------------------------------
  */
-public class CopyAddDialog extends BaseDimDialog implements CheckLinkContact.ICheckLinkView,
+public class CopyAddDialog extends BaseDimDialog implements
         ArticleDetailContract.IArticleDetailView, LinkCreateContact.IPushView {
 
-    @BindView(R.id.ll_copy_add_layout)
-    LinearLayout mRoot;
-    @BindView(R.id.ll_copy_add_write)
-    LinearLayout mWriteLayout;
+    @BindView(R.id.ll_copy_add_content)
+    LinearLayout mContentLayout;
     @BindView(R.id.ll_copy_add_loading)
     LinearLayout mLoadingLayout;
     @BindView(R.id.tv_copy_add_title)
@@ -59,24 +62,20 @@ public class CopyAddDialog extends BaseDimDialog implements CheckLinkContact.ICh
     TextView mPlayView;
     @BindView(R.id.iv_copy_add_close)
     ImageView mCloseView;
-    private CheckLinkPresenter mCheckLinkPresenter;
+    @BindView(R.id.btn_copy_add_fastadd)
+    Button mFastAddBtn;
     private ArticleDetailPresenter mArticleDetailPresenter;
     private LinkCreatePresenter mLinkCreatePresenter;
     private String mUrl;
 
     public CopyAddDialog(Context context, String url) {
         super(context);
-        mCheckLinkPresenter = new CheckLinkPresenter();
-        mCheckLinkPresenter.attachView(this);
         mLinkCreatePresenter = new LinkCreatePresenter();
         mLinkCreatePresenter.attachView(this);
         mArticleDetailPresenter = new ArticleDetailPresenter();
         mArticleDetailPresenter.attachView(this);
         mUrl = url;
-        CheckLinkUrlRequset request = new CheckLinkUrlRequset();
-        request.setUrl(url);
-        request.doSign();
-        mCheckLinkPresenter.onCheckLink(request);
+        mContactView.setText(url);
     }
 
     @Override
@@ -90,15 +89,22 @@ public class CopyAddDialog extends BaseDimDialog implements CheckLinkContact.ICh
             case R.id.tv_copy_add_add_unread:
                 L.v();
                 addUnread();
-                mPlayView.setEnabled(false);
                 break;
             case R.id.tv_copy_add_play:
                 isPlay = true;
                 addUnread();
-                mAddUnreadView.setEnabled(false);
                 L.v();
                 break;
             case R.id.iv_copy_add_close:
+            case R.id.v_copy_add_nc:
+            case R.id.ll_copy_add_layout:
+                this.dismiss();
+                break;
+            case R.id.btn_copy_add_fastadd:
+                Intent intent = new Intent(mContext, PlayerlActivity.class);
+                intent.putExtra(PlayerlActivity.EXTRA_HTML,PlayerlActivity.PROTOCOL_URL);
+                intent.putExtra(PlayerlActivity.EXTRA_TITLE,mContext.getResources().getString(R.string.player_mting));
+                mContext.startActivity(intent);
                 this.dismiss();
                 break;
         }
@@ -107,6 +113,8 @@ public class CopyAddDialog extends BaseDimDialog implements CheckLinkContact.ICh
     private boolean isPlay;
 
     private void addUnread() {
+        mContentLayout.setVisibility(View.INVISIBLE);
+        mLoadingLayout.setVisibility(View.VISIBLE);
         LinkCreateRequest request = new LinkCreateRequest();
         request.setUrl(mUrl);
         request.setInType(1);
@@ -129,7 +137,6 @@ public class CopyAddDialog extends BaseDimDialog implements CheckLinkContact.ICh
     @Override
     public void dismiss() {
         mLinkCreatePresenter.deatchView();
-        mCheckLinkPresenter.deatchView();
         mArticleDetailPresenter.deatchView();
         super.dismiss();
     }
@@ -151,6 +158,9 @@ public class CopyAddDialog extends BaseDimDialog implements CheckLinkContact.ICh
         EventBus.getDefault().post(new AddUnreadEvent());
         if (isPlay) {
             EventBus.getDefault().post(new NotifyMainPlayEvent(mLinkArticle.getArticleId()));
+            Toast.makeText(mContext, "开始朗读文章", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(mContext, "已添加到待读", Toast.LENGTH_SHORT).show();
         }
         this.dismiss();
     }
@@ -159,32 +169,7 @@ public class CopyAddDialog extends BaseDimDialog implements CheckLinkContact.ICh
     public void onErrorArticleDetail(int code, String errorMsg) {
         mPlayView.setEnabled(true);
         mAddUnreadView.setEnabled(true);
-    }
-
-    @Override
-    public void onCheckLinkSuccess(BaseResponse<LinkArticle> response) {
-        mLoadingLayout.setVisibility(View.GONE);
-        mTitleView.setText(response.getData().getTitle());
-        mContactView.setText(response.getData().getDescribe());
-        mAddUnreadView.setEnabled(true);
-        mPlayView.setEnabled(true);
-    }
-
-    //200:成功
-//-1: 签名错误
-//-2:url链接无效
-//-3:解析正文失败
-//-4:文章正文超限,max limit 20w character
-//
-//-999:token失效或登录超时
-//-100000:异常,请核实后重试!
-    @Override
-    public void onCheckLinkError(int code, String errorMsg) {
-        mLoadingLayout.setVisibility(View.GONE);
-        if (!TextUtils.isEmpty(errorMsg))
-            mTitleView.setText(errorMsg);
-        mPlayView.setEnabled(true);
-        mAddUnreadView.setEnabled(true);
+        this.dismiss();
     }
 
     @Override
@@ -199,9 +184,11 @@ public class CopyAddDialog extends BaseDimDialog implements CheckLinkContact.ICh
     @Override
     public void onPushError(int code, String errorMsg) {
         mLoadingLayout.setVisibility(View.GONE);
+        Toast.makeText(mContext, "文章加载失败，请稍后再试", Toast.LENGTH_SHORT).show();
         if (!TextUtils.isEmpty(errorMsg))
             mTitleView.setText(errorMsg);
         mPlayView.setEnabled(true);
         mAddUnreadView.setEnabled(true);
+        this.dismiss();
     }
 }

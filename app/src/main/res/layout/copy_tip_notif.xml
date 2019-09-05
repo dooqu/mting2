@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="48dp"
+    android:layout_height="50dp"
     android:background="@color/white"
     android:gravity="center_vertical"
     android:orientation="horizontal">
@@ -10,6 +10,8 @@
         android:layout_width="32dp"
         android:layout_height="32dp"
         android:layout_marginLeft="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
         android:src="@mipmap/logo" />
 
     <LinearLayout
@@ -17,12 +19,15 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="12dp"
         android:layout_weight="1"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
         android:orientation="vertical">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/c333333"
+            android:textSize="14sp"
             android:text="添加到轩辕听" />
 
         <TextView
@@ -31,15 +36,18 @@
             android:singleLine="true"
             android:textColor="@color/cbbbbbb"
             android:ellipsize="end"
+            android:textSize="12sp"
             android:layout_height="wrap_content" />
     </LinearLayout>
 
     <TextView
         android:id="@+id/tv_copy_tip_notif_add"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="28dp"
+        android:layout_height="match_parent"
+        android:paddingRight="28dp"
+        android:gravity="center"
         android:textColor="@color/c488def"
-        android:layout_marginRight="28dp"
+        android:paddingLeft="28dp"
+        android:textSize="16sp"
         android:text="添加" />
 </LinearLayout>
