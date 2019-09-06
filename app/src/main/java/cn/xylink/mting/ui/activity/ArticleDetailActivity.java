@@ -43,6 +43,7 @@ import cn.xylink.mting.event.ArticleEditEvent;
 import cn.xylink.mting.openapi.QQApi;
 import cn.xylink.mting.openapi.WXapi;
 import cn.xylink.mting.presenter.DelMainPresenter;
+import cn.xylink.mting.speech.SpeechError;
 import cn.xylink.mting.speech.SpeechService;
 import cn.xylink.mting.speech.SpeechServiceProxy;
 import cn.xylink.mting.speech.Speechor;
@@ -745,6 +746,10 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
         } else if (event instanceof SpeechErrorEvent) {
             showLoaddingBar(false);
             Toast.makeText(this, ((SpeechErrorEvent) event).getMessage() + ",错误码:" + ((SpeechErrorEvent) event).getErrorCode(), Toast.LENGTH_SHORT).show();
+            //如果是正文加载失败了， 那么就把当前详情页退出
+            if(((SpeechErrorEvent) event).getErrorCode() == SpeechError.ARTICLE_LOAD_ERROR) {
+                finish();
+            }
             //Toast.makeText(this, ((SpeechErrorEvent) event).getMessage(), Toast.LENGTH_SHORT).show();
         }
         setPlayerState(service.getState());

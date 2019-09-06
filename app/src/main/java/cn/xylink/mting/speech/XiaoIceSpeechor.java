@@ -287,7 +287,7 @@ public abstract class XiaoIceSpeechor implements Speechor {
                                             //用户在重试等待期间，可能改动了播放主控的操作，如果播放还需要继续，那么就显示错误
                                             if (state == SpeechorState.SpeechorStateLoadding) {
                                                 state = SpeechorState.SpeechorStateReady;
-                                                onError(SpeechError.FRAGMENT_TTS_ERROR, BuildConfig.DEBUG? this.fragment.getErrorMessage() : BufferErrorHint);
+                                                onError(errorCode, BuildConfig.DEBUG? this.fragment.getErrorMessage() : BufferErrorHint);
                                             }
                                         }
                                     }
