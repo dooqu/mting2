@@ -170,13 +170,12 @@
             android:name=".ui.activity.PersonalInfoActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
+
             android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
             android:name=".ui.activity.PlayerlActivity"
             android:hardwareAccelerated="true"
-            android:theme="@style/PlayerTheme"
-            android:launchMode="singleTask"
-            android:process=":PlayerlActivity" />
+            android:launchMode="singleTask" />
 
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
