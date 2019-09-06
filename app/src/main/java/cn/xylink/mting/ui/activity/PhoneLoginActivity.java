@@ -1,18 +1,13 @@
 package cn.xylink.mting.ui.activity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -20,11 +15,10 @@ import cn.xylink.mting.MTing;
 import cn.xylink.mting.R;
 import cn.xylink.mting.base.BaseResponse;
 import cn.xylink.mting.bean.CodeInfo;
-import cn.xylink.mting.model.GetCodeRequest;
 import cn.xylink.mting.contract.GetCodeContact;
+import cn.xylink.mting.model.GetCodeRequest;
 import cn.xylink.mting.model.data.HttpConst;
 import cn.xylink.mting.presenter.GetCodePresenter;
-import cn.xylink.mting.ui.activity.user.LoginPwdActivity;
 import cn.xylink.mting.utils.L;
 import cn.xylink.mting.utils.NetworkUtil;
 import cn.xylink.mting.utils.PhoneNumberUtils;

@@ -22,11 +22,15 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import cn.xylink.mting.MTing;
 import cn.xylink.mting.R;
+import cn.xylink.mting.base.BaseResponse;
+import cn.xylink.mting.bean.CodeInfo;
 import cn.xylink.mting.bean.UserInfo;
+import cn.xylink.mting.contract.GetCodeContact;
+import cn.xylink.mting.model.GetCodeRequest;
 import cn.xylink.mting.model.data.HttpConst;
 import cn.xylink.mting.model.data.OkGoUtils;
 import cn.xylink.mting.openapi.QQApi;
-import cn.xylink.mting.ui.activity.user.BindLoginPwdActivity;
+import cn.xylink.mting.presenter.GetCodePresenter;
 import cn.xylink.mting.utils.ContentManager;
 import cn.xylink.mting.utils.ImageUtils;
 import cn.xylink.mting.utils.L;
@@ -34,7 +38,7 @@ import cn.xylink.mting.utils.NetworkUtil;
 import cn.xylink.mting.utils.SharedPreHelper;
 import cn.xylink.mting.widget.ZpPhoneEditText;
 
-public class BindingPhoneQQWxActivity extends BasePresenterActivity {
+public class BindingPhoneQQWxActivity extends BasePresenterActivity implements GetCodeContact.IGetCodeView {
 
     @BindView(R.id.tv_include_title)
     TextView tvTitle;
@@ -55,6 +59,7 @@ public class BindingPhoneQQWxActivity extends BasePresenterActivity {
     com.tencent.connect.UserInfo mInfo;
 
     SharedPreHelper sharedPreHelper;
+    private GetCodePresenter codePresenter;
 
     @Override
     protected void preView() {
@@ -156,6 +161,8 @@ public class BindingPhoneQQWxActivity extends BasePresenterActivity {
         } else {
             getWxUserInfo();
         }
+        codePresenter = (GetCodePresenter) createPresenter(GetCodePresenter.class);
+        codePresenter.attachView(this);
     }
 
 
@@ -173,11 +180,12 @@ public class BindingPhoneQQWxActivity extends BasePresenterActivity {
                     toastShort(HttpConst.NO_NETWORK);
                     return;
                 }
-                Intent mIntent = new Intent(this, BindLoginPwdActivity.class);
-                mIntent.putExtra(BindLoginPwdActivity.EXTRA_PHONE, phone);
-                mIntent.putExtra(BindLoginPwdActivity.EXTRA_PLATFORM, platform);
-                mIntent.putExtra(BindingPhoneActivity.EXTRA_SOURCE, source);
-                startActivity(mIntent);
+//                Intent mIntent = new Intent(this, BindLoginPwdActivity.class);
+//                mIntent.putExtra(BindLoginPwdActivity.EXTRA_PHONE, phone);
+//                mIntent.putExtra(BindLoginPwdActivity.EXTRA_PLATFORM, platform);
+//                mIntent.putExtra(BindingPhoneActivity.EXTRA_SOURCE, source);
+//                startActivity(mIntent);
+                requsetCode();
                 break;
             }
             case R.id.tv_change_phone: {
@@ -203,4 +211,45 @@ public class BindingPhoneQQWxActivity extends BasePresenterActivity {
     }
 
 
+    @Override
+    public void onCodeSuccess(BaseResponse<CodeInfo> response) {
+        L.v(response.code);
+        toastShort(response.message);
+        if (response.data != null) {
+            Intent mIntent = new Intent(this, BindingThirdCodeActivity.class);
+            mIntent.putExtra(BindingPhoneActivity.EXTRA_PHONE, phone);
+            mIntent.putExtra(BindingPhoneActivity.EXTRA_SOURCE, source);
+            mIntent.putExtra(BindingPhoneActivity.EXTRA_PLATFORM, platform);
+            mIntent.putExtra(BindingPhoneActivity.EXTRA_CODE, response.data.getCodeId());
+            startActivity(mIntent);
+        }
+    }
+    @Override
+    public void onCodeError(int code, String errorMsg) {
+        switch (code) {
+            case HttpConst.STATUS_910:
+                toastShort(errorMsg);
+                break;
+        }
+        if (code == -910) {
+//            long resumeTime = SystemClock.elapsedRealtime();
+//            long pauseTime = (long) SharedPreHelper.getInstance(this).getSharedPreference(PAUSE_TIME, 0l);
+//            L.v("resumeTime", resumeTime, "pauseTime", pauseTime);
+//            long endTime = resumeTime - pauseTime;
+//            L.v("endTime", endTime, "ONE_MINUTE", ONE_MINUTE);
+//            if (endTime < ONE_MINUTE) {
+////                resetDownTimer(endTime);
+//            }
+        }
+    }
+
+    public void requsetCode() {
+        if (TextUtils.isEmpty(phone))
+            return;
+        GetCodeRequest requset = new GetCodeRequest();
+        requset.phone = phone.replaceAll(" ", "");
+        requset.source = source;
+        requset.doSign();
+        codePresenter.onGetCode(requset);
+    }
 }

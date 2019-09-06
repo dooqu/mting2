@@ -43,5 +43,7 @@ public class Const {
 
     public static String TCAGENT_APPID = "FCAC8CE6C75F41C39A8F759E7FADB4F5";
 
+    public static final String USERPROTOCOL_URL = "http://service.xylink.net/article/html/agreement.html";
+
 
 }
