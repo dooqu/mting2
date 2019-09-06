@@ -172,16 +172,11 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
-            android:name=".ui.activity.UserProtocolActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".ui.activity.PlayerlActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden"
             android:hardwareAccelerated="true"
+            android:theme="@style/PlayerTheme"
             android:launchMode="singleTask"
-            android:process=":PlayerlActivity"
-            android:screenOrientation="portrait" />
+            android:process=":PlayerlActivity" />
 
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
