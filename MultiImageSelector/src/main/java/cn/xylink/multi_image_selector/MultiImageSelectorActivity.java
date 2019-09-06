@@ -72,7 +72,7 @@ public class MultiImageSelectorActivity extends AppCompatActivity
     public static final String EXTRA_SHOW_VIDEO = "show_video";
 
     private ArrayList<String> resultList = new ArrayList<>();
-    private Button mSubmitButton;
+    private TextView mSubmitButton;
     private ImageView mBtnBack;
     private TextView mTvTitle;
     public int mDefaultCount = 0;
@@ -110,7 +110,7 @@ public class MultiImageSelectorActivity extends AppCompatActivity
         }
         selectCount = intent.getIntExtra(EXTRA_SELECT_COUNT_IMG, 0);
 
-        mSubmitButton = (Button) findViewById(R.id.commit);
+        mSubmitButton = findViewById(R.id.commit);
         mTvTitle = findViewById(R.id.tv_title);
 
         mSubmitButton.setText("确定");
@@ -277,14 +277,14 @@ public class MultiImageSelectorActivity extends AppCompatActivity
         switch (type) {
             case EventConstant.ACTIVITY_FINISH:
                 resultList = (ArrayList<String>) msg.getObj()[1];
-                if (resultList != null && resultList.size() > 0) {
+//                if (resultList != null && resultList.size() > 0) {
                     // Notify success
                     Intent mIntent = new Intent();
                     mIntent.putStringArrayListExtra(EXTRA_RESULT, resultList);
                     setResult(RESULT_OK, mIntent);
-                } else {
-                    setResult(RESULT_CANCELED);
-                }
+//                } else {
+//                    setResult(RESULT_CANCELED);
+//                }
                 finish();
                 break;
         }

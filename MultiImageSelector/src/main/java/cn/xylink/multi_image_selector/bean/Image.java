@@ -12,6 +12,7 @@ public class Image  implements java.io.Serializable{
     public long time;
     private int width;
     private int height;
+    public boolean isCheck;
 
     public String getDuration() {
         return duration;

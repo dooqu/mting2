@@ -267,8 +267,10 @@ public class ImageGridAdapter extends BaseAdapter {
                     if (mSelectedImages.contains(data)) {
                         // 设置选中状态
                         zoom(holder.image);
+                        data.isCheck = true;
                     } else {
                         // 未选择
+                        data.isCheck = false;
                         disZoom(holder.image);
                     }
                 }

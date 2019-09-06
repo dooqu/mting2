@@ -2,6 +2,7 @@ package cn.xylink.mting;
 
 import android.app.Application;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Environment;
 import android.util.Log;
@@ -176,6 +177,17 @@ public class MTing extends Application {
                 });
 
     }
+
+
+    public boolean isDebugMode() {
+        try {
+            ApplicationInfo info = this.getApplicationInfo();
+            return (info.flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
 
     public static MTing getInstance() {
         return instance;

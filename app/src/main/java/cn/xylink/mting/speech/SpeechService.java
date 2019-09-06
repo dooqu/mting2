@@ -293,9 +293,7 @@ public class SpeechService extends Service {
     }
 
     private void onSpeechError(int errorCode, String message, Article article) {
-        Log.d(TAG, "SpeechService.onSpeechError: errorCode=" + errorCode + ", message=" + message);
         EventBus.getDefault().post(new SpeechErrorEvent(errorCode, message, article));
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
         initNotification();
     }
 

@@ -1,18 +1,13 @@
 package cn.xylink.mting.ui.activity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -27,11 +22,9 @@ import cn.xylink.mting.model.GetCodeRequest;
 import cn.xylink.mting.model.data.HttpConst;
 import cn.xylink.mting.presenter.BindCheckPresenter;
 import cn.xylink.mting.presenter.GetCodePresenter;
-import cn.xylink.mting.ui.activity.user.LoginPwdActivity;
 import cn.xylink.mting.utils.L;
 import cn.xylink.mting.utils.NetworkUtil;
 import cn.xylink.mting.utils.PhoneNumberUtils;
-import cn.xylink.mting.utils.TingUtils;
 import cn.xylink.mting.widget.ZpPhoneEditText;
 
 public class BindingPhoneActivity extends BasePresenterActivity implements BindCheckContact.IBindCheckView, GetCodeContact.IGetCodeView {
@@ -179,12 +172,12 @@ public class BindingPhoneActivity extends BasePresenterActivity implements BindC
                     toastShort("手机号码输入有误，请重新输入");
                     return;
                 }
-//                BindCheckRequest requset = new BindCheckRequest();
-//                requset.setPhone(phone);
-//                requset.setPlatform(platform);
-//                requset.doSign();
-//                bindCheckPresenter.onBindCheck(requset);
-                requsetCode();
+                BindCheckRequest requset = new BindCheckRequest();
+                requset.setPhone(phone);
+                requset.setPlatform(platform);
+                requset.doSign();
+                bindCheckPresenter.onBindCheck(requset);
+
                 break;
         }
     }
@@ -211,7 +204,6 @@ public class BindingPhoneActivity extends BasePresenterActivity implements BindC
                 break;
             }
             case 201: {
-
                 Intent mIntent = new Intent(this, BindingPhoneQQWxActivity.class);
                 mIntent.putExtra(EXTRA_PHONE, phone);
                 mIntent.putExtra(EXTRA_SOURCE, source);
@@ -221,9 +213,7 @@ public class BindingPhoneActivity extends BasePresenterActivity implements BindC
                 break;
             }
             case -2: {
-                Intent mIntent = new Intent(this, LoginPwdActivity.class);
-                mIntent.putExtra(EXTRA_PHONE, phone);
-                startActivity(mIntent);
+                requsetCode();
                 break;
             }
         }

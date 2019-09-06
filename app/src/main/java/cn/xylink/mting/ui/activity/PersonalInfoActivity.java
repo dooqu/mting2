@@ -32,7 +32,9 @@ import com.yalantis.ucrop.UCrop;
 import com.yalantis.ucrop.UCropActivity;
 
 import java.io.File;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -92,6 +94,7 @@ public class PersonalInfoActivity extends BasePresenterActivity implements TakeP
     private InputMethodManager im;
     private String oldNiceName;
     private long birthday;
+    TimePickerView pvTime;
 
 
     public TakePhoto getTakePhoto() {
@@ -181,8 +184,8 @@ public class PersonalInfoActivity extends BasePresenterActivity implements TakeP
             ImageUtils.get().loadCircle(ivhead, headImgUrl);
         if (!TextUtils.isEmpty(user.getNickName()))
             tvNickName.setText(user.getNickName());
-        if(user.getBirthdate() > 0)
-            tvBirthday.setText(DateUtils.getDateText(new Date(user.getBirthdate()),DateUtils.YMD_BREAK));
+        if (user.getBirthdate() > 0)
+            tvBirthday.setText(DateUtils.getDateText(new Date(user.getBirthdate()), DateUtils.YMD_BREAK));
     }
 
     @Override
@@ -241,11 +244,27 @@ public class PersonalInfoActivity extends BasePresenterActivity implements TakeP
     }
 
     private void showDate() {
-        TimePickerView pvTime = new TimePickerView.Builder(this, new TimePickerView.OnTimeSelectListener() {
+
+        Calendar data = Calendar.getInstance();
+
+        if (!tvBirthday.equals("请选择")) {
+            try {
+                data.setTime(DateUtils.getDate(tvBirthday.getText().toString(), DateUtils.YMD_BREAK));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+        Calendar start = Calendar.getInstance();
+        try {
+            start.setTime(DateUtils.getDate("1900-01-01", DateUtils.YMD_BREAK));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        pvTime = new TimePickerView.Builder(this, new TimePickerView.OnTimeSelectListener() {
             @Override
             public void onTimeSelect(Date date, View v) {
-                String time = DateUtils.getDateText(date,DateUtils.YMD_BREAK);
-                if(TextUtils.isEmpty(tvNickName.getText())){
+                String time = DateUtils.getDateText(date, DateUtils.YMD_BREAK);
+                if (TextUtils.isEmpty(tvNickName.getText())) {
                     toastShort("昵称不能为空");
                     return;
                 }
@@ -262,12 +281,12 @@ public class PersonalInfoActivity extends BasePresenterActivity implements TakeP
                 .setCancelText("取消")//取消按钮文字
                 .setSubmitText("确定")//确认按钮文字
                 .isCenterLabel(false) //是否只显示中间选中项的label文字，false则每项item全部都带有label。
+                .setRangDate(start, Calendar.getInstance())
+                .setDate(data)
                 .build();
 
         pvTime.show();
     }
-
-
 
 
     public void hideSoftInput(View view) {
@@ -460,7 +479,7 @@ public class PersonalInfoActivity extends BasePresenterActivity implements TakeP
         if (!TextUtils.isEmpty(etNickName.getText())) {
             userInfo.setNickName(etNickName.getText().toString());
         }
-        if(birthday > 0)
+        if (birthday > 0)
             userInfo.setBirthdate(birthday);
         ContentManager.getInstance().setUserInfo(userInfo);
     }
