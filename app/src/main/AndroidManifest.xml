@@ -79,6 +79,7 @@
 
         <service android:name=".speech.SpeechService" />
         <service android:name=".service.CopyCheckService" />
+        <service android:name=".service.AddUnreadService" />
 
         <activity
             android:name=".ui.activity.MainActivity"
