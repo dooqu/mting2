@@ -72,7 +72,7 @@ public class MultiImageSelectorActivity extends AppCompatActivity
     public static final String EXTRA_SHOW_VIDEO = "show_video";
 
     private ArrayList<String> resultList = new ArrayList<>();
-    private Button mSubmitButton;
+    private TextView mSubmitButton;
     private ImageView mBtnBack;
     private TextView mTvTitle;
     public int mDefaultCount = 0;
@@ -110,11 +110,10 @@ public class MultiImageSelectorActivity extends AppCompatActivity
         }
         selectCount = intent.getIntExtra(EXTRA_SELECT_COUNT_IMG, 0);
 
-        mSubmitButton = (Button) findViewById(R.id.commit);
+        mSubmitButton = findViewById(R.id.commit);
         mTvTitle = findViewById(R.id.tv_title);
 
-        mSubmitButton.setText(getString(R.string.mis_action_button_string,
-               "请选择图片", resultList.size(), mDefaultCount));
+        mSubmitButton.setText("确定");
 
         mBtnBack = findViewById(R.id.btn_left);
         mBtnBack.setOnClickListener(new View.OnClickListener() {
@@ -213,11 +212,6 @@ public class MultiImageSelectorActivity extends AppCompatActivity
         } else {
             mSubmitButton.setEnabled(true);
         }
-        if (resultList.size() > 0)
-            mSubmitButton.setBackgroundColor(getColor(R.color.mis_button_selected_bg));
-        else
-            mSubmitButton.setBackgroundColor(getColor(R.color.mis_button_default_bg));
-
         mTvTitle.setText(getString(R.string.mis_action_button_string,
                 "请选择图片", resultList.size(), mDefaultCount));
 
@@ -283,14 +277,14 @@ public class MultiImageSelectorActivity extends AppCompatActivity
         switch (type) {
             case EventConstant.ACTIVITY_FINISH:
                 resultList = (ArrayList<String>) msg.getObj()[1];
-                if (resultList != null && resultList.size() > 0) {
+//                if (resultList != null && resultList.size() > 0) {
                     // Notify success
                     Intent mIntent = new Intent();
                     mIntent.putStringArrayListExtra(EXTRA_RESULT, resultList);
                     setResult(RESULT_OK, mIntent);
-                } else {
-                    setResult(RESULT_CANCELED);
-                }
+//                } else {
+//                    setResult(RESULT_CANCELED);
+//                }
                 finish();
                 break;
         }

@@ -10,46 +10,31 @@ import android.widget.TextView;
 import com.tendcloud.tenddata.TCAgent;
 import com.tendcloud.tenddata.TDAccount;
 
-import org.apaches.commons.codec.binary.Base64;
-
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.spec.InvalidKeySpecException;
-
 import butterknife.BindView;
 import butterknife.OnClick;
 import cn.xylink.mting.MTing;
 import cn.xylink.mting.R;
 import cn.xylink.mting.base.BaseResponse;
-import cn.xylink.mting.bean.CheckInfo;
 import cn.xylink.mting.bean.CodeInfo;
 import cn.xylink.mting.bean.UserInfo;
 import cn.xylink.mting.contract.BindThirdPlatformContact;
-import cn.xylink.mting.contract.CheckPhoneContact;
 import cn.xylink.mting.contract.GetCodeContact;
-import cn.xylink.mting.contract.SmsLoginContact;
 import cn.xylink.mting.model.GetCodeRequest;
-import cn.xylink.mting.model.SmsLoginRequset;
 import cn.xylink.mting.model.ThirdPlatformRequest;
 import cn.xylink.mting.model.data.Const;
 import cn.xylink.mting.model.data.HttpConst;
-import cn.xylink.mting.presenter.CheckPhonePresenter;
 import cn.xylink.mting.presenter.GetCodePresenter;
-import cn.xylink.mting.presenter.SmsLoginPresenter;
 import cn.xylink.mting.presenter.ThirdPlatformPresenter;
 import cn.xylink.mting.utils.ContentManager;
-import cn.xylink.mting.utils.EncryptionUtil;
 import cn.xylink.mting.utils.L;
-import cn.xylink.mting.utils.MD5;
 import cn.xylink.mting.utils.SafeUtils;
 import cn.xylink.mting.utils.SharedPreHelper;
 import cn.xylink.mting.widget.PhoneCode;
 import cn.xylink.mting.widget.ZpPhoneEditText;
 
-public class BindingThirdCodeActivity extends BasePresenterActivity implements GetCodeContact.IGetCodeView, CheckPhoneContact.ICheckPhoneView, BindThirdPlatformContact.IThirdPlatformView {
+public class BindingThirdCodeActivity extends BasePresenterActivity implements GetCodeContact.IGetCodeView, BindThirdPlatformContact.IThirdPlatformView {
 
     private GetCodePresenter codePresenter;
-    private CheckPhonePresenter checkPhonePresenter;
     private ThirdPlatformPresenter thirdPlatformPresenter;
     private CodeInfo codeInfo;
     public static final String EXTRA_TICKET = "extra_ticket";
@@ -190,8 +175,6 @@ public class BindingThirdCodeActivity extends BasePresenterActivity implements G
         codePresenter = (GetCodePresenter) createPresenter(GetCodePresenter.class);
         codePresenter.attachView(this);
 
-        checkPhonePresenter = (CheckPhonePresenter) createPresenter(CheckPhonePresenter.class);
-        checkPhonePresenter.attachView(this);
 
         thirdPlatformPresenter = (ThirdPlatformPresenter) createPresenter(ThirdPlatformPresenter.class);
         thirdPlatformPresenter.attachView(this);
@@ -275,45 +258,6 @@ public class BindingThirdCodeActivity extends BasePresenterActivity implements G
                 break;
         }
     }
-
-    @Override
-    public void onCheckPhoneSuccess(BaseResponse<CheckInfo> response) {
-        L.v("code", response.code);
-        timer.onFinish();
-        if (response.data != null) {
-            ticket = response.data.getTicket();
-            SharedPreHelper.getInstance(this).put(SharedPreHelper.SharedAttribute.TICKET, ticket);
-
-            Intent mIntent = new Intent(this, SetPhonePwdActivity.class);
-            mIntent.putExtra(EXTRA_TICKET, ticket);
-            mIntent.putExtra(BindingPhoneActivity.EXTRA_PLATFORM, platform);
-            mIntent.putExtra(EXTRA_PHONE, phone.replaceAll(" ", ""));
-            if (source.equals("register")) {
-                mIntent.putExtra(SetPhonePwdActivity.EXTRA_TYPE, 1);
-            } else if (source.equals("forgot")) {
-                mIntent.putExtra(SetPhonePwdActivity.EXTRA_TYPE, 2);
-            }
-            startActivity(mIntent);
-
-        }
-    }
-
-    @Override
-    public void onCheckPhoneError(int code, String errorMsg) {
-        switch (code) {
-            case -3:
-                pCcode.clearText();
-                toastShort("验证码输入错误，请重新输入");
-                break;
-            default:
-                pCcode.clearText();
-                toastShort(errorMsg);
-                break;
-        }
-//        if (timer != null)
-//            timer.onFinish();
-    }
-
     @Override
     protected void onStop() {
         super.onStop();
@@ -347,8 +291,15 @@ public class BindingThirdCodeActivity extends BasePresenterActivity implements G
     @Override
     public void onThirdPlatformError(int code, String errorMsg) {
         L.v("code",code);
-        if(!TextUtils.isEmpty(errorMsg)) {
-            toastShort(errorMsg);
+        switch (code) {
+            case -3:
+                pCcode.clearText();
+                toastShort("验证码输入错误，请重新输入");
+                break;
+            default:
+                pCcode.clearText();
+                toastShort(errorMsg);
+                break;
         }
     }
 }

@@ -6,51 +6,35 @@ import android.os.SystemClock;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.tendcloud.tenddata.TCAgent;
 import com.tendcloud.tenddata.TDAccount;
-
-import org.apaches.commons.codec.binary.Base64;
-
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.spec.InvalidKeySpecException;
 
 import butterknife.BindView;
 import butterknife.OnClick;
 import cn.xylink.mting.MTing;
 import cn.xylink.mting.R;
 import cn.xylink.mting.base.BaseResponse;
-import cn.xylink.mting.bean.CheckInfo;
 import cn.xylink.mting.bean.CodeInfo;
 import cn.xylink.mting.bean.UserInfo;
-import cn.xylink.mting.contract.CheckPhoneContact;
 import cn.xylink.mting.contract.GetCodeContact;
 import cn.xylink.mting.contract.SmsLoginContact;
-import cn.xylink.mting.model.CheckPhoneRequest;
 import cn.xylink.mting.model.GetCodeRequest;
 import cn.xylink.mting.model.SmsLoginRequset;
 import cn.xylink.mting.model.data.Const;
 import cn.xylink.mting.model.data.HttpConst;
-import cn.xylink.mting.presenter.CheckPhonePresenter;
 import cn.xylink.mting.presenter.GetCodePresenter;
 import cn.xylink.mting.presenter.SmsLoginPresenter;
 import cn.xylink.mting.utils.ContentManager;
-import cn.xylink.mting.utils.EncryptionUtil;
 import cn.xylink.mting.utils.L;
 import cn.xylink.mting.utils.SafeUtils;
 import cn.xylink.mting.utils.SharedPreHelper;
-import cn.xylink.mting.utils.TingUtils;
 import cn.xylink.mting.widget.PhoneCode;
 import cn.xylink.mting.widget.ZpPhoneEditText;
 
-public class GetCodeActivity extends BasePresenterActivity implements GetCodeContact.IGetCodeView, CheckPhoneContact.ICheckPhoneView, SmsLoginContact.ISmsLoginView {
+public class GetCodeActivity extends BasePresenterActivity implements GetCodeContact.IGetCodeView, SmsLoginContact.ISmsLoginView {
 
     private GetCodePresenter codePresenter;
-    private CheckPhonePresenter checkPhonePresenter;
     private SmsLoginPresenter smsLoginPresenter;
     private CodeInfo codeInfo;
     public static final String EXTRA_TICKET = "extra_ticket";
@@ -136,7 +120,6 @@ public class GetCodeActivity extends BasePresenterActivity implements GetCodeCon
     protected void initView() {
 
         L.v("source", source);
-//        if ("register".equals(source))
         resetDownTimer(ONE_MINUTE);
         pCcode.setOnCompleteListener(new PhoneCode.Listener() {
             @Override
@@ -145,22 +128,7 @@ public class GetCodeActivity extends BasePresenterActivity implements GetCodeCon
                 codeLength = content.length();
                 if (TextUtils.isEmpty(phone))
                     return;
-//                CheckPhoneRequest requset = new CheckPhoneRequest();
-//                requset.source = "register";
-//                requset.codeId = codeID;
-//                requset.phone = phone.replaceAll(" ", "");
-//                requset.setDeviceId(TingUtils.getDeviceId(getApplicationContext()));
-//                try {
-//                    requset.code = SafeUtils.getRsaString(content, Const.publicKey);
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//                requset.doSign();
-//                checkPhonePresenter.onCheckPhone(requset);
-
                 smsLogin(content);
-
-
             }
         });
 
@@ -199,8 +167,6 @@ public class GetCodeActivity extends BasePresenterActivity implements GetCodeCon
         codePresenter = (GetCodePresenter) createPresenter(GetCodePresenter.class);
         codePresenter.attachView(this);
 
-        checkPhonePresenter = (CheckPhonePresenter) createPresenter(CheckPhonePresenter.class);
-        checkPhonePresenter.attachView(this);
 
         smsLoginPresenter = (SmsLoginPresenter) createPresenter(SmsLoginPresenter.class);
         smsLoginPresenter.attachView(this);
@@ -286,43 +252,7 @@ public class GetCodeActivity extends BasePresenterActivity implements GetCodeCon
         }
     }
 
-    @Override
-    public void onCheckPhoneSuccess(BaseResponse<CheckInfo> response) {
-        L.v("code", response.code);
-        timer.onFinish();
-        if (response.data != null) {
-            ticket = response.data.getTicket();
-            SharedPreHelper.getInstance(this).put(SharedPreHelper.SharedAttribute.TICKET, ticket);
 
-            Intent mIntent = new Intent(this, SetPhonePwdActivity.class);
-            mIntent.putExtra(EXTRA_TICKET, ticket);
-            mIntent.putExtra(BindingPhoneActivity.EXTRA_PLATFORM, platform);
-            mIntent.putExtra(EXTRA_PHONE, phone.replaceAll(" ", ""));
-            if (source.equals("register")) {
-                mIntent.putExtra(SetPhonePwdActivity.EXTRA_TYPE, 1);
-            } else if (source.equals("forgot")) {
-                mIntent.putExtra(SetPhonePwdActivity.EXTRA_TYPE, 2);
-            }
-            startActivity(mIntent);
-
-        }
-    }
-
-    @Override
-    public void onCheckPhoneError(int code, String errorMsg) {
-        switch (code) {
-            case -3:
-                pCcode.clearText();
-                toastShort("验证码输入错误，请重新输入");
-                break;
-            default:
-                pCcode.clearText();
-                toastShort(errorMsg);
-                break;
-        }
-//        if (timer != null)
-//            timer.onFinish();
-    }
 
     @Override
     protected void onStop() {
@@ -356,9 +286,15 @@ public class GetCodeActivity extends BasePresenterActivity implements GetCodeCon
 
     @Override
     public void onSmsLoginError(int code, String errorMsg) {
-        L.v("code",code);
-        if(!TextUtils.isEmpty(errorMsg)) {
-            toastShort(errorMsg);
+        switch (code) {
+            case -3:
+                pCcode.clearText();
+                toastShort("验证码输入错误，请重新输入");
+                break;
+            default:
+                pCcode.clearText();
+                toastShort(errorMsg);
+                break;
         }
     }
 }

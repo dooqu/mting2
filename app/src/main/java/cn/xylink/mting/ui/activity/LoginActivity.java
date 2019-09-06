@@ -22,13 +22,12 @@ import cn.xylink.mting.base.BaseResponse;
 import cn.xylink.mting.bean.UserInfo;
 import cn.xylink.mting.common.Const;
 import cn.xylink.mting.contract.ThirdLoginContact;
-import cn.xylink.mting.model.ThirdLoginRequset;
 import cn.xylink.mting.event.WXQQDataBean;
+import cn.xylink.mting.model.ThirdLoginRequset;
 import cn.xylink.mting.model.data.HttpConst;
 import cn.xylink.mting.openapi.QQApi;
 import cn.xylink.mting.openapi.WXapi;
 import cn.xylink.mting.presenter.ThirdLoginPresenter;
-import cn.xylink.mting.ui.dialog.AgreementDialog;
 import cn.xylink.mting.utils.ContentManager;
 import cn.xylink.mting.utils.L;
 import cn.xylink.mting.utils.NetworkUtil;
@@ -107,7 +106,10 @@ public class LoginActivity extends BasePresenterActivity implements ThirdLoginCo
                     toastShort(HttpConst.NO_NETWORK);
                     return;
                 }
-                startActivity(new Intent(this, UserProtocolActivity.class));
+                Intent mIntent = new Intent(this, PlayerlActivity.class);
+                mIntent.putExtra(PlayerlActivity.EXTRA_HTML, Const.USERPROTOCOL_URL);
+                mIntent.putExtra(PlayerlActivity.EXTRA_TITLE,"用户使用协议");
+                startActivity(mIntent);
                 break;
             }
             case R.id.btn_left:

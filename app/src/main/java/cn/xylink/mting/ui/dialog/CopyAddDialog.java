@@ -11,6 +11,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +35,7 @@ import cn.xylink.mting.model.LinkCreateRequest;
 import cn.xylink.mting.presenter.ArticleDetailPresenter;
 import cn.xylink.mting.presenter.CheckLinkPresenter;
 import cn.xylink.mting.presenter.LinkCreatePresenter;
+import cn.xylink.mting.service.AddUnreadService;
 import cn.xylink.mting.speech.data.SpeechList;
 import cn.xylink.mting.ui.activity.PlayerlActivity;
 import cn.xylink.mting.utils.L;
@@ -76,6 +79,7 @@ public class CopyAddDialog extends BaseDimDialog implements
         mArticleDetailPresenter.attachView(this);
         mUrl = url;
         mContactView.setText(url);
+        EventBus.getDefault().register(this);
     }
 
     @Override
@@ -114,11 +118,16 @@ public class CopyAddDialog extends BaseDimDialog implements
     private void addUnread() {
         mContentLayout.setVisibility(View.INVISIBLE);
         mLoadingLayout.setVisibility(View.VISIBLE);
-        LinkCreateRequest request = new LinkCreateRequest();
-        request.setUrl(mUrl);
-        request.setInType(1);
-        request.doSign();
-        mLinkCreatePresenter.onPush(request);
+        Intent intent = new Intent(mContext, AddUnreadService.class);
+        intent.putExtra(AddUnreadService.EXTRA_URL, mUrl);
+        intent.putExtra(AddUnreadService.EXTRA_ISPLAY, isPlay);
+        mContext.startService(intent);
+
+//        LinkCreateRequest request = new LinkCreateRequest();
+//        request.setUrl(mUrl);
+//        request.setInType(1);
+//        request.doSign();
+//        mLinkCreatePresenter.onPush(request);
     }
 
     private LinkArticle mLinkArticle;
@@ -137,7 +146,13 @@ public class CopyAddDialog extends BaseDimDialog implements
     public void dismiss() {
         mLinkCreatePresenter.deatchView();
         mArticleDetailPresenter.deatchView();
+        EventBus.getDefault().unregister(this);
         super.dismiss();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onSpeechResume(AddUnreadEvent event) {
+        this.dismiss();
     }
 
     @Override
@@ -184,8 +199,8 @@ public class CopyAddDialog extends BaseDimDialog implements
     public void onPushError(int code, String errorMsg) {
         mLoadingLayout.setVisibility(View.GONE);
         Toast.makeText(mContext, "文章加载失败，请稍后再试", Toast.LENGTH_SHORT).show();
-        if (!TextUtils.isEmpty(errorMsg))
-            mTitleView.setText(errorMsg);
+//        if (!TextUtils.isEmpty(errorMsg))
+//            mTitleView.setText(errorMsg);
         mPlayView.setEnabled(true);
         mAddUnreadView.setEnabled(true);
         this.dismiss();
