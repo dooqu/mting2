@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <dimen name="mis_image_size">96dp</dimen>
     <dimen name="mis_space_size">10dp</dimen>
     <dimen name="mis_folder_cover_size">72dp</dimen>
+    <dimen name="login_top_view" tools:ignore="MissingDefaultResource,ResourceName">10dp</dimen>
 </resources>
