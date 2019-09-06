@@ -140,46 +140,46 @@ public class CopyCheckService extends Service {
     private RemoteViews headsUpView;
 
     public void sendCustomHeadsUpViewNotification(Context context, String str) {
-            //创建点击通知时发送的广播
-            Intent intent = new Intent(context, MainActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            PendingIntent pi = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-            Intent answerIntent = new Intent(context, CopyCheckService.class);
-            answerIntent.putExtra("copy_str", str);
-            answerIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            PendingIntent answerPendingIntent = PendingIntent.getService(context, 0, answerIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-            headsUpView = new RemoteViews(context.getPackageName(), R.layout.copy_tip_notif);
-            headsUpView.setOnClickPendingIntent(R.id.tv_copy_tip_notif_add, answerPendingIntent);
+        //创建点击通知时发送的广播
+        Intent intent = new Intent(context, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent pi = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        Intent answerIntent = new Intent(context, CopyCheckService.class);
+        answerIntent.putExtra("copy_str", str);
+        answerIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent answerPendingIntent = PendingIntent.getService(context, 0, answerIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        headsUpView = new RemoteViews(context.getPackageName(), R.layout.copy_tip_notif);
+        headsUpView.setOnClickPendingIntent(R.id.tv_copy_tip_notif_add, answerPendingIntent);
 //            headsUpView.setCharSequence(R.id.tv_copy_tip_notif_link, "setText", str);
 
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-                String channelId = "cn.xylink.mting.copy.tip";
-                String channelName = "COPY_CHECK_TIP";
-                NotificationChannel notificationChannel = new NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_HIGH);
-                notificationChannel.enableLights(false);
-                notificationChannel.setShowBadge(false);
-                notificationChannel.setBypassDnd(true);
-                notificationChannel.setSound(null, null);
-                notificationChannel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
-                mNotifManager.createNotificationChannel(notificationChannel);
-            }
-            //创建通知
-            nb = new NotificationCompat.Builder(this, "cn.xylink.mting.copy.tip")
-                    .setSmallIcon(R.mipmap.icon_notif)
-                    .setContentTitle("添加到轩辕听")
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            String channelId = "cn.xylink.mting.copy.tip";
+            String channelName = "COPY_CHECK_TIP";
+            NotificationChannel notificationChannel = new NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_HIGH);
+            notificationChannel.enableLights(false);
+            notificationChannel.setShowBadge(false);
+            notificationChannel.setBypassDnd(true);
+            notificationChannel.setSound(null, null);
+            notificationChannel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
+            mNotifManager.createNotificationChannel(notificationChannel);
+        }
+        //创建通知
+        nb = new NotificationCompat.Builder(this, "cn.xylink.mting.copy.tip")
+                .setSmallIcon(R.mipmap.icon_notif)
+                .setContentTitle("添加到轩辕听")
 //                    .setContentText(str)
-                    .setAutoCancel(true)
-                    .setShowWhen(true)
-                    .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                    .setContentIntent(pi)
-                    .setTimeoutAfter(4000)
-                    .setDefaults(NotificationCompat.DEFAULT_ALL)
-                    .setCategory(NotificationCompat.CATEGORY_SYSTEM)
-                    .setPriority(Notification.PRIORITY_MAX)
-                    .setTicker("轩辕听")
-                    .setOnlyAlertOnce(false)
+                .setAutoCancel(true)
+                .setShowWhen(true)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .setContentIntent(pi)
+                .setTimeoutAfter(4000)
+                .setDefaults(NotificationCompat.DEFAULT_ALL)
+                .setCategory(NotificationCompat.CATEGORY_SYSTEM)
+                .setPriority(Notification.PRIORITY_MAX)
+                .setTicker("轩辕听")
+                .setOnlyAlertOnce(false)
 //                    .setFullScreenIntent(pi, true)
-                    .setCustomHeadsUpContentView(headsUpView);
+                .setCustomHeadsUpContentView(headsUpView);
         nb.setContentText(str);
         headsUpView.setCharSequence(R.id.tv_copy_tip_notif_link, "setText", str);
         mNotifManager.notify(212312313, nb.build());
