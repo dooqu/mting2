@@ -23,6 +23,16 @@
             android:text="真棒！文章都读完了！快去添加新内容吧"
             android:textColor="@color/cbbbbbb"
             android:textSize="16sp" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:drawableRight="@mipmap/right"
+            android:drawablePadding="10dp"
+            android:gravity="center_vertical"
+            android:text="如何添加内容？"
+            android:textColor="@color/c4285f4"
+            android:textSize="16sp" />
     </LinearLayout>
 
     <LinearLayout

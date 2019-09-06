@@ -34,7 +34,7 @@ public class ShareAppDialog extends BaseDimDialog {
     TextView mDelTextView;
     private String url = RemoteUrl.getShareUrl();
     private String title = "轩辕听";
-    private String content = "随时随地，听你想听";
+    private String content = "帮你读文章的软件，读朋友圈、读新闻的APP";
 
     public ShareAppDialog(Context context) {
         super(context);

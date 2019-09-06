@@ -438,7 +438,6 @@ public class ArticleDataProvider {
 
                     @Override
                     public void onFailure(int code, String errorMsg) {
-                        Log.d("xy", errorMsg);
                     }
 
                     @Override

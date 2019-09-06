@@ -397,25 +397,31 @@ public class SpeechService extends Service {
         if (speechList.getCurrent() == null) {
             return -SpeechError.NOTHING_TO_PLAY;
         }
-
         SpeechServiceState preState = serviceState;
-        //当前状态必须是在播放，或者是暂停，否则不支持
-        if (serviceState != SpeechServiceState.Ready && getSelected() != null && getSelected().getTextBody() != null) {
-            int index;
-            if ((index = helper.seekFragmentIndex(percentage, speechor.getTextFragments())) >= 0) {
-                int result = speechor.seek(index);
-                if (result >= 0) {
-                    this.serviceState = SpeechServiceState.Playing;
-                    //如果seek之前是暂停状态，那么发出一个resume事件
-                    //if (preState == SpeechServiceState.Paused) {
-                        onSpeechResume(getSelected());
-                    //}
-                }
-                return result;
-            }
-            return index;
+        //ready和loadding的时候，正文还未加载完毕，也就无从进行seek操作
+        //error情况，可能有两种，一种是分片列表已经初始化，还有一种可能就是分片加载中出现错误，也不能seek
+        if(serviceState == SpeechServiceState.Ready && serviceState == SpeechServiceState.Loadding) {
+            return -SpeechError.SEEK_NOT_ALLOW;
         }
-        return -SpeechError.SEEK_NOT_ALLOW;
+        if(getSelected() == null || getSelected().getTextBody() == null) {
+            return -SpeechError.SEEK_NOT_ALLOW;
+        }
+        int index;
+        if ((index = helper.seekFragmentIndex(percentage, speechor.getTextFragments())) >= 0) {
+            int result = speechor.seek(index);
+            //确保当前的线程中seek的操作是无错误的，否则会出现在seek中抛出error event,后面又有resume event的状况
+            //seek后，其他线程的异步错误不用理会，因为那也是在resume之后的error，顺序是ok的。
+            if (result >= 0) {
+                this.serviceState = SpeechServiceState.Playing;
+                //如果seek之前是暂停状态，那么发出一个resume事件
+                //如果seek之前是error状态，那么也发出一个resume事件
+                if (preState == SpeechServiceState.Paused || preState == SpeechServiceState.Error) {
+                    onSpeechResume(getSelected());
+                }
+            }
+            return result;
+        }
+        return index;
     }
 
 
@@ -470,7 +476,7 @@ public class SpeechService extends Service {
                 else {
                     result = seek(getProgress()) > 0;
                     initNotification();
-                    onSpeechResume(speechList.getCurrent());
+                    //onSpeechResume(speechList.getCurrent());
                 }
                 return result;
             }

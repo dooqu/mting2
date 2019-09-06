@@ -108,7 +108,6 @@ public class CopyAddDialog extends BaseDimDialog implements
                 intent.putExtra(PlayerlActivity.EXTRA_HTML, PlayerlActivity.PROTOCOL_URL);
                 intent.putExtra(PlayerlActivity.EXTRA_TITLE, mContext.getResources().getString(R.string.player_mting));
                 mContext.startActivity(intent);
-                this.dismiss();
                 break;
         }
     }
