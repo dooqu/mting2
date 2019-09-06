@@ -367,6 +367,44 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
     void onTvfkClick(View v) {
         Bundle bundle = new Bundle();
         bundle.putString("type", "detail");
+        bundle.putString("aid", aid);
+        if (mCurrentArticle != null) {
+            bundle.putString("url", mCurrentArticle.getUrl());
+        }
+        Speechor.SpeechorRole role = service.getRole();
+        int sound = 0;
+        switch (role) {
+            case XiaoIce:
+                sound = 1;
+                break;
+            case XiaoMei:
+                sound = 2;
+                break;
+            case XiaoYao:
+                sound = 3;
+                break;
+            case XiaoYu:
+                sound = 4;
+                break;
+        }
+        bundle.putInt("sound", sound);
+        Speechor.SpeechorSpeed speed = service.getSpeed();
+        float sp = 0;
+        switch (speed) {
+            case SPEECH_SPEED_HALF:
+                sp = 0.5f;
+                break;
+            case SPEECH_SPEED_NORMAL:
+                sp = 1f;
+                break;
+            case SPEECH_SPEED_MULTIPLE_1_POINT_5:
+                sp = 1.5f;
+                break;
+            case SPEECH_SPEED_MULTIPLE_2:
+                sp = 2f;
+                break;
+        }
+        bundle.putFloat("speed", sp);
         jumpActivity(FeedBackActivity.class, bundle);
         TCAgent.onEvent(this, "articleDetails_feedback");
     }

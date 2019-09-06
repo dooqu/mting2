@@ -52,6 +52,8 @@ public class FeedBackActivity extends BasePresenterActivity implements AddFeedba
 
     private AddFeedbackPresenter addFeedbackPresenter;
     private QuickAdapter<String> mAdapter;
+    private Integer sound = null;
+    private Float speed = null;
 
     @Override
     protected void preView() {
@@ -80,6 +82,9 @@ public class FeedBackActivity extends BasePresenterActivity implements AddFeedba
                     @Override
                     public void onClick(View v) {
                         mAdapter.remove(helper.getPosition());
+                        if (mAdapter.getCount() == 5 && !"add".equals(mAdapter.getItem(4))) {
+                            mAdapter.add("add");
+                        }
                     }
                 });
             }
@@ -96,6 +101,8 @@ public class FeedBackActivity extends BasePresenterActivity implements AddFeedba
             String type = intent.getExtras().getString("type");
             aid = intent.getExtras().getString("aid");
             url = intent.getExtras().getString("url");
+            sound = intent.getExtras().getInt("sound");
+            speed = intent.getExtras().getFloat("speed");
             if ("detail".equals(type)) {
                 String[] fadeType2 = getResources().getStringArray(R.array.fade_type2);
                 ArrayAdapter arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, fadeType2);
@@ -140,10 +147,12 @@ public class FeedBackActivity extends BasePresenterActivity implements AddFeedba
                 e.printStackTrace();
             }
         }
-        param.put("type", (String) snType.getSelectedItem());
-        param.put("content", etContent.getText().toString());
         param.put("articleId", aid);
         param.put("url", url);
+        param.put("content", etContent.getText().toString());
+        param.put("type", (String) snType.getSelectedItem());
+        param.put("sound", sound);
+        param.put("speed", speed);
         addFeedbackPresenter.onFeedBackForm(files, param);
     }
 
