@@ -32,7 +32,7 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@mipmap/ico_wx" />
+                android:src="@mipmap/share_wechat" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -54,7 +54,7 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@mipmap/ico_wx_quan" />
+                android:src="@mipmap/share_wechat_zone" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -76,7 +76,7 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@mipmap/ico_qq" />
+                android:src="@mipmap/share_qq" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -98,7 +98,7 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@mipmap/ico_qq_space" />
+                android:src="@mipmap/share_qzone" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -133,7 +133,7 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@mipmap/ico_link" />
+                android:src="@mipmap/share_url" />
 
             <TextView
                 android:layout_width="wrap_content"

@@ -14,6 +14,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import cn.xylink.mting.BuildConfig;
+
 import static cn.xylink.mting.speech.SpeechError.FRAGMENT_LOAD_INNTERNAL_ERROR;
 
 public abstract class BaiduSpeechor implements Speechor {
@@ -124,7 +126,7 @@ public abstract class BaiduSpeechor implements Speechor {
                             seekAndPlay(self.fragmentIndexNext);
                         }
                         else {
-                            self.onError(cn.xylink.mting.speech.SpeechError.FRAGMENT_LOAD_INNTERNAL_ERROR, "语音分片加载错误:" + cn.xylink.mting.speech.SpeechError.FRAGMENT_LOAD_INNTERNAL_ERROR);
+                            self.onError(cn.xylink.mting.speech.SpeechError.FRAGMENT_LOAD_INNTERNAL_ERROR, BuildConfig.DEBUG? "语音分片加载错误:" + cn.xylink.mting.speech.SpeechError.FRAGMENT_LOAD_INNTERNAL_ERROR  : "语音缓冲错误");
                         }
                     }
                 }
@@ -147,7 +149,7 @@ public abstract class BaiduSpeechor implements Speechor {
                             seekAndPlay(errorFrameIndex);
                         }
                         else {
-                            self.onError(cn.xylink.mting.speech.SpeechError.FRAGMENT_LOAD_INNTERNAL_ERROR, "语音分片内部加载错误:" + speechError.description);
+                            self.onError(cn.xylink.mting.speech.SpeechError.FRAGMENT_LOAD_INNTERNAL_ERROR, BuildConfig.DEBUG? "语音分片内部加载错误:" + speechError.description : "音频缓冲错误");
                         }
                     }
                     else {

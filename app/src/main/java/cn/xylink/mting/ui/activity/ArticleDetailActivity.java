@@ -744,7 +744,8 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
             return;
         } else if (event instanceof SpeechErrorEvent) {
             showLoaddingBar(false);
-            Toast.makeText(this, ((SpeechErrorEvent) event).getMessage(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, ((SpeechErrorEvent) event).getMessage() + ",错误码:" + ((SpeechErrorEvent) event).getErrorCode(), Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, ((SpeechErrorEvent) event).getMessage(), Toast.LENGTH_SHORT).show();
         }
         setPlayerState(service.getState());
     }
