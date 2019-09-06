@@ -86,8 +86,8 @@
             android:layout_height="wrap_content"
             android:text="保存二维码到本地"
             android:padding="10dp"
-            android:background="#cecfff"
-            android:textColor="#9c9ace"
+            android:background="#e6edf7"
+            android:textColor="#4886ef"
             android:id="@+id/joinUsSaveImgButton"/>
     </LinearLayout>
 
