@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="50dp"
-    android:background="@color/white"
+    android:background="@color/c333333"
     android:gravity="center_vertical"
     android:orientation="horizontal">
 
@@ -18,36 +18,37 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="12dp"
-        android:layout_weight="1"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
+        android:layout_weight="1"
         android:orientation="vertical">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/c333333"
-            android:textSize="14sp"
-            android:text="添加到轩辕听" />
+            android:text="添加到轩辕听"
+            android:textColor="@color/white"
+            android:textSize="11sp" />
 
         <TextView
             android:id="@+id/tv_copy_tip_notif_link"
             android:layout_width="wrap_content"
-            android:singleLine="true"
-            android:textColor="@color/cbbbbbb"
+            android:layout_height="wrap_content"
             android:ellipsize="end"
-            android:textSize="12sp"
-            android:layout_height="wrap_content" />
+            android:singleLine="true"
+            android:textColor="@color/white"
+            android:textSize="11sp" />
     </LinearLayout>
 
     <TextView
         android:id="@+id/tv_copy_tip_notif_add"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:paddingRight="28dp"
+        android:layout_width="64dp"
+        android:layout_height="24dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
         android:gravity="center"
-        android:textColor="@color/c488def"
-        android:paddingLeft="28dp"
-        android:textSize="16sp"
-        android:text="添加" />
+        android:background="@drawable/bg_notif_add"
+        android:text="添加"
+        android:textColor="@color/white"
+        android:textSize="12sp" />
 </LinearLayout>
