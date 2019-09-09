@@ -588,9 +588,10 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
                             break;
                         case 4:
                             if (mCurrentArticle != null) {
+                                String cs = "我正在使用【轩辕听】收听："+mCurrentArticle.getTitle()+mCurrentArticle.getShareUrl();
                                 ClipboardManager cm =
                                         (ClipboardManager) ArticleDetailActivity.this.getSystemService(ArticleDetailActivity.this.CLIPBOARD_SERVICE);
-                                ClipData mClipData = ClipData.newPlainText("Label", mCurrentArticle.getShareUrl());
+                                ClipData mClipData = ClipData.newPlainText("Label", cs);
                                 cm.setPrimaryClip(mClipData);
                                 ContentManager.getInstance().addCopyItem(mCurrentArticle.getShareUrl());
                                 toastShort("分享链接复制成功");
