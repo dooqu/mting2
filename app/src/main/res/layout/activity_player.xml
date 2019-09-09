@@ -2,6 +2,7 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/transparent"
     android:orientation="vertical">
     <RelativeLayout
         android:id="@+id/rl_top"
@@ -41,9 +42,9 @@
         android:id="@+id/fl_web"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-    <WebView
+ <!--   <WebView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/wv_html"></WebView>
+        android:id="@+id/wv_html"></WebView>-->
     </FrameLayout>
 </LinearLayout>

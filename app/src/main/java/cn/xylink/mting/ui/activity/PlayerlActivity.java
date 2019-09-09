@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.view.WindowManager;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
@@ -25,12 +26,12 @@ import cn.xylink.mting.utils.L;
 
 public class PlayerlActivity extends BaseActivity {
 
-//    public static final String EXTRA_HTML = "html_url";
+    //    public static final String EXTRA_HTML = "html_url";
     public static final String PROTOCOL_URL = "http://test.xylink.cn/article/html/tutorial.html";
     public static final String EXTRA_HTML = "html_url";
     public static final String EXTRA_TITLE = "title";
 
-    @BindView(R.id.wv_html)
+    //    @BindView(R.id.wv_html)
     WebView wvHtml;
     @BindView(R.id.pb_speech_bar)
     ProgressBar progressBar;
@@ -41,15 +42,15 @@ public class PlayerlActivity extends BaseActivity {
     @BindView(R.id.tv_title)
     TextView tvTitle;
 
+    String url;
 
-
-    /** 视频全屏参数 */
-    protected  FrameLayout.LayoutParams COVER_SCREEN_PARAMS ;
+    /**
+     * 视频全屏参数
+     */
+    protected FrameLayout.LayoutParams COVER_SCREEN_PARAMS;
     private View customView;
     private FrameLayout fullscreenContainer;
     private WebChromeClient.CustomViewCallback customViewCallback;
-
-
 
 
     @Override
@@ -58,7 +59,15 @@ public class PlayerlActivity extends BaseActivity {
     }
 
     @Override
-    protected void initView() {
+    protected void onPostResume() {
+        super.onPostResume();
+        initWebView();
+    }
+
+    public void initWebView() {
+        wvHtml = new WebView(this);
+        wvHtml.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
+        flWeb.addView(wvHtml);
         int height = getResources().getDisplayMetrics().heightPixels;
         COVER_SCREEN_PARAMS = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height);
 //        COVER_SCREEN_PARAMS = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 800);
@@ -87,7 +96,7 @@ public class PlayerlActivity extends BaseActivity {
                 L.v("newProgress", newProgress);
                 progressBar.setVisibility(View.VISIBLE);
                 progressBar.setProgress(newProgress);
-                if(newProgress == 100)
+                if (newProgress == 100)
                     progressBar.setVisibility(View.GONE);
             }
 
@@ -111,7 +120,7 @@ public class PlayerlActivity extends BaseActivity {
             }
 
         });
-        wvHtml.setWebViewClient(new WebViewClient(){
+        wvHtml.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 view.loadUrl(url);
@@ -119,11 +128,19 @@ public class PlayerlActivity extends BaseActivity {
             }
         });
 
+        wvHtml.loadUrl(url);
+
+    }
+
+    @Override
+    protected void initView() {
 
 
     }
 
-    /** 视频播放全屏 **/
+    /**
+     * 视频播放全屏
+     **/
     private void showCustomView(View view, WebChromeClient.CustomViewCallback callback) {
         // if a view already exists then immediately terminate the new one
         if (customView != null) {
@@ -146,7 +163,9 @@ public class PlayerlActivity extends BaseActivity {
     }
 
 
-    /** 隐藏视频全屏 */
+    /**
+     * 隐藏视频全屏
+     */
     private void hideCustomView() {
         if (customView == null) {
             return;
@@ -161,7 +180,9 @@ public class PlayerlActivity extends BaseActivity {
         wvHtml.setVisibility(View.VISIBLE);
     }
 
-    /** 全屏容器界面 */
+    /**
+     * 全屏容器界面
+     */
     static class FullscreenHolder extends FrameLayout {
 
         public FullscreenHolder(Context ctx) {
@@ -181,16 +202,14 @@ public class PlayerlActivity extends BaseActivity {
     }
 
 
-
-
     @Override
     protected void initData() {
-        String url = getIntent().getStringExtra(EXTRA_HTML);
+        url = getIntent().getStringExtra(EXTRA_HTML);
 //        L.v(url);
-        wvHtml.loadUrl(url);
+
 
         String title = getIntent().getStringExtra(EXTRA_TITLE);
-        if(!TextUtils.isEmpty(title))
+        if (!TextUtils.isEmpty(title))
             tvTitle.setText(title);
     }
 
@@ -201,28 +220,58 @@ public class PlayerlActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        L.v("canGoBack",wvHtml.canGoBack());
-        if(wvHtml.canGoBack())
-        {
+        L.v("canGoBack", wvHtml.canGoBack());
+        if (wvHtml.canGoBack()) {
             wvHtml.goBack();
-        }else{
+        } else {
+            finish();
             super.onBackPressed();
-            android.os.Process.killProcess(android.os.Process.myPid());
+//            android.os.Process.killProcess(android.os.Process.myPid());
         }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        L.v("");
+        destroyWebView();
+    }
+
+    @Override
+    public void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        L.v("");
+        destroyWebView();
+    }
+
+    private void destroyWebView() {
+        L.v(wvHtml);
+        if (wvHtml != null) {
+
+            // 如果先调用destroy()方法，则会命中if (isDestroyed()) return;这一行代码，需要先onDetachedFromWindow()，再
+            // destory()
+            ViewParent parent = wvHtml.getParent();
+            if (parent != null) {
+                ((ViewGroup) parent).removeView(wvHtml);
+            }
+
+            wvHtml.stopLoading();
+            // 退出时调用此方法，移除绑定的服务，否则某些特定系统会报错
+            wvHtml.getSettings().setJavaScriptEnabled(false);
+            wvHtml.clearHistory();
+            wvHtml.clearView();
+            wvHtml.removeAllViews();
+            wvHtml.destroy();
+
+        }
     }
 
     @OnClick(R.id.iv_close)
-    public void onClick(View v)
-    {
-        switch (v.getId())
-        {
+    public void onClick(View v) {
+        switch (v.getId()) {
             case R.id.iv_close:
-                android.os.Process.killProcess(android.os.Process.myPid());
+                finish();
+//                android.os.Process.killProcess(android.os.Process.myPid());
                 break;
         }
     }
