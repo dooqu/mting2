@@ -19,8 +19,6 @@ import android.graphics.Color;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
-import android.widget.Toast;
-
 import org.greenrobot.eventbus.EventBus;
 
 import cn.xylink.mting.R;
@@ -860,7 +858,8 @@ public class SpeechService extends Service {
 
                     case "exit":
                         pause();
-                        stopForeground(true);
+                        stopForeground(false);
+                        ((NotificationManager) SpeechService.this.getSystemService(Context.NOTIFICATION_SERVICE)).cancelAll();
                         break;
                 } // end switch
             } // end sychornized

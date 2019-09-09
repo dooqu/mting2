@@ -26,7 +26,6 @@ public abstract class XiaoIceSpeechor implements Speechor {
         Error
     }
 
-
     public class SpeechTextFragment {
         String fragmentText;
         String audioUrl;
@@ -102,7 +101,6 @@ public abstract class XiaoIceSpeechor implements Speechor {
 
     public abstract class IceLoadResult implements TTSAudioLoader.LoadResult {
         SpeechTextFragment fragment;
-
         public IceLoadResult(SpeechTextFragment fragment) {
             this.fragment = fragment;
         }
@@ -169,17 +167,16 @@ public abstract class XiaoIceSpeechor implements Speechor {
     @Override
     public synchronized int seek(int index) {
         synchronized (this) {
-            if (isReleased)
+            if (isReleased) {
                 return -SpeechError.TARGET_IS_RELEASED;
-
+            }
             if (fragmentIndex < 0
-                    || fragmentIndex >= this.textFragments.size())
+                    || fragmentIndex >= this.textFragments.size()) {
                 return -SpeechError.INDEX_OUT_OF_RANGE;
-
+            }
             if (textFragments.size() == 0) {
                 return -SpeechError.HAS_NO_FRAGMENTS;
             }
-
             if(this.state == SpeechorState.SpeechorStatePlaying) {
                 mediaPlayer.stop();
             }
@@ -197,7 +194,6 @@ public abstract class XiaoIceSpeechor implements Speechor {
                 }).start();
                 return index;
             }
-
             return -SpeechError.FRAGMENT_TTS_ERROR;
         }
     }
@@ -225,7 +221,6 @@ public abstract class XiaoIceSpeechor implements Speechor {
                     }
                     break;
                 //如果当前的这片段正在loading，跳过它；
-
                 case Error:
                     if (isSegumentCurrentToPlay == true) {
                         this.state = SpeechorState.SpeechorStateReady;
