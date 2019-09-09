@@ -37,7 +37,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dialog_ico_tv_space"
+                android:layout_marginTop="10dp"
                 android:text="微信好友"
                 android:textColor="#666666"
                 android:textSize="16sp" />
@@ -59,7 +59,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dialog_ico_tv_space"
+                android:layout_marginTop="10dp"
                 android:text="朋友圈"
                 android:textColor="#666666"
                 android:textSize="16sp" />
@@ -81,7 +81,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dialog_ico_tv_space"
+                android:layout_marginTop="10dp"
                 android:text="QQ好友"
                 android:textColor="#666666"
                 android:textSize="16sp" />
@@ -103,7 +103,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dialog_ico_tv_space"
+                android:layout_marginTop="10dp"
                 android:text="QQ空间"
                 android:textColor="#666666"
                 android:textSize="16sp" />
@@ -138,7 +138,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dialog_ico_tv_space"
+                android:layout_marginTop="10dp"
                 android:text="复制链接"
                 android:textColor="#666666"
                 android:textSize="16sp" />
