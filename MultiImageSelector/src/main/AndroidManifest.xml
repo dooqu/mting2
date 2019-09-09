@@ -15,9 +15,6 @@
         <activity android:name="cn.xylink.multi_image_selector.ViewPagerActivity"
             android:launchMode="singleTask"
             />
-        <activity android:name="cn.xylink.multi_image_selector.PictureVideoPlayActivity"
-            android:launchMode="singleTask"
-            />
 
     </application>
 
