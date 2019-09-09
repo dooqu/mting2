@@ -19,6 +19,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.Date;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -38,8 +39,10 @@ import cn.xylink.mting.presenter.CheckLinkPresenter;
 import cn.xylink.mting.presenter.LinkCreatePresenter;
 import cn.xylink.mting.ui.activity.PlayerlActivity;
 import cn.xylink.mting.ui.dialog.CheckArticleDialog;
+import cn.xylink.mting.utils.ContentManager;
 import cn.xylink.mting.utils.DateUtils;
 import cn.xylink.mting.utils.L;
+import cn.xylink.mting.utils.StringUtil;
 
 public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCreateContact.IPushView, CheckLinkContact.ICheckLinkView, AddFeedbackContact.IAddFeedBackView {
 
@@ -231,12 +234,15 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
         ClipboardManager cmb = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
         if (cmb.getPrimaryClip() != null && cmb.getPrimaryClip().getItemCount() > 0) {
             String fristText = cmb.getPrimaryClip().getItemAt(0).getText().toString();
-            L.v("fristText",fristText);
-            if (fristText.startsWith("http://") || fristText.startsWith("https://")) {
+            L.v("fristText", fristText);
+            if (!TextUtils.isEmpty(fristText) && !TextUtils.isEmpty(StringUtil.matcherUrl(fristText.toString()))
+                    && !StringUtil.isShieldUrl(this.getActivity(), fristText)) {
+                fristText = StringUtil.matcherUrl(fristText);
+                L.v(fristText);
                 etLink.setText(fristText);
                 tvPreview.setTextColor(getResources().getColorStateList(R.color.color_blue));
-                ivDelEt.setVisibility(View.VISIBLE);
             }
+
         }
     }
 
@@ -325,7 +331,7 @@ public class AddTwoNoteFragment extends BasePresenterFragment implements LinkCre
         L.v("title", title);
         L.v("describle", describe);
         String sourcename = linkArticle.getSourceName();
-        describe = describe.replaceAll("\n","\n\n");
+        describe = describe.replaceAll("\n", "\n\n");
         if (sourcename == null || sourcename.equals("null")) {
             sourcename = "";
             tv_content.setText(title + "\n" + describe);

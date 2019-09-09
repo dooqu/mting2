@@ -56,6 +56,7 @@ public class MTing extends Application {
     public void onCreate() {
         super.onCreate();
         instance = this;
+
         int pid = android.os.Process.myPid();
         String processAppName = getAppName(pid);
         // 如果APP启用了远程的service，此application:onCreate会被调用2次
