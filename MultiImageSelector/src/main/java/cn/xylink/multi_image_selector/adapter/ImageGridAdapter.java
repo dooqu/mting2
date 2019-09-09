@@ -233,9 +233,8 @@ public class ImageGridAdapter extends BaseAdapter {
             @Override
             public void onClick(View v) {
                 if (mSelectedImages.size() != mDefalutCount || mSelectedImages.contains(data)) {
-                    Intent mIntent = new Intent();
+                    final Intent mIntent = new Intent();
                     mIntent.setClass(mContext, ViewPagerActivity.class);
-                    mIntent.putExtra(ViewPagerActivity.IMAGES_DATA, (Serializable) mImages);
                     mIntent.putExtra(ViewPagerActivity.SELECTED_IMAGES, (Serializable) mSelectedImages);
                     mIntent.putExtra(ViewPagerActivity.SELECT_INDEX, data);
                     mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -244,6 +243,7 @@ public class ImageGridAdapter extends BaseAdapter {
 
                     mContext.startActivity(mIntent,
                             compat.toBundle());
+
                 }
 //                callBack.imageseleected(data, i);
 //                if (mSelectedImages.size() != mDefalutCount) {
