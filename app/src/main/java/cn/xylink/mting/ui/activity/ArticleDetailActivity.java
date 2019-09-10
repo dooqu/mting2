@@ -153,7 +153,7 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
 
         synchronized (service) {
             //如果当前播放的不是选中的，或者当前没有选中的，那么开始播放选中的
-            if (prevArt != null && prevArt.getArticleId().equals(aid) == false || prevArt == null) {
+            if (prevArt != null && prevArt.getArticleId().equals(aid) == false || prevArt == null || prevArt.getTextBody() == null) {
                 service.play(aid);
             }
             //获取当前正在播放的ArticleInfo
