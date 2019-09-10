@@ -130,6 +130,18 @@ public class CopyCheckService extends Service {
                 builder.setChannelId(channelId);
             }
 
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                String channelId = "cn.xylink.mting.copy.tip";
+                String channelName = "COPY_CHECK_TIP";
+                NotificationChannel notificationChannel = new NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_HIGH);
+                notificationChannel.enableLights(false);
+                notificationChannel.setShowBadge(false);
+                notificationChannel.setBypassDnd(true);
+                notificationChannel.setSound(null, null);
+                notificationChannel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
+                mNotifManager.createNotificationChannel(notificationChannel);
+            }
+
             Notification notification = builder.build();
             this.startForeground(android.os.Process.myPid(), notification);
         }
@@ -152,17 +164,17 @@ public class CopyCheckService extends Service {
         headsUpView.setOnClickPendingIntent(R.id.tv_copy_tip_notif_add, answerPendingIntent);
 //            headsUpView.setCharSequence(R.id.tv_copy_tip_notif_link, "setText", str);
 
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            String channelId = "cn.xylink.mting.copy.tip";
-            String channelName = "COPY_CHECK_TIP";
-            NotificationChannel notificationChannel = new NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_HIGH);
-            notificationChannel.enableLights(false);
-            notificationChannel.setShowBadge(false);
-            notificationChannel.setBypassDnd(true);
-            notificationChannel.setSound(null, null);
-            notificationChannel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
-            mNotifManager.createNotificationChannel(notificationChannel);
-        }
+//        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+//            String channelId = "cn.xylink.mting.copy.tip";
+//            String channelName = "COPY_CHECK_TIP";
+//            NotificationChannel notificationChannel = new NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_HIGH);
+//            notificationChannel.enableLights(false);
+//            notificationChannel.setShowBadge(false);
+//            notificationChannel.setBypassDnd(true);
+//            notificationChannel.setSound(null, null);
+//            notificationChannel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
+//            mNotifManager.createNotificationChannel(notificationChannel);
+//        }
         //创建通知
         nb = new NotificationCompat.Builder(this, "cn.xylink.mting.copy.tip")
                 .setSmallIcon(R.mipmap.icon_notif)
