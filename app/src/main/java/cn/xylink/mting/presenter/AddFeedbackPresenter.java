@@ -1,5 +1,6 @@
 package cn.xylink.mting.presenter;
 
+import android.os.Build;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import cn.xylink.mting.MTing;
 import cn.xylink.mting.base.BaseResponse;
 import cn.xylink.mting.bean.LinkArticle;
 import cn.xylink.mting.contract.AddFeedbackContact;
@@ -29,6 +31,7 @@ import cn.xylink.mting.model.data.RemoteUrl;
 import cn.xylink.mting.utils.ContentManager;
 import cn.xylink.mting.utils.GsonUtil;
 import cn.xylink.mting.utils.L;
+import cn.xylink.mting.utils.PackageUtils;
 import okhttp3.OkHttpClient;
 
 public class AddFeedbackPresenter extends BasePresenter<AddFeedbackContact.IAddFeedBackView> implements AddFeedbackContact.Presenter {
@@ -87,6 +90,12 @@ public class AddFeedbackPresenter extends BasePresenter<AddFeedbackContact.IAddF
         OkGo.<String>post(url)
                 .tag(this)
                 .isMultipart(true)
+                .headers("timestamp", String.valueOf(System.currentTimeMillis()))
+                .headers("version", PackageUtils.getAppVersionCode(MTing.getInstance()))
+                .headers("versionName", PackageUtils.getAppVersionName(MTing.getInstance()))
+                .headers("deviceId", PackageUtils.getWifiMac(MTing.getInstance()))
+                .headers("deviceName", Build.MODEL)
+                .headers("sysVersion", "Android " + Build.VERSION.RELEASE)
                 .params(param)
                 .addFileParams("files", files)
                 .execute(new Callback<String>() {
