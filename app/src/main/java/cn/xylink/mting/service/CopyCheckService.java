@@ -132,7 +132,7 @@ public class CopyCheckService extends Service {
 
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
                 String channelId = "cn.xylink.mting.copy.tip";
-                String channelName = "COPY_CHECK_TIP";
+                String channelName = "快捷添加";
                 NotificationChannel notificationChannel = new NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_HIGH);
                 notificationChannel.enableLights(false);
                 notificationChannel.setShowBadge(false);
