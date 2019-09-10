@@ -151,8 +151,12 @@ public class FeedBackActivity extends BasePresenterActivity implements AddFeedba
         param.put("url", url);
         param.put("content", etContent.getText().toString());
         param.put("type", (String) snType.getSelectedItem());
-        param.put("sound", sound);
-        param.put("speed", speed);
+        if (sound != null) {
+            param.put("sound", sound);
+        }
+        if (speed != null) {
+            param.put("speed", speed);
+        }
         addFeedbackPresenter.onFeedBackForm(files, param);
     }
 
