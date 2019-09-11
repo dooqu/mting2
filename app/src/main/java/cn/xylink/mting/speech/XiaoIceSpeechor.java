@@ -264,7 +264,7 @@ public abstract class XiaoIceSpeechor implements Speechor {
                                             state = SpeechorState.SpeechorStatePlaying;
                                             //play it;
                                             boolean isPlaying = playSegment(this.fragment.getFrameIndex());
-                                            if (isPlaying == true && isFirstFragment == true) {
+                                            if (isPlaying == true && isFirstFragment == true && bufferSize == 1) {
                                                 //此时buffer_size = 1;
                                                 //算上index那个，就意味着在当前之后，加载了两个
                                                 seekAndPlay(this.fragment.getFrameIndex() + 1, 2);
@@ -324,8 +324,6 @@ public abstract class XiaoIceSpeechor implements Speechor {
             return true;
         }
         catch (IOException ex) {
-            Log.d(TAG, "playSegment error:" + ex.toString());
-            Log.d(TAG, "isDebugMode:" + MTing.getInstance().isDebugMode());
             onError(SpeechError.FRAGMENT_IO_ERROR, MTing.getInstance().isDebugMode() ? "media player 分片IO错误:" + ex.getMessage() : BufferErrorHint);
         }
         catch (NullPointerException ex) {
@@ -475,6 +473,7 @@ public abstract class XiaoIceSpeechor implements Speechor {
 
         if (state != SpeechorState.SpeechorStateReady) {
             state = SpeechorState.SpeechorStateReady;
+            ttsAudioLoader.cancelAll();
             mediaPlayer.stop();
         }
     }
