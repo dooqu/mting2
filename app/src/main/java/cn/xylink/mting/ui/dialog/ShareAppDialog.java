@@ -15,6 +15,7 @@ import cn.xylink.mting.R;
 import cn.xylink.mting.model.data.RemoteUrl;
 import cn.xylink.mting.openapi.QQApi;
 import cn.xylink.mting.openapi.WXapi;
+import cn.xylink.mting.utils.ContentManager;
 import cn.xylink.mting.utils.T;
 
 /*
@@ -75,6 +76,7 @@ public class ShareAppDialog extends BaseDimDialog {
                 QQApi.shareSpace((Activity) mContext, url, null, title, content);
                 break;
             case R.id.tv_dialog_main_list_menu_copy:
+                ContentManager.getInstance().addCopyItem(url);
                 url = "我正在使用【轩辕听】：一款帮你读文章的软件，读朋友圈、读新闻的APP    " + url;
                 ClipboardManager cm = (ClipboardManager) mContext.getSystemService(Context.CLIPBOARD_SERVICE);
                 ClipData mClipData = ClipData.newPlainText("Label", url);

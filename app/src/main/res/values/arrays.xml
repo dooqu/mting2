@@ -16,15 +16,15 @@
     </string-array>
 
     <string-array name="shield_url">
-        <item>www.jd.com</item>
-        <item>www.taobao.com</item>
-        <item>www.tb.cn</item>
-        <item>www.mi.com</item>
-        <item>www.taobao.com</item>
-        <item>www.xiaomiyoupin.com</item>
-        <item>www.vip.com</item>
-        <item>www.dangdang.com</item>
-        <item>www.yangkeduo.com</item>
-        <item>www.pinduoduo.com</item>
+        <item>jd.com</item>
+        <item>taobao.com</item>
+        <item>tb.cn</item>
+        <item>mi.com</item>
+        <item>taobao.com</item>
+        <item>xiaomiyoupin.com</item>
+        <item>vip.com</item>
+        <item>dangdang.com</item>
+        <item>yangkeduo.com</item>
+        <item>pinduoduo.com</item>
     </string-array>
 </resources>
