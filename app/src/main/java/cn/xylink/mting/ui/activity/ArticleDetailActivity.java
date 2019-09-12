@@ -81,6 +81,8 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
     private ArticleDetailShare mArticleDetailShare;
     private SpeechService service;
     private SpeechServiceProxy proxy;
+    //是否离开当前页面
+    private boolean isPause = false;
 
     @BindView(R.id.pb_main_play_progress)
     ProgressBar loadingBar;
@@ -366,6 +368,7 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
 
     @OnClick(R.id.tv_fk)
     void onTvfkClick(View v) {
+        //点击反馈按钮，传参数到反馈页面
         Bundle bundle = new Bundle();
         bundle.putString("type", "detail");
         bundle.putString("aid", aid);
@@ -412,10 +415,12 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
 
     @OnClick({R.id.ll_setting, R.id.iv_setting, R.id.tv_setting})
     void onSettingClick(View v) {
+        //点击设置按钮，打开设置弹窗
         if (mArticleDetailSetting == null) {
             mArticleDetailSetting = new ArticleDetailSetting(new ArticleDetailSetting.SettingListener() {
                 @Override
                 public void onSpeed(int speed) {
+                    //速度回调，分别对应第一个按钮至第四个按钮
                     switch (speed) {
                         case 0:
                             service.setSpeed(Speechor.SpeechorSpeed.SPEECH_SPEED_HALF);
@@ -436,6 +441,7 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
 
                 @Override
                 public void onTime(int time) {
+                    //设置定时关闭回调
                     String optName = "articleDetails_timing_close";
                     switch (time) {
                         case 0:
@@ -463,6 +469,7 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
 
                 @Override
                 public void onVoiceType(int type) {
+                    //设置声音类型回调
                     switch (type) {
                         case 0:
                             service.setRole(Speechor.SpeechorRole.XiaoIce);
@@ -483,6 +490,7 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
                 }
             });
         }
+        //初始化设置弹窗
         mArticleDetailSetting.setRole(service.getRole());
         mArticleDetailSetting.setSpeed(service.getSpeed());
         mArticleDetailSetting.setCountDown(service.getCountDownMode(), service.getCountDownValue());
@@ -588,7 +596,7 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
                             break;
                         case 4:
                             if (mCurrentArticle != null) {
-                                String cs = "我正在使用【轩辕听】收听："+mCurrentArticle.getTitle()+mCurrentArticle.getShareUrl();
+                                String cs = "我正在使用【轩辕听】收听：" + mCurrentArticle.getTitle() + mCurrentArticle.getShareUrl();
                                 ClipboardManager cm =
                                         (ClipboardManager) ArticleDetailActivity.this.getSystemService(ArticleDetailActivity.this.CLIPBOARD_SERVICE);
                                 ClipData mClipData = ClipData.newPlainText("Label", cs);
@@ -748,7 +756,7 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
             showLoaddingBar(false);
             Toast.makeText(this, ((SpeechErrorEvent) event).getMessage() + ",错误码:" + ((SpeechErrorEvent) event).getErrorCode(), Toast.LENGTH_SHORT).show();
             //如果是正文加载失败了， 那么就把当前详情页退出
-            if(((SpeechErrorEvent) event).getErrorCode() == SpeechError.ARTICLE_LOAD_ERROR) {
+            if (((SpeechErrorEvent) event).getErrorCode() == SpeechError.ARTICLE_LOAD_ERROR) {
                 finish();
             }
             //Toast.makeText(this, ((SpeechErrorEvent) event).getMessage(), Toast.LENGTH_SHORT).show();
@@ -876,6 +884,26 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (isPause) {
+            //重新进入当前页面，滚动到当前播放位置
+            int frameIndex = service.getSpeechorFrameIndex();
+            List<String> textFragments = service.getSpeechorTextFragments();
+            if (textFragments.size() > 0) {
+                showContent(textFragments, frameIndex);
+            }
+        }
+        isPause = false;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        isPause = true;
     }
 
     @Override
