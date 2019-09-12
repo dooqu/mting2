@@ -69,6 +69,7 @@ import cn.xylink.mting.widget.ArcProgressBar;
 import cn.xylink.mting.widget.MyScrollView;
 
 import static cn.xylink.mting.speech.SpeechService.SpeechServiceState.Playing;
+import static cn.xylink.mting.speech.SpeechService.SpeechServiceState.Ready;
 
 /**
  * Created by liuhe. on Date: 2019/7/2
@@ -680,7 +681,6 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
             switch (service.getState()) {
                 case Loadding:
                 case Playing:
-                    //case Buffering:
                     service.pause();
                     break;
 
@@ -693,7 +693,6 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
                     break;
             }
         }
-
         TCAgent.onEvent(this, "articleDetails_play");
     }
 
@@ -731,11 +730,7 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
                 ivPlayBarBtn.setImageDrawable(mPlayDrawable);
                 ((Animatable) mPlayDrawable).start();
             }
-            switch (((SpeechStopEvent) event).getStopReason()) {
-                case ListIsNull:
-                    finish();
-                    break;
-            }
+            finish();
         } else if (event instanceof SpeechBufferingEvent) {
             showLoaddingBar(true);
             return;
