@@ -235,7 +235,8 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
         int textSize = 16;
         if (ContentManager.getInstance().getTextSize() == 1) {
             textSize = 21;
-        } else if (ContentManager.getInstance().getTextSize() == 2) {
+        }
+        else if (ContentManager.getInstance().getTextSize() == 2) {
             textSize = 26;
         }
 
@@ -589,7 +590,7 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
                             break;
                         case 4:
                             if (mCurrentArticle != null) {
-                                String cs = "我正在使用【轩辕听】收听："+mCurrentArticle.getTitle()+mCurrentArticle.getShareUrl();
+                                String cs = "我正在使用【轩辕听】收听：" + mCurrentArticle.getTitle() + mCurrentArticle.getShareUrl();
                                 ClipboardManager cm =
                                         (ClipboardManager) ArticleDetailActivity.this.getSystemService(ArticleDetailActivity.this.CLIPBOARD_SERVICE);
                                 ClipData mClipData = ClipData.newPlainText("Label", cs);
@@ -635,7 +636,8 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
                                         service.updateNotification();
                                     }
                                     EventBus.getDefault().post(new AddStoreSuccessEvent());
-                                } else {
+                                }
+                                else {
                                     //恢复状态
                                     //fav.setText(fav.getText().equals("已收藏")? "收藏" : "已收藏");
                                     setFavorite(fav.getText().equals("收藏"));
@@ -689,7 +691,14 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
                     break;
 
                 case Error:
-                    service.seek((float) skProgress.getProgress() / (float) 100);
+                    if (service.getSelected() != null) {
+                        if (service.getSelected().getTextBody() == null) {
+                            service.play(service.getSelected().getArticleId());
+                        }
+                        else {
+                            service.seek((float) skProgress.getProgress() / (float) 100);
+                        }
+                    }
                     break;
             }
         }
@@ -705,7 +714,8 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
             tvAuthor.setText(event.getArticle().getSourceName());
             tvAuthor.setVisibility(event.getArticle().getSourceName() != null && event.getArticle().getSourceName().trim() != "" ? View.VISIBLE : View.GONE);
             showLoaddingBar(true);
-        } else if (event instanceof SpeechReadyEvent) {
+        }
+        else if (event instanceof SpeechReadyEvent) {
             //需要从网络加载的字段，需要在此事件中才能获取到
             mCurrentArticle = event.getArticle();
             tvContent.setText(mCurrentArticle.getContent());
@@ -713,37 +723,45 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
             llSourceDetail.setVisibility((mCurrentArticle.getInType() == 1 || TextUtils.isEmpty(mCurrentArticle.getUrl())) ? View.GONE : View.VISIBLE);
             setFavorite(mCurrentArticle.getStore() == 1);
             showLoaddingBar(false);
-        } else if (event instanceof SpeechProgressEvent) {
+        }
+        else if (event instanceof SpeechProgressEvent) {
             SpeechProgressEvent spe = (SpeechProgressEvent) event;
             showContent(((SpeechProgressEvent) event).getTextFragments(), ((SpeechProgressEvent) event).getFrameIndex());
             setArticleProgress(spe.getFrameIndex(), spe.getTextFragments().size());
             showLoaddingBar(false);
             return;
-        } else if (event instanceof SpeechEndEvent) {
+        }
+        else if (event instanceof SpeechEndEvent) {
             setArticleProgress(100, 100);
-        } else if (event instanceof SpeechResumeEvent) {
+        }
+        else if (event instanceof SpeechResumeEvent) {
             aid = event.getArticle().getId();
-        } else if (event instanceof SpeechPauseEvent) {
+        }
+        else if (event instanceof SpeechPauseEvent) {
             showLoaddingBar(false);
-        } else if (event instanceof SpeechStopEvent) {
+        }
+        else if (event instanceof SpeechStopEvent) {
             if (ivPlayBarBtn.getDrawable() != mPlayDrawable) {
                 ivPlayBarBtn.setImageDrawable(mPlayDrawable);
                 ((Animatable) mPlayDrawable).start();
             }
             finish();
-        } else if (event instanceof SpeechBufferingEvent) {
+        }
+        else if (event instanceof SpeechBufferingEvent) {
             showLoaddingBar(true);
             return;
-        } else if (event instanceof FavoriteEvent) {
+        }
+        else if (event instanceof FavoriteEvent) {
             if (event.getArticle().getArticleId() != null && event.getArticle().getArticleId().equals(mCurrentArticle.getArticleId())) {
                 setFavorite(event.getArticle().getStore() == 1);
             }
             return;
-        } else if (event instanceof SpeechErrorEvent) {
+        }
+        else if (event instanceof SpeechErrorEvent) {
             showLoaddingBar(false);
             Toast.makeText(this, ((SpeechErrorEvent) event).getMessage() + ",错误码:" + ((SpeechErrorEvent) event).getErrorCode(), Toast.LENGTH_SHORT).show();
             //如果是正文加载失败了， 那么就把当前详情页退出
-            if(((SpeechErrorEvent) event).getErrorCode() == SpeechError.ARTICLE_LOAD_ERROR) {
+            if (((SpeechErrorEvent) event).getErrorCode() == SpeechError.ARTICLE_LOAD_ERROR) {
                 finish();
             }
             //Toast.makeText(this, ((SpeechErrorEvent) event).getMessage(), Toast.LENGTH_SHORT).show();
@@ -896,7 +914,8 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
     public void onSuccessAddLove(String str, Article article) {
         if ("收藏".equals(tvFav.getText().toString())) {
             tvFav.setText("已收藏");
-        } else {
+        }
+        else {
             tvFav.setText("收藏");
         }
     }
