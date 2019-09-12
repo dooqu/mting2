@@ -21,7 +21,7 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import cn.xylink.mting.R;
 import cn.xylink.mting.base.BaseActivity;
-import cn.xylink.mting.utils.L;
+import cn.xylink.mting.utils.LogUtils;
 
 
 public class PlayerlActivity extends BaseActivity {
@@ -77,7 +77,7 @@ public class PlayerlActivity extends BaseActivity {
         }
 
         WebSettings mWebSettings = wvHtml.getSettings();
-        mWebSettings.setJavaScriptCanOpenWindowsAutomatically(true);//设置js可以直接打开窗口，如window.open()，默认为false
+        mWebSettings.setJavaScriptCanOpenWindowsAutomatically(false);//设置js可以直接打开窗口，如window.open()，默认为false
         mWebSettings.setJavaScriptEnabled(true);//是否允许JavaScript脚本运行，默认为false。设置true时，会提醒可能造成XSS漏洞
         mWebSettings.setSupportZoom(true);//是否可以缩放，默认true
         mWebSettings.setBuiltInZoomControls(true);//是否显示缩放按钮，默认false
@@ -93,7 +93,6 @@ public class PlayerlActivity extends BaseActivity {
             @Override
             public void onProgressChanged(WebView view, int newProgress) {
                 super.onProgressChanged(view, newProgress);
-                L.v("newProgress", newProgress);
                 progressBar.setVisibility(View.VISIBLE);
                 progressBar.setProgress(newProgress);
                 if (newProgress == 100)
@@ -123,8 +122,11 @@ public class PlayerlActivity extends BaseActivity {
         wvHtml.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                view.loadUrl(url);
-                return false;
+                if (url != null && url.startsWith("http")) {
+                    view.loadUrl(url);
+                    return false;
+                }
+                return true;
             }
         });
 
@@ -205,9 +207,7 @@ public class PlayerlActivity extends BaseActivity {
     @Override
     protected void initData() {
         url = getIntent().getStringExtra(EXTRA_HTML);
-//        L.v(url);
-
-
+        LogUtils.e(url);
         String title = getIntent().getStringExtra(EXTRA_TITLE);
         if (!TextUtils.isEmpty(title))
             tvTitle.setText(title);
@@ -220,32 +220,27 @@ public class PlayerlActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        L.v("canGoBack", wvHtml.canGoBack());
         if (wvHtml.canGoBack()) {
             wvHtml.goBack();
         } else {
             finish();
             super.onBackPressed();
-//            android.os.Process.killProcess(android.os.Process.myPid());
         }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        L.v("");
         destroyWebView();
     }
 
     @Override
     public void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        L.v("");
         destroyWebView();
     }
 
     private void destroyWebView() {
-        L.v(wvHtml);
         if (wvHtml != null) {
 
             // 如果先调用destroy()方法，则会命中if (isDestroyed()) return;这一行代码，需要先onDetachedFromWindow()，再
@@ -271,7 +266,6 @@ public class PlayerlActivity extends BaseActivity {
         switch (v.getId()) {
             case R.id.iv_close:
                 finish();
-//                android.os.Process.killProcess(android.os.Process.myPid());
                 break;
         }
     }
