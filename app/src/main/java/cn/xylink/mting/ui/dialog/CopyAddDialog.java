@@ -38,6 +38,7 @@ import cn.xylink.mting.presenter.LinkCreatePresenter;
 import cn.xylink.mting.service.AddUnreadService;
 import cn.xylink.mting.speech.data.SpeechList;
 import cn.xylink.mting.ui.activity.PlayerlActivity;
+import cn.xylink.mting.ui.activity.TutorialActivity;
 import cn.xylink.mting.utils.L;
 import cn.xylink.mting.utils.T;
 
@@ -104,8 +105,8 @@ public class CopyAddDialog extends BaseDimDialog implements
                 this.dismiss();
                 break;
             case R.id.btn_copy_add_fastadd:
-                Intent intent = new Intent(mContext, PlayerlActivity.class);
-                intent.putExtra(PlayerlActivity.EXTRA_HTML, PlayerlActivity.PROTOCOL_URL);
+                Intent intent = new Intent(mContext, TutorialActivity.class);
+//                intent.putExtra(PlayerlActivity.EXTRA_HTML, PlayerlActivity.PROTOCOL_URL);
                 intent.putExtra(PlayerlActivity.EXTRA_TITLE, mContext.getResources().getString(R.string.player_mting));
                 mContext.startActivity(intent);
                 break;
