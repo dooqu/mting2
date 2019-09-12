@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
+import android.provider.Settings;
 import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
@@ -95,7 +96,7 @@ public class TutorialActivity extends BaseActivity {
         mWebSettings.setDomStorageEnabled(true);//开启本地DOM存储
         mWebSettings.setLoadsImagesAutomatically(true); // 加载图片
         mWebSettings.setMediaPlaybackRequiresUserGesture(false);//播放音频，多媒体需要用户手动？设置为false为可自动播放
-        mWebSettings.setUserAgentString(mWebSettings.getUserAgentString()+"xyting-android-vname/"+BuildConfig.VERSION_NAME+"-vcode/"+BuildConfig.VERSION_CODE);
+        mWebSettings.setUserAgentString(mWebSettings.getUserAgentString() + "xyting-android-vname/" + BuildConfig.VERSION_NAME + "-vcode/" + BuildConfig.VERSION_CODE);
 
 
         wvHtml.setWebChromeClient(new WebChromeClient() {
@@ -147,14 +148,19 @@ public class TutorialActivity extends BaseActivity {
                 String callback = map.get("callback");
                 String data = map.get("data");
                 L.v(data);
-                if ("open_permission".equals(data)){
+                if ("open_permission".equals(data)) {
                     Intent intentNotifOpen = new Intent();
                     intentNotifOpen.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        intentNotifOpen.setAction(Settings.ACTION_APP_NOTIFICATION_SETTINGS);
+                        intentNotifOpen.putExtra(Settings.EXTRA_APP_PACKAGE, TutorialActivity.this.getPackageName());
+                    } else {
 //                    intentNotifOpen.setAction("android.settings.APPLICATION_DETAILS_SETTINGS");
-                    intentNotifOpen.setAction("android.settings.APP_NOTIFICATION_SETTINGS");
-                    intentNotifOpen.putExtra("app_package", TutorialActivity.this.getPackageName());
-                    intentNotifOpen.putExtra("app_uid", TutorialActivity.this.getApplicationInfo().uid);
+                        intentNotifOpen.setAction("android.settings.APP_NOTIFICATION_SETTINGS");
+                        intentNotifOpen.putExtra("app_package", TutorialActivity.this.getPackageName());
+                        intentNotifOpen.putExtra("app_uid", TutorialActivity.this.getApplicationInfo().uid);
 //                    intentNotifOpen.setData(Uri.fromParts("package", TutorialActivity.this.getPackageName(), null));
+                    }
                     TutorialActivity.this.startActivity(intentNotifOpen);
                 }
                 return true;
