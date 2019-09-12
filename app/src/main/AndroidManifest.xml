@@ -29,6 +29,11 @@
         android:networkSecurityConfig="@xml/network_security_config"
         android:theme="@style/AppTheme"
         tools:replace="android:appComponentFactory">
+        <activity
+            android:name=".ui.activity.TutorialActivity"
+            android:hardwareAccelerated="true"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"></activity>
 
         <provider
             android:name=".utils.DownloadFileProvider"
@@ -50,7 +55,7 @@
 
         <activity
             android:name=".ui.activity.ArrangeActivity"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.SplashActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
@@ -67,8 +72,8 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <!--下面所设置的质需要和html端对调-->
-                <!--在data里设置了 scheme和host，则该Activity可以接收和处理类似于 "sharetest://data/XXX"的链接-->
+                <!-- 下面所设置的质需要和html端对调 -->
+                <!-- 在data里设置了 scheme和host，则该Activity可以接收和处理类似于 "sharetest://data/XXX"的链接 -->
                 <data
                     android:host="mting"
                     android:path="/homePage"
@@ -85,10 +90,10 @@
             android:name=".ui.activity.MainActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustNothing"></activity>
+            android:windowSoftInputMode="adjustNothing" />
         <activity
             android:name=".ui.activity.SpeechServicActivity"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.GuideActivity"
             android:screenOrientation="portrait" />
@@ -114,12 +119,11 @@
                 <data android:scheme="tencent1107912298" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".ui.activity.ArticleDetailActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/DetailTheme"></activity>
+            android:theme="@style/DetailTheme" />
         <activity
             android:name=".ui.activity.PhoneLoginActivity"
             android:launchMode="singleTask"
@@ -150,34 +154,27 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustResize" />
-
         <activity
             android:name=".ui.activity.FeedBackActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan|stateHidden" />
-
-
         <activity
             android:name=".ui.activity.AboutVersion"
-            android:screenOrientation="portrait"></activity>
-
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.JoinUsActivity"
-            android:screenOrientation="portrait"></activity>
-
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.PersonalInfoActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
-
             android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
             android:name=".ui.activity.PlayerlActivity"
             android:hardwareAccelerated="true"
-            android:screenOrientation="portrait"
-            android:launchMode="singleTask" />
-
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
             android:screenOrientation="portrait"
@@ -187,7 +184,6 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
-
         <activity
             android:name=".ui.activity.ImageDetailActivity"
             android:screenOrientation="portrait" />
@@ -199,6 +195,7 @@
         <activity
             android:name=".ui.activity.ShareActivity"
             android:launchMode="singleTask">
+
             <!-- 第二个filter -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -222,7 +219,6 @@
                     android:mimeType="audio/*"
                     android:scheme="http" />
             </intent-filter>
-
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
 
@@ -274,7 +270,7 @@
 
         <service
             android:name="com.talkingdata.sdk.TDAntiCheatingService"
-            android:process="com.talkingdata.sdk.TDAntiCheatingService">  <!--用户质量评估Service可以配置在主进程或者单独进程-->
+            android:process="com.talkingdata.sdk.TDAntiCheatingService"> <!-- 用户质量评估Service可以配置在主进程或者单独进程 -->
             <intent-filter>
                 <action android:name="com.talkingdata.sdk.TDAntiCheatingService" />
             </intent-filter>
@@ -286,8 +282,6 @@
         <meta-data
             android:name="TD_CHANNEL_ID"
             android:value="mting" />
-
-
     </application>
 
 </manifest>
