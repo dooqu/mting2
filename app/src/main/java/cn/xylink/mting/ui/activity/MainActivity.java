@@ -487,27 +487,19 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
                         }
                     break;
                 case Error:
-                    service.seek((float) mProgress.getProgress() / (float) 100);
+                    if(service.getSelected() != null) {
+                        if(service.getSelected().getTextBody() == null) {
+                            service.play(service.getSelected().getArticleId());
+                        }
+                        else {
+                            service.seek((float) mProgress.getProgress() / (float) 100);
+                        }
+                    }
                     break;
             }
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onSpeechEvent(RecycleEvent event) {
-        L.v(event);
-        if (event instanceof SpeechStartEvent) {
-        } else if (event instanceof SpeechReadyEvent) {
-        } else if (event instanceof SpeechProgressEvent) {
-        } else if (event instanceof SpeechEndEvent) {
-        } else if (event instanceof SpeechResumeEvent) {
-        } else if (event instanceof SpeechPauseEvent) {
-        } else if (event instanceof SpeechStopEvent) {
-        } else if (event instanceof SpeechBufferingEvent) {
-        } else if (event instanceof FavoriteEvent) {
-        } else if (event instanceof SpeechErrorEvent) {
-        }
-    }
 
     private void doAnim(TAB_ENUM currentTab, TAB_ENUM goTab, boolean isGoPage) {
         if (currentTab != goTab) {
