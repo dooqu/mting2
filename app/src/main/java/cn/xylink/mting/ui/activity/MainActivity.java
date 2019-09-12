@@ -55,10 +55,13 @@ import cn.xylink.mting.speech.SpeechService;
 import cn.xylink.mting.speech.SpeechServiceProxy;
 import cn.xylink.mting.speech.data.SpeechList;
 import cn.xylink.mting.speech.event.FavoriteEvent;
+import cn.xylink.mting.speech.event.RecycleEvent;
 import cn.xylink.mting.speech.event.SpeechBufferingEvent;
+import cn.xylink.mting.speech.event.SpeechEndEvent;
 import cn.xylink.mting.speech.event.SpeechErrorEvent;
 import cn.xylink.mting.speech.event.SpeechPauseEvent;
 import cn.xylink.mting.speech.event.SpeechProgressEvent;
+import cn.xylink.mting.speech.event.SpeechReadyEvent;
 import cn.xylink.mting.speech.event.SpeechResumeEvent;
 import cn.xylink.mting.speech.event.SpeechStartEvent;
 import cn.xylink.mting.speech.event.SpeechStopEvent;
@@ -483,7 +486,26 @@ public class MainActivity extends BasePresenterActivity implements BaseMainTabFr
                             ((Animatable) mPauseDrawable).start();
                         }
                     break;
+                case Error:
+                    service.seek((float) mProgress.getProgress() / (float) 100);
+                    break;
             }
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onSpeechEvent(RecycleEvent event) {
+        L.v(event);
+        if (event instanceof SpeechStartEvent) {
+        } else if (event instanceof SpeechReadyEvent) {
+        } else if (event instanceof SpeechProgressEvent) {
+        } else if (event instanceof SpeechEndEvent) {
+        } else if (event instanceof SpeechResumeEvent) {
+        } else if (event instanceof SpeechPauseEvent) {
+        } else if (event instanceof SpeechStopEvent) {
+        } else if (event instanceof SpeechBufferingEvent) {
+        } else if (event instanceof FavoriteEvent) {
+        } else if (event instanceof SpeechErrorEvent) {
         }
     }
 
