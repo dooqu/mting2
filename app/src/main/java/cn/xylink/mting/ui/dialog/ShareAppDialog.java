@@ -15,6 +15,7 @@ import cn.xylink.mting.R;
 import cn.xylink.mting.model.data.RemoteUrl;
 import cn.xylink.mting.openapi.QQApi;
 import cn.xylink.mting.openapi.WXapi;
+import cn.xylink.mting.utils.ContentManager;
 import cn.xylink.mting.utils.T;
 
 /*
@@ -63,22 +64,24 @@ public class ShareAppDialog extends BaseDimDialog {
             case R.id.v_dialog_main_list_menu_out:
                 break;
             case R.id.tv_dialog_main_list_menu_wx:
-                    WXapi.shareWx((Activity) mContext, url, null, title, content);
+                WXapi.shareWx((Activity) mContext, url, null, title, content);
                 break;
             case R.id.tv_dialog_main_list_menu_wxp:
-                    WXapi.sharePyq((Activity) mContext, url, null, title, content);
+                WXapi.sharePyq((Activity) mContext, url, null, title, content);
                 break;
             case R.id.tv_dialog_main_list_menu_qq:
-                    QQApi.shareQQ((Activity) mContext, url, null, title, content);
+                QQApi.shareQQ((Activity) mContext, url, null, title, content);
                 break;
             case R.id.tv_dialog_main_list_menu_quen:
-                    QQApi.shareSpace((Activity) mContext, url, null, title, content);
+                QQApi.shareSpace((Activity) mContext, url, null, title, content);
                 break;
             case R.id.tv_dialog_main_list_menu_copy:
-                    ClipboardManager cm = (ClipboardManager) mContext.getSystemService(Context.CLIPBOARD_SERVICE);
-                    ClipData mClipData = ClipData.newPlainText("Label", url);
-                    cm.setPrimaryClip(mClipData);
-                    T.showCustomToast("分享链接复制成功");
+                ContentManager.getInstance().addCopyItem(url);
+                url = "我正在使用【轩辕听】：一款帮你读文章的软件，读朋友圈、读新闻的APP    " + url;
+                ClipboardManager cm = (ClipboardManager) mContext.getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData mClipData = ClipData.newPlainText("Label", url);
+                cm.setPrimaryClip(mClipData);
+                T.showCustomToast("分享链接复制成功");
                 break;
 
         }
