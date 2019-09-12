@@ -155,5 +155,9 @@ public class RemoteUrl {
     public static String v1PlatformBind() {
         return URL_BASE + "/api/user/v1/third_platform/bind";
     }
+    //教程页
+    public static String tutorialUrl() {
+        return URL_BASE + "/article/html/tutorial_quick.html?";
+    }
 
 }
