@@ -1,7 +1,10 @@
 package cn.xylink.mting.ui.activity;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
+import android.provider.Settings;
 import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
@@ -17,10 +20,15 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import butterknife.BindView;
 import butterknife.OnClick;
+import cn.xylink.mting.BuildConfig;
 import cn.xylink.mting.R;
 import cn.xylink.mting.base.BaseActivity;
+import cn.xylink.mting.utils.L;
 import cn.xylink.mting.utils.LogUtils;
 
 
@@ -87,6 +95,7 @@ public class PlayerlActivity extends BaseActivity {
         mWebSettings.setDomStorageEnabled(true);//开启本地DOM存储
         mWebSettings.setLoadsImagesAutomatically(true); // 加载图片
         mWebSettings.setMediaPlaybackRequiresUserGesture(false);//播放音频，多媒体需要用户手动？设置为false为可自动播放
+        mWebSettings.setUserAgentString(mWebSettings.getUserAgentString() + "xyting-android-vname/" + BuildConfig.VERSION_NAME + "-vcode/" + BuildConfig.VERSION_CODE);
 
 
         wvHtml.setWebChromeClient(new WebChromeClient() {
@@ -122,9 +131,33 @@ public class PlayerlActivity extends BaseActivity {
         wvHtml.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                if (url != null && url.startsWith("http")) {
-                    view.loadUrl(url);
+                L.v(url);
+                String pre = "xylink://xyting";
+                if (TextUtils.isEmpty(url))
+                    return true;
+                if (!url.contains(pre)&& url.startsWith("http")) {
+                    wvHtml.loadUrl(url);
                     return false;
+                }
+                //该url是调用android方法的请求，通过解析url中的参数来执行相应方法
+                Map<String, String> map = getParamsMap(url, pre);
+                String callback = map.get("callback");
+                String data = map.get("data");
+                L.v(data);
+                if ("open_permission".equals(data)) {
+                    Intent intentNotifOpen = new Intent();
+                    intentNotifOpen.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//                    if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//                        intentNotifOpen.setAction(Settings.ACTION_APP_NOTIFICATION_SETTINGS);
+//                        intentNotifOpen.putExtra(Settings.EXTRA_APP_PACKAGE, PlayerlActivity.this.getPackageName());
+//                    } else {
+                    intentNotifOpen.setAction("android.settings.APPLICATION_DETAILS_SETTINGS");
+//                        intentNotifOpen.setAction("android.settings.APP_NOTIFICATION_SETTINGS");
+//                        intentNotifOpen.putExtra("app_package", PlayerlActivity.this.getPackageName());
+//                        intentNotifOpen.putExtra("app_uid", PlayerlActivity.this.getApplicationInfo().uid);
+                    intentNotifOpen.setData(Uri.fromParts("package", PlayerlActivity.this.getPackageName(), null));
+//                    }
+                    PlayerlActivity.this.startActivity(intentNotifOpen);
                 }
                 return true;
             }
@@ -132,6 +165,37 @@ public class PlayerlActivity extends BaseActivity {
 
         wvHtml.loadUrl(url);
 
+    }
+
+    private Map<String, String> getParamsMap(String url, String pre) {
+        Map<String, String> queryStringMap = new HashMap<>();
+        if (url.contains(pre)) {
+            int index = url.indexOf(pre);
+            int end = index + pre.length();
+            String queryString = url.substring(end + 1);
+
+            String[] queryStringSplit = queryString.split("&");
+
+            String[] queryStringParam;
+            for (String qs : queryStringSplit) {
+                if (qs.toLowerCase().startsWith("data=")) {
+                    //单独处理data项，避免data内部的&被拆分
+                    int dataIndex = qs.indexOf("data=");
+                    String dataValue = qs.substring(dataIndex + 5);
+                    queryStringMap.put("data", dataValue);
+                } else {
+                    queryStringParam = qs.split("=");
+
+                    String value = "";
+                    if (queryStringParam.length > 1) {
+                        //避免后台有时候不传值,如“key=”这种
+                        value = queryStringParam[1];
+                    }
+                    queryStringMap.put(queryStringParam[0].toLowerCase(), value);
+                }
+            }
+        }
+        return queryStringMap;
     }
 
     @Override
