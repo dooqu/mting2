@@ -268,6 +268,9 @@ public class CopyCheckService extends Service {
                 int code = baseResponse.code;
                 if (code == 200) {
                     addLocalUread(baseResponse.data.getArticleId());
+                } else {
+                    if (code != 9999)
+                        Toast.makeText(CopyCheckService.this, "文章加载失败请稍后再试", Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -323,7 +326,10 @@ public class CopyCheckService extends Service {
                         list.add(article);
                         SpeechList.getInstance().pushFront(list);
                         EventBus.getDefault().post(new AddUnreadEvent());
-//                        Toast.makeText(CopyCheckService.this,"tianjiachengg",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(CopyCheckService.this, "已添加到轩辕听", Toast.LENGTH_SHORT).show();
+                    } else {
+                        if (code != 9999)
+                            Toast.makeText(CopyCheckService.this, "文章加载失败请稍后再试", Toast.LENGTH_SHORT).show();
                     }
                 }
 
