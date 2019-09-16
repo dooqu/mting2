@@ -19,6 +19,7 @@ import cn.xylink.mting.model.FavoriteArticleRequest;
 import cn.xylink.mting.model.UpdateSpeechSettingRequest;
 import cn.xylink.mting.model.data.OkGoUtils;
 import cn.xylink.mting.model.ReadArticleRequest;
+import cn.xylink.mting.model.data.RemoteUrl;
 import cn.xylink.mting.speech.SoundEffector;
 import cn.xylink.mting.speech.Speechor;
 import cn.xylink.mting.utils.ContentManager;
@@ -31,7 +32,6 @@ import cn.xylink.mting.utils.GsonUtil;
 public class ArticleDataProvider {
 
     static String TAG = ArticleDataProvider.class.getSimpleName();
-    static String serverURL = "http://test.xylink.cn";
     /*
     文章正文加载的回调，采用函数接口形式
     invoke(errorCode, Article article)
@@ -114,7 +114,7 @@ public class ArticleDataProvider {
                     public void hideLoading() {
                     }
                 },
-                serverURL + "/api/sct/v2/article/detail",
+                RemoteUrl.getArticleDetailUrl(),
                 GsonUtil.GsonString(request), ArticleInfoResponse.class,
                 new OkGoUtils.ICallback<ArticleInfoResponse>() {
                     @Override
@@ -179,7 +179,7 @@ public class ArticleDataProvider {
                     public void hideLoading() {
                     }
                 },
-                serverURL + "/api/sct/v2/article/detail",
+                RemoteUrl.getArticleDetailUrl(),
                 GsonUtil.GsonString(request), ArticleInfoResponse.class,
                 new OkGoUtils.ICallback<ArticleInfoResponse>() {
                     @Override
@@ -243,7 +243,7 @@ public class ArticleDataProvider {
                     public void hideLoading() {
                     }
                 }
-                , serverURL + "/api/sct/v2/article/read",
+                , RemoteUrl.getArticleReadedUrl(),
                 GsonUtil.GsonString(request),
                 BaseResponse.class,
                 new OkGoUtils.ICallback<BaseResponse<Object>>() {
@@ -287,7 +287,7 @@ public class ArticleDataProvider {
                     public void hideLoading() {
                     }
                 }
-                , serverURL + "/api/sct/v2/article/store",
+                ,   RemoteUrl.getStoreArticleUrl(),
                 GsonUtil.GsonString(request),
                 BaseResponse.class,
                 new OkGoUtils.ICallback<BaseResponse<Object>>() {
@@ -338,7 +338,7 @@ public class ArticleDataProvider {
                     public void hideLoading() {
                     }
                 }
-                , serverURL + "/api/analyse/v1/article/reader_time",
+                , RemoteUrl.getArticleReadDurationUrl(),
                 GsonUtil.GsonString(request),
                 BaseResponse.class,
                 new OkGoUtils.ICallback<BaseResponse<Object>>() {
@@ -423,7 +423,7 @@ public class ArticleDataProvider {
                     public void hideLoading() {
                     }
                 }
-                , serverURL + "/api/user/v1/user_setting/update",
+                , RemoteUrl.getPersonalSpeechSettingUrl(),
                 GsonUtil.GsonString(request),
                 BaseResponse.class,
                 new OkGoUtils.ICallback<BaseResponse<Object>>() {
