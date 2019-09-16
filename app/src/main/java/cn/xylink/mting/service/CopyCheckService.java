@@ -14,10 +14,12 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Vibrator;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
 import android.widget.RemoteViews;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -219,6 +221,8 @@ public class CopyCheckService extends Service {
             String str = intent.getStringExtra("copy_str");
             L.v(str);
             if (!TextUtils.isEmpty(str) && !TextUtils.isEmpty(StringUtil.matcherUrl(str))) {
+                Vibrator vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+                vibrator.vibrate(50);
                 ContentManager.getInstance().addCopyItem(str);
                 mNotifManager.cancel(212312313);
                 mHandler.removeCallbacks(runnable);
@@ -318,6 +322,7 @@ public class CopyCheckService extends Service {
                         list.add(article);
                         SpeechList.getInstance().pushFront(list);
                         EventBus.getDefault().post(new AddUnreadEvent());
+//                        Toast.makeText(CopyCheckService.this,"tianjiachengg",Toast.LENGTH_SHORT).show();
                     }
                 }
 
