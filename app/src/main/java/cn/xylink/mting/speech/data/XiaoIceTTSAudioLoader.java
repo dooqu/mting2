@@ -14,6 +14,7 @@ import com.lzy.okgo.model.Response;
 import java.io.File;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -21,8 +22,19 @@ import org.json.JSONObject;
 
 
 import cn.xylink.mting.MTing;
+import cn.xylink.mting.base.BaseResponse;
+import cn.xylink.mting.bean.XiaoIceTTSInfo;
+import cn.xylink.mting.contract.IBaseView;
+import cn.xylink.mting.model.FavoriteArticleRequest;
+import cn.xylink.mting.model.XiaoIceTTSRequest;
+import cn.xylink.mting.model.XiaoIceTTSResponse;
+import cn.xylink.mting.model.data.OkGoUtils;
+import cn.xylink.mting.model.data.RemoteUrl;
+import cn.xylink.mting.speech.SpeechError;
 import cn.xylink.mting.speech.Speechor;
 import cn.xylink.mting.speech.TTSAudioLoader;
+import cn.xylink.mting.utils.ContentManager;
+import cn.xylink.mting.utils.GsonUtil;
 import cn.xylink.mting.utils.PackageUtils;
 import okhttp3.Call;
 import okhttp3.MediaType;
@@ -61,8 +73,99 @@ public class XiaoIceTTSAudioLoader implements TTSAudioLoader {
         return "0";
     }
 
+
+
+
     @Override
     public void textToSpeech(String text, Speechor.SpeechorSpeed speechorSpeed, LoadResult result) {
+        XiaoIceTTSRequest request = new XiaoIceTTSRequest();
+        request.setSpeed(getSpeechString(speechorSpeed));
+        request.setText(text);
+        request.setToken(ContentManager.getInstance().getLoginToken());
+        request.doSign();
+
+        OkGoUtils.getInstance().postData(
+                new IBaseView() {
+                    @Override
+                    public void showLoading() {
+                    }
+
+                    @Override
+                    public void hideLoading() {
+                    }
+                }
+                ,   RemoteUrl.getXiaoIceTTSUrl(),
+                GsonUtil.GsonString(request),
+                XiaoIceTTSResponse.class,
+                new OkGoUtils.ICallback<XiaoIceTTSResponse>() {
+                    @Override
+                    public void onStart() {
+                    }
+
+                    @Override
+                    public void onSuccess(XiaoIceTTSResponse data) {
+                        if(data.getCode() == 200) {
+                            List<XiaoIceTTSInfo> ttsResponses = data.getData();
+
+                            if(ttsResponses == null || ttsResponses.size() < 1) {
+                                result.invoke(FRAGMENT_LOAD_INNTERNAL_ERROR, "没有响应", null);
+                                return;
+                            }
+
+                            XiaoIceTTSInfo ttsResponse = ttsResponses.get(0);
+
+                            if(ttsResponse.getContent() != null && ttsResponse.getContent().getAudioUrl() != null) {
+                                Uri voiceUri = Uri.parse(ttsResponse.getContent().getAudioUrl());
+                                String fileStoragePath = MTing.getInstance().AudioCachePath;
+                                String filename = voiceUri.getLastPathSegment();
+
+                                OkGo.<File>get(ttsResponse.getContent().getAudioUrl())
+                                        .tag(XiaoIceTTSAudioLoader.this)
+                                        .execute(new FileCallback(fileStoragePath, filename) {
+                                            @Override
+                                            public void onSuccess(Response<File> response) {
+                                                String fileUrl = response.body().getAbsolutePath();
+                                                if (result != null) {
+                                                    Log.d(TAG, "complete:" + text);
+                                                    result.invoke(0, null, fileUrl);
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onError(Response<File> response) {
+                                                super.onError(response);
+                                                if (result != null) {
+                                                    result.invoke(FRAGMENT_LOAD_INNTERNAL_ERROR, "音频文件下载错误:" + response.getException().getMessage(), null);
+                                                }
+                                            }
+                                        });
+                            }
+                        }
+                        else if(data.getCode() == -999) {
+                            if (result != null) {
+                                result.invoke(SpeechError.TOKEN_EXPIRED, "音频文件下载错误:" + data.getMessage(), null);
+                            }
+                        }
+                        else {
+                            result.invoke(FRAGMENT_LOAD_INNTERNAL_ERROR, data.getMessage(), null);
+                        }
+
+                    }
+
+                    @Override
+                    public void onFailure(int code, String errorMsg) {
+                        Log.d("xylink", "xylink");
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+                    }
+                });
+    }
+
+
+    public void textToSpeech2(String text, Speechor.SpeechorSpeed speechorSpeed, LoadResult result) {
         Log.d(TAG, "TTS:" + text);
         String postData = null;
 
@@ -158,6 +261,15 @@ public class XiaoIceTTSAudioLoader implements TTSAudioLoader {
         itemObject.put("content", contentObject);
         itemObject.put("msgId", MSG_ID);
         itemObject.put("timestamp", String.valueOf(System.currentTimeMillis()));
+        return itemObject.toString();
+    }
+
+
+    private String createPostJsonString(String text, String speedStr) throws JSONException {
+        JSONObject itemObject = new JSONObject();
+        itemObject.put("token", ContentManager.getInstance().getLoginToken());
+        itemObject.put("text", text);
+        itemObject.put("speed", speedStr);
         return itemObject.toString();
     }
 
