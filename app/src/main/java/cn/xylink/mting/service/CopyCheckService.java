@@ -118,8 +118,8 @@ public class CopyCheckService extends Service {
 
             //>= android 8.0 设定foregroundService的前提是notification要创建channel，并关掉channel的sound
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-                String channelId = "cn.xylink.mting";
-                String channelName = "SPEECH_SERVICE_NAME";
+                String channelId = "cn.xylink.mting.copy";
+                String channelName = "COPY_CECHK_SERVICE";
                 NotificationChannel notificationChannel = null;
                 notificationChannel = new NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_DEFAULT);
                 notificationChannel.enableLights(false);
@@ -145,7 +145,8 @@ public class CopyCheckService extends Service {
             }
 
             Notification notification = builder.build();
-            this.startForeground(android.os.Process.myPid(), notification);
+//            this.startForeground(android.os.Process.myPid(), notification);
+            this.startForeground(32456666, notification);
         }
     }
 
