@@ -35,7 +35,7 @@ import cn.xylink.mting.utils.LogUtils;
 public class PlayerlActivity extends BaseActivity {
 
     //    public static final String EXTRA_HTML = "html_url";
-    public static final String PROTOCOL_URL = "http://test.xylink.cn/article/html/tutorial.html";
+    public static final String PROTOCOL_URL = "http://test.xylink.cn/article/html/tutorial_v2.html";
     public static final String EXTRA_HTML = "html_url";
     public static final String EXTRA_TITLE = "title";
 
