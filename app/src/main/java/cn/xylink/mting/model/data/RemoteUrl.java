@@ -1,7 +1,8 @@
 package cn.xylink.mting.model.data;
 
 public class RemoteUrl {
-    private static final String URL_BASE = "http://test.xylink.cn";//外网2019-4-9
+//    private static final String URL_BASE = "http://test.xylink.cn";//外网2019-4-9
+    private static final String URL_BASE = "http://service.xylink.cn";//外网2019-4-9
 
 
     //获取短信验证码
