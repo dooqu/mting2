@@ -161,4 +161,15 @@ public class RemoteUrl {
         return URL_BASE + "/article/html/tutorial_quick.html?";
     }
 
+    public static String  getArticleDetailUrl() { return URL_BASE +  "/api/sct/v2/article/detail";}
+
+    public static String getArticleReadedUrl() { return URL_BASE + "/api/sct/v2/article/read"; }
+
+    public static String getStoreArticleUrl() { return URL_BASE + "/api/sct/v2/article/store";}
+
+    public static String getArticleReadDurationUrl() { return URL_BASE + "/api/analyse/v1/article/reader_time";}
+
+
+    public static String getPersonalSpeechSettingUrl() { return URL_BASE +  "/api/user/v1/user_setting/update"; }
+
 }
