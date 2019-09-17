@@ -68,16 +68,16 @@ public class WXapi {
                 }
                 webpage.webpageUrl = webUrl;
                 WXMediaMessage msg = new WXMediaMessage(webpage);
-                if (title.length() > MAX_TITLE_SIZE) {
-                    msg.title = title.substring(0, MAX_TITLE_SIZE-3) + "...";
-                } else {
+//                if (title.length() > MAX_TITLE_SIZE) {
+//                    msg.title = title.substring(0, MAX_TITLE_SIZE-3) + "...";
+//                } else {
                     msg.title = title;
-                }
-                if (description.length() > MAX_DES_SIZE) {
-                    msg.description = description.substring(0, MAX_DES_SIZE-3) + "...";
-                } else {
+//                }
+//                if (description.length() > MAX_DES_SIZE) {
+//                    msg.description = description.substring(0, MAX_DES_SIZE-3) + "...";
+//                } else {
                     msg.description = description;
-                }
+//                }
                 Bitmap thumbBmp = Bitmap.createScaledBitmap(bmp, THUMB_SIZE, THUMB_SIZE, true);
                 bmp.recycle();
                 msg.thumbData = WxUtil.bmpToByteArray(thumbBmp, true);
