@@ -74,8 +74,6 @@ public class XiaoIceTTSAudioLoader implements TTSAudioLoader {
     }
 
 
-
-
     @Override
     public void textToSpeech(String text, Speechor.SpeechorSpeed speechorSpeed, LoadResult result) {
         XiaoIceTTSRequest request = new XiaoIceTTSRequest();
@@ -94,7 +92,7 @@ public class XiaoIceTTSAudioLoader implements TTSAudioLoader {
                     public void hideLoading() {
                     }
                 }
-                ,   RemoteUrl.getXiaoIceTTSUrl(),
+                , RemoteUrl.getXiaoIceTTSUrl(),
                 GsonUtil.GsonString(request),
                 XiaoIceTTSResponse.class,
                 new OkGoUtils.ICallback<XiaoIceTTSResponse>() {
@@ -104,17 +102,17 @@ public class XiaoIceTTSAudioLoader implements TTSAudioLoader {
 
                     @Override
                     public void onSuccess(XiaoIceTTSResponse data) {
-                        if(data.getCode() == 200) {
+                        if (data.getCode() == 200) {
                             List<XiaoIceTTSInfo> ttsResponses = data.getData();
 
-                            if(ttsResponses == null || ttsResponses.size() < 1) {
+                            if (ttsResponses == null || ttsResponses.size() < 1) {
                                 result.invoke(FRAGMENT_LOAD_INNTERNAL_ERROR, "没有响应", null);
                                 return;
                             }
 
                             XiaoIceTTSInfo ttsResponse = ttsResponses.get(0);
 
-                            if(ttsResponse.getContent() != null && ttsResponse.getContent().getAudioUrl() != null) {
+                            if (ttsResponse.getContent() != null && ttsResponse.getContent().getAudioUrl() != null) {
                                 Uri voiceUri = Uri.parse(ttsResponse.getContent().getAudioUrl());
                                 String fileStoragePath = MTing.getInstance().AudioCachePath;
                                 String filename = voiceUri.getLastPathSegment();
@@ -141,7 +139,7 @@ public class XiaoIceTTSAudioLoader implements TTSAudioLoader {
                                         });
                             }
                         }
-                        else if(data.getCode() == -999) {
+                        else if (data.getCode() == -999) {
                             if (result != null) {
                                 result.invoke(SpeechError.TOKEN_EXPIRED, "音频文件下载错误:" + data.getMessage(), null);
                             }
@@ -154,8 +152,9 @@ public class XiaoIceTTSAudioLoader implements TTSAudioLoader {
 
                     @Override
                     public void onFailure(int code, String errorMsg) {
-                        Log.d("xylink", "xylink");
-
+                        if (result != null) {
+                            result.invoke(SpeechError.FRAGMENT_TTS_ERROR, "tts内部错误", null);
+                        }
                     }
 
                     @Override
