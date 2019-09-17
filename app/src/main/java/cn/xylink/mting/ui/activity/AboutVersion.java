@@ -218,9 +218,11 @@ public class AboutVersion extends BaseActivity {
         Intent intent = new Intent(this, PlayerlActivity.class);
         if (v == privacyButton) {
             intent.putExtra(PlayerlActivity.EXTRA_HTML, "http://service.xylink.cn/article/html/policy.html");
+            intent.putExtra(PlayerlActivity.EXTRA_TITLE, "隐私政策");
         }
         else if (v == institutionOfUserButton) {
             intent.putExtra(PlayerlActivity.EXTRA_HTML, "http://service.xylink.cn/article/html/agreement.html");
+            intent.putExtra(PlayerlActivity.EXTRA_TITLE, "用户协议");
         }
         else if(v  == contactUsButton) {
             intent = new Intent(this, JoinUsActivity.class);
