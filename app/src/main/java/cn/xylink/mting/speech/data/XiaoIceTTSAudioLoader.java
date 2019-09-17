@@ -106,7 +106,9 @@ public class XiaoIceTTSAudioLoader implements TTSAudioLoader {
                             List<XiaoIceTTSInfo> ttsResponses = data.getData();
 
                             if (ttsResponses == null || ttsResponses.size() < 1) {
-                                result.invoke(FRAGMENT_LOAD_INNTERNAL_ERROR, "没有响应", null);
+                                if(result != null) {
+                                    result.invoke(FRAGMENT_LOAD_INNTERNAL_ERROR, "没有响应", null);
+                                }
                                 return;
                             }
 
