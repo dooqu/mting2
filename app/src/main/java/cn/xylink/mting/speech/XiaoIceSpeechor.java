@@ -268,9 +268,9 @@ public abstract class XiaoIceSpeechor implements Speechor {
                                             if (isPlaying == true && isFirstFragment == true && bufferSize == 1) {
                                                 //此时buffer_size = 1;
                                                 //算上index那个，就意味着在当前之后，加载了两个
-                                                new Thread(()->{
+                                               // new Thread(()->{
                                                     seekAndPlay(this.fragment.getFrameIndex() + 1, 2);
-                                                }).start();
+                                                //}).start();
 
                                             }
                                         }
@@ -368,9 +368,9 @@ public abstract class XiaoIceSpeechor implements Speechor {
         int fragmentSize = speechTextFragments.size();
 
         if (fragmentIndex < fragmentSize) {
-            new Thread(()->{
+            //new Thread(()->{
                 seekAndPlay(fragmentIndex, fragment.isFirstFragment()? 2 : 3);
-            }).start();
+            //}).start();
 
         }
         else if (fragmentIndex == fragmentSize) {

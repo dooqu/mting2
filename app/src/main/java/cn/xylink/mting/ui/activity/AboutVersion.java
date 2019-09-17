@@ -27,6 +27,7 @@ import cn.xylink.mting.contract.IBaseView;
 import cn.xylink.mting.model.UpgradeRequest;
 import cn.xylink.mting.model.UpgradeResponse;
 import cn.xylink.mting.model.data.OkGoUtils;
+import cn.xylink.mting.model.data.RemoteUrl;
 import cn.xylink.mting.ui.dialog.UpgradeConfirmDialog;
 import cn.xylink.mting.upgrade.UpgradeManager;
 import cn.xylink.mting.utils.EncryptionUtil;
@@ -140,7 +141,7 @@ public class AboutVersion extends BaseActivity {
                     public void hideLoading() {
                     }
                 },
-                "http://service.xylink.cn/api/v2/version/check",
+                RemoteUrl.getUpgradeUrl(),
                 GsonUtil.GsonString(request), UpgradeResponse.class,
                 new OkGoUtils.ICallback<UpgradeResponse>() {
                     @Override
