@@ -177,6 +177,6 @@ public class RemoteUrl {
 
     public static String getXiaoIceTTSUrl() { return URL_BASE + "/api/tts/v1/text2audio/xiaobing";}
 
-    public static String getUpgradeUrl() {  return URL_BASE + "api/v2/version/check";}
+    public static String getUpgradeUrl() {  return URL_BASE + "/api/v2/version/check";}
 
 }
