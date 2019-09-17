@@ -24,6 +24,7 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import com.tendcloud.tenddata.TCAgent;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -222,6 +223,7 @@ public class CopyCheckService extends Service {
             String str = intent.getStringExtra("copy_str");
             L.v(str);
             if (!TextUtils.isEmpty(str) && !TextUtils.isEmpty(StringUtil.matcherUrl(str))) {
+                TCAgent.onEvent(this, "add_article_notice");
                 Vibrator vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
                 vibrator.vibrate(50);
                 ContentManager.getInstance().addCopyItem(str);
