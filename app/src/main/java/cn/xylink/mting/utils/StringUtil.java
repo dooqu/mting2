@@ -958,7 +958,7 @@ public class StringUtil {
         if (!TextUtils.isEmpty(str)){
             String[] shield=context.getResources().getStringArray(R.array.shield_url);
             for (String s:shield) {
-                if (s.equals(str))
+                if (str.contains(s))
                     return true;
             }
         }

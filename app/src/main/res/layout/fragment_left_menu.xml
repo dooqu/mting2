@@ -64,7 +64,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:text="玩转「轩辕听」" />
+            android:text="使用教程" />
 
         <ImageView
             android:layout_width="wrap_content"
