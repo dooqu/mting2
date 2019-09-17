@@ -122,8 +122,6 @@ public class UpgradeConfirmDialog extends Dialog {
                 || this.upgradeInfo.getAppDownloadUrl().trim() == "") {
             return -1;
         }
-
-
         final String packageName = "com.android.providers.downloads";
         int state = context.getPackageManager().getApplicationEnabledSetting(packageName);
 
@@ -139,19 +137,17 @@ public class UpgradeConfirmDialog extends Dialog {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         Log.d("SPEECH_", String.valueOf(keyCode));
-        if (keyCode != 4) {
+        if (keyCode != 4 || upgradeInfo.getNeedUpdate() != 0) {
             return super.onKeyDown(keyCode, event);
         }
+        if (forceUpdateConfirm == false) {
+            forceUpdateConfirm = true;
+            Toast.makeText(this.context, "该升级为强制升级，再次点击返回键退出应用", Toast.LENGTH_SHORT).show();
+            return false;
+        }
         else {
-            if (forceUpdateConfirm == false) {
-                forceUpdateConfirm = true;
-                Toast.makeText(this.context, "该升级为强制升级，再次点击返回键退出应用", Toast.LENGTH_SHORT).show();
-                return false;
-            }
-            else {
-                System.exit(0);
-                return false;
-            }
+            System.exit(0);
+            return false;
         }
     }
 }
