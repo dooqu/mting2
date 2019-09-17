@@ -200,9 +200,10 @@ public abstract class XiaoIceSpeechor implements Speechor {
 
 
     private synchronized boolean seekAndPlay(int indexToPlay, int bufferSize) {
-        Log.d(TAG, "seekAndPlay:" + indexToPlay);
+        Log.d(TAG, "seekAndPlay:" + indexToPlay + ",bufferSize=" + bufferSize);
         seekTime = System.currentTimeMillis();
         int segmentSize = this.textFragments.size();
+        boolean seekResult = true;
         for (int startIndex = indexToPlay, endIndex = Math.min(startIndex + bufferSize, segmentSize); startIndex < endIndex; ++startIndex) {
             boolean isSegumentCurrentToPlay = startIndex == this.fragmentIndex;
             SpeechTextFragment fragment = this.speechTextFragments.get(startIndex);
@@ -267,7 +268,10 @@ public abstract class XiaoIceSpeechor implements Speechor {
                                             if (isPlaying == true && isFirstFragment == true && bufferSize == 1) {
                                                 //此时buffer_size = 1;
                                                 //算上index那个，就意味着在当前之后，加载了两个
-                                                seekAndPlay(this.fragment.getFrameIndex() + 1, 2);
+                                               // new Thread(()->{
+                                                    seekAndPlay(this.fragment.getFrameIndex() + 1, 2);
+                                                //}).start();
+
                                             }
                                         }
                                     }
@@ -305,7 +309,9 @@ public abstract class XiaoIceSpeechor implements Speechor {
                 case AudioReady:
                     if (isSegumentCurrentToPlay == true) {
                         state = SpeechorState.SpeechorStatePlaying;
-                        return playSegment(fragmentIndex);
+                        if(playSegment(fragmentIndex) == false) {
+                            return false;
+                        }
                     }
                     break;
             }//end switch
@@ -362,7 +368,10 @@ public abstract class XiaoIceSpeechor implements Speechor {
         int fragmentSize = speechTextFragments.size();
 
         if (fragmentIndex < fragmentSize) {
-            seekAndPlay(fragmentIndex, fragment.isFirstFragment()? 2 : 3);
+            //new Thread(()->{
+                seekAndPlay(fragmentIndex, fragment.isFirstFragment()? 2 : 3);
+            //}).start();
+
         }
         else if (fragmentIndex == fragmentSize) {
             state = SpeechorState.SpeechorStateReady;

@@ -2,7 +2,9 @@ package cn.xylink.mting.model.data;
 
 public class RemoteUrl {
     private static final String URL_BASE = "http://test.xylink.cn";//外网2019-4-9
-//    private static final String URL_BASE = "http://service.xylink.cn";//外网2019-4-9
+
+    //private static final String URL_BASE = "http://service.xylink.cn";//外网2019-4-9
+
 
 
     //获取短信验证码
@@ -171,5 +173,10 @@ public class RemoteUrl {
 
 
     public static String getPersonalSpeechSettingUrl() { return URL_BASE +  "/api/user/v1/user_setting/update"; }
+
+
+    public static String getXiaoIceTTSUrl() { return URL_BASE + "/api/tts/v1/text2audio/xiaobing";}
+
+    public static String getUpgradeUrl() {  return URL_BASE + "/api/v2/version/check";}
 
 }

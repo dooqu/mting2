@@ -12,5 +12,6 @@ public class SpeechError {
     public static int SEEK_NOT_ALLOW = 991;
     public static int HAS_NO_FRAGMENTS = 990;
     public static int FRAGMENT_LOAD_INNTERNAL_ERROR = 989;
+    public static int TOKEN_EXPIRED = 987;
 
 }

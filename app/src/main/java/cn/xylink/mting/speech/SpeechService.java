@@ -19,6 +19,7 @@ import android.graphics.Color;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
+
 import org.greenrobot.eventbus.EventBus;
 
 import cn.xylink.mting.R;
@@ -149,7 +150,7 @@ public class SpeechService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d("SpeechService", "onStartCommand");
 
-        if(intent != null) {
+        if (intent != null) {
             String roleValue = intent.getStringExtra("role");
             String speedValue = intent.getStringExtra("speed");
             Speechor.SpeechorRole currRole = roleValue != null && roleValue.trim() != "" ? Speechor.SpeechorRole.valueOf(roleValue) : Speechor.SpeechorRole.XiaoIce;
@@ -220,7 +221,7 @@ public class SpeechService extends Service {
                         serviceState = SpeechServiceState.Ready;
                         onSpeechStoped(reason);
                     }
-                    else if(speakerState == SpeechorState.SpeechorStateLoadding) {
+                    else if (speakerState == SpeechorState.SpeechorStateLoadding) {
                         onSpeechBuffering(currentArticle);
                     }
                 }
@@ -306,15 +307,15 @@ public class SpeechService extends Service {
         }
 
         long duration = new java.util.Date().getTime() - speechStartTimeOfArticle;
-        speechDurationOfArticle += (duration > 0)? duration : 0;
+        speechDurationOfArticle += (duration > 0) ? duration : 0;
 
-        articleDataProvider.appendArticleRecord(speechArticleIdOfArticle, speechDurationOfArticle/1000);
+        articleDataProvider.appendArticleRecord(speechArticleIdOfArticle, speechDurationOfArticle / 1000);
     }
 
     private void onSpeechPause(Article article) {
         EventBus.getDefault().post(new SpeechPauseEvent(article));
         long duration = new java.util.Date().getTime() - speechStartTimeOfArticle;
-        speechDurationOfArticle += (duration > 0)? duration : 0;
+        speechDurationOfArticle += (duration > 0) ? duration : 0;
     }
 
     private void onSpeechResume(Article article) {
@@ -398,10 +399,10 @@ public class SpeechService extends Service {
         SpeechServiceState preState = serviceState;
         //ready和loadding的时候，正文还未加载完毕，也就无从进行seek操作
         //error情况，可能有两种，一种是分片列表已经初始化，还有一种可能就是分片加载中出现错误，也不能seek
-        if(serviceState == SpeechServiceState.Ready && serviceState == SpeechServiceState.Loadding) {
+        if (serviceState == SpeechServiceState.Ready && serviceState == SpeechServiceState.Loadding) {
             return -SpeechError.SEEK_NOT_ALLOW;
         }
-        if(getSelected() == null || getSelected().getTextBody() == null) {
+        if (getSelected() == null || getSelected().getTextBody() == null) {
             return -SpeechError.SEEK_NOT_ALLOW;
         }
         int index;
@@ -769,7 +770,7 @@ public class SpeechService extends Service {
                     return;
             }
 
-            actionExit = new Notification.Action(R.mipmap.dialog_close, "",PendingIntent.getBroadcast(this, ++executeCode, exitIntent, PendingIntent.FLAG_UPDATE_CURRENT));
+            actionExit = new Notification.Action(R.mipmap.dialog_close, "", PendingIntent.getBroadcast(this, ++executeCode, exitIntent, PendingIntent.FLAG_UPDATE_CURRENT));
 
             if (actionFav != null) {
                 builder.addAction(actionFav);
@@ -786,7 +787,7 @@ public class SpeechService extends Service {
             builder.addAction(actionExit);
 
             Notification.MediaStyle mediaStyle = new Notification.MediaStyle();
-            mediaStyle.setShowActionsInCompactView( 1, 2, 3);
+            mediaStyle.setShowActionsInCompactView(1, 2, 3);
             builder.setStyle(mediaStyle);
 
             Notification notification = builder.build();
