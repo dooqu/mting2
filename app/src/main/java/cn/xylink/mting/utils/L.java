@@ -3,10 +3,12 @@ package cn.xylink.mting.utils;
 import android.text.TextUtils;
 import android.util.Log;
 
+import cn.xylink.mting.BuildConfig;
+
 public class L {
 
     public static final String TAG = "LOG_INFO";
-    public static final boolean DEBUG = true;
+    public static final boolean DEBUG = BuildConfig.DEBUG;
     private static final String TAG_CONTENT_PRINT = "[%s][%s] [%s]";
 
     private static String getContent(String tag, String method, Object msg) {
