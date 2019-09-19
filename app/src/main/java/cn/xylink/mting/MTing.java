@@ -93,7 +93,7 @@ public class MTing extends Application {
         }
 
         TCAgent.LOG_ON = true;
-        TCAgent.init(this, Const.TCAGENT_APPID, "mting");
+        TCAgent.init(this, Const.TCAGENT_APPID, "renrendict");
         TCAgent.setReportUncaughtExceptions(true);
     }
 

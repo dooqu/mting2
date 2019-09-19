@@ -287,9 +287,7 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
                     case MotionEvent.ACTION_MOVE:
                         mCurPosX = event.getX();
                         mCurPosY = event.getY();
-
                         break;
-
                     case MotionEvent.ACTION_UP:
                         if (mCurPosX - mPosX > 0
                                 && (Math.abs(mCurPosX - mPosX) > 50) && Math.abs(mCurPosY - mPosY) < 50) {
@@ -298,7 +296,6 @@ public class ArticleDetailActivity extends BasePresenterActivity implements DelM
                         }
                         break;
                 }
-
                 return false;
             }
         });
