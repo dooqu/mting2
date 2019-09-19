@@ -43,6 +43,7 @@ android {
     productFlavors {
         mting {
             manifestPlaceholders = [TING_CHANNEL_VALUE: "mting"]
+//            manifestPlaceholders = [TING_CHANNEL_VALUE: "renrendict"]
         }
     }
     compileOptions {
