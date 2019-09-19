@@ -3,6 +3,7 @@ package cn.xylink.mting.model.data;
 import android.os.Build;
 
 import com.lzy.okgo.OkGo;
+import com.lzy.okgo.model.HttpHeaders;
 
 import org.bouncycastle.util.Pack;
 
@@ -10,6 +11,7 @@ import java.io.File;
 import java.lang.reflect.Type;
 import java.util.Map;
 
+import cn.xylink.mting.BuildConfig;
 import cn.xylink.mting.MTing;
 import cn.xylink.mting.contract.IBaseView;
 import cn.xylink.mting.utils.PackageUtils;
@@ -33,6 +35,7 @@ public class OkGoUtils<T> {
                 .headers("deviceId", PackageUtils.getWifiMac(MTing.getInstance()))
                 .headers("deviceName", Build.MODEL)
                 .headers("sysVersion", "Android " + Build.VERSION.RELEASE)
+                .headers("User-Agent", HttpHeaders.getUserAgent()+";xyting-android-vname/" + BuildConfig.VERSION_NAME + "-vcode/" + BuildConfig.VERSION_CODE)
                 .tag(view)
                 .execute(new JsonBeanCallback<T>(type) {
                              @Override
@@ -83,6 +86,7 @@ public class OkGoUtils<T> {
                 .headers("deviceId", PackageUtils.getWifiMac(MTing.getInstance()))
                 .headers("deviceName", Build.MODEL)
                 .headers("sysVersion", "Android " + Build.VERSION.RELEASE)
+                .headers("User-Agent", HttpHeaders.getUserAgent()+";xyting-android-vname/" + BuildConfig.VERSION_NAME + "-vcode/" + BuildConfig.VERSION_CODE)
                 .params(postData)
                 .execute(new JsonBeanCallback<T>(type) {
 
@@ -126,6 +130,7 @@ public class OkGoUtils<T> {
                 .headers("deviceId", PackageUtils.getWifiMac(MTing.getInstance()))
                 .headers("deviceName", Build.MODEL)
                 .headers("sysVersion", "Android " + Build.VERSION.RELEASE)
+                .headers("User-Agent", HttpHeaders.getUserAgent()+";xyting-android-vname/" + BuildConfig.VERSION_NAME + "-vcode/" + BuildConfig.VERSION_CODE)
                 .params(data, true)
                 .params("file", file)
                 .execute(new JsonBeanCallback<T>(type) {
@@ -177,6 +182,7 @@ public class OkGoUtils<T> {
                 .headers("deviceId", PackageUtils.getWifiMac(MTing.getInstance()))
                 .headers("deviceName", Build.MODEL)
                 .headers("sysVersion", "Android " + Build.VERSION.RELEASE)
+                .headers("User-Agent", HttpHeaders.getUserAgent()+";xyting-android-vname/" + BuildConfig.VERSION_NAME + "-vcode/" + BuildConfig.VERSION_CODE)
                 .tag(view)
                 .execute(new JsonBeanCallback<T>(type) {
 
