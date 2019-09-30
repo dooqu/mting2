@@ -187,7 +187,7 @@ public abstract class XiaoIceSpeechor implements Speechor {
             resetFragmentsState(index);
             SpeechTextFragment firstFrgament = this.speechTextFragments.get(index);
             firstFrgament.setFirstFragment(true);
-            //动态缓冲区，尽快让播放启动
+
             if(seekAndPlay(index, 1) == true) {
                 new Thread(() -> {
                     onStateChanged(SpeechorState.SpeechorStatePlaying);
@@ -211,7 +211,6 @@ public abstract class XiaoIceSpeechor implements Speechor {
             fragment.setSeekTime(seekTime);
             switch (fragment.getFragmentState()) {
                 case AudioLoadding:
-                    //如果准备播放的分片正在加载，设定播放器的状态为Loadding
                     if (isSegumentCurrentToPlay == true) {
                         if(this.state != SpeechorState.SpeechorStateLoadding) {
                             this.state = SpeechorState.SpeechorStateLoadding;
@@ -221,7 +220,7 @@ public abstract class XiaoIceSpeechor implements Speechor {
                         }
                     }
                     break;
-                //如果当前的这片段正在loading，跳过它；
+
                 case Error:
                     if (isSegumentCurrentToPlay == true) {
                         this.state = SpeechorState.SpeechorStateReady;
@@ -281,9 +280,9 @@ public abstract class XiaoIceSpeechor implements Speechor {
                                     if (++this.fragment.retryCount > Speechor.ERROR_RETRY_COUNT) {
                                         this.fragment.setFragmentState(SpeechTextFragmentState.Error);
                                         this.fragment.setErrorMessage("网络连接失败，请稍候重试:" + errorCode);
-                                        //如果当前播放的主控正在等待当前分片的加载结果，那么反向主动回应
+
                                         if (this.fragment.getFrameIndex() == XiaoIceSpeechor.this.fragmentIndex) {
-                                            //用户在重试等待期间，可能改动了播放主控的操作，如果播放还需要继续，那么就显示错误
+
                                             if (state == SpeechorState.SpeechorStateLoadding) {
                                                 state = SpeechorState.SpeechorStateReady;
                                                 onError(errorCode, BuildConfig.DEBUG? this.fragment.getErrorMessage() : BufferErrorHint);
@@ -291,8 +290,6 @@ public abstract class XiaoIceSpeechor implements Speechor {
                                         }
                                     }
                                     else {
-                                        //state的状态不会等于Error，内部状态没有Error，Error的时候，就是Ready
-                                        //也就是说，只要播放器还在Loadding或者Playing，就继续尝试重试
                                         if (state != SpeechorState.SpeechorStateReady) {
                                             ttsAudioLoader.textToSpeech(fragment.getFragmentText(), speed, this);
                                         }

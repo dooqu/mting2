@@ -7,7 +7,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 28
         //versionCode改为年份两位，月份两位，日两位，次数1位
-        versionCode 1909175
+        versionCode 1909191
 
         versionName "1.1"
     }
@@ -42,8 +42,8 @@ android {
     flavorDimensions "mting"
     productFlavors {
         mting {
-            manifestPlaceholders = [TING_CHANNEL_VALUE: "mting"]
-//            manifestPlaceholders = [TING_CHANNEL_VALUE: "renrendict"]
+           // manifestPlaceholders = [TING_CHANNEL_VALUE: "mting"]
+            manifestPlaceholders = [TING_CHANNEL_VALUE: "renrendict"]
         }
     }
     compileOptions {

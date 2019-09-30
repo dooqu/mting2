@@ -39,17 +39,7 @@ import cn.xylink.mting.speech.event.SpeechStartEvent;
 import cn.xylink.mting.speech.event.SpeechStopEvent;
 import cn.xylink.mting.ui.activity.MainActivity;
 
-/*
-SpeechService 的核心思想也是控制分片播放
-Speechor的核心控制思想也是分片
-两者的分片颗粒不同
-在Speechor中，分片是某一个文章的各个段落
-而在SpeechService中，分片是整个播放列表
 
-两者在内部都有Loadding状态
-对于Speechor，内部的Loadding时刻是在分片和分片之间
-而对于SpeechService，内部的Loadding时刻是在文章和文章之间
- */
 public class SpeechService extends Service {
     static String TAG = SpeechService.class.getSimpleName();
 
@@ -196,28 +186,28 @@ public class SpeechService extends Service {
                     if (currentArticle == null) {
                         return;
                     }
-                    //在每个文章播正常放完成后，注意是正常不受外部操作干扰的读玩， 像playNext()除外，因为他不触发结束的onReady
+
                     if (speakerState == SpeechorState.SpeechorStateReady) {
                         Log.d(TAG, "SpeechService.onStateChanged:Ready");
-                        //强制设定progress为1
+
                         currentArticle.setProgress(1);
-                        //调用onSpeechEnd事件
+
                         SpeechService.this.onSpeechEnd(currentArticle, 1, true);
-                        //以下代码，判定播放后续动作，包括定时器或者列表为空的情况；先预先设置一个播放停止信号默认值
+
                         SpeechStopEvent.StopReason reason = SpeechStopEvent.StopReason.ListIsNull;
-                        //在每个播放完成的时机，判断下当前是否有Number定时器， 如果有，就减一，如果减一等于0，说明定时器到期
+
                         if (SpeechService.this.countDownMode == CountDownMode.NumberCount && --countdownValue == 0) {
                             SpeechService.this.cancelCountDown();
                             reason = SpeechStopEvent.StopReason.CountDownToZero;
                         }
-                        //如果定时器没有走， 那继续判定是否还有下一个文章可播放， 如果有，去播放；
+
                         else if (SpeechService.this.hasNext()) {
                             SpeechService.this.playNextInvokeByInternal();
                             return;
                         }
-                        //调用moveNext，不是为了要播放下一个，因为当前没有下一个了， 而是要通过moveNext的调用，把指向的当前元素删除掉;
+
                         SpeechService.this.moveNext();
-                        //没有要读的文章了
+
                         serviceState = SpeechServiceState.Ready;
                         onSpeechStoped(reason);
                     }
@@ -258,9 +248,8 @@ public class SpeechService extends Service {
         notifIntent.addAction("unfavorite");
         notifIntent.addAction("exit");
         registerReceiver(notifReceiver, notifIntent);
-        //注册广播接收者监听状态改变
         IntentFilter a2dpIntent = new IntentFilter(BluetoothA2dp.ACTION_CONNECTION_STATE_CHANGED);
-        //a2dpIntent.addAction(BluetoothA2dp.ACTION_PLAYING_STATE_CHANGED);
+
         registerReceiver(a2dpReceiver, a2dpIntent);
     }
 
@@ -337,13 +326,11 @@ public class SpeechService extends Service {
         return serviceState;
     }
 
-    /*
-    设定计时器
-     */
+
     public synchronized void setCountDown(CountDownMode mode, int tickcountValue) {
-        //如果一个倒计时正在进行，先取消
+
         this.cancelCountDown();
-        //参数检查
+
         if (tickcountValue <= 0 || mode == CountDownMode.None) {
             return;
         }
@@ -397,8 +384,7 @@ public class SpeechService extends Service {
             return -SpeechError.NOTHING_TO_PLAY;
         }
         SpeechServiceState preState = serviceState;
-        //ready和loadding的时候，正文还未加载完毕，也就无从进行seek操作
-        //error情况，可能有两种，一种是分片列表已经初始化，还有一种可能就是分片加载中出现错误，也不能seek
+
         if (serviceState == SpeechServiceState.Ready && serviceState == SpeechServiceState.Loadding) {
             return -SpeechError.SEEK_NOT_ALLOW;
         }
@@ -408,12 +394,8 @@ public class SpeechService extends Service {
         int index;
         if ((index = helper.seekFragmentIndex(percentage, speechor.getTextFragments())) >= 0) {
             int result = speechor.seek(index);
-            //确保当前的线程中seek的操作是无错误的，否则会出现在seek中抛出error event,后面又有resume event的状况
-            //seek后，其他线程的异步错误不用理会，因为那也是在resume之后的error，顺序是ok的。
             if (result >= 0) {
                 this.serviceState = SpeechServiceState.Playing;
-                //如果seek之前是暂停状态，那么发出一个resume事件
-                //如果seek之前是error状态，那么也发出一个resume事件
                 if (preState == SpeechServiceState.Paused || preState == SpeechServiceState.Error) {
                     onSpeechResume(getSelected());
                 }
@@ -447,10 +429,7 @@ public class SpeechService extends Service {
         return false;
     }
 
-    /*
-    resume的时候要分情况，如果当前是Paused，那使用resume
-    如果是ready，那么用playSelected();
-     */
+
     public synchronized boolean resume() {
         if (speechList.getCurrent() == null) {
             return false;
@@ -458,7 +437,7 @@ public class SpeechService extends Service {
 
         boolean result = false;
         if (serviceState == SpeechServiceState.Paused) {
-            //如果是在loadding期间被pause掉，那么直接playSelected()
+
             if (this.isSimulatePaused == true) {
                 playSelected();
                 initNotification();
@@ -552,22 +531,19 @@ public class SpeechService extends Service {
         this.articleDataProvider.loadArticleContent(article, needSourceEffect, (int errorcode, Article articleUpdated) -> {
 
             synchronized (this) {
-                //如果回来之后，状态已经不是Loadding，说明在加载期间，有了其他操作
+
                 if (isReleased || serviceState != SpeechServiceState.Loadding || articleUpdated != this.speechList.getCurrent()) {
                     return;
                 }
-                //网络加载动作结束后，走到这里， 要判定下errorCode
+
                 if (errorcode != 0) {
-                    //文章正文加载错误
                     this.serviceState = SpeechServiceState.Error;
                     this.onSpeechError(SpeechError.ARTICLE_LOAD_ERROR, "文章正文加载失败", article);
                     return;
                 }
 
                 this.onSpeechReady(article);
-                //首先判定下回调回来后，是否物是人非，在加载期间，用户可能做了其他操作
-                //比如暂停、切换文章，点选等等
-                //如果用户在加载期间，没有做其他操作，比如pause、切换文章
+
                 speechor.reset();
                 speechor.prepare(article.getTitle());
                 speechor.prepare(article.getTextBody());
@@ -656,7 +632,7 @@ public class SpeechService extends Service {
             //this.onSpeechEnd(currentArt, currentArt.getProgress());
             //??是否还记录播放进度
             if (this.speechList.size() > 0) {
-                //播放列表中的第一个
+
                 Article article = this.speechList.selectFirst();
                 prepareArticle(article, false);
             }
