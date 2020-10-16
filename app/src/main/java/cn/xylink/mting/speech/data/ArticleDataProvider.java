@@ -208,7 +208,7 @@ public class ArticleDataProvider {
                                 article.setId(response.data.getId());
                                 article.setSourceLogo(response.data.getSourceLogo());
                                 article.setRead(response.data.getRead());
-                                article.setProgress(response.data.getProgress());
+                                //article.setProgress(response.data.getProgress());
                                 callback.invoke(0, article);
                             }
                         }

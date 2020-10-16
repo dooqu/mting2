@@ -101,6 +101,7 @@ public abstract class XiaoIceSpeechor implements Speechor {
 
     public abstract class IceLoadResult implements TTSAudioLoader.LoadResult {
         SpeechTextFragment fragment;
+
         public IceLoadResult(SpeechTextFragment fragment) {
             this.fragment = fragment;
         }
@@ -177,7 +178,7 @@ public abstract class XiaoIceSpeechor implements Speechor {
             if (textFragments.size() == 0) {
                 return -SpeechError.HAS_NO_FRAGMENTS;
             }
-            if(this.state == SpeechorState.SpeechorStatePlaying) {
+            if (this.state == SpeechorState.SpeechorStatePlaying) {
                 mediaPlayer.stop();
             }
 
@@ -188,7 +189,7 @@ public abstract class XiaoIceSpeechor implements Speechor {
             SpeechTextFragment firstFrgament = this.speechTextFragments.get(index);
             firstFrgament.setFirstFragment(true);
 
-            if(seekAndPlay(index, 1) == true) {
+            if (seekAndPlay(index, 1) == true) {
                 new Thread(() -> {
                     onStateChanged(SpeechorState.SpeechorStatePlaying);
                 }).start();
@@ -200,7 +201,7 @@ public abstract class XiaoIceSpeechor implements Speechor {
 
 
     private synchronized boolean seekAndPlay(int indexToPlay, int bufferSize) {
-        Log.d(TAG, "seekAndPlay:" + indexToPlay + ",bufferSize=" + bufferSize);
+        Log.d(TAG, "seekAndPlay:" + indexToPlay + ",bufferSize=" + bufferSize + ", threaid=" + Thread.currentThread().getId());
         seekTime = System.currentTimeMillis();
         int segmentSize = this.textFragments.size();
         boolean seekResult = true;
@@ -212,12 +213,13 @@ public abstract class XiaoIceSpeechor implements Speechor {
             switch (fragment.getFragmentState()) {
                 case AudioLoadding:
                     if (isSegumentCurrentToPlay == true) {
-                        if(this.state != SpeechorState.SpeechorStateLoadding) {
+                        if (this.state != SpeechorState.SpeechorStateLoadding) {
                             this.state = SpeechorState.SpeechorStateLoadding;
-                            new Thread(()->{
+                            new Thread(() -> {
                                 onStateChanged(SpeechorState.SpeechorStateLoadding);
                             }).start();
                         }
+                        
                     }
                     break;
 
@@ -225,21 +227,21 @@ public abstract class XiaoIceSpeechor implements Speechor {
                     if (isSegumentCurrentToPlay == true) {
                         this.state = SpeechorState.SpeechorStateReady;
                         //此时fragmentText装载的是错误信息
-                        this.onError(SpeechError.FRAGMENT_TTS_ERROR, BuildConfig.DEBUG? fragment.getErrorMessage() : BufferErrorHint);
+                        this.onError(SpeechError.FRAGMENT_TTS_ERROR, BuildConfig.DEBUG ? fragment.getErrorMessage() : BufferErrorHint);
                     }
                     return false;
 
                 case TextReady:
                     if (isSegumentCurrentToPlay == true) {
-                        if(this.state != SpeechorState.SpeechorStateLoadding) {
+                        if (this.state != SpeechorState.SpeechorStateLoadding) {
                             this.state = SpeechorState.SpeechorStateLoadding;
-                            new Thread(()->{
+                            new Thread(() -> {
                                 onStateChanged(SpeechorState.SpeechorStateLoadding);
                             }).start();
                         }
                     }
 
-                    Log.d(TAG, "loadding fragment audio: loadIndex=" + startIndex + ", frameIndex=" + indexToPlay);
+                    Log.d(TAG, "start loading audio fragment: [loadIndex=" + startIndex + ", frameIndex=" + indexToPlay + "]");
                     TTSAudioLoader.LoadResult loadResult = new IceLoadResult(fragment) {
                         @Override
                         public void invoke(int errorCode, String message, String audioUrl) {
@@ -247,18 +249,16 @@ public abstract class XiaoIceSpeechor implements Speechor {
                                 if (isReleased == true) {
                                     return;
                                 }
-                                Log.d(TAG, "fragment audio loaded: loadIndex =" + this.fragment.getFrameIndex() + ", indexToPlay=" + indexToPlay + ", errorCode=" + errorCode);
+                                Log.d(TAG, "audio fragment loaded: [loadIndex =" + this.fragment.getFrameIndex() + ", indexToPlay=" + indexToPlay + ", errorCode=" + errorCode + ", threaid=" + Thread.currentThread().getId() + "]");
                                 if (errorCode == 0) {
                                     boolean isFirstFragment = this.fragment.isFirstFragment();
                                     this.fragment.setFragmentState(SpeechTextFragmentState.AudioReady);
                                     this.fragment.setAudioUrl(audioUrl);
-                                    //this.fragment.setFirstFragment(false);
                                     if (XiaoIceSpeechor.this.seekTime != this.fragment.getSeekTime()) {
-                                        Log.d(TAG, "load ticken invalided, return;");
+                                        Log.d(TAG, "---->callback token invalided;");
                                         return;
                                     }
                                     if (this.fragment.getFrameIndex() == XiaoIceSpeechor.this.fragmentIndex) {
-                                        Log.d(TAG, "回来之后状态是:" + state);
                                         if (state == SpeechorState.SpeechorStateLoadding) {
                                             //定性
                                             state = SpeechorState.SpeechorStatePlaying;
@@ -267,10 +267,9 @@ public abstract class XiaoIceSpeechor implements Speechor {
                                             if (isPlaying == true && isFirstFragment == true && bufferSize == 1) {
                                                 //此时buffer_size = 1;
                                                 //算上index那个，就意味着在当前之后，加载了两个
-                                               // new Thread(()->{
+                                                new Thread(() -> {
                                                     seekAndPlay(this.fragment.getFrameIndex() + 1, 2);
-                                                //}).start();
-
+                                                }).start();
                                             }
                                         }
                                     }
@@ -285,7 +284,7 @@ public abstract class XiaoIceSpeechor implements Speechor {
 
                                             if (state == SpeechorState.SpeechorStateLoadding) {
                                                 state = SpeechorState.SpeechorStateReady;
-                                                onError(errorCode, BuildConfig.DEBUG? this.fragment.getErrorMessage() : BufferErrorHint);
+                                                onError(errorCode, BuildConfig.DEBUG ? this.fragment.getErrorMessage() : BufferErrorHint);
                                             }
                                         }
                                     }
@@ -306,14 +305,13 @@ public abstract class XiaoIceSpeechor implements Speechor {
                 case AudioReady:
                     if (isSegumentCurrentToPlay == true) {
                         state = SpeechorState.SpeechorStatePlaying;
-                        if(playSegment(fragmentIndex) == false) {
+                        if (playSegment(fragmentIndex) == false) {
                             return false;
                         }
                     }
                     break;
             }//end switch
         }
-
         return true;
     }
 
@@ -331,7 +329,7 @@ public abstract class XiaoIceSpeechor implements Speechor {
         }
         catch (NullPointerException ex) {
             SpeechTextFragment fragment = speechTextFragments.get(segmentIndex);
-            onError(SpeechError.MEDIA_PLAYER_NULL_ERROR, MTing.getInstance().isDebugMode()? "NullPointError:" + ex.getMessage() + ",source=" + speechTextFragments.get(segmentIndex).getAudioUrl() + ", text=" + speechTextFragments.get(segmentIndex).getFragmentText() : BufferErrorHint);
+            onError(SpeechError.MEDIA_PLAYER_NULL_ERROR, MTing.getInstance().isDebugMode() ? "NullPointError:" + ex.getMessage() + ",source=" + speechTextFragments.get(segmentIndex).getAudioUrl() + ", text=" + speechTextFragments.get(segmentIndex).getFragmentText() : BufferErrorHint);
         }
         return false;
     }
@@ -356,7 +354,6 @@ public abstract class XiaoIceSpeechor implements Speechor {
             default:
                 return;
         }
-
         SpeechTextFragment fragment = this.speechTextFragments.get(fragmentIndex);
         //一个切片播放完成之后，下一步的操作：
         //1、判断播放器是否被停止：可能在一个切片播放完成之后，被外部抢入控制权
@@ -365,10 +362,7 @@ public abstract class XiaoIceSpeechor implements Speechor {
         int fragmentSize = speechTextFragments.size();
 
         if (fragmentIndex < fragmentSize) {
-            //new Thread(()->{
-                seekAndPlay(fragmentIndex, fragment.isFirstFragment()? 2 : 3);
-            //}).start();
-
+            seekAndPlay(fragmentIndex, fragment.isFirstFragment() ? 2 : 4);
         }
         else if (fragmentIndex == fragmentSize) {
             state = SpeechorState.SpeechorStateReady;
@@ -398,7 +392,6 @@ public abstract class XiaoIceSpeechor implements Speechor {
             this.speechTextFragments.get(index).setFirstFragment(false);
         }
     }
-
     /*
     media player完成一个媒体切片加载后进行回调调用
      */
@@ -445,7 +438,7 @@ public abstract class XiaoIceSpeechor implements Speechor {
         if (isReleased) {
             return false;
         }
-        if(this.state != SpeechorState.SpeechorStatePaused) {
+        if (this.state != SpeechorState.SpeechorStatePaused) {
             return false;
         }
 
